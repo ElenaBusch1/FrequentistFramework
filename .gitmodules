@@ -1,0 +1,3 @@
+[submodule "xmlAnaWSBuilder"]
+	path = xmlAnaWSBuilder
+	url = https://:@gitlab.cern.ch:8443/atlas-hgam-sw/xmlAnaWSBuilder.git
