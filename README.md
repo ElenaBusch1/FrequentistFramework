@@ -13,8 +13,15 @@ git submodule update --remote
 cd xmlAnaWSBuilder/
 source setup.sh
 make
+cd ..
 ```
 
 ```
+cd config/dijetTLA
 ln -s AnaWSBuilder.dtd ../../xmlAnaWSBuilder/dtd/AnaWSBuilder.dtd 
+cd ../..
 ```
+
+# Run
+
+./xmlAnaWSBuilder/exe/XMLReader -x config/dijetTLA/dijetTLA_J100yStar06_v01.xml -s 0 -b 1 --plotOption logy
