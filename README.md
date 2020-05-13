@@ -1,6 +1,7 @@
 # FrequentistFramework
+This code is very preliminary and under construction!!
 
-A statistical analysis framework based on:
+This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
 # Install
@@ -23,5 +24,7 @@ cd ../..
 ```
 
 # Run
-
+Example run command:
+```
 ./xmlAnaWSBuilder/exe/XMLReader -x config/dijetTLA/dijetTLA_J100yStar06_v01.xml -s 0 -b 1 --plotOption logy
+```
