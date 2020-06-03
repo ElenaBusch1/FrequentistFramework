@@ -38,6 +38,13 @@ def getHistGraph(refhistkey):
         graph.SetPoint(graph.GetN(), refhist.GetBinCenter(b), refhist.GetBinContent(b) )
     return graph
 
+def setGausSignal(w, mZ, width = 0.07):
+    # fit parameters
+    w.factory("mZ[{0}]".format(mZ)) 
+    w.var("mZ").setConstant(True)
+    w.factory("prod::width(mZ,{0})".format(width))
+    w.factory("EXPR::signal('TMath::Gaus(@0, @1, @2)',{mass,mZ, width })")
+
 def setBkfFunc_UA2(w):
     # fit parameters
     '''w.factory("p1[0.1, -100, 100]") 
@@ -139,6 +146,16 @@ if __name__ == '__main__':
     #setBkfFunc_UA2(w)
     setBkfFunc_UA2(w)
 
+    #### Set up signal function ########
+    setGausSignal(w,800, 0.07) 
+    sigNorm =  w.pdf("signal").getVal()
+    print "Initial signal normalization = ", sigNorm
+
+
+    ####################################
+
+    w.factory("SUM::model(mu[0.01,0.0,9.0]*signal,background)");
+
     ####################################
 
     ROOT.SetOwnership(datahist,False)
@@ -154,20 +171,22 @@ if __name__ == '__main__':
     # set up frame object
     frame = w.var('mass').frame(ROOT.RooFit.Title(mytitle)) ;
 
-    w.pdf("background").setAttribute("BinnedLikelihood", True);
+    w.pdf("model").setAttribute("BinnedLikelihood", True);
     #nll = makeIntegratedLikelihood(w)
-    nll = w.pdf("background").createNLL(data)
+    nll = w.pdf("model").createNLL(data)
     nll.enableOffsetting(True)
     minim = ROOT.RooMinimizer(nll);
-    minim.minimize("Migrad")
+    #minim.minimize("Migrad")
 
     # fitTo
     #w.pdf("background").fitTo(data, ROOT.RooFit.Strategy(1),  ROOT.RooFit.SumW2Error(True), ROOT.RooFit.Minimizer("Minuit2","Migrad")) ;
     
 
     w.data("data").plotOn(frame) ;
-    w.pdf("background").plotOn(frame) ;
-    w.pdf("background").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
+    w.pdf("signal").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kRed)) ;
+    w.pdf("background").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kGreen)) ;
+    w.pdf("model").plotOn(frame,) ;
+    w.pdf("model").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
 
     # Construct a histogram with the residuals of the data w.r.t. the curve
     hresid = frame.residHist() 
@@ -183,9 +202,11 @@ if __name__ == '__main__':
     frame3 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
     frame3.addPlotable(hpull,"P") ;
 
+    w.Print()
+
     makePlot(frame, frame2, frame3, datahist)
 
-    #w.Print()
+    
     #datafile.Close()
 
     #ROOT.SetOwnership(can, False)
