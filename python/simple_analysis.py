@@ -1,30 +1,103 @@
 import ROOT, sys
 
-def getHistogram(datafilename,datahistname ):
-    datafile = ROOT.TFile(datafilename,"READ")
-    datahist = datafile.Get(datahistname)
-    datahist.SetDirectory(0)
-    #datahist.Scale(1, "width")
-    datahist.Sumw2(ROOT.kTRUE);
-    datafile.Close()
-    return datahist
+# key: (filename, histname)
+
+inputs = {"J75yStar03_2016binning": ("../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root",
+                                     "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_2016binning_TLArange_data"),
+          "J75yStar03_1GeVbinning": ("../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root",
+                                     "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data"),
+          "J100yStar06_2016binning":("../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root",
+                                     "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_2016binning_TLArange_data"),
+          "J100yStar06_1GeVbinning": ("../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root",
+                                     "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data"),
+          }
+
+def getHistogram(key = None, datafilename = None,datahistname = None ):
+
+    if key and key in inputs:
+        datafilename, datahistname = inputs[key]
+
+    if datafilename and datahistname:
+        datafile = ROOT.TFile(datafilename,"READ")
+        datahist = datafile.Get(datahistname)
+        datahist.SetDirectory(0)
+        #datahist.Scale(1, "width")
+        datahist.Sumw2(ROOT.kTRUE);
+        datafile.Close()
+        return datahist
+
+    else:
+        print "{0} not a valid input.".format(key)
+        sys.exit(2)
+
+def getHistGraph(refhistkey):
+    refhist  = getHistogram(refhistkey)
+    graph = ROOT.TGraph()
+    for b in range(0, refhist.GetNbinsX()):
+        if refhist.GetBinContent(b) == 0: continue
+        graph.SetPoint(graph.GetN(), refhist.GetBinCenter(b), refhist.GetBinContent(b) )
+    return graph
+
+def getWeightedRebinGraph(datahistkey, refhistkey):
+    datahist = getHistogram(datahistkey)
+    refhist  = getHistogram(refhistkey)
+    data_index = 1
+    graph = ROOT.TGraph()
+    for b in range(0, refhist.GetNbinsX()):
+        if refhist.GetBinContent(b) == 0: continue
+        xstart = refhist.GetBinLowEdge(b)
+        xend   = refhist.GetBinLowEdge(b+1)
+        xcenter = 0
+        sumcontent = 0
+        print "Bin from {0}-{1} (center {3}) filled with: {2}".format(xstart, xend,refhist.GetBinContent(b), refhist.GetBinCenter(b))
+        while xend >= datahist.GetBinLowEdge(data_index+1):
+            #if datahist.GetBinContent(data_index) > 0:
+            #    print ' ', data_index, datahist.GetBinCenter(data_index), datahist.GetBinContent(data_index)
+            xcenter += datahist.GetBinCenter(data_index)*datahist.GetBinContent(data_index)
+            sumcontent += datahist.GetBinContent(data_index)
+            data_index += 1
+        #print xcenter, sumcontent
+        if sumcontent == 0:
+            xcenter = refhist.GetBinCenter(b)
+        else:
+            xcenter /= sumcontent
+        print "...Re-weighted bin center: {0}, summed content: {1}".format(xcenter, sumcontent)
+        #print xcenter, refhist.GetBinCenter(b), sumcontent, refhist.GetBinContent(b)
+        graph.SetPoint(graph.GetN(), xcenter, sumcontent )
+
+    return graph
+
+
+
+
+'''
 
 def getJ75Histogram():
     datafilename = "../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root"
     datahistname = "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_2016binning_TLArange_data"
     return getHistogram(datafilename, datahistname)
 
+def getJ75HistogramFine():
+    datafilename = "../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root"
+    datahistname = "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data"
+    return getHistogram(datafilename, datahistname).Rebin(2)
+
 def getJ100Histogram():
     datafilename = "../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root"
     datahistname = "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_2016binning_TLArange_data"
     return getHistogram(datafilename, datahistname)
+'''
 
 def setBkfFunc_UA2(w):
     # fit parameters
-    w.factory("p1[0.1, -100, 100]") 
+    '''w.factory("p1[0.1, -100, 100]") 
     w.factory("p2[4.5, -100, 10]") 
     w.factory("p3[21, -100, 100]") 
-    w.factory("p4[-28, -200, 200]") 
+    w.factory("p4[-28, -300, 300]") '''
+    w.factory("p1[0.129905, -0.5, 1.5]") 
+    w.factory("p2[4.51084, -10, 10]") 
+    w.factory("p3[23.4939, -30, 30]")  
+    w.factory("p4[-36.767, -40, 10]") 
     # background function
     w.factory("EXPR::background('@1*TMath::Power(@0/13000.,-1*@2)*TMath::Exp( -1*(@3*@0/13000. + @4*TMath::Power(@0/13000.,2)))',{mass,p1,p2,p3,p4})")
 
@@ -36,6 +109,26 @@ def setBkfFunc_4param(w):
     w.factory("p4[-6.9, -100, 100]") 
     # background function
     w.factory("EXPR::background('@1*TMath::Power(1-@0/13000.,1*@2)*1/TMath::Power( @0/13000., @3 + @4*TMath::Log(@0/13000.))',{mass,p1,p2,p3,p4})")
+
+# following https://gitlab.cern.ch/atlas-phys-exotics-dijet-tla/BayesianFramework_FullRun2/-/blob/master/source/Bayesian/Root/MjjFitter.cxx#L82
+def makeIntegratedLikelihood(w):
+    pdf_int = w.pdf("background").createIntegral(ROOT.RooArgSet(w.var('mass'))) 
+    print "Bkg func integral = ", pdf_int.getVal()
+    getattr(w,'import')(pdf_int)
+
+    for b in range(w.data("data").numEntries()):
+        args = w.data("data").get(b)
+        iter = args.createIterator()
+        var = iter.Next()
+        while var :
+            print var.GetName(), var.getVal()
+            var = iter.Next()
+
+
+
+    #logL += -SimpleLogPoisson( data , (fitEquivalentOfNEvents + sigEquivalentOfNEvents)/weight);
+
+    return pdf_int
 
 def makePlot(frame, frame2, frame3, datahist):
     c = ROOT.TCanvas("c1","c1",600,600)
@@ -49,11 +142,17 @@ def makePlot(frame, frame2, frame3, datahist):
     frame.Draw()
     pad1.SetLogy()
 
-    datahist.SetMarkerColor(ROOT.kBlue);
+    '''datahist.SetMarkerColor(ROOT.kBlue);
     datahist.SetLineColor(ROOT.kBlue);
     datahist.SetMarkerStyle(ROOT.kOpenCircle);
     datahist.SetMarkerSize(1.5);
-    datahist.Draw("sameP");
+    datahist.Draw("sameP");'''
+
+    '''datahist_scaled.SetMarkerColor(ROOT.kRed);
+    datahist_scaled.SetLineColor(ROOT.kRed);
+    datahist_scaled.SetMarkerStyle(ROOT.kOpenCircle);
+    datahist_scaled.SetMarkerSize(1.5);
+    datahist_scaled.Draw("sameP");'''
 
     c.cd()
     pad2 = ROOT.TPad("pad2", "pad2", 0, 0.3, 1, 0.5);
@@ -68,6 +167,15 @@ def makePlot(frame, frame2, frame3, datahist):
     frame2.GetYaxis().SetTitleOffset(0.3)
     frame2.GetYaxis().SetTitleSize(0.1)
     frame2.Draw()
+
+
+    #f2 = ROOT.TFile("../test/200519_29p3invfb_J75DataitteddWithGlobFit_NominalBin_400_2079_tr1.root")
+    #hdatatest = f2.Get("TriggerJets_J75_yStar03_mjj_2016binning_TLArange_data")
+    f2 = ROOT.TFile("../test/200519_29p3invfb_J75DataitteddWithGlobFit_FineBin_400_2079_2GeV.root")
+    hdatatest = f2.Get("TriggerJets_J75_yStar03_mjj_finebinned_all_data")
+    hbkgtest = f2.Get("BkgTemplate")
+    hdatatest.Add(hbkgtest,-1)
+    hdatatest.Draw("hist+same")
 
     c.cd()
     pad3 = ROOT.TPad("pad3", "pad3", 0, 0.1, 1, 0.3);
@@ -97,8 +205,27 @@ if __name__ == '__main__':
     #### Set input data & fit range ####
     #observable mass with fit range
     w.factory("mass[400,2079]")
-    datahist = getJ75Histogram()
-    mytitle = "J75 Data"
+    
+    datahist = getHistogram("J75yStar03_1GeVbinning")
+
+    datahist_raw = getHistogram("J75yStar03_2016binning")
+    #datahist_resbin = getHistGraph("J75yStar03_2016binning") 
+    datahist_rescaled = getWeightedRebinGraph("J75yStar03_1GeVbinning", refhistkey = "J75yStar03_2016binning")
+
+    datahist_rescaled.Draw("P")
+    datahist_raw.SetMarkerStyle(ROOT.kFullCircle)
+    datahist_raw.SetLineColor(ROOT.kGreen)
+    datahist_raw.SetMarkerColor(ROOT.kGreen)
+    #datahist_resbin.SetMarkerStyle(ROOT.kFullSquare)
+    datahist_raw.Draw("hist+p+same")
+    #datahist_resbin.Draw("p+same")
+    datahist_rescaled.Draw("p+same")
+    raw_input("Wait...")
+    #sys.exit()
+    mytitle = "J75 Data (1 GeV bins)"
+
+    sys.exit()
+
 
     #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
     #for the 800 GeV Z' mass, we fit from bins 9  to 27 in our spectrum, which corresponds to a mass range of 531 GeV to 1186 GeV.
@@ -114,28 +241,33 @@ if __name__ == '__main__':
 
     ####################################
 
+    ROOT.SetOwnership(datahist,False)
+
     # put histogram into RooDataHist object
+    #data = ROOT.RooDataHist("data","data",ROOT.RooArgList(w.var('mass')),datahist);
     data = ROOT.RooDataHist("data","data",ROOT.RooArgList(w.var('mass')),datahist);
+    # for memory management
+    ROOT.SetOwnership(data,False)
     # workaround to call import function (import is a protected keyword in python)
     getattr(w,'import')(data, ROOT.RooFit.Rename("data"))
-
     
     # set up frame object
     frame = w.var('mass').frame(ROOT.RooFit.Title(mytitle)) ;
 
-
+    w.pdf("background").setAttribute("BinnedLikelihood", True);
+    #nll = makeIntegratedLikelihood(w)
     nll = w.pdf("background").createNLL(data)
+    nll.enableOffsetting(True)
     minim = ROOT.RooMinimizer(nll);
-    minim.minimize("Minuit2")
+    minim.minimize("Migrad")
 
     # fitTo
-    #nll.fitTo(data, ROOT.RooFit.Strategy(1),  ROOT.RooFit.SumW2Error(True), ROOT.RooFit.Minimizer("Minuit2","Migrad")) ;
+    #w.pdf("background").fitTo(data, ROOT.RooFit.Strategy(1),  ROOT.RooFit.SumW2Error(True), ROOT.RooFit.Minimizer("Minuit2","Migrad")) ;
     
 
     w.data("data").plotOn(frame) ;
     w.pdf("background").plotOn(frame) ;
     w.pdf("background").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
-
 
     # Construct a histogram with the residuals of the data w.r.t. the curve
     hresid = frame.residHist() 
@@ -153,7 +285,8 @@ if __name__ == '__main__':
 
     makePlot(frame, frame2, frame3, datahist)
 
-    w.Print()
+    #w.Print()
+    #datafile.Close()
 
     #ROOT.SetOwnership(can, False)
 
