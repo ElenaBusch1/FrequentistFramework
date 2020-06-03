@@ -38,56 +38,6 @@ def getHistGraph(refhistkey):
         graph.SetPoint(graph.GetN(), refhist.GetBinCenter(b), refhist.GetBinContent(b) )
     return graph
 
-def getWeightedRebinGraph(datahistkey, refhistkey):
-    datahist = getHistogram(datahistkey)
-    refhist  = getHistogram(refhistkey)
-    data_index = 1
-    graph = ROOT.TGraph()
-    for b in range(0, refhist.GetNbinsX()):
-        if refhist.GetBinContent(b) == 0: continue
-        xstart = refhist.GetBinLowEdge(b)
-        xend   = refhist.GetBinLowEdge(b+1)
-        xcenter = 0
-        sumcontent = 0
-        print "Bin from {0}-{1} (center {3}) filled with: {2}".format(xstart, xend,refhist.GetBinContent(b), refhist.GetBinCenter(b))
-        while xend >= datahist.GetBinLowEdge(data_index+1):
-            #if datahist.GetBinContent(data_index) > 0:
-            #    print ' ', data_index, datahist.GetBinCenter(data_index), datahist.GetBinContent(data_index)
-            xcenter += datahist.GetBinCenter(data_index)*datahist.GetBinContent(data_index)
-            sumcontent += datahist.GetBinContent(data_index)
-            data_index += 1
-        #print xcenter, sumcontent
-        if sumcontent == 0:
-            xcenter = refhist.GetBinCenter(b)
-        else:
-            xcenter /= sumcontent
-        print "...Re-weighted bin center: {0}, summed content: {1}".format(xcenter, sumcontent)
-        #print xcenter, refhist.GetBinCenter(b), sumcontent, refhist.GetBinContent(b)
-        graph.SetPoint(graph.GetN(), xcenter, sumcontent )
-
-    return graph
-
-
-
-
-'''
-
-def getJ75Histogram():
-    datafilename = "../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root"
-    datahistname = "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_2016binning_TLArange_data"
-    return getHistogram(datafilename, datahistname)
-
-def getJ75HistogramFine():
-    datafilename = "../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root"
-    datahistname = "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data"
-    return getHistogram(datafilename, datahistname).Rebin(2)
-
-def getJ100Histogram():
-    datafilename = "../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root"
-    datahistname = "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_2016binning_TLArange_data"
-    return getHistogram(datafilename, datahistname)
-'''
-
 def setBkfFunc_UA2(w):
     # fit parameters
     '''w.factory("p1[0.1, -100, 100]") 
@@ -110,25 +60,6 @@ def setBkfFunc_4param(w):
     # background function
     w.factory("EXPR::background('@1*TMath::Power(1-@0/13000.,1*@2)*1/TMath::Power( @0/13000., @3 + @4*TMath::Log(@0/13000.))',{mass,p1,p2,p3,p4})")
 
-# following https://gitlab.cern.ch/atlas-phys-exotics-dijet-tla/BayesianFramework_FullRun2/-/blob/master/source/Bayesian/Root/MjjFitter.cxx#L82
-def makeIntegratedLikelihood(w):
-    pdf_int = w.pdf("background").createIntegral(ROOT.RooArgSet(w.var('mass'))) 
-    print "Bkg func integral = ", pdf_int.getVal()
-    getattr(w,'import')(pdf_int)
-
-    for b in range(w.data("data").numEntries()):
-        args = w.data("data").get(b)
-        iter = args.createIterator()
-        var = iter.Next()
-        while var :
-            print var.GetName(), var.getVal()
-            var = iter.Next()
-
-
-
-    #logL += -SimpleLogPoisson( data , (fitEquivalentOfNEvents + sigEquivalentOfNEvents)/weight);
-
-    return pdf_int
 
 def makePlot(frame, frame2, frame3, datahist):
     c = ROOT.TCanvas("c1","c1",600,600)
@@ -141,18 +72,6 @@ def makePlot(frame, frame2, frame3, datahist):
     #frame.GetYaxis().SetTitleOffset(1.6)
     frame.Draw()
     pad1.SetLogy()
-
-    '''datahist.SetMarkerColor(ROOT.kBlue);
-    datahist.SetLineColor(ROOT.kBlue);
-    datahist.SetMarkerStyle(ROOT.kOpenCircle);
-    datahist.SetMarkerSize(1.5);
-    datahist.Draw("sameP");'''
-
-    '''datahist_scaled.SetMarkerColor(ROOT.kRed);
-    datahist_scaled.SetLineColor(ROOT.kRed);
-    datahist_scaled.SetMarkerStyle(ROOT.kOpenCircle);
-    datahist_scaled.SetMarkerSize(1.5);
-    datahist_scaled.Draw("sameP");'''
 
     c.cd()
     pad2 = ROOT.TPad("pad2", "pad2", 0, 0.3, 1, 0.5);
@@ -205,34 +124,15 @@ if __name__ == '__main__':
     #### Set input data & fit range ####
     #observable mass with fit range
     w.factory("mass[400,2079]")
-    
     datahist = getHistogram("J75yStar03_1GeVbinning")
-
-    datahist_raw = getHistogram("J75yStar03_2016binning")
-    #datahist_resbin = getHistGraph("J75yStar03_2016binning") 
-    datahist_rescaled = getWeightedRebinGraph("J75yStar03_1GeVbinning", refhistkey = "J75yStar03_2016binning")
-
-    datahist_rescaled.Draw("P")
-    datahist_raw.SetMarkerStyle(ROOT.kFullCircle)
-    datahist_raw.SetLineColor(ROOT.kGreen)
-    datahist_raw.SetMarkerColor(ROOT.kGreen)
-    #datahist_resbin.SetMarkerStyle(ROOT.kFullSquare)
-    datahist_raw.Draw("hist+p+same")
-    #datahist_resbin.Draw("p+same")
-    datahist_rescaled.Draw("p+same")
-    raw_input("Wait...")
-    #sys.exit()
     mytitle = "J75 Data (1 GeV bins)"
-
-    sys.exit()
 
 
     #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
     #for the 800 GeV Z' mass, we fit from bins 9  to 27 in our spectrum, which corresponds to a mass range of 531 GeV to 1186 GeV.
 
-
-    #w.factory("mass[ 2000,2079]")
-    #datahist = getJ100Histogram()
+    #w.factory("mass[ 927,2079]")
+    #datahist = getHistogram("J100yStar06_1GeVbinning")
     #mytitle = "J100 Data, fit range = [ 927,2079]"
 
     #### Set up bkg function ###########
