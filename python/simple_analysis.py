@@ -38,6 +38,13 @@ def getHistGraph(refhistkey):
         graph.SetPoint(graph.GetN(), refhist.GetBinCenter(b), refhist.GetBinContent(b) )
     return graph
 
+def setGausSignal(w, mZ, width = 0.07):
+    # fit parameters
+    w.factory("mZ[{0}]".format(mZ)) 
+    w.var("mZ").setConstant(True)
+    w.factory("prod::width(mZ,{0})".format(width))
+    w.factory("EXPR::signal('TMath::Gaus(@0, @1, @2)',{mass,mZ, width })")
+
 def setBkfFunc_UA2(w):
     # fit parameters
     '''w.factory("p1[0.1, -100, 100]") 
@@ -123,9 +130,25 @@ if __name__ == '__main__':
 
     #### Set input data & fit range ####
     #observable mass with fit range
-    w.factory("mass[400,2079]")
-    datahist = getHistogram("J75yStar03_1GeVbinning")
-    mytitle = "J75 Data (1 GeV bins)"
+
+    datasetname = "J100"
+
+    if datasetname == "J100":
+         #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
+    #for the 800 GeV Z' mass, we fit from bins 9  to 27 in our spectrum, which corresponds to a mass range of 531 GeV to 1186 GeV.
+
+        #w.factory("mass[ 927,2079]")
+        #datahist = getHistogram("J100yStar06_1GeVbinning")
+        #mytitle = "J100 Data, fit range = [ 927,2079]"
+
+        w.factory("mass[ 531,1186]")
+        datahist = getHistogram("J100yStar06_1GeVbinning")
+        mytitle = "J100 Data, fit range = [ 531,1186]"
+
+    elif datasetname == "J75":
+        w.factory("mass[400,2079]")
+        datahist = getHistogram("J75yStar03_1GeVbinning")
+        mytitle = "J75 Data (1 GeV bins)"
 
 
     #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
@@ -138,6 +161,16 @@ if __name__ == '__main__':
     #### Set up bkg function ###########
     #setBkfFunc_UA2(w)
     setBkfFunc_UA2(w)
+
+    #### Set up signal function ########
+    setGausSignal(w,800, 0.07) 
+    sigNorm =  w.pdf("signal").getVal()
+    print "Initial signal normalization = ", sigNorm
+
+
+    ####################################
+
+    w.factory("SUM::model(mu[0.0,0.0,9.0]*signal,background)");
 
     ####################################
 
@@ -154,9 +187,9 @@ if __name__ == '__main__':
     # set up frame object
     frame = w.var('mass').frame(ROOT.RooFit.Title(mytitle)) ;
 
-    w.pdf("background").setAttribute("BinnedLikelihood", True);
+    w.pdf("model").setAttribute("BinnedLikelihood", True);
     #nll = makeIntegratedLikelihood(w)
-    nll = w.pdf("background").createNLL(data)
+    nll = w.pdf("model").createNLL(data)
     nll.enableOffsetting(True)
     minim = ROOT.RooMinimizer(nll);
     minim.minimize("Migrad")
@@ -166,26 +199,32 @@ if __name__ == '__main__':
     
 
     w.data("data").plotOn(frame) ;
-    w.pdf("background").plotOn(frame) ;
-    w.pdf("background").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
+    w.pdf("signal").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kRed)) ;
+    w.pdf("background").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kBlue)) ;
+    w.pdf("model").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kGreen)) ;
+    w.pdf("model").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
 
     # Construct a histogram with the residuals of the data w.r.t. the curve
     hresid = frame.residHist() 
+    hresid.SetLineColor(ROOT.kGreen)
 
     # Construct a histogram with the pulls of the data w.r.t the curve
     hpull = frame.pullHist() 
+    hpull.SetLineColor(ROOT.kGreen)
 
     # Create a new frame to draw the residual distribution and add the distribution to the frame
     frame2 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
-    frame2.addPlotable(hresid,"P") ;
+    frame2.addPlotable(hresid,"hist") ;
 
     # Create a new frame to draw the pull distribution and add the distribution to the frame
     frame3 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
-    frame3.addPlotable(hpull,"P") ;
+    frame3.addPlotable(hpull,"hist") ;
+
+    w.Print()
 
     makePlot(frame, frame2, frame3, datahist)
 
-    #w.Print()
+    
     #datafile.Close()
 
     #ROOT.SetOwnership(can, False)
