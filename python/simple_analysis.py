@@ -130,9 +130,25 @@ if __name__ == '__main__':
 
     #### Set input data & fit range ####
     #observable mass with fit range
-    w.factory("mass[400,2079]")
-    datahist = getHistogram("J75yStar03_1GeVbinning")
-    mytitle = "J75 Data (1 GeV bins)"
+
+    datasetname = "J100"
+
+    if datasetname == "J100":
+         #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
+    #for the 800 GeV Z' mass, we fit from bins 9  to 27 in our spectrum, which corresponds to a mass range of 531 GeV to 1186 GeV.
+
+        #w.factory("mass[ 927,2079]")
+        #datahist = getHistogram("J100yStar06_1GeVbinning")
+        #mytitle = "J100 Data, fit range = [ 927,2079]"
+
+        w.factory("mass[ 531,1186]")
+        datahist = getHistogram("J100yStar06_1GeVbinning")
+        mytitle = "J100 Data, fit range = [ 531,1186]"
+
+    elif datasetname == "J75":
+        w.factory("mass[400,2079]")
+        datahist = getHistogram("J75yStar03_1GeVbinning")
+        mytitle = "J75 Data (1 GeV bins)"
 
 
     #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
@@ -154,7 +170,7 @@ if __name__ == '__main__':
 
     ####################################
 
-    w.factory("SUM::model(mu[0.01,0.0,9.0]*signal,background)");
+    w.factory("SUM::model(mu[0.0,0.0,9.0]*signal,background)");
 
     ####################################
 
@@ -176,7 +192,7 @@ if __name__ == '__main__':
     nll = w.pdf("model").createNLL(data)
     nll.enableOffsetting(True)
     minim = ROOT.RooMinimizer(nll);
-    #minim.minimize("Migrad")
+    minim.minimize("Migrad")
 
     # fitTo
     #w.pdf("background").fitTo(data, ROOT.RooFit.Strategy(1),  ROOT.RooFit.SumW2Error(True), ROOT.RooFit.Minimizer("Minuit2","Migrad")) ;
@@ -184,23 +200,25 @@ if __name__ == '__main__':
 
     w.data("data").plotOn(frame) ;
     w.pdf("signal").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kRed)) ;
-    w.pdf("background").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kGreen)) ;
-    w.pdf("model").plotOn(frame,) ;
+    w.pdf("background").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kBlue)) ;
+    w.pdf("model").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kGreen)) ;
     w.pdf("model").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
 
     # Construct a histogram with the residuals of the data w.r.t. the curve
     hresid = frame.residHist() 
+    hresid.SetLineColor(ROOT.kGreen)
 
     # Construct a histogram with the pulls of the data w.r.t the curve
     hpull = frame.pullHist() 
+    hpull.SetLineColor(ROOT.kGreen)
 
     # Create a new frame to draw the residual distribution and add the distribution to the frame
     frame2 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
-    frame2.addPlotable(hresid,"P") ;
+    frame2.addPlotable(hresid,"hist") ;
 
     # Create a new frame to draw the pull distribution and add the distribution to the frame
     frame3 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
-    frame3.addPlotable(hpull,"P") ;
+    frame3.addPlotable(hpull,"hist") ;
 
     w.Print()
 
