@@ -106,8 +106,10 @@ if __name__ == '__main__':
 
     w.factory("mass[ 531,1186]")
     datahist = getHistogram(inputfilename, inputhistname)
-    mytitle = "Signal injected J100 Pseudodata, fit range = [ 531,1186]"
+    
     dataevts= datahist.Integral(531,1186)
+    nsiginject = 100000
+    mytitle = "J100 Pseudodata, Nsig_injected = {0}, fit range = [ 531,1186]".format(nsiginject)
 
     #### Set up bkg function ###########
     #setBkfFunc_UA2(w)
@@ -147,21 +149,24 @@ if __name__ == '__main__':
     # do the first fit
     minim.minimize("Migrad")
 
+    ###### Inject signal ########
+    if nsiginject > 0:
     # set value of injected signal
-    w.var("nsig").setVal(100000) ;
+        w.var("nsig").setVal(nsiginject) ;
 
 
-    ######### Generate a dataset of 10000 events in mass from the model
-    #pseudodata = w.pdf("model").generate(ROOT.RooArgSet(w.var("mass")),int(dataevts)) ; # too much data to use this implementation
-    pseudodata = w.pdf("model").generateBinned(ROOT.RooArgSet(w.var("mass")),int(dataevts))
+        ######### Generate a dataset of 10000 events in mass from the model
+        #pseudodata = w.pdf("model").generate(ROOT.RooArgSet(w.var("mass")),int(dataevts)) ; # too much data to use this implementation
+        pseudodata = w.pdf("model").generateBinned(ROOT.RooArgSet(w.var("mass")),int(dataevts))
 
-    w.var("nsig").setVal(0) ;
+        w.var("nsig").setVal(0) ;
 
-    ######### fit again to the data ########
-    nllpd = w.pdf("model").createNLL(pseudodata)
-    nllpd.enableOffsetting(True)
-    minim = ROOT.RooMinimizer(nllpd);
-    minim.minimize("Migrad")
+        ######### fit again to the data ########
+
+        nllpd = w.pdf("model").createNLL(pseudodata)
+        nllpd.enableOffsetting(True)
+        minim = ROOT.RooMinimizer(nllpd);
+        minim.minimize("Migrad")
 
     ######## initial plotting stuff ########
     # set up frame object
@@ -171,8 +176,10 @@ if __name__ == '__main__':
 
     modelcolor = ROOT.kAzure+1
     signalcolor = ROOT.kGreen-9
-    pseudodata.plotOn(frame) ;
-    #w.data("data").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kRed)) ;
+    if nsiginject > 0:
+        pseudodata.plotOn(frame) ;
+    else:
+        w.data("data").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kRed)) ;
     w.pdf("signal").plotOn(frame,ROOT.RooFit.LineColor(signalcolor)) ;
     w.pdf("background").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kBlue)) ;
     w.pdf("model").plotOn(frame,ROOT.RooFit.LineColor(modelcolor)) ;
