@@ -106,6 +106,7 @@ if __name__ == '__main__':
 
     w.factory("mass[ 531,1186]")
     datahist = getHistogram(inputfilename, inputhistname)
+    w.var("mass").setBins(1186-531);
     
     dataevts= datahist.Integral(531,1186)
     nsiginject = 100000
