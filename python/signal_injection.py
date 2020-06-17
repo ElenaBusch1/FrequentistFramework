@@ -1,42 +1,15 @@
 import ROOT, sys
 
-# key: (filename, histname)
 
-inputs = {"J75yStar03_2016binning": ("../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root",
-                                     "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_2016binning_TLArange_data"),
-          "J75yStar03_1GeVbinning": ("../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root",
-                                     "Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data"),
-          "J100yStar06_2016binning":("../Input/data/dijetTLA/TLA2016_NominalUnblindedData.root",
-                                     "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_2016binning_TLArange_data"),
-          "J100yStar06_1GeVbinning": ("../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root",
-                                     "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data"),
-          }
+def getHistogram(datafilename ,datahistname ):
 
-def getHistogram(key = None, datafilename = None,datahistname = None ):
-
-    if key and key in inputs:
-        datafilename, datahistname = inputs[key]
-
-    if datafilename and datahistname:
-        datafile = ROOT.TFile(datafilename,"READ")
-        datahist = datafile.Get(datahistname)
-        datahist.SetDirectory(0)
-        #datahist.Scale(1, "width")
-        datahist.Sumw2(ROOT.kTRUE);
-        datafile.Close()
-        return datahist
-
-    else:
-        print "{0} not a valid input.".format(key)
-        sys.exit(2)
-
-def getHistGraph(refhistkey):
-    refhist  = getHistogram(refhistkey)
-    graph = ROOT.TGraph()
-    for b in range(0, refhist.GetNbinsX()):
-        if refhist.GetBinContent(b) == 0: continue
-        graph.SetPoint(graph.GetN(), refhist.GetBinCenter(b), refhist.GetBinContent(b) )
-    return graph
+    datafile = ROOT.TFile(datafilename,"READ")
+    datahist = datafile.Get(datahistname)
+    datahist.SetDirectory(0)
+    #datahist.Scale(1, "width")
+    datahist.Sumw2(ROOT.kTRUE);
+    datafile.Close()
+    return datahist
 
 def setGausSignal(w, mZ, width = 0.07):
     # fit parameters
@@ -95,15 +68,6 @@ def makePlot(frame, frame2, frame3, datahist):
     frame2.GetYaxis().SetTitleSize(0.1)
     frame2.Draw()
 
-
-    #f2 = ROOT.TFile("../test/200519_29p3invfb_J75DataitteddWithGlobFit_NominalBin_400_2079_tr1.root")
-    #hdatatest = f2.Get("TriggerJets_J75_yStar03_mjj_2016binning_TLArange_data")
-    f2 = ROOT.TFile("../test/200519_29p3invfb_J75DataitteddWithGlobFit_FineBin_400_2079_2GeV.root")
-    hdatatest = f2.Get("TriggerJets_J75_yStar03_mjj_finebinned_all_data")
-    hbkgtest = f2.Get("BkgTemplate")
-    hdatatest.Add(hbkgtest,-1)
-    hdatatest.Draw("hist+same")
-
     c.cd()
     pad3 = ROOT.TPad("pad3", "pad3", 0, 0.1, 1, 0.3);
     pad3.SetTopMargin(0);
@@ -132,34 +96,18 @@ if __name__ == '__main__':
     #### Set input data & fit range ####
     #observable mass with fit range
 
-    datasetname = "J100"
-
-    if datasetname == "J100":
-         #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
-    #for the 800 GeV Z' mass, we fit from bins 9  to 27 in our spectrum, which corresponds to a mass range of 531 GeV to 1186 GeV.
-
-        #w.factory("mass[ 927,2079]")
-        #datahist = getHistogram("J100yStar06_1GeVbinning")
-        #mytitle = "J100 Data, fit range = [ 927,2079]"
-
-        w.factory("mass[ 531,1186]")
-        datahist = getHistogram("J100yStar06_1GeVbinning")
-        mytitle = "J100 Data, fit range = [ 531,1186]"
-        dataevts= datahist.Integral(531,1186)
-
-    elif datasetname == "J75":
-        w.factory("mass[400,2079]")
-        datahist = getHistogram("J75yStar03_1GeVbinning")
-        mytitle = "J75 Data (1 GeV bins)"
-        dataevts= datahist.Integral(400,2079)
+    inputfilename = "../Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root"
+    #inputhistname = "PseudoData_BG_InjectedSignal_500000_99"
+    inputhistname = "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data"
 
 
     #For the 1400 GeV mass point we fit bins 22 through 40 which corresponds to a mass range of 927-1998 GeV.
     #for the 800 GeV Z' mass, we fit from bins 9  to 27 in our spectrum, which corresponds to a mass range of 531 GeV to 1186 GeV.
 
-    #w.factory("mass[ 927,2079]")
-    #datahist = getHistogram("J100yStar06_1GeVbinning")
-    #mytitle = "J100 Data, fit range = [ 927,2079]"
+    w.factory("mass[ 531,1186]")
+    datahist = getHistogram(inputfilename, inputhistname)
+    mytitle = "Signal injected J100 Pseudodata, fit range = [ 531,1186]"
+    dataevts= datahist.Integral(531,1186)
 
     #### Set up bkg function ###########
     #setBkfFunc_UA2(w)
@@ -172,48 +120,73 @@ if __name__ == '__main__':
 
 
     ####################################
-
-    w.factory("SUM::model(nsig[0.0,0.0,9000.0]*signal, nbkg[{0},0,{0}*2]*background)".format(dataevts));
+    ##### Set up final model to fit
+    
+    w.factory("SUM::model(nsig[0.0,0.0,{0}]*signal, nbkg[{0},0,{0}*2]*background)".format(dataevts));
 
     ####################################
 
+    #### Bookkeeping & setup ########
     ROOT.SetOwnership(datahist,False)
 
     # put histogram into RooDataHist object
-    #data = ROOT.RooDataHist("data","data",ROOT.RooArgList(w.var('mass')),datahist);
     data = ROOT.RooDataHist("data","data",ROOT.RooArgList(w.var('mass')),datahist);
     # for memory management
     ROOT.SetOwnership(data,False)
     # workaround to call import function (import is a protected keyword in python)
     getattr(w,'import')(data, ROOT.RooFit.Rename("data"))
-    
-    # set up frame object
-    frame = w.var('mass').frame(ROOT.RooFit.Title(mytitle)) ;
 
+
+    #### Set up minimizer ########
     w.pdf("model").setAttribute("BinnedLikelihood", True);
-    #nll = makeIntegratedLikelihood(w)
     nll = w.pdf("model").createNLL(data)
     nll.enableOffsetting(True)
     minim = ROOT.RooMinimizer(nll);
+
+    ####################################
+    # do the first fit
     minim.minimize("Migrad")
 
-    # fitTo
-    #w.pdf("background").fitTo(data, ROOT.RooFit.Strategy(1),  ROOT.RooFit.SumW2Error(True), ROOT.RooFit.Minimizer("Minuit2","Migrad")) ;
-    
+    # set value of injected signal
+    w.var("nsig").setVal(100000) ;
 
-    w.data("data").plotOn(frame) ;
-    w.pdf("signal").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kRed)) ;
+
+    ######### Generate a dataset of 10000 events in mass from the model
+    #pseudodata = w.pdf("model").generate(ROOT.RooArgSet(w.var("mass")),int(dataevts)) ; # too much data to use this implementation
+    pseudodata = w.pdf("model").generateBinned(ROOT.RooArgSet(w.var("mass")),int(dataevts))
+
+    w.var("nsig").setVal(0) ;
+
+    ######### fit again to the data ########
+    nllpd = w.pdf("model").createNLL(pseudodata)
+    nllpd.enableOffsetting(True)
+    minim = ROOT.RooMinimizer(nllpd);
+    minim.minimize("Migrad")
+
+    ######## initial plotting stuff ########
+    # set up frame object
+
+
+    frame = w.var('mass').frame(ROOT.RooFit.Title(mytitle)) ;
+
+    modelcolor = ROOT.kAzure+1
+    signalcolor = ROOT.kGreen-9
+    pseudodata.plotOn(frame) ;
+    #w.data("data").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kRed)) ;
+    w.pdf("signal").plotOn(frame,ROOT.RooFit.LineColor(signalcolor)) ;
     w.pdf("background").plotOn(frame, ROOT.RooFit.LineColor(ROOT.kBlue)) ;
-    w.pdf("model").plotOn(frame,ROOT.RooFit.LineColor(ROOT.kGreen)) ;
+    w.pdf("model").plotOn(frame,ROOT.RooFit.LineColor(modelcolor)) ;
     w.pdf("model").paramOn(frame,ROOT.RooFit.Layout(0.65)) ;
 
     # Construct a histogram with the residuals of the data w.r.t. the curve
     hresid = frame.residHist() 
-    hresid.SetLineColor(ROOT.kGreen)
+    hresid.SetLineColor(modelcolor)
+    hresid.SetMarkerColor(modelcolor)
 
     # Construct a histogram with the pulls of the data w.r.t the curve
     hpull = frame.pullHist() 
-    hpull.SetLineColor(ROOT.kGreen)
+    hpull.SetLineColor(modelcolor)
+    hpull.SetMarkerColor(modelcolor)
 
     # Create a new frame to draw the residual distribution and add the distribution to the frame
     frame2 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
@@ -223,20 +196,15 @@ if __name__ == '__main__':
     frame3 = w.var('mass').frame(ROOT.RooFit.Title("")) ;
     frame3.addPlotable(hpull) ;
 
+    ######## Print any relevant info ########
+
     w.Print()
-    print "Initial signal normalization = ", sigNorm
+
+    print "Data events in fit range =", dataevts
+    print "Bkg events = ", w.var("nbkg").getVal( ROOT.RooArgSet(w.var("mass")))
+    print "Signal events = ", w.var("nsig").getVal( ROOT.RooArgSet(w.var("mass")))
 
     makePlot(frame, frame2, frame3, datahist)
-
-    
-    #datafile.Close()
-
-    #ROOT.SetOwnership(can, False)
-
-    #ROOT.SetOwnership(pad, False)
-
-    #curve = frame.getCurve("background");'''
-
 
     
 
