@@ -106,6 +106,7 @@ if __name__ == '__main__':
 
     w.factory("mass[ 531,1186]")
     datahist = getHistogram(inputfilename, inputhistname)
+    w.var("mass").setBins(1186-531);
     
     dataevts= datahist.Integral(531,1186)
     nsiginject = 100000
@@ -207,9 +208,14 @@ if __name__ == '__main__':
 
     w.Print()
 
+    nsig = w.var("nsig").getVal( ROOT.RooArgSet(w.var("mass")))
+    nsigerr = w.var("nsig").getError() 
+
     print "Data events in fit range =", dataevts
     print "Bkg events = ", w.var("nbkg").getVal( ROOT.RooArgSet(w.var("mass")))
-    print "Signal events = ", w.var("nsig").getVal( ROOT.RooArgSet(w.var("mass")))
+    print "Signal events = ", nsig
+    print "Signal significance = ", nsig/w.var("nsig").getError()  
+    print "Signal recovery is", 100 + (nsig - nsiginject)/nsiginject*100,"%"
 
     makePlot(frame, frame2, frame3, datahist)
 
