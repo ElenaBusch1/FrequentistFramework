@@ -9,6 +9,7 @@ https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 setupATLAS
 lsetup git
 git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
+cd FrequentistFramework/
 git submodule init
 git submodule update --remote
 cd xmlAnaWSBuilder/
@@ -17,14 +18,6 @@ sh scripts/install_roofitext.sh
 mkdir build && cd build
 cmake ..
 make -j4
-cd ..
-```
-
-#NOTE: the instructions below still don't work out of the box. 
-
-```
-0cd config/dijetTLA
-ln -s AnaWSBuilder.dtd ../../xmlAnaWSBuilder/dtd/AnaWSBuilder.dtd 
 cd ../..
 ```
 
