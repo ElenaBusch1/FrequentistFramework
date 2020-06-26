@@ -20,8 +20,10 @@ make -j4
 cd ..
 ```
 
+#NOTE: the instructions below still don't work out of the box. 
+
 ```
-cd config/dijetTLA
+0cd config/dijetTLA
 ln -s AnaWSBuilder.dtd ../../xmlAnaWSBuilder/dtd/AnaWSBuilder.dtd 
 cd ../..
 ```
