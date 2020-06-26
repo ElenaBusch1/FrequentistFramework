@@ -4,7 +4,7 @@ This code is very preliminary and under construction!!
 This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
-# Install
+# Install - follow the README Of the XmlAnaWSBuilder
 ```
 setupATLAS
 lsetup git
@@ -12,8 +12,11 @@ git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/Frequentist
 git submodule init
 git submodule update --remote
 cd xmlAnaWSBuilder/
-source setup.sh
-make
+source setup_lxplus.sh
+sh scripts/install_roofitext.sh
+mkdir build && cd build
+cmake ..
+make -j4
 cd ..
 ```
 
