@@ -27,10 +27,10 @@ Example run command:
 ```
 ./xmlAnaWSBuilder/exe/XMLReader -x config/dijetTLA/20200701_j75_bkgonly_test/dijetTLA_J75yStar03_v01.xml -s 0 -b 1 --plotOption logy
 ```
-This command will make a RooWorkspace starting J75-triggered data from [[https://arxiv.org/abs/1804.03496][https://arxiv.org/abs/1804.03496]], fitted with the UA2 background function. 
+This command will make a RooWorkspace starting J75-triggered data from https://arxiv.org/abs/1804.03496, fitted with the UA2 background function. 
 
 # Scripts
 
-The directory =python/= contains a number of standalone Python scripts to plot and extracts the information from the workspace. Test files and .pdf files of how the output should look like are provided in each of the directories. 
+The directory _python/_ contains a number of standalone Python scripts to plot and extracts the information from the workspace. Test files and .pdf files of how the output should look like are provided in each of the directories. 
 
-   * =PlotWorkspace/PlotWorkspaceFit.py= plots the fit and the data in the workspace (obtained from the command above) together with its residuals and pulls, and overlays it with the fit result from the previous statistical analysis framework. 
+   * _PlotWorkspace/PlotWorkspaceFit.py_ plots the fit and the data in the workspace (obtained from the command above) together with its residuals and pulls, and overlays it with the fit result from the previous statistical analysis framework. 
