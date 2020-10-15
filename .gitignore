@@ -1,3 +1,5 @@
 workspace/*
 test/*
 *.pdf
+*~
+run/
