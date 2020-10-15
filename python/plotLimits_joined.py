@@ -6,9 +6,9 @@ from ROOT import *
 from math import sqrt
 from glob import glob
 
-gROOT.LoadMacro("../../TLASpectraFit/atlasstyle-00-04-02/AtlasLabels.C")
-gROOT.LoadMacro("../../TLASpectraFit/atlasstyle-00-04-02/AtlasStyle.C")
-gROOT.LoadMacro("../../TLASpectraFit/atlasstyle-00-04-02/AtlasUtils.C")
+gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
+gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
+gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 # path = "/data/barn01/bartels/TLA/quickFit/run/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root"
 paths = [ "../run/Limits/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root",
