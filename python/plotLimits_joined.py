@@ -4,6 +4,7 @@ import sys, re, os, math, argparse
 from array import array
 from ROOT import *
 from math import sqrt
+from math import isnan
 from glob import glob
 
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
@@ -11,8 +12,8 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 # path = "/data/barn01/bartels/TLA/quickFit/run/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root"
-paths = [ "../run/Limits/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root",
-          "../run/Limits/Limits_J100yStar06_mean${MEAN}_width${WIDTH}.root", ]
+paths = [ "../run/Limits/swift_fivepar/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root",
+          "../run/Limits/swift_fivepar/Limits_J100yStar06_mean${MEAN}_width${WIDTH}.root", ]
 
 
 sigmeans  = [ [ 450, 500, 550, 600, 650, 700, ], 
@@ -111,12 +112,17 @@ def main(args):
                 exp1d = h.GetBinContent(h.GetXaxis().FindBin("-1sigma")) / lumis[dataset]
                 exp2d = h.GetBinContent(h.GetXaxis().FindBin("-2sigma")) / lumis[dataset]
                 
-                g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
                 g_exp[i].SetPoint(g_exp[i].GetN(), sigmean, exp)
                 g_exp1u[i].SetPoint(g_exp1u[i].GetN(), sigmean, exp1u)
                 g_exp2u[i].SetPoint(g_exp2u[i].GetN(), sigmean, exp2u)
                 g_exp1d[i].SetPoint(g_exp1d[i].GetN(), sigmean, exp1d)
                 g_exp2d[i].SetPoint(g_exp2d[i].GetN(), sigmean, exp2d)
+
+                if isnan(obs):
+                    continue
+                
+                g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
+
     
             g_exp1.append( createFillBetweenGraphs(g_exp1d[-1], g_exp1u[-1]) )
             g_exp2.append( createFillBetweenGraphs(g_exp2d[-1], g_exp2u[-1]) )
@@ -192,7 +198,7 @@ def main(args):
     leg_exp.Draw()
     leg_obs.Draw()
 
-    c1.Print("../run/limitPlot.png")
+    c1.Print("../run/limitPlot_swift_fivepar.png")
 
     # raw_input("Press enter to continue...")
 
