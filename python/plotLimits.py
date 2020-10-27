@@ -10,7 +10,6 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-# path = "/data/barn01/bartels/TLA/quickFit/run/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root"
 path = "../run/Limits/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root"
 
 sigmeans=[ 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1300, 1400, 1500, 1600, 1700, 1800, ]
