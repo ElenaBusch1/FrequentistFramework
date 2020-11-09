@@ -72,7 +72,7 @@ quickLimit -f workspace/dijetTLA/dijetTLA_J75yStar03.root -d combData -p nsig_me
 ```
 With _initialGuess_ you need to specify the order of magnitude that you expect your limit to have. The default of 1 might be too small to achieve a difference between likelihoods larger than machine precision.
 
-#Automation
+# Automation
 
 All of this is performed in the bash scripts _scripts/run_buildAndFit_swift_ and _scripts/run_buildAndFit_nlofit_. In there you can specify your _datafile_, _datahist_, _sigmean_ and _sigwidth_ (or set them as env variables before executing). It then uses generic copies of the xmlAnaWsBuilder .xml config files labeled as .template files which you can specify with the _topfile_ and _categoryfile_ variables. They are virtually identically but contain strings like DATAHIST instead of definite entries. These are then replaced in the run script with whatever you provided before executing the xmlAnaWSBuilder. For the analytic window fit also the range and bin count of the fit will be passed on by the run script, as specified by your windowhalfwidth _whw_ and the binning in which to apply it _binedges_.
 
