@@ -21,18 +21,21 @@ fi
 
 mkdir -p run
 
-
 # setting some default inputs if not given by env vars
 if [[ -z $datafile ]]; then
     datafile=Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root
+    # datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_531_2079_fivepar_finebinned_J100.root
+    # datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_531_2079_fourpar_finebinned_J100.root
 fi
 if [[ -z $datahist ]]; then
     # datahist=Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data
     datahist=Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data
+    # datahist=pseudodata_0
 fi
 if [[ -z $categoryfile ]]; then
     # categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
-    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06.template
+    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
+    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
 fi
 if [[ -z $topfile ]]; then
     # topfile=config/dijetTLA/dijetTLA_J75yStar03.template
@@ -42,17 +45,13 @@ if [[ -z $wsfile ]]; then
     wsfile=run/dijetTLAnlo_combWS_swift.root
 fi
 if [[ -z $sigmean ]]; then
-    sigmean=1800
+    sigmean=1200
 fi
 if [[ -z $sigwidth ]]; then
     sigwidth=7
 fi
 if [[ -z $sigfit ]]; then
     sigfit=false
-fi
-if [[ -z $outputfile ]]; then
-    # outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
-    outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}.root
 fi
 if [[ -z $whw ]]; then
     #window half width (full window = 2*whw+1)
@@ -66,6 +65,10 @@ if [[ -z $minbin ]]; then
     if [[ $topfile == *"J100"* ]]; then
 	minbin=6
     fi
+fi
+if [[ -z $outputfile ]]; then
+    # outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
+    outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}.root
 fi
 
 binedges=( 400 420 441 462 484 507 531 555 580 606 633 661 690 720 751 784 818 853 889 927 966 1007 1049 1093 1139 1186 1235 1286 1339 1394 1451 1511 1573 1637 1704 1773 1845 1920 1998 2079 2163 2251 2342 2437 2536 2639 2746 2857 2973 3094 3220 3351 3487 3629 3776 3929 4088 4254 )
@@ -99,8 +102,10 @@ for edge in ${binedges[@]}; do
     i=$((i+1))
 done
 
-rangelow=${binedges[$binlow]}
-rangehigh=${binedges[$((binhigh+1))]} 
+# rangelow=${binedges[$binlow]}
+# rangehigh=${binedges[$((binhigh+1))]} 
+rangelow=531 #global fit
+rangehigh=2079 #global fit
 bins=$((rangehigh - rangelow))
 
 echo "Fitting $bins bins in range $rangelow - $rangehigh"
@@ -131,19 +136,27 @@ fi
 
 if ! $sigfit; then
     echo "Now running bkg-only quickFit"
-    quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o ${outputfile}
+    quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 -o ${outputfile}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
+
+    #sometimes randomly fails at exit:
+    python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --datafirstbin $rangelow --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
+
 else
     # Don't need to set all POIs to 0, that is default behavior. Only specify the floating POI
-    PARS="-p nsig_mean${sigmean}_width${sigwidth}"
+    PARS="nsig_mean${sigmean}_width${sigwidth}"
 
     echo "Now running s+b quickFit"
     quickFit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o ${outputfile}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
+
+    python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --datafirstbin $rangelow --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 
     echo "Now running quickLimit"
     quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 -o ${outputfile/FitResult/Limits}

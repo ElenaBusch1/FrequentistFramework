@@ -24,19 +24,19 @@ mkdir -p run
 
 # setting some default inputs if not given by env vars
 if [[ -z $datafile ]]; then
-    datafile=Input/data/dijetTLAnlo/data_J75yStar03_range400_2079_fixedBins.root
-    # datafile=Input/data/dijetTLAnlo/data_J100yStar06_range531_2079_fixedBins.root
+    # datafile=Input/data/dijetTLAnlo/data_J75yStar03_range400_2079_fixedBins.root
+    datafile=Input/data/dijetTLAnlo/data_J100yStar06_range531_2079_fixedBins.root
 fi
 if [[ -z $datahist ]]; then
     datahist=data
 fi
 if [[ -z $categoryfile ]]; then
-    categoryfile=config/dijetTLAnlo/category_dijetTLAnlo_J75yStar03.template
-    # categoryfile=config/dijetTLAnlo/category_dijetTLAnlo_J100yStar06.template
+    # categoryfile=config/dijetTLAnlo/category_dijetTLAnlo_J75yStar03.template
+    categoryfile=config/dijetTLAnlo/category_dijetTLAnlo_J100yStar06.template
 fi
 if [[ -z $topfile ]]; then
-    topfile=config/dijetTLAnlo/dijetTLAnlo_J75yStar03.template
-    # topfile=config/dijetTLAnlo/dijetTLAnlo_J100yStar06.template
+    # topfile=config/dijetTLAnlo/dijetTLAnlo_J75yStar03.template
+    topfile=config/dijetTLAnlo/dijetTLAnlo_J100yStar06.template
 fi
 if [[ -z $wsfile ]]; then
     wsfile=run/dijetTLAnlo_combWS_nloFit.root
@@ -50,9 +50,12 @@ fi
 if [[ -z $sigfit ]]; then
     sigfit=false
 fi
+if [[ -z $nbkg ]]; then
+    nbkg="2E8,0,3E8"
+fi
 if [[ -z $outputfile ]]; then
-    outputfile=run/FitResult_nloFit_J75yStar03_mean${sigmean}_width${sigwidth}.root
-    # outputfile=run/FitResult_nloFit_J100yStar06_mean${sigmean}_width${sigwidth}.root
+    # outputfile=run/FitResult_nloFit_J75yStar03_mean${sigmean}_width${sigwidth}.root
+    outputfile=run/FitResult_nloFit_J100yStar06_mean${sigmean}_width${sigwidth}.root
 fi
 
 tmpcategoryfile=run/category_dijetTLAnlo_fromTemplate.xml
@@ -66,6 +69,7 @@ fi
 cp ${categoryfile} ${tmpcategoryfile}
 sed -i "s@DATAFILE@${datafile}@g" ${tmpcategoryfile} #@ because datafile contains /
 sed -i "s@DATAHIST@${datahist}@g" ${tmpcategoryfile}
+sed -i "s@NBKG@${nbkg}@g" ${tmpcategoryfile}
  
 cp ${topfile} ${tmptopfile}
 sed -i "s@CATEGORYFILE@${tmpcategoryfile}@g" ${tmptopfile}
@@ -78,7 +82,7 @@ fi
 
 if ! $sigfit; then
     echo "Now running bkg-only quickFit"
-    quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o ${outputfile}
+    quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 -o ${outputfile}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
@@ -87,13 +91,13 @@ else
     PARS="-p nsig_mean${sigmean}_width${sigwidth}"
 
     echo "Now running s+b quickFit"
-    quickFit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o ${outputfile}
+    quickFit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 -o ${outputfile}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
 
     echo "Now running quickLimit"
-    quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 -o ${outputfile/FitResult/Limits}
+    quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 --minStrat 1 --nllOffset 1 -o ${outputfile/FitResult/Limits}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickLimit. Check if tolerable"
     fi

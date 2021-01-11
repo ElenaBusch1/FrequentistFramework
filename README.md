@@ -19,7 +19,7 @@ sh scripts/install_roofitext.sh
 mkdir build && cd build
 cmake ..
 make -j4
-cd ../quickFit/
+cd ../../quickFit/
 source setup_lxplus.sh
 export RooFitExtensions_DIR=../xmlAnaWSBuilder/RooFitExtensions/
 mkdir build && cd build
@@ -64,7 +64,7 @@ To perform a signal+background fit (e.g. for a Gauss signal at 700 GeV with 7% w
 ```
 quickFit -f workspace/dijetTLA/dijetTLA_J75yStar03.root -d combData -p nsig_mean700_width7 --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o run/FitResult.root
 ```
-quickFit will now treat the parameter _nsig_mean700_width7_ as floating POI in the fit while still keeping all others fixed to 0. The parameter specified here needs to exist in the RooStats workspace, meaninf it needs to be defined by a custom signal .xml card in the xmlAnaWSBuilder.
+quickFit will now treat the parameter _nsig_mean700_width7_ as floating POI in the fit while still keeping all others fixed to 0. The parameter specified here needs to exist in the RooStats workspace, meaning it needs to be defined by a custom signal .xml card in the xmlAnaWSBuilder.
 
 If quickFit succeeds (or only fails because of forced positive-definite matrix) you can run quickLimit to set 95% CLs limits on your chosen parameter:
 ```
