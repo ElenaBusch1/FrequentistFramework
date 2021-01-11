@@ -17,7 +17,7 @@ sigmeans=[ 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 11
 sigwidths=[ 5, 7, 10 ]
 
 # lumi = 3600
-lumi = 29300
+lumi = 130000
 
 def createFillBetweenGraphs(g1, g2):
   g_fill = TGraph()
