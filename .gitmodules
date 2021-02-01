@@ -1,3 +1,6 @@
 [submodule "xmlAnaWSBuilder"]
 	path = xmlAnaWSBuilder
 	url = https://:@gitlab.cern.ch:8443/atlas-hgam-sw/xmlAnaWSBuilder.git
+[submodule "quickFit"]
+	path = quickFit
+	url = https://:@gitlab.cern.ch:8443/atlas_higgs_combination/software/quickFit.git
