@@ -4,3 +4,5 @@ test/*
 *~
 run/
 *.txt
+
+!doc/*
