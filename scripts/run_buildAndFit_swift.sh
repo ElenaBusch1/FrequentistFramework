@@ -70,8 +70,8 @@ if [[ -z $nbkg ]]; then
     nbkg="4E7,0,6E7"
 fi
 if [[ -z $outputfile ]]; then
-    # outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
-    outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}.root
+    outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
+    # outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}.root
 fi
 
 binedges=( 400 420 441 462 484 507 531 555 580 606 633 661 690 720 751 784 818 853 889 927 966 1007 1049 1093 1139 1186 1235 1286 1339 1394 1451 1511 1573 1637 1704 1773 1845 1920 1998 2079 2163 2251 2342 2437 2536 2639 2746 2857 2973 3094 3220 3351 3487 3629 3776 3929 4088 4254 )
@@ -107,7 +107,7 @@ done
 
 # rangelow=${binedges[$binlow]}
 # rangehigh=${binedges[$((binhigh+1))]} 
-rangelow=531 #global fit
+rangelow=400 #global fit
 rangehigh=2079 #global fit
 bins=$((rangehigh - rangelow))
 
@@ -118,7 +118,7 @@ tmptopfile=run/dijetTLA_fromTemplate.xml
 
 # generate the config files on the fly in run dir
 if [ ! -f run/AnaWSBuilder.dtd ]; then
-    ln -s ../config/dijetTL/AnaWSBuilder.dtd run/AnaWSBuilder.dtd
+    ln -s ../config/dijetTLA/AnaWSBuilder.dtd run/AnaWSBuilder.dtd
 fi
 
 cp ${categoryfile} ${tmpcategoryfile}
