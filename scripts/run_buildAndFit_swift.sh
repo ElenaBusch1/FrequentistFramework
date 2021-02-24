@@ -28,21 +28,21 @@ if [[ -z $datafile ]]; then
     # datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_531_2079_fourpar_finebinned_J100.root
 fi
 if [[ -z $datahist ]]; then
-    # datahist=Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data
-    datahist=Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data
+    datahist=Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data
+    # datahist=Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data
     # datahist=pseudodata_0
 fi
 if [[ -z $categoryfile ]]; then
-    # categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
+    categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
     # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
-    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
+    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
 fi
 if [[ -z $topfile ]]; then
-    # topfile=config/dijetTLA/dijetTLA_J75yStar03.template
-    topfile=config/dijetTLA/dijetTLA_J100yStar06.template
+    topfile=config/dijetTLA/dijetTLA_J75yStar03.template
+    # topfile=config/dijetTLA/dijetTLA_J100yStar06.template
 fi
 if [[ -z $wsfile ]]; then
-    wsfile=run/dijetTLAnlo_combWS_swift.root
+    wsfile=run/dijetTLA_combWS_swift.root
 fi
 if [[ -z $sigmean ]]; then
     sigmean=1200
@@ -65,6 +65,9 @@ if [[ -z $minbin ]]; then
     if [[ $topfile == *"J100"* ]]; then
 	minbin=6
     fi
+fi
+if [[ -z $nbkg ]]; then
+    nbkg="4E7,0,6E7"
 fi
 if [[ -z $outputfile ]]; then
     # outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
@@ -110,12 +113,12 @@ bins=$((rangehigh - rangelow))
 
 echo "Fitting $bins bins in range $rangelow - $rangehigh"
 
-tmpcategoryfile=run/category_dijetTLAnlo_fromTemplate.xml
-tmptopfile=run/dijetTLAnlo_fromTemplate.xml
+tmpcategoryfile=run/category_dijetTLA_fromTemplate.xml
+tmptopfile=run/dijetTLA_fromTemplate.xml
 
 # generate the config files on the fly in run dir
 if [ ! -f run/AnaWSBuilder.dtd ]; then
-    ln -s ../config/dijetTLAnlo/AnaWSBuilder.dtd run/AnaWSBuilder.dtd
+    ln -s ../config/dijetTL/AnaWSBuilder.dtd run/AnaWSBuilder.dtd
 fi
 
 cp ${categoryfile} ${tmpcategoryfile}
@@ -124,12 +127,13 @@ sed -i "s@DATAHIST@${datahist}@g" ${tmpcategoryfile}
 sed -i "s@RANGELOW@${rangelow}@g" ${tmpcategoryfile}
 sed -i "s@RANGEHIGH@${rangehigh}@g" ${tmpcategoryfile}
 sed -i "s@BINS@${bins}@g" ${tmpcategoryfile}
+sed -i "s@NBKG@${nbkg}@g" ${tmpcategoryfile}
  
 cp ${topfile} ${tmptopfile}
 sed -i "s@CATEGORYFILE@${tmpcategoryfile}@g" ${tmptopfile}
 sed -i "s@OUTPUTFILE@${wsfile}@g" ${tmptopfile}
 
-xmlAnaWSBuilder/exe/XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
+XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
 if [[ $? != 0 ]]; then
     echo "Non-zero return code from XMLReader. Check if tolerable"
 fi

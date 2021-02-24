@@ -19,6 +19,7 @@ sh scripts/install_roofitext.sh
 mkdir build && cd build
 cmake ..
 make -j4
+make install
 cd ../../quickFit/
 source setup_lxplus.sh
 export RooFitExtensions_DIR=../xmlAnaWSBuilder/RooFitExtensions/
