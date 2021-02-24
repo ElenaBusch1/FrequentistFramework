@@ -5,7 +5,7 @@ This code is very preliminary and under construction, and its documentation is a
 This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
-# Install - follow the README Of the XmlAnaWSBuilder
+# Install - This follows the README of the XmlAnaWSBuilder and quickFit
 ```
 setupATLAS
 lsetup git
@@ -13,6 +13,12 @@ git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/Frequentist
 cd FrequentistFramework/
 git submodule init
 git submodule update --remote
+```
+
+Now you should check whether xmlAnaWSBuilder and quickFit setup the same root version. If different versions of `ROOT-env.sh` are sourced in `xmlAnaWSBuilder/setup_lxplus.sh` and `quickFit/setup_lxplus.sh`, replace one of them sucht that they match. Then continue the setup via:
+
+
+```
 cd xmlAnaWSBuilder/
 source setup_lxplus.sh
 sh scripts/install_roofitext.sh
