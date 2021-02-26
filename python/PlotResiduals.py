@@ -5,6 +5,7 @@ from array import array
 from ROOT import *
 from math import sqrt
 from glob import glob
+from color import getColorSteps
 
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
@@ -13,11 +14,12 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 def main(args):
     SetAtlasStyle()
  
-    # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
-    colors = [kBlue, kRed+1, kOrange-3]
-    fillstyles = [3245, 3254]
 
     paths = args[0:]
+
+    colors = getColorSteps(len(paths))
+    # fillstyles = [3245, 3254, 3295, 3205]
+    fillstyles = [3245, 3245, 3245, 3245]
 
     hists = []
 
@@ -42,16 +44,20 @@ def main(args):
 
         h.Draw("same hist")
 
-    leg = TLegend(0.70,0.80,0.85,0.90)
-    leg.AddEntry(hists[0], "quickFit", "f")
-    leg.AddEntry(hists[1], "custom RooFit", "f")
+    leg = TLegend(0.70,0.70,0.85,0.90)
+    # leg.AddEntry(hists[0], "quickFit", "f")
+    # leg.AddEntry(hists[1], "custom RooFit", "f")
+    leg.AddEntry(hists[0], "CT14")
+    leg.AddEntry(hists[1], "MMHT")
+    leg.AddEntry(hists[2], "ABMP")
+    leg.AddEntry(hists[3], "ABMP, rew.")
     leg.Draw()
 
 
     ATLASLabel(0.20, 0.90, "Work in progress", 13)
-    myText(0.20, 0.85, 1, "#sqrt{s}=13 TeV, 3.6 fb^{-1}", 13)
+    myText(0.20, 0.85, 1, "#sqrt{s}=13 TeV, 29 fb^{-1}", 13)
 
-    c1.Print("residuals_J100.eps")
+    c1.Print("residuals_J100.svg")
 
     raw_input("Press enter to continue...")
 
