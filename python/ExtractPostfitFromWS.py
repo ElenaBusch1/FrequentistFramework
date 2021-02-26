@@ -7,6 +7,21 @@ from ROOT import *
 #It must be related to the way ROOT closes the file containing the RooWorkspace. Fortunately, the
 #output is fine nevertheless.
 
+#adapted from xmlAnaWSBuilder::auxUtil::getNDOF()
+def getNPars(pdf, obs, exclSyst):
+    params = pdf.getVariables()
+    nuispdf = RooStats.MakeNuisancePdf(pdf, RooArgSet(obs), "nuisancePdf")
+
+    counter=0
+    
+    for var in params:
+        if(not var.isConstant() and
+           var.GetName() != obs.GetName() and
+           (exclSyst and not nuispdf.dependsOn(RooArgSet(var)))):
+            counter+=1
+        
+    return counter
+
 
 def main(args):
 
@@ -75,18 +90,42 @@ def main(args):
         h_residuals = h_data.Clone()
         h_residuals.Reset("M")
 
+        # can only write vectors to file:
+        chi2 = 0.
+        nbins = 0
+
         for ibin in range(1, h_residuals.GetNbinsX()+1):
             valueErrorData = h_data.GetBinError(ibin)
             valueData = h_data.GetBinContent(ibin)
             postFitValue = h_postfit.GetBinContent(ibin)
 
-            binSig = 0.0  
-            if valueErrorData > 0.0:
+            binSig = 0.
+            if valueErrorData > 0. and postFitValue > 0.:
                 binSig = (valueData - postFitValue)/valueErrorData
 
             h_residuals.SetBinContent(ibin, binSig)
             h_residuals.SetBinError(ibin, 0)
 
+            chi2 += binSig*binSig
+            nbins += 1
+        
+        npars = getNPars(pdfi, x, exclSyst=True)
+        ndof = nbins - npars
+
+        pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
+
+        h_chi2 = TH1D("chi2", "chi2", 5, 0, 5)
+        h_chi2.SetBinContent(1, chi2)
+        h_chi2.SetBinContent(2, chi2/ndof)
+        h_chi2.SetBinContent(3, nbins)
+        h_chi2.SetBinContent(4, npars)
+        h_chi2.SetBinContent(5, pval)
+        
+        h_chi2.GetXaxis().SetBinLabel(1, "chi2")
+        h_chi2.GetXaxis().SetBinLabel(2, "chi2/ndof")
+        h_chi2.GetXaxis().SetBinLabel(3, "nbins")
+        h_chi2.GetXaxis().SetBinLabel(4, "npars")
+        h_chi2.GetXaxis().SetBinLabel(5, "pval")
 
         outname = args.outfile
         if outname == "":
@@ -96,6 +135,8 @@ def main(args):
         h_postfit.Write("postfit")
         h_data.Write("data")
         h_residuals.Write("postFitSigma")
+        h_chi2.Write("chi2")
+
         fout.Close()
 
     # w.Delete()
