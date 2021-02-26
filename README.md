@@ -15,7 +15,7 @@ git submodule init
 git submodule update --remote
 ```
 
-Now you should check whether xmlAnaWSBuilder and quickFit setup the same root version. If different versions of `ROOT-env.sh` are sourced in `xmlAnaWSBuilder/setup_lxplus.sh` and `quickFit/setup_lxplus.sh`, replace one of them sucht that they match. Then continue the setup via:
+Now you should check whether xmlAnaWSBuilder and quickFit setup the same root version. If different versions of `ROOT-env.sh` are sourced in `xmlAnaWSBuilder/setup_lxplus.sh` and `quickFit/setup_lxplus.sh`, replace one of them such that they match. Then continue the setup via:
 
 
 ```
