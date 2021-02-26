@@ -75,7 +75,7 @@ cp ${topfile} ${tmptopfile}
 sed -i "s@CATEGORYFILE@${tmpcategoryfile}@g" ${tmptopfile}
 sed -i "s@OUTPUTFILE@${wsfile}@g" ${tmptopfile}
 
-xmlAnaWSBuilder/exe/XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
+XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
 if [[ $? != 0 ]]; then
     echo "Non-zero return code from XMLReader. Check if tolerable"
 fi
@@ -86,6 +86,10 @@ if ! $sigfit; then
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
+
+    #sometimes randomly fails at exit:
+    python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 else
     # Don't need to set all POIs to 0, that is default behavior. Only specify the floating POI
     PARS="-p nsig_mean${sigmean}_width${sigwidth}"
@@ -95,6 +99,9 @@ else
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
+
+    python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 
     echo "Now running quickLimit"
     quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 --minStrat 1 --nllOffset 1 -o ${outputfile/FitResult/Limits}

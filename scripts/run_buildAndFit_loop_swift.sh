@@ -150,7 +150,6 @@ do
     echo $loopoutputfile
 
     cp ${categoryfile} ${tmpcategoryfile}
-    # cp config/dijetTLAnlo/category_dijetTLAnlo_J100yStar06.template ${categoryfile}
     sed -i "s@DATAFILE@${injecteddatafile}@g" ${tmpcategoryfile} #@ because datafile contains /
     sed -i "s@DATAHIST@${loopdatahist}@g" ${tmpcategoryfile}
     sed -i "s@RANGELOW@${rangelow}@g" ${tmpcategoryfile}
@@ -159,11 +158,10 @@ do
     sed -i "s@NBKG@${nbkg}@g" ${tmpcategoryfile}
     
     cp ${topfile} ${tmptopfile}
-    # cp config/dijetTLAnlo/dijetTLAnlo_J100yStar06.template ${topfile}
     sed -i "s@CATEGORYFILE@${tmpcategoryfile}@g" ${tmptopfile}
     sed -i "s@OUTPUTFILE@${wsfile}@g" ${tmptopfile}
 
-    xmlAnaWSBuilder/exe/XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
+    XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from XMLReader. Check if tolerable"
     fi

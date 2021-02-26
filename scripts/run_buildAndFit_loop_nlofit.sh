@@ -113,7 +113,7 @@ do
     sed -i "s@CATEGORYFILE@${tmpcategoryfile}@g" ${tmptopfile}
     sed -i "s@OUTPUTFILE@${wsfile}@g" ${tmptopfile}
 
-    xmlAnaWSBuilder/exe/XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
+    XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from XMLReader. Check if tolerable"
     fi
