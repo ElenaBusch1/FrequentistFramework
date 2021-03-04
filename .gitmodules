@@ -4,5 +4,5 @@
 	ignore = untracked
 [submodule "quickFit"]
 	path = quickFit
-	url = https://:@gitlab.cern.ch:8443/atlas_higgs_combination/software/quickFit.git
+	url = https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijetisr/quickfit.git
 	ignore = untracked

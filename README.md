@@ -13,21 +13,14 @@ git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/Frequentist
 cd FrequentistFramework/
 git submodule init
 git submodule update --remote
-```
-
-Now you should check whether xmlAnaWSBuilder and quickFit setup the same root version. If different versions of `ROOT-env.sh` are sourced in `xmlAnaWSBuilder/setup_lxplus.sh` and `quickFit/setup_lxplus.sh`, replace one of them such that they match. Then continue the setup via:
-
-
-```
+source scripts/setup_buildAndFit.sh
 cd xmlAnaWSBuilder/
-source setup_lxplus.sh
 sh scripts/install_roofitext.sh
 mkdir build && cd build
 cmake ..
 make -j4
 make install
 cd ../../quickFit/
-source setup_lxplus.sh
 export RooFitExtensions_DIR=../xmlAnaWSBuilder/RooFitExtensions/
 mkdir build && cd build
 cmake ..
@@ -45,7 +38,7 @@ source scripts/setup_buildAndFit.sh
 
 Example run command:
 ```
-./xmlAnaWSBuilder/exe/XMLReader -x config/dijetTLA/dijetTLA_J75yStar03.xml -s 0 --plotOption logy
+XMLReader -x config/dijetTLA/dijetTLA_J75yStar03.xml -s 0 --plotOption logy
 ```
 This command will make a RooWorkspace starting J75-triggered data from https://arxiv.org/abs/1804.03496, fitted with the five parameter background function. It will also generate a summary PDF with the fit result.
 
