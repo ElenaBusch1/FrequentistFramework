@@ -28,18 +28,18 @@ if [[ -z $datafile ]]; then
     # datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_531_2079_fourpar_finebinned_J100.root
 fi
 if [[ -z $datahist ]]; then
-    datahist=Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data
-    # datahist=Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data
+    # datahist=Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data
+    datahist=Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data
     # datahist=pseudodata_0
 fi
 if [[ -z $categoryfile ]]; then
-    categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
+    # categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
     # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
-    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
+    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
 fi
 if [[ -z $topfile ]]; then
-    topfile=config/dijetTLA/dijetTLA_J75yStar03.template
-    # topfile=config/dijetTLA/dijetTLA_J100yStar06.template
+    # topfile=config/dijetTLA/dijetTLA_J75yStar03.template
+    topfile=config/dijetTLA/dijetTLA_J100yStar06.template
 fi
 if [[ -z $wsfile ]]; then
     wsfile=run/dijetTLA_combWS_swift.root
@@ -67,11 +67,12 @@ if [[ -z $minbin ]]; then
     fi
 fi
 if [[ -z $nbkg ]]; then
-    nbkg="4E7,0,6E7"
+    # nbkg="4E7,0,6E7"
+    nbkg="2E8,0,3E8"
 fi
 if [[ -z $outputfile ]]; then
-    outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
-    # outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}.root
+    # outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
+    outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}.root
 fi
 
 binedges=( 400 420 441 462 484 507 531 555 580 606 633 661 690 720 751 784 818 853 889 927 966 1007 1049 1093 1139 1186 1235 1286 1339 1394 1451 1511 1573 1637 1704 1773 1845 1920 1998 2079 2163 2251 2342 2437 2536 2639 2746 2857 2973 3094 3220 3351 3487 3629 3776 3929 4088 4254 )
@@ -107,7 +108,7 @@ done
 
 # rangelow=${binedges[$binlow]}
 # rangehigh=${binedges[$((binhigh+1))]} 
-rangelow=400 #global fit
+rangelow=531 #global fit
 rangehigh=2079 #global fit
 bins=$((rangehigh - rangelow))
 
