@@ -31,7 +31,7 @@ if [[ -z $datahist ]]; then
     datahist=pseudodata
 fi
 if [[ -z $inputmodel ]]; then
-    inputmodel=Input/model/dijetTLAnlo/LO_CT14nnlo_reducedNPs_scaledOnly_reweightedNLO_inflated10000/HistFactory_dijetTLAnlo_J100yStar06_bkg_ws.root
+    inputmodel=Input/model/dijetTLAnlo/LO_CT14nnlo_reducedNPs_scaledOnly_reweightedNLO/HistFactory_dijetTLAnlo_J100yStar06_bkg_ws.root
 fi
 if [[ -z $bkgfile ]]; then
     bkgfile=config/dijetTLAnlo/background_dijetTLAnlo_J100yStar06_CT14nnlo_reweightedData.xml
