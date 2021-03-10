@@ -2,6 +2,7 @@
 import ROOT
 import sys, re, os, math, argparse
 from ROOT import *
+import array
 
 #This scripts sometimes crashes with errors like "Error in `python': corrupted size vs. prev_size"
 #It must be related to the way ROOT closes the file containing the RooWorkspace. Fortunately, the
@@ -17,7 +18,8 @@ def getNPars(pdf, obs, exclSyst):
     for var in params:
         if(not var.isConstant() and
            var.GetName() != obs.GetName() and
-           (exclSyst and not nuispdf.dependsOn(RooArgSet(var)))):
+           not (exclSyst and nuispdf and nuispdf.dependsOn(RooArgSet(var)))):
+            # if exclSyst, do not count nuisance parameters
             counter+=1
         
     return counter
@@ -33,8 +35,22 @@ def main(args):
     parser.add_argument('--wsname', dest='wsname', type=str, default='combWS', help='Name of workspace')
     parser.add_argument('--modelname', dest='modelname', type=str, default='ModelConfig', help='Name of model in workspace')
     parser.add_argument('--outfile', dest='outfile', type=str, default='', help='Output file name')
+    parser.add_argument('--rebinfile', dest='rebinfile', type=str, default='', help='Specify if rebinning to different template wanted')
+    parser.add_argument('--rebinhist', dest='rebinhist', type=str, default='', help='Specify if rebinning to different template wanted')
 
     args = parser.parse_args(args)
+
+    binEdges = None
+    if args.rebinfile and args.rebinhist:
+        f_rebin = ROOT.TFile(args.rebinfile, "READ")
+        h_rebin = f_rebin.Get(args.rebinhist)
+
+        binEdges = []
+        nBins = h_rebin.GetNbinsX()
+        for i in range(1, nBins+2):
+            binEdges.append(h_rebin.GetBinLowEdge(i))
+
+        f_rebin.Close()
 
     f = ROOT.TFile(args.wsfile, "READ")
     w = f.Get(args.wsname)
@@ -43,7 +59,7 @@ def main(args):
 
     fd =  ROOT.TFile(args.datafile, "READ")
     h_data = fd.Get(args.datahist)
-    
+
     model = w.obj(args.modelname)
     pdf = model.GetPdf()
     cat = pdf.indexCat()
@@ -61,7 +77,7 @@ def main(args):
     # asdata.Print("V")
     # asdata.get(0).Print("V")
     # asdata.get(1).Print("V")
-
+    
     for i in range(nChan):
     
         datai = dataList.At( i )
@@ -85,14 +101,17 @@ def main(args):
             h_postfit.SetBinContent(ibin + args.datafirstbin, hpdf.GetBinContent(ibin))
             h_postfit.SetBinError(ibin + args.datafirstbin, 0)
 
+        if binEdges:
+            h_postfit = h_postfit.Rebin(nBins, "postfit", array.array('d', binEdges))
+            h_data = h_data.Rebin(nBins, args.datahist, array.array('d', binEdges))
+
         # h_postfit.Draw()
 
         h_residuals = h_data.Clone()
         h_residuals.Reset("M")
 
-        # can only write vectors to file:
         chi2 = 0.
-        nbins = 0
+        chi2bins = 0
 
         for ibin in range(1, h_residuals.GetNbinsX()+1):
             valueErrorData = h_data.GetBinError(ibin)
@@ -102,22 +121,22 @@ def main(args):
             binSig = 0.
             if valueErrorData > 0. and postFitValue > 0.:
                 binSig = (valueData - postFitValue)/valueErrorData
+                chi2bins += 1
+                chi2 += binSig*binSig
 
             h_residuals.SetBinContent(ibin, binSig)
             h_residuals.SetBinError(ibin, 0)
 
-            chi2 += binSig*binSig
-            nbins += 1
         
         npars = getNPars(pdfi, x, exclSyst=True)
-        ndof = nbins - npars
+        ndof = chi2bins - npars
 
         pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
 
         h_chi2 = TH1D("chi2", "chi2", 5, 0, 5)
         h_chi2.SetBinContent(1, chi2)
         h_chi2.SetBinContent(2, chi2/ndof)
-        h_chi2.SetBinContent(3, nbins)
+        h_chi2.SetBinContent(3, chi2bins)
         h_chi2.SetBinContent(4, npars)
         h_chi2.SetBinContent(5, pval)
         
