@@ -25,7 +25,7 @@ trap 'echo caught interrupt and exiting;exit' INT
 
 # setting some default inputs if not given by env vars
 if [[ -z $datafile ]]; then
-    datafile=Input/data/dijetTLAnlo/PD_130ifb_GlobalFit_fivepar_resbinned_J100.root
+    datafile=Input/data/dijetTLAnlo/PD_130ifb_nloFit_CT14nnlo_531_2079_J100.root
 fi
 if [[ -z $datahist ]]; then
     datahist=pseudodata
@@ -46,13 +46,13 @@ if [[ -z $wsfile ]]; then
     wsfile=run/dijetTLAnlo_combWS_nlofit.root
 fi
 if [[ -z $sigmean ]]; then
-    sigmean=1000
+    sigmean=1200
 fi
 if [[ -z $sigwidth ]]; then
     sigwidth=7
 fi
 if [[ -z $sigamp ]]; then
-    sigamp=7
+    sigamp=0
 fi
 if [[ -z $sigfit ]]; then
     sigfit=true
@@ -142,7 +142,7 @@ do
 	    echo "Non-zero return code from quickFit. Check if tolerable"
 	fi
 
-	python python/ExtractPostfitFromWS.py --datafile $injecteddatafileorigbinned --datahist $loopdatahist --wsfile ${loopoutputfile}
+	python python/ExtractPostfitFromWS.py --datafile $injecteddatafileorigbinned --datahist $loopdatahist --wsfile ${loopoutputfile} --outfile ${loopoutputfile/FitResult/PostFit}
 
     else
 
@@ -154,7 +154,7 @@ do
 	    echo "Non-zero return code from quickFit. Check if tolerable"
 	fi
 
-	python python/ExtractPostfitFromWS.py --datafile $injecteddatafileorigbinned --datahist $loopdatahist --wsfile ${loopoutputfile}
+	python python/ExtractPostfitFromWS.py --datafile $injecteddatafileorigbinned --datahist $loopdatahist --wsfile ${loopoutputfile} --outfile ${loopoutputfile/FitResult/PostFit}
 
 	loopoutputfile2=${loopoutputfile/FitResult/Limits}
 

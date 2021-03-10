@@ -26,8 +26,8 @@ trap 'echo caught interrupt and exiting;exit' INT
 # setting some default inputs if not given by env vars
 if [[ -z $datafile ]]; then
     # datafile=Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root
-    # datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_fivepar_finebinned_J100.root
-    datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_fourpar_finebinned_J100.root
+    datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_531_2079_fivepar_finebinned_J100.root
+    # datafile=Input/data/dijetTLA/PD_130ifb_GlobalFit_fourpar_finebinned_J100.root
 fi
 if [[ -z $datahist ]]; then
     # datahist=Nominal/DSJ75yStar03_TriggerJets_J75_yStar03_mjj_finebinned_all_data
@@ -36,7 +36,7 @@ if [[ -z $datahist ]]; then
 fi
 if [[ -z $categoryfile ]]; then
     # categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
-    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06.template
+    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
 fi
 if [[ -z $topfile ]]; then
     # topfile=config/dijetTLA/dijetTLA_J75yStar03.template
@@ -46,16 +46,16 @@ if [[ -z $wsfile ]]; then
     wsfile=run/dijetTLA_combWS_swift.root
 fi
 if [[ -z $sigmean ]]; then
-    sigmean=1000
+    sigmean=1200
 fi
 if [[ -z $sigwidth ]]; then
-    sigwidth=5
+    sigwidth=7
 fi
 if [[ -z $sigamp ]]; then
     sigamp=0
 fi
 if [[ -z $sigfit ]]; then
-    sigfit=false
+    sigfit=true
 fi
 if [[ -z $whw ]]; then
     #window half width (full window = 2*whw+1)
