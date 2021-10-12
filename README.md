@@ -5,6 +5,8 @@ This code is very preliminary and under construction, and its documentation is a
 This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
+You can also see the slides in the _docs/_ directory. 
+
 # Install - This follows the README of the XmlAnaWSBuilder and quickFit
 ```
 setupATLAS
