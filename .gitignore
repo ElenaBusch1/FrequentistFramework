@@ -5,4 +5,6 @@ test/*
 run/
 *.txt
 
+Input/model/dijetTLAnlo/HistFactoryInput/*/signal
+Input/model/dijetTLAnlo/HistFactoryInput/*/bkg/*_range*.root
 !doc/*
