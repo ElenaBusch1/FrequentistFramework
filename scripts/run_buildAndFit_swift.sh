@@ -34,8 +34,8 @@ if [[ -z $datahist ]]; then
 fi
 if [[ -z $categoryfile ]]; then
     # categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
-    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
-    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
+    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
+    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
 fi
 if [[ -z $topfile ]]; then
     # topfile=config/dijetTLA/dijetTLA_J75yStar03.template

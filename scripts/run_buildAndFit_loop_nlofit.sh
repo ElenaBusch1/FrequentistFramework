@@ -94,7 +94,7 @@ fi
 injecteddatafileorigbinned=$injecteddatafile
 
 if [[ $injecteddatafile != *"_fixedBins.root" ]]; then
-    python python/unifyBinning.py $injecteddatafile
+    python python/PrepareTemplates/unifyBinning.py $injecteddatafile
     injecteddatafilerebinned=${injecteddatafile/.root/_fixedBins.root}
     injecteddatafile=$injecteddatafilerebinned
 fi
@@ -136,7 +136,7 @@ do
     if ! $sigfit; then
 
 
-	echo "Now running bkg-only quickFit"
+	echo "Now running bkg-only quickFit on toy $i"
 	quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minTolerance $tol --minStrat 1 -o ${loopoutputfile}
 	if [[ $? != 0 ]]; then
 	    echo "Non-zero return code from quickFit. Check if tolerable"
@@ -148,7 +148,7 @@ do
 
 	PARS="nsig_mean${sigmean}_width${sigwidth}"
 
-	echo "Now running s+b quickFit"
+	echo "Now running s+b quickFit on toy $i"
 	quickFit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minTolerance $tol --minStrat 1 -o ${loopoutputfile}
 	if [[ $? != 0 ]]; then
 	    echo "Non-zero return code from quickFit. Check if tolerable"
@@ -158,8 +158,8 @@ do
 
 	loopoutputfile2=${loopoutputfile/FitResult/Limits}
 
-	echo "Now running quickLimit"
-	timeout --foreground 600 quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 --minTolerance $tol --minStrat 1 --nllOffset 1 -o ${loopoutputfile2}
+	echo "Now running quickLimit on toy $i"
+	timeout --foreground 1500 quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 --minTolerance $tol --minStrat 1 --nllOffset 1 -o ${loopoutputfile2}
 	if [[ $? != 0 ]]; then
 	    echo "Non-zero return code from quickLimit. Check if tolerable"
 	fi

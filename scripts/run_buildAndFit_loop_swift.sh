@@ -77,6 +77,12 @@ if [[ -z $outputfile ]]; then
     # outputfile=run/FitResult_swift_J75yStar03_mean${sigmean}_width${sigwidth}.root
     outputfile=run/FitResult_swift_J100yStar06_mean${sigmean}_width${sigwidth}_amp${sigamp}.root
 fi
+if [[ -z $loopstart ]]; then
+    loopstart=0
+fi
+if [[ -z $loopend ]]; then
+    loopend=49
+fi
 
 binedges=( 400 420 441 462 484 507 531 555 580 606 633 661 690 720 751 784 818 853 889 927 966 1007 1049 1093 1139 1186 1235 1286 1339 1394 1451 1511 1573 1637 1704 1773 1845 1920 1998 2079 2163 2251 2342 2437 2536 2639 2746 2857 2973 3094 3220 3351 3487 3629 3776 3929 4088 4254 )
 nbinedges=${#binedges[@]}
@@ -141,8 +147,7 @@ if [ ! -f run/AnaWSBuilder.dtd ]; then
     ln -s ../config/dijetTLA/AnaWSBuilder.dtd run/AnaWSBuilder.dtd
 fi
 
-for i in {0..49}
-# for i in 0
+for i in $(seq $loopstart $loopend);
 do
     
     loopoutputfile=${outputfile/.root/_${i}.root}
@@ -188,6 +193,7 @@ do
 	fi
 
 	python python/ExtractPostfitFromWS.py --datafile $injecteddatafile --datahist $loopdatahist --datafirstbin $rangelow --wsfile ${loopoutputfile} --outfile ${loopoutputfile/FitResult/PostFit}
+	python python/ExtractFitParameters.py --wsfile ${loopoutputfile} --outfile ${loopoutputfile/FitResult/FitParameters}
 
     else
 
@@ -201,6 +207,7 @@ do
 	fi
 
 	python python/ExtractPostfitFromWS.py --datafile $injecteddatafile --datahist $loopdatahist --datafirstbin $rangelow --wsfile ${loopoutputfile} --outfile ${loopoutputfile/FitResult/PostFit}
+	python python/ExtractFitParameters.py --wsfile ${loopoutputfile} --outfile ${loopoutputfile/FitResult/FitParameters}
 
 	# tol=0.001
 	# maxtol=0.002
@@ -213,7 +220,7 @@ do
 	    loopoutputfile2=${loopoutputfile/FitResult/Limits}
 
 	    echo "Now running quickLimit"
-	    timeout --foreground 600 quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 --minTolerance $tol --minStrat 1 --nllOffset 1 -o ${loopoutputfile2}
+	    timeout --foreground 600 quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 --minTolerance $tol --muScanPoints 100 --minStrat 1 --nllOffset 1 -o ${loopoutputfile2}
 	    if [[ $? != 0 ]]; then
 		echo "Non-zero return code from quickLimit. Check if tolerable"
 	    fi
