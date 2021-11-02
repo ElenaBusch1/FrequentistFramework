@@ -5,7 +5,7 @@ This code is very preliminary and under construction, and its documentation is a
 This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
-# Install - This follows the README of the XmlAnaWSBuilder and quickFit
+# Install - This follows the README of the XmlAnaWSBuilder and quickFit. pyBumpHunter is run in a virtualenv to run python 3.6 alongside python 2.7 setup with ROOT
 ```
 setupATLAS
 lsetup git
@@ -26,6 +26,7 @@ mkdir build && cd build
 cmake ..
 make -j4
 cd ../..
+source scripts/install_pyBumpHunter.sh
 ```
 # Setup
 
@@ -41,6 +42,14 @@ Example run command:
 XMLReader -x config/dijetTLA/dijetTLA_J75yStar03.xml -s 0 --plotOption logy
 ```
 This command will make a RooWorkspace starting J75-triggered data from https://arxiv.org/abs/1804.03496, fitted with the five parameter background function. It will also generate a summary PDF with the fit result.
+
+To run pyBumpHunter, the virtualenv needs to be activated and deactivated afterwards. The ROOT setup can mess up $PYTHONPATH for numpy and other packages, so it needs to be overwritten when running scripts.
+```
+source pyBumpHunter/pyBH_env/bin/activate
+# execute pyBumpHunter scripts like this:
+env PYTHONPATH="" python3 python/FindBHWindow.py --inputfile XYZ.root
+deactivate
+```
 
 # Scripts
 

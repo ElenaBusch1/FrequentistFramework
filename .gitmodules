@@ -6,3 +6,7 @@
 	path = quickFit
 	url = https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijetisr/quickfit.git
 	ignore = untracked
+[submodule "pyBumpHunter"]
+	path = pyBumpHunter
+	url = https://github.com/scikit-hep/pyBumpHunter.git
+	ignore = untracked
