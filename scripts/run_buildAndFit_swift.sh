@@ -34,8 +34,8 @@ if [[ -z $datahist ]]; then
 fi
 if [[ -z $categoryfile ]]; then
     # categoryfile=config/dijetTLA/category_dijetTLA_J75yStar03.template
-    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
-    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
+    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fourPar.template
+    # categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
 fi
 if [[ -z $topfile ]]; then
     # topfile=config/dijetTLA/dijetTLA_J75yStar03.template
@@ -134,6 +134,7 @@ cp ${topfile} ${tmptopfile}
 sed -i "s@CATEGORYFILE@${tmpcategoryfile}@g" ${tmptopfile}
 sed -i "s@OUTPUTFILE@${wsfile}@g" ${tmptopfile}
 
+echo XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
 XMLReader -x ${tmptopfile} -o "logy integral" -s 0 # minimizer strategy fast, binned data 
 if [[ $? != 0 ]]; then
     echo "Non-zero return code from XMLReader. Check if tolerable"
@@ -141,13 +142,16 @@ fi
 
 if ! $sigfit; then
     echo "Now running bkg-only quickFit"
+    echo quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 -o ${outputfile}
     quickFit -f ${wsfile} -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 -o ${outputfile}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
 
     #sometimes randomly fails at exit:
+    echo python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --datafirstbin $rangelow --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
     python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --datafirstbin $rangelow --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    echo python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
     python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 
 else
@@ -155,15 +159,19 @@ else
     PARS="nsig_mean${sigmean}_width${sigwidth}"
 
     echo "Now running s+b quickFit"
+    echo quickFit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o ${outputfile}
     quickFit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o ${outputfile}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
 
+    echo python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --datafirstbin $rangelow --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
     python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --datafirstbin $rangelow --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    echo python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
     python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 
     echo "Now running quickLimit"
+    echo quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 -o ${outputfile/FitResult/Limits}
     quickLimit -f ${wsfile} -d combData -p $PARS --checkWS 1 --hesse 1 --initialGuess 100000 -o ${outputfile/FitResult/Limits}
     if [[ $? != 0 ]]; then
 	echo "Non-zero return code from quickLimit. Check if tolerable"
