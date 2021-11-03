@@ -25,6 +25,7 @@ export RooFitExtensions_DIR=../xmlAnaWSBuilder/RooFitExtensions/
 mkdir build && cd build
 cmake ..
 make -j4
+make install
 cd ../..
 source scripts/install_pyBumpHunter.sh
 ```
