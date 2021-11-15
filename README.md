@@ -26,6 +26,11 @@ mkdir build && cd build
 cmake ..
 make -j4
 make install
+cd ../../workspaceCombiner
+mkdir build && cd build
+cmake ..
+make -j4 
+make install
 cd ../..
 source scripts/install_pyBumpHunter.sh
 ```
