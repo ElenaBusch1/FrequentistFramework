@@ -13,7 +13,7 @@ git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/Frequentist
 cd FrequentistFramework/
 git submodule init
 git submodule update --remote
-source scripts/setup_buildAndFit.sh
+source scripts/setup_buildCombineFit.sh
 cd xmlAnaWSBuilder/
 sh scripts/install_roofitext.sh
 mkdir build && cd build
@@ -38,7 +38,7 @@ source scripts/install_pyBumpHunter.sh
 
 In the future you can setup your environment via
 ```
-source scripts/setup_buildAndFit.sh
+source scripts/setup_buildCombineFit.sh
 ```
 
 # Run

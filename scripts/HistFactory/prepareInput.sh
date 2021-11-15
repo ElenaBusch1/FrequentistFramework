@@ -11,8 +11,8 @@ Input/model/dijetTLAnlo/HistFactoryInput/templates2021/bkg/dijet_HTystar_00_06_R
 
 FILES=( $FILES )
 
-rangeMin=531
-rangeMax=2058
+rangeMin=171
+rangeMax=3217
 
 for FILE in "${FILES[@]}"
 do
