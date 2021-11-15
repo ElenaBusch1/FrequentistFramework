@@ -82,6 +82,17 @@ class FitParameterExtractor:
             self.Extract()
         return self.nsigErr
 
+    def WriteRoot(self, outfile):
+        if not self.h1_params:
+            self.Extract()
+
+        f_out = ROOT.TFile(outfile, "RECREATE")
+
+        self.h1_params.Write()
+        self.h2_cov.Write()
+        self.h2_cor.Write()
+
+        f_out.Close()
 
 def main(args):
     parser = argparse.ArgumentParser(description='%prog [options]')
@@ -91,18 +102,7 @@ def main(args):
     args = parser.parse_args(args)
     
     fpe = FitParameterExtractor(args.wsfile)
-    
-    h1_params = fpe.GetH1Params()
-    h2_cov = fpe.GetH2Cov()
-    h2_cor = fpe.GetH2Cor()
-
-    f_out = ROOT.TFile(args.outfile, "RECREATE")
-
-    h1_params.Write()
-    h2_cov.Write()
-    h2_cor.Write()
-
-    f_out.Close()
+    fpe.WriteRoot(args.outfile)
 
 if __name__ == "__main__":  
    sys.exit(main(sys.argv[1:]))   

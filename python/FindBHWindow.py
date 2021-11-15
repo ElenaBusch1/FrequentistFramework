@@ -8,13 +8,16 @@ import json
 import numpy as np
 import pyBumpHunter as BH
 
-# from https://stackoverflow.com/a/47626762
-class NumpyEncoder(json.JSONEncoder):
+# from https://stackoverflow.com/a/57915246
+class NpEncoder(json.JSONEncoder):
     def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
-
+        return super(NpEncoder, self).default(obj)
 
 def main(args):
 
@@ -88,7 +91,7 @@ def main(args):
     out_dict["BlindRange"] = "%d,%d" % (out_dict["MaskMin"], out_dict["MaskMax"])
 
     with open(args.outputjson, 'w') as f:
-        json.dump(out_dict, f, cls=NumpyEncoder)
+        json.dump(out_dict, f, cls=NpEncoder)
 
     print(out_dict["BlindRange"])
 
