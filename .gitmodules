@@ -10,3 +10,6 @@
 	path = pyBumpHunter
 	url = https://github.com/scikit-hep/pyBumpHunter.git
 	ignore = untracked
+[submodule "workspaceCombiner"]
+	path = workspaceCombiner
+	url = https://:@gitlab.cern.ch:8443/atlas_higgs_combination/software/workspaceCombiner.git
