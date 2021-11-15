@@ -4,6 +4,7 @@ test/*
 *~
 run/
 *.txt
+*.pyc
 
 Input/model/dijetTLAnlo/HistFactoryInput/*/signal
 Input/model/dijetTLAnlo/HistFactoryInput/*/bkg/*_range*.root
