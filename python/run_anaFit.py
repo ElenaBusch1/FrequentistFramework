@@ -60,7 +60,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         datahist=datahist,
         datafirstbin=datafirstbin,
         wsfile=fitresultfile,
-        rebinfile="Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range531_2058.root",
+        rebinfile="Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root",
         rebinhist="data",
         maskmin=maskmin,
         maskmax=maskmax

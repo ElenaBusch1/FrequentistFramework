@@ -17,7 +17,7 @@ def main(args):
     parser.add_argument('--nbkg', dest='nbkg', type=str, required=True, help='Initial value and range of nbkg par (e.g. "2E8,0,3E8")')
     parser.add_argument('--rangelow', dest='rangelow', type=int, required=True, help='Start of fit range (in GeV)')
     parser.add_argument('--rangehigh', dest='rangehigh', type=int, required=True, help='End Start of fit range (in GeV)')
-    parser.add_argument('--sigfit', dest='sigfit', action="store_true", help='Perform s+b fit (default: bkg-only)')
+    parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
@@ -58,7 +58,7 @@ def main(args):
                        nbkg=args.nbkg,
                        rangelow=args.rangelow,
                        rangehigh=args.rangehigh,
-                       sigfit=args.sigfit,
+                       dosignal=args.dosignal,
                        dolimit=args.dolimit,
                        sigmean=args.sigmean,
                        sigwidth=args.sigwidth,
@@ -74,7 +74,7 @@ def main(args):
                    nbkg=args.nbkg,
                    rangelow=args.rangelow,
                    rangehigh=args.rangehigh,
-                   sigfit=args.sigfit,
+                   dosignal=args.dosignal,
                    dolimit=args.dolimit,
                    sigmean=args.sigmean,
                    sigwidth=args.sigwidth,
