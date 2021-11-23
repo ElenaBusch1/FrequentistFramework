@@ -11,8 +11,9 @@ setupATLAS
 lsetup git
 git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
 cd FrequentistFramework/
+git checkout nlofit
 git submodule init
-git submodule update --remote
+git submodule update
 source scripts/setup_buildCombineFit.sh
 cd xmlAnaWSBuilder/
 sh scripts/install_roofitext.sh
