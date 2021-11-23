@@ -33,16 +33,28 @@ def main(args):
     args = parser.parse_args(args)
 
     # Open the file
-    # with uproot.open("../../run/PostFit_nloFit_J100yStar06_templates2021_CT14nnlo_scaledOnly_constr10_bkgonly.root") as file:
     with uproot.open(args.inputfile) as file:
-
         # Background
         bkg_th1 = file[args.bkghist]
         bkg, bins = bkg_th1.to_numpy()
 
         # Data
         data_th1 = file[args.datahist]
-        data,_ = data_th1.to_numpy()
+        data,bins_data = data_th1.to_numpy()
+
+    #crop data hist to bkg range
+    firstbindata=0
+    lastbindata=0
+
+    for i,b in enumerate(bins_data):
+        if b >= bins[0]:
+            firstbindata = i
+            break
+    for i,b in enumerate(bins_data):
+        if b <= bins[-1]:
+            lastbindata = i
+
+    data=data[firstbindata:lastbindata]
 
     # Create a BumpHunter1D class instance
     hunter = BH.BumpHunter1D(
@@ -82,8 +94,8 @@ def main(args):
     out_dict["pyBHresult"] = state
 
     if args.usebinnumbers:
-        out_dict["MaskMin"] = state["min_loc_ar"][0]
-        out_dict["MaskMax"] = state["min_loc_ar"][0]+state["min_width_ar"][0]
+        out_dict["MaskMin"] = firstbindata+state["min_loc_ar"][0]
+        out_dict["MaskMax"] = firstbindata+state["min_loc_ar"][0]+state["min_width_ar"][0]
     else:
         out_dict["MaskMin"] = bins[state["min_loc_ar"][0]]
         out_dict["MaskMax"] = bins[state["min_loc_ar"][0]+state["min_width_ar"][0]]
