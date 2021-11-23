@@ -7,7 +7,7 @@
     bkgfile=config/dijetTLAnlo/templates2021/background_dijetTLAnlo_J100yStar06_CT14nnlo.template
     categoryfile=config/dijetTLAnlo/templates2021/category_dijetTLAnlo_J100yStar06.template
     topfile=config/dijetTLAnlo/templates2021/dijetTLAnlo_J100yStar06.template
-    combinefile=workspaceCombiner/cfg/dijetTLA/Inflation_CT14.template
+    combinefile=config/dijetTLAnlo/Inflation_CT14.template
     wsfile=run/dijetTLAnlo_combWS_nloFit.root
     sigmean=1000
     sigwidth=7
@@ -20,6 +20,7 @@
     datafile=Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217_fixedBins.root
     datahist=data
     nbkg="2E8,0,3E8"
+    maskthreshold=0.01
     dosignal=1
     doinitialpars=1
     dolimit=1
@@ -47,5 +48,6 @@
 	--constr $constr \
 	--externalchi2file $externalchi2file \
 	--externalchi2fct $externalchi2fct \
+	--maskthreshold $maskthreshold \
 	$flags
 }
