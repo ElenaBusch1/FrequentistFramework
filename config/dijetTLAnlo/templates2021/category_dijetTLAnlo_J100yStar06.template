@@ -1,6 +1,6 @@
 <!DOCTYPE Channel SYSTEM 'AnaWSBuilder.dtd'>
 <Channel Name="J100yStar06" Type="shape" Lumi="1">
-  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_J100yStar06[0,40]" Binning="40" InjectGhost="1"/>
+  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_J100yStar06[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
 
   <Sample Name="background" InputFile="BACKGROUNDFILE" MultiplyLumi="0">
     <NormFactor Name="nbkg[NBKG]" />
