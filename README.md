@@ -12,28 +12,7 @@ lsetup git
 git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
 cd FrequentistFramework/
 git checkout nlofit
-git submodule init
-git submodule update
-source scripts/setup_buildCombineFit.sh
-cd xmlAnaWSBuilder/
-sh scripts/install_roofitext.sh
-mkdir build && cd build
-cmake ..
-make -j4
-make install
-cd ../../quickFit/
-export RooFitExtensions_DIR=../xmlAnaWSBuilder/RooFitExtensions/
-mkdir build && cd build
-cmake ..
-make -j4
-make install
-cd ../../workspaceCombiner
-mkdir build && cd build
-cmake ..
-make -j4 
-make install
-cd ../..
-source scripts/install_pyBumpHunter.sh
+source scripts/install_FrequentistFramework.sh
 ```
 # Setup
 
