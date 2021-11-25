@@ -14,6 +14,13 @@ cd FrequentistFramework/
 git checkout nlofit
 source scripts/install_FrequentistFramework.sh
 ```
+
+If you plan to run the NLOFit, you need to prepare input workspaces from the template histograms in this repository. For that, run
+```
+source scripts/HistFactory/prepareInput.sh
+source scripts/HistFactory/generate.sh
+```
+
 # Setup
 
 In the future you can setup your environment via

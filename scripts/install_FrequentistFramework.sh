@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cwd=$(pwd)
+
 git submodule init
 git submodule update
 
@@ -8,25 +10,24 @@ source scripts/install_pyBumpHunter.sh
 
 source scripts/setup_buildCombineFit.sh
 
-source scripts/install_roofitext.sh
-export RooFitExtensions_DIR=../RooFitExtensions/
+source scripts/install_roofitext.sh $cwd/xmlAnaWSBuilder
 
-cd xmlAnaWSBuilder/
+cd $cwd/xmlAnaWSBuilder/
 mkdir build && cd build
 cmake ..
 make -j4
 make install
 
-cd ../../quickFit/
+cd $cwd/quickFit/
 mkdir build && cd build
 cmake ..
 make -j4
 make install
 
-cd ../../workspaceCombiner
+cd $cwd/workspaceCombiner
 mkdir build && cd build
 cmake ..
 make -j4 
 make install
 
-cd ../..
+cd $cwd

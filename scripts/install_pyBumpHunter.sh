@@ -13,3 +13,6 @@ python3 -m pip install --upgrade setuptools
 python3 -m pip install setuptools_scm
 
 python3 setup.py install
+
+deactivate
+cd ..

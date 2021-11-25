@@ -20,7 +20,7 @@
     datafile=Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217_fixedBins.root
     datahist=data
     nbkg="2E8,0,3E8"
-    maskthreshold=0.01
+    maskthreshold=1
     dosignal=1
     doinitialpars=1
     dolimit=1

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script is for installing RooFitExtensions. If the user has installed the package somewhere, please make sure cmake can find it
-if [ $# -gt 1 ]; then
+if [ $# -gt 0 ]; then
     outputDir=${1}
 else
     outputDir=`pwd`
