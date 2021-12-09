@@ -28,7 +28,7 @@ def main(args):
             
             for ibin in range(0, h_in.GetNbinsX()+2):
                 binEdge = h_in.GetXaxis().GetBinLowEdge(ibin)
-                if (binEdge >= args.rangeMin and binEdge <= args.rangeMax): 
+                if (binEdge >= args.rangeMin-0.001 and binEdge <= args.rangeMax+0.001): 
                     binEdges.append(binEdge)
         
             h_out = ROOT.TH1D(histName, h_in.GetTitle(), len(binEdges)-1, array('d', binEdges))
