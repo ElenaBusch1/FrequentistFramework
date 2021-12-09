@@ -186,7 +186,7 @@ def main(args):
 
         
     ATLASLabel(0.20, 0.90, "Work in progress", 13)
-    myText(0.20, 0.84, 1, "95% CL_{s} upper limts", 13)
+    myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
     # myText(0.20, 0.80, 1, "#sqrt{s}=13 TeV, 3.6 fb^{-1}", 13)
     myText(xToNDC(700), 0.78, 1, "#sqrt{s}=13 TeV", 23)
 
