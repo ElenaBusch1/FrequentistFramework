@@ -209,6 +209,7 @@ def run_nloFit(datafile,
 
     if pval_global > maskthreshold:
         print("p(chi2) threshold passed. Exiting with succesful fit.")
+        _range=""
     else:
         print("p(chi2) threshold not passed.")
         print("Now running BH for masking.")
@@ -257,16 +258,18 @@ def run_nloFit(datafile,
 
         if pval_masked > maskthreshold:
             print("p(chi2) threshold passed. Continuing with successful (window-excluded) fit.")
-            wsfile=wsfilemasked
+            combwsfile=combwsfilemasked
+            _range="--range SBLo,SBHi"
         else:
             print("p(chi2) threshold still not passed.")
             print("Exiting with failed fit status.")
             return -1
             
     # blindrange not yet implemented with quickLimit
-    if dolimit and dosignal and pval_global > maskthreshold:
+    # if dolimit and dosignal and pval_global > maskthreshold:
+    if dolimit and dosignal:
         print("Now running quickLimit")
-        rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+        rtv=execute("timeout --foreground 28800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 10 --minStrat 1 --nllOffset 1 %s -o %s" % (combwsfile, poi, _range, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

@@ -4,7 +4,7 @@ from __future__ import print_function
 import os,sys,re,argparse
 from InjectGaussian import InjectGaussian
 from run_nloFit import run_nloFit
-import PrepareTemplates.unifyBinning
+from PrepareTemplates import unifyBinning
 
 def main(args):
     
@@ -56,14 +56,14 @@ def main(args):
         print("Copying %s into unit bin widths" % injecteddatafile)
 
         unifyBinning.main([injecteddatafile])
-        injecteddatafilere=injecteddatafile.replace(".root","_fixedBins.root")
+        injecteddatafile=injecteddatafile.replace(".root","_fixedBins.root")
         
     if args.loopstart!=None and args.loopend!=None:
         for toy in range(args.loopstart, args.loopend+1):
             datahist="%s_%d" % (args.datahist, toy)
             outputfile=args.outputfile.replace(".root", "_%d.root" % toy)
             print("Running run_nloFit with datahist %s" % datahist)
-            run_nloFit(datafile=args.datafile,
+            run_nloFit(datafile=injecteddatafile,
                        datahist=datahist,
                        topfile=args.topfile,
                        categoryfile=args.categoryfile,
