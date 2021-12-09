@@ -15,6 +15,7 @@ def main(args):
     parser.add_argument('--histname', dest='histname', type=str, default='data', help='Name of hist in infile')
     parser.add_argument('--sigMean', dest='sigMean', type=float, default=-999., help='Mean of signal gaus')
     parser.add_argument('--sigWidth', dest='sigWidth', type=float, default=5, help='Width of signal gaus')
+    parser.add_argument('--injectGhost', dest='injectGhost', action='store_true', help='Set empty bins to small number')
 
     args = parser.parse_args(args)
 
@@ -30,6 +31,9 @@ def main(args):
 
     for ibin in range(1, h_signal.GetNbinsX()+1):
         fraction = integrateGaus(args.sigMean, (args.sigWidth*0.01) * args.sigMean, h_signal.GetXaxis().GetBinLowEdge(ibin), h_signal.GetXaxis().GetBinUpEdge(ibin))
+
+        if args.injectGhost and fraction == 0.:
+            fraction=1.e-20
 
         h_signal.SetBinContent(ibin, fraction)
 
