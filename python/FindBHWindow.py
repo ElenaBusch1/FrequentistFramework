@@ -25,6 +25,7 @@ def main(args):
     parser.add_argument('--inputfile', dest='inputfile', type=str, required=True, help='Root file with bkg and data histograms')
     parser.add_argument('--datahist', dest='datahist', type=str, default='data', help='data hist name')
     parser.add_argument('--bkghist', dest='bkghist', type=str, default='postfit', help='bkg hist name')
+    parser.add_argument('--outname', dest='outname', type=str, default='', help='String used to identify output file')
     parser.add_argument('--outputjson', dest='outputjson', type=str, default='BHresults.json', help='Name of output file with BH results')
     parser.add_argument('--inputxmlcard', dest='inputxmlcard', type=str, help='Path of xmlAnaWSBuilder card to insert BlindRange into')
     parser.add_argument('--outputxmlcard', dest='outputxmlcard', type=str, help='Output path of modified xmlAnaWSBuilder card')
@@ -82,6 +83,7 @@ def main(args):
     # Get and save tomography plot
     # hunter.plot_tomography(data, is_hist=True, filename="tomography.png")
 
+    # TODO: Need better path for this!
     # Get and save bump plot
     hunter.plot_bump(data, bkg, is_hist=True, filename="bump.png")
 
@@ -102,6 +104,7 @@ def main(args):
 
     out_dict["BlindRange"] = "%d,%d" % (out_dict["MaskMin"], out_dict["MaskMax"])
 
+    print ("Trying to print now")
     with open(args.outputjson, 'w') as f:
         json.dump(out_dict, f, cls=NpEncoder)
 

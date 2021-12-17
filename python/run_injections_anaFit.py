@@ -23,6 +23,9 @@ def main(args):
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
     parser.add_argument('--sigamp', dest='sigamp', type=float, default=0, help='Amplitude of Gaussian to inject (in sigma)')
+    parser.add_argument('--rebinfile', dest='rebinfile', type=str, required=False, help='File containing histogram with template histogram for rebinning result')
+    parser.add_argument('--rebinhist', dest='rebinhist', type=str, required=False, help='Name of template histogram for rebinning result')
+    parser.add_argument('--rebinedges', dest='rebinedges', type=int, nargs="*", default='[]', help='Name of template hist')
     parser.add_argument('--loopstart', dest='loopstart', type=int, help='First toy to fit')
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
 
@@ -43,13 +46,15 @@ def main(args):
                        outfile=injecteddatafile,
                        firsttoy=args.loopstart,
                        lasttoy=args.loopend)
+    else:
+       injecteddatafile = args.datafile
         
     if args.loopstart!=None and args.loopend!=None:
         for toy in range(args.loopstart, args.loopend+1):
             datahist="%s_%d" % (args.datahist, toy)
             outputfile=args.outputfile.replace(".root", "_%d.root" % toy)
             print("Running run_anaFit with datahist %s" % datahist)
-            run_anaFit(datafile=args.datafile,
+            run_anaFit(datafile=injecteddatafile,
                        datahist=datahist,
                        topfile=args.topfile,
                        categoryfile=args.categoryfile,
@@ -62,10 +67,13 @@ def main(args):
                        dolimit=args.dolimit,
                        sigmean=args.sigmean,
                        sigwidth=args.sigwidth,
+                       rebinFile=args.rebinfile,
+                       rebinHist=args.rebinhist,
+                       rebinEdges=args.rebinedges,
                        maskthreshold=args.maskthreshold)
     else:
         print("Running run_anaFit with datahist %s" % args.datahist)
-        run_anaFit(datafile=args.datafile,
+        run_anaFit(datafile=injecteddatafile,
                    datahist=args.datahist,
                    topfile=args.topfile,
                    categoryfile=args.categoryfile,
@@ -78,6 +86,9 @@ def main(args):
                    dolimit=args.dolimit,
                    sigmean=args.sigmean,
                    sigwidth=args.sigwidth,
+                   rebinFile=args.rebinfile,
+                   rebinHist=args.rebinhist,
+                   rebinEdges=args.rebinedges,
                    maskthreshold=args.maskthreshold)
 
 

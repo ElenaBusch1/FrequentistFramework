@@ -27,7 +27,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None):
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -55,13 +55,16 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     postfitfile=fitresultfile.replace("FitResult","PostFit")
     parameterfile=fitresultfile.replace("FitResult","FitParameters")
 
+    # TODO please fix the datafirstbin
     pfe = PostfitExtractor(
         datafile=datafile,
         datahist=datahist,
-        datafirstbin=datafirstbin,
+        #datafirstbin=datafirstbin,
+        datafirstbin=0,
         wsfile=fitresultfile,
-        rebinfile="Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root",
-        rebinhist="data",
+        rebinfile=rebinFile,
+        rebinhist=rebinHist,
+        binEdges=rebinEdges,
         maskmin=maskmin,
         maskmax=maskmax
     )
@@ -86,7 +89,11 @@ def run_anaFit(datafile,
                dolimit=False,
                sigmean=1000,
                sigwidth=7,
-               maskthreshold=0.01):
+               maskthreshold=0.01,
+               rebinFile=None,
+               rebinHist=None,
+               rebinEdges=None,
+              ):
 
     nbins=rangehigh - rangelow
 
@@ -119,13 +126,18 @@ def run_anaFit(datafile,
     else:
         poi=None
 
+    # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
     pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile, 
                                                                 datahist=datahist, 
                                                                 datafirstbin=rangelow, 
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
-                                                                poi=poi)
+                                                                poi=poi,
+                                                                rebinFile=rebinFile,
+                                                                rebinHist=rebinHist,
+                                                                rebinEdges=rebinEdges,
+                                                                )
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -137,23 +149,28 @@ def run_anaFit(datafile,
 
         tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
 
+        # TODO: Need to use the actual path, since this will only run if working in the correct directory
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --outputjson %s; deactivate" % (postfitfile, "run/BHresults.json"))
+        #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s --outputjson %s; deactivate" % (postfitfile, "run/BHresults.json"))
+        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s --outputjson run/BHresults.json; deactivate" % (postfitfile))
 
         # pass results of pyBH via this json file
         with open("run/BHresults.json") as f:
             BHresults=json.load(f)
 
         tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
-        wsfilemasked=wsfile.replace(".root","_masked.root")
+        # We don't make a new file, and this seems to behave correctly, so I think this is ok to comment out
+        #wsfilemasked=wsfile.replace(".root","_masked.root")
         outfilemasked=outputfile.replace(".root","_masked.root")
+        wsfilemasked=wsfile
 
         shutil.copy2(tmptopfile, tmptopfilemasked) 
         shutil.copy2(tmpcategoryfile, tmpcategoryfilemasked) 
 
         replaceinfile(tmptopfilemasked, 
                       [(tmpcategoryfile,tmpcategoryfilemasked),
-                       (r'(OutputFile="[A-Za-z0-9_/.-]*")',r'\1 Blind="true"'),
+                       (r'(OutputFile="[A-Za-z0-9_/.-]*")',r'\1'),
+                       ('Blind="false"','Blind="true"'),
                        (wsfile, wsfilemasked),])
         replaceinfile(tmpcategoryfilemasked, 
                       [(r'(Binning="\d+")', r'\1 BlindRange="%s"' % BHresults["BlindRange"])])
@@ -165,6 +182,9 @@ def run_anaFit(datafile,
                                             wsfile=wsfilemasked, 
                                             fitresultfile=outfilemasked, 
                                             poi=poi, 
+                                            rebinFile=rebinFile,
+                                            rebinHist=rebinHist,
+                                            rebinEdges=rebinEdges,
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
@@ -177,9 +197,11 @@ def run_anaFit(datafile,
             print("Exiting with failed fit status.")
             return -1
             
+ 
+      
+    #print(dolimit, dosignal, pval_global > maskthreshold, pval_global, pval_masked)
     # blindrange not yet implemented with quickLimit
     if dolimit and dosignal and pval_global > maskthreshold:
-        print("Now running quickLimit")
         rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
@@ -202,6 +224,9 @@ def main(args):
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
+    parser.add_argument('--rebinfile', dest='rebinfile', type=str, required=False, help='File containing histogram with template histogram for rebinning result')
+    parser.add_argument('--rebinhist', dest='rebinhist', type=str, required=False, help='Name of template histogram for rebinning result')
+    parser.add_argument('--rebinedges', dest='rebinedges', type=int, nargs="*", default='[]', help='Name of template hist')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
 
     args = parser.parse_args(args)
@@ -219,6 +244,9 @@ def main(args):
                dolimit=args.dolimit,
                sigmean=args.sigmean,
                sigwidth=args.sigwidth,
+               rebinFile=args.rebinfile,
+               rebinHist=args.rebinhist,
+               rebinEdges=args.rebinedges,
                maskthreshold=args.maskthreshold)
 
 

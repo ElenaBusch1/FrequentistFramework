@@ -25,6 +25,8 @@ def getNPars(pdf, obs, exclSyst):
         
     return counter
 
+# This enables us to rebin the result, either using a template histogram, or with a list of bin edges. If arguments for both are provided,
+# the bin edges are prioritized.
 class PostfitExtractor:
     def __init__(self, 
                  wsfile, 
@@ -35,6 +37,7 @@ class PostfitExtractor:
                  datafirstbin=0, 
                  rebinfile=None, 
                  rebinhist=None, 
+                 binEdges=None,
                  externalchi2file=None, 
                  externalchi2fct=None, 
                  externalchi2bins=40, 
@@ -49,6 +52,7 @@ class PostfitExtractor:
         self.datafirstbin = datafirstbin
         self.rebinfile = rebinfile
         self.rebinhist = rebinhist
+        self.binEdges = binEdges
         self.externalchi2file = externalchi2file
         self.externalchi2fct = externalchi2fct
         self.externalchi2bins = externalchi2bins
@@ -72,6 +76,7 @@ class PostfitExtractor:
 
         fd =  ROOT.TFile(self.datafile, "READ")
         self.h_data = fd.Get(self.datahist)
+        print self.datafile, self.datahist
         self.h_data.SetDirectory(0)
 
         model = w.obj(self.modelname)
@@ -103,12 +108,13 @@ class PostfitExtractor:
             hpdf.Scale(expectedEvents/hpdf.Integral())
 
 
+            # TODO: Should this be rebinned with the same binning as the other output?
             binEdges = []
             nBins = hpdf.GetNbinsX()
             for i in range(1, nBins+2):
                 binEdges.append(self.h_data.GetBinLowEdge(i+self.datafirstbin))
 
-            h_postfit = TH1D("postfit", "postfit", nBins, array.array('d', binEdges))
+            h_postfit = TH1D("postfit_1", "postfit", nBins, array.array('d', binEdges))
             h_postfit.SetDirectory(0)
 
             for ibin in range(1, nBins+1):
@@ -164,25 +170,29 @@ class PostfitExtractor:
             h_chi2.GetXaxis().SetBinLabel(5, "ndof")
             h_chi2.GetXaxis().SetBinLabel(6, "pval")
 
-            binEdges = None
-            if self.rebinfile and self.rebinhist:
+            # TODO: need to make the binedges configurable -- we might not always want to use a template hist
+            if self.rebinfile and self.rebinhist and not len(self.binEdges):
                 f_rebin = ROOT.TFile(self.rebinfile, "READ")
                 h_rebin = f_rebin.Get(self.rebinhist)
 
-                binEdges = []
+                self.binEdges = []
                 nBins = h_rebin.GetNbinsX()
                 for i in range(1, nBins+2):
                     edge = h_rebin.GetBinLowEdge(i)
                     if edge < h_postfit.GetBinLowEdge(1) or edge > h_postfit.GetBinLowEdge(h_postfit.GetNbinsX()+2):
                         continue
-                    binEdges.append(edge)
+                    self.binEdges.append(edge)
                     
                 f_rebin.Close()
             
-            if binEdges:
-                h_postfit = h_postfit.Rebin(len(binEdges)-1, "postfit", array.array('d', binEdges))
-                self.h_data = self.h_data.Rebin(len(binEdges)-1, self.datahist, array.array('d', binEdges))
-                self.datafirstbin = self.h_data.FindBin(self.datafirstbin) - 1
+            if self.binEdges:
+                h_postfit = h_postfit.Rebin(len(self.binEdges)-1, "postfit", array.array('d', self.binEdges))
+                self.h_data = self.h_data.Rebin(len(self.binEdges)-1, self.datahist, array.array('d', self.binEdges))
+                #self.datafirstbin = self.h_data.FindBin(self.datafirstbin) - 1
+                self.datafirstbin = 0
+                self.h_data.SetDirectory(0)
+                h_postfit.SetDirectory(0)
+            print(self.h_data)
 
             h_residuals = h_postfit.Clone("residuals")
             h_residuals.SetDirectory(0)
