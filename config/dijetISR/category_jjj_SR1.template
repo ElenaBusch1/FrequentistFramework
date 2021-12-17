@@ -1,0 +1,21 @@
+<!DOCTYPE Channel SYSTEM 'CDIR/config/dijetISR/AnaWSBuilder.dtd'>
+<Channel Name="jjj_SR1" Type="shape" Lumi="1">
+  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_channel[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
+
+  <Sample Name="background" 
+	  InputFile="CDIR/config/FITFUNC" 
+	  MultiplyLumi="0" ImportSyst=":self:">
+    <NormFactor Name="nbkg[NBKG]"/>
+  </Sample>
+
+  <Sample Name="signal_mean550_width5" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean550_width5.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean550_width5[NSIG]" />
+  </Sample>
+  <Sample Name="signal_mean550_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean550_width7.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean550_width7[NSIG]" />
+  </Sample>
+  <Sample Name="signal_mean550_width10" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean550_width10.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean550_width10[NSIG]" />
+  </Sample>
+
+</Channel>

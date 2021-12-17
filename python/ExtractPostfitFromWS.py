@@ -170,8 +170,7 @@ class PostfitExtractor:
             h_chi2.GetXaxis().SetBinLabel(5, "ndof")
             h_chi2.GetXaxis().SetBinLabel(6, "pval")
 
-            # TODO: need to make the binedges configurable -- we might not always want to use a template hist
-            if self.rebinfile and self.rebinhist and not len(self.binEdges):
+            if self.rebinfile and self.rebinhist and not self.binEdges:
                 f_rebin = ROOT.TFile(self.rebinfile, "READ")
                 h_rebin = f_rebin.Get(self.rebinhist)
 
@@ -188,11 +187,9 @@ class PostfitExtractor:
             if self.binEdges:
                 h_postfit = h_postfit.Rebin(len(self.binEdges)-1, "postfit", array.array('d', self.binEdges))
                 self.h_data = self.h_data.Rebin(len(self.binEdges)-1, self.datahist, array.array('d', self.binEdges))
-                #self.datafirstbin = self.h_data.FindBin(self.datafirstbin) - 1
                 self.datafirstbin = 0
                 self.h_data.SetDirectory(0)
                 h_postfit.SetDirectory(0)
-            print(self.h_data)
 
             h_residuals = h_postfit.Clone("residuals")
             h_residuals.SetDirectory(0)
