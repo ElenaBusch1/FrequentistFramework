@@ -30,3 +30,12 @@ def getFileName(prefix, directory, channelName, rangelow, rangehigh, sigmean=0, 
     return "%s/%s/%s_Fit_%d_%d"%(directory, channelName, prefix, rangelow, rangehigh)
 
 
+def getBinning(rangelow, rangehigh, delta=25):
+  bins = []
+  for i in range(rangelow, rangehigh, delta):
+    bins.append(i)
+  bins.append(rangehigh)
+  return bins
+     
+
+
