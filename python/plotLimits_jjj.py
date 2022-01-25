@@ -88,7 +88,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
             for j,sigmean in enumerate(sigmeans):
 
                 tmp_path = paths[dataset]
-                tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_0.root"
+                #tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_1.root"
+                tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_1.root"
 
                 f = TFile(tmp_path, "READ")
                 if f.IsZombie():

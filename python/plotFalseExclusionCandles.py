@@ -2,6 +2,7 @@ import sys, ROOT, math, glob, os, re
 from array import array
 from color import getColorSteps
 import DrawingFunctions as df
+import config as config
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -25,7 +26,7 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
         continue
 
     graphs_lim[g.GetTitle()] = g
-    print "adding", g.GetTitle()
+    #print "adding", g.GetTitle()
 
   ################################################
 
@@ -138,7 +139,7 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
   i = 0
   axisExists = 0
   for mass in masses:
-    print i, mass
+    #print i, mass
     # graph = graphs_frac_above[mass]
     # graph.SetMarkerStyle(ROOT.kOpenCircle)
     # graph.SetMarkerSize(1)
@@ -180,7 +181,7 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
 
   legend.Draw()
   canvas.Update()
-  canvas.Print(os.path.basename(inpath).replace(".root", ".png"))
+  outfileName = config.getFileName(os.path.basename(inpath), cdir, channelName, rangelow, rangehigh) + ".pdf"
 
   canvas2 = ROOT.TCanvas()
 
@@ -211,7 +212,8 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
   legend2.Draw()    
 
 
-  canvas_name = os.path.basename(inpath).replace(".root", "_candleplot.png")
+  #canvas_name = os.path.basename(inpath).replace(".root", "_candleplot.png")
+  canvas_name = config.getFileName(os.path.basename(inpath).replace(".root", "_candleplot"), cdir, channelName, rangelow, rangehigh) + ".pdf"
   canvas2.Print(canvas_name)
     
 

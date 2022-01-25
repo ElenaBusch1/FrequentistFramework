@@ -42,6 +42,7 @@ for rangelow in rangeslow:
            rangelow=rangelow,
            rangehigh=rangehigh,
            outputfile=outputfile,
+           maskthreshold=0.0,
            dosignal=0,
            dolimit=0,)
 

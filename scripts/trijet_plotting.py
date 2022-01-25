@@ -14,7 +14,7 @@ sigwidths=[ 7 ]
 #sigamps=[5,1,0]
 sigamps=[5,1]
 rangelow=300
-rangehigh=1200
+rangehigh=1000
 channelName="BkgLow_3_alpha0_SR1_tagged"
 lumis =  29300
 
@@ -27,7 +27,7 @@ outfileExtraction = "PD_extraction_bkgonly"
 createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/")
 
 
-sigmeans=[ 550, 650]
+sigmeans=[ 550, 650, 750]
 # Limits
 pathsLimits = [ "Limits_sigPlusBkg"]
 plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumis, outdir=channelName, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)

@@ -14,11 +14,13 @@ outputdir = channelName
 if not os.path.exists(outputdir):
       os.makedirs(outputdir)
 
-sigmeans = [550, 650]
-#sigamps = [0, 1]
-sigamps = [5]
+sigmeans = [550, 650, 750]
+#sigamps = [0, 1, 5]
+#sigamps = [1, 5]
+sigamps = [0]
+#sigamps = [5]
 rangelow=300
-rangehigh=1200
+rangehigh=1000
 
 # First make the pseudodata
 # TODO: maybe make a flag to decide whether to run this?
@@ -39,7 +41,8 @@ for sigmean in sigmeans:
     # Output file names, which will be written to outputdir
     wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
     outputfile = config.getFileName("FitResult_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-    binedges=[300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000, 1025, 1050, 1075, 1100, 1125, 1150, 1175, 1200]
+    binedges = config.getBinning(rangelow, rangehigh, delta=25)
+
 
 
     # Then run the injection

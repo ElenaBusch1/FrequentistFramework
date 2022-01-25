@@ -43,7 +43,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                 if sigamp > 0:
                     tmp_path_injection = infilePD
                     tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "*.root"
-                    print tmp_path_injection
+                    #print tmp_path_injection
                     tmp_path_injection = glob(tmp_path_injection)
 
                     if len(tmp_path_injection) == 0:
@@ -51,7 +51,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                         continue
 
                     f = TFile(tmp_path_injection[0])
-                    print tmp_path_injection[0]
+                    #print tmp_path_injection[0]
                     h = f.Get("pseudodata_0_injection")
                     n_injected = h.Integral(0, h.GetNbinsX()+1)
                     f.Close()
@@ -61,7 +61,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
 
                 tmp_path_fitresult = infile
                 tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "*.root"
-                print tmp_path_fitresult
+                #print tmp_path_fitresult
                 tmp_path_fitresult = glob(tmp_path_fitresult)
                 if len(tmp_path_fitresult) == 0:
                     print "No fit results"
@@ -78,7 +78,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                         print "Couldn't read nsig from", path
                         continue
 
-                    print n_injected, nsig
+                    #print n_injected, nsig
                     if nsig == None or  math.isnan(nsig):
                         nans += 1
                     if nsig == None:
@@ -100,7 +100,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                     sqrtB = (n_injected / sigamp) if sigamp != 0 else 1
 
 
-                print (sigamp, nFit, sqrtB, nFit/sqrtB)
+                #print (sigamp, nFit, sqrtB, nFit/sqrtB)
                 g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
                 g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
 
@@ -168,7 +168,8 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
 
     # raw_input("enter")
 
-    c.Print(outfile + ".pdf")
+    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
+    c.Print(outfileName)
 
 
 def main(args):
