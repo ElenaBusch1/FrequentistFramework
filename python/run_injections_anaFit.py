@@ -4,6 +4,7 @@ from __future__ import print_function
 import os,sys,re,argparse
 from InjectGaussian import InjectGaussian
 from run_anaFit import run_anaFit
+#import config as config
 
 def run_injections_anaFit(datafile, 
                           datahist, 
@@ -26,15 +27,15 @@ def run_injections_anaFit(datafile,
                           loopstart, 
                           loopend, 
                           fitFunction, 
-                          cdir
+                          cdir,
+                          outdir,
                          ):
     injecteddatafile=datafile
 
     if (sigamp > 0):
         print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
 
-        injecteddatafile="run/"+os.path.basename(datafile)
-        injecteddatafile=injecteddatafile.replace(".root","_injected_mean%d_width%d_amp%.0f.root" % (sigmean, sigwidth, sigamp))
+        injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f.root" % (sigmean, sigwidth, sigamp))
         print("Injected file ", injecteddatafile)
 
         InjectGaussian(infile=datafile,
@@ -63,6 +64,7 @@ def run_injections_anaFit(datafile,
                        fitFunction=fitFunction,
                        cdir=cdir,
                        nbkg=nbkg,
+                       outdir=outdir,
                        rangelow=rangelow,
                        rangehigh=rangehigh,
                        dosignal=dosignal,
@@ -84,6 +86,7 @@ def run_injections_anaFit(datafile,
                    fitFunction=fitFunction,
                    cdir=cdir,
                    nbkg=nbkg,
+                   outdir=outdir,
                    rangelow=rangelow,
                    rangehigh=rangehigh,
                    dosignal=dosignal,
@@ -122,11 +125,12 @@ def main(args):
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
     parser.add_argument('--fitFunction', dest='fitFunction', type=str, default=None, help='Name of the file with the fit function information')
     parser.add_argument('--cdir', dest='cdir', type=str, default=None, help='Full path to current directory')
+    parser.add_argument('--outdir', dest='outdir', type=str, default=None, help='Full path to current directory')
 
     args = parser.parse_args(args)
 
 
-    run_injections_anaFit(datafile=args.datafile, datahist=args.datahist, topfile=args.topfile, categoryfile=args.categoryfile, wsfile=args.wsfile, outputfile=args.outputfile, nbkg=args.nbkg, rangelow=args.rangelow, rangehigh=args.rangehigh, dosignal=args.dosignal, dolimit=args.dolimit, sigmean=args.sigmean, sigwidth=args.sigwidth, maskthreshold=args.maskthreshold, sigamp=args.sigamp, rebinfile=args.rebinfile, rebinedges=args.rebinedges, loopstart=args.loopstart, loopend=args.loopend, fitFunction=args.fitFunction, cdir=args.cdir, rebinhist=args.rebinhist)
+    run_injections_anaFit(datafile=args.datafile, datahist=args.datahist, topfile=args.topfile, categoryfile=args.categoryfile, wsfile=args.wsfile, outputfile=args.outputfile, nbkg=args.nbkg, rangelow=args.rangelow, rangehigh=args.rangehigh, dosignal=args.dosignal, dolimit=args.dolimit, sigmean=args.sigmean, sigwidth=args.sigwidth, maskthreshold=args.maskthreshold, sigamp=args.sigamp, rebinfile=args.rebinfile, rebinedges=args.rebinedges, loopstart=args.loopstart, loopend=args.loopend, fitFunction=args.fitFunction, cdir=args.cdir, rebinhist=args.rebinhist, outdir=args.outdir)
 
 
 

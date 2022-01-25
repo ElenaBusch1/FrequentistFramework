@@ -72,9 +72,7 @@ def plotPulls(infiles, outfile, residualhist="residuals", datahist="data", atlas
     l2.Draw()
     AS.ATLASLabel(0.15, 0.9, 1, 0.15, 0.05, atlasLabel)
 
-
-
-    c.Print(outfile.replace(".root", ".pdf"))
+    c.Print(outfile + ".pdf")
 
     inFile.Close()
 
@@ -86,8 +84,8 @@ def main(args):
     parser.add_argument('--infiles', dest='infiles', type=str, default='', help='Input file name')
     parser.add_argument('--inResidualHist', dest='residualhist', type=str, default='residuals', help='Input residual hist name')
     parser.add_argument('--inDataName', dest='datahist', type=str, default='data', help='Data hist name')
-    parser.add_argument('--outfile', dest='outfile', type=str, default='pulls.root', help='Output file name')
-    parser.add_argument('--atlasLabel', dest='outfile', type=str, default='Simulation Internal', help='Output file name')
+    parser.add_argument('--outfile', dest='outfile', type=str, default='pulls', help='Output file name')
+    parser.add_argument('--atlasLabel', dest='atlasLabel', type=str, default='Simulation Internal', help='Output file name')
 
     args = parser.parse_args(args)
     plotPulls(infiles=args.infiles, outfile=args.outfile, residualhist=args.residualhist, datahist=args.datahist, atlasLabel=args.atlasLabel)

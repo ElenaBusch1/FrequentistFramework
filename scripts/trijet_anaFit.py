@@ -18,8 +18,9 @@ dataFile=config.samples[channelName]["inputFile"]
 datahist=config.samples[channelName]["histname"]
 
 # Output file names, which will be written to outputdir
-wsfile="FitResult_" + channelName + "_1GeVBin_GlobalFit_%dto_%d_0.root"%(rangelow, rangehigh)
-outputfile="FitResult_" + channelName + "_bkgonly_range_%d_%d.root"%(rangelow, rangehigh)
+wsfile = config.getFileName("FitResult_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+outputfile = config.getFileName("FitResult_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+print wsfile, outputfile
 
 
 dosignal=0
@@ -36,12 +37,13 @@ run_anaFit.run_anaFit(
            categoryfile=categoryfile,
            topfile=topfile,
            fitFunction=fitFunction,
-           cdir=cdir,
-           wsfile=outputdir+"/" + wsfile,
+           cdir=cdir ,
+           wsfile=wsfile,
            nbkg=nbkg,
+           outdir=outputdir,
            rangelow=rangelow,
            rangehigh=rangehigh,
-           outputfile=outputdir+"/" + outputfile,
+           outputfile=outputfile,
            dosignal=dosignal,
            dolimit=dolimit,)
 

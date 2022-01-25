@@ -11,22 +11,16 @@ rangelow=300
 rangehigh=1200
 
 
-nbkg="1E7,0,1E8"
-topfile=config.samples[channelName]["topfile"]
-categoryfile=config.samples[channelName]["categoryfile"]
-dataFile=config.samples[channelName]["inputFile"]
-datahist=config.samples[channelName]["histname"]
-
 rebinedges=[300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000, 1025, 1050, 1075, 1100, 1125, 1150, 1175, 1200]
 
 fitFunction = "fivePar"
 
-infiles = [cdir + "/scripts/" + channelName + "/PostFit_%s_bkgonly_range_%d_%d.root"%(channelName, rangelow, rangehigh)]
+infiles = [config.getFileName("PostFit_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"]
 
-outfileFits = channelName + "/fits.root"
+outfileFits = config.getFileName("fits", cdir + "/scripts/", channelName, rangelow, rangehigh)
 plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, rebinedges=rebinedges, atlasLabel=config.atlasLabel)
 
-outfilePulls = channelName + "/pulls.root"
+outfilePulls = config.getFileName("pulls", cdir + "/scripts/", channelName, rangelow, rangehigh)
 plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, atlasLabel=config.atlasLabel)
 
 

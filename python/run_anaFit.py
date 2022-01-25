@@ -93,6 +93,7 @@ def run_anaFit(datafile,
                nbkg,
                rangelow,
                rangehigh,
+               outdir,
                dosignal=False,
                dolimit=False,
                sigmean=1000,
@@ -172,10 +173,10 @@ def run_anaFit(datafile,
         # TODO: Need to use the actual path, since this will only run if working in the correct directory
         # need to unset pythonpath in order to not use cvmfs numpy
         #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s --outputjson %s; deactivate" % (postfitfile, "run/BHresults.json"))
-        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson run/BHresults.json; deactivate" % (postfitfile))
+        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json; deactivate" % (postfitfile, cdir, outdir))
 
         # pass results of pyBH via this json file
-        with open("run/BHresults.json") as f:
+        with open(cdir + "/scripts/" + outdir + "/BHresults.json") as f:
             BHresults=json.load(f)
 
         tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
