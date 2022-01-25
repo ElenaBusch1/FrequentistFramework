@@ -81,14 +81,13 @@ def main(args):
     hunter.print_bump_true(data, bkg, is_hist=True)
 
     # Get and save tomography plot
-    # hunter.plot_tomography(data, is_hist=True, filename="tomography.png")
+    # hunter.plot_tomography(data, is_hist=True, filename="%s_tomography.png"%(args.outname))
 
-    # TODO: Need better path for this!
     # Get and save bump plot
-    hunter.plot_bump(data, bkg, is_hist=True, filename="bump.png")
+    hunter.plot_bump(data, bkg, is_hist=True, filename="%s_bump.png"%(args.outname))
 
     # Get and save statistics plot
-    hunter.plot_stat(show_Pval=True, filename="BH_statistics.png")
+    hunter.plot_stat(show_Pval=True, filename="%s_BH_statistics.png"%(args.outname))
 
     state = hunter.save_state()
 

@@ -11,21 +11,23 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
     seed = 0
 
     for histKey in f_in.GetListOfKeys():
-        histName = histKey.GetName()
+        histNameFile = histKey.GetName()
         
-        if not histname in histName:
+        if not histname in histNameFile:
             continue
-        if firsttoy != None and lasttoy != None and re.search(r'.*_(\d+)', histName):
-            #reduce size by omitting all other toys
-            toy = int(re.search(r'.*_(\d+)', histName).group(1))
-            if toy < firsttoy or toy > lasttoy:
-                seed += 1
-                continue
+        print histNameFile, histname
+        #if firsttoy != None and lasttoy != None and re.search(r'.*_(\d+)', histNameFile):
+        #    #reduce size by omitting all other toys
+        #    toy = int(re.search(r'.*_(\d+)', histNameFile).group(1))
+        #    if toy < firsttoy or toy > lasttoy:
+        #        seed += 1
+        #        continue
 
-        hist = f_in.Get(histName).Clone()
+        hist = f_in.Get(histNameFile).Clone()
         hinj = hist.Clone()
         hgaus = hist.Clone("injectedSignal") 
         hgaus.Reset("M")
+        print "found", hist
 
         # define the parameters of the gaussian and fill it
         if sigmean > 0.0:
@@ -52,9 +54,12 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
                 hgaus.FillRandom('mygaus', nSig) 
                 hinj.Add(hgaus)
 
-        hinj.Write(histName)
-        hist.Write(histName+"_beforeInjection")
-        hgaus.Write(histName+"_injection")
+        # TODO This thing shouldn't be included for the PD histograms, since it's already there
+        # This is just a stopgap to do some studies
+        #hinj.Write(histname + "_0")
+        hinj.Write(histNameFile )
+        hist.Write(histNameFile+"_beforeInjection")
+        hgaus.Write(histNameFile+"_injection")
 
         seed += 1
             

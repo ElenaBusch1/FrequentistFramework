@@ -2,6 +2,8 @@
 import ROOT
 import sys, re, os, math, argparse
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
@@ -83,20 +85,20 @@ def main(args):
     if not args.nofit:
         print "fct  integral:", f1.Integral(0,2000)
 
-    ROOT.ATLASLabel(0.59, 0.90, "Work in progress", 13)
+    ROOT.ATLASLabel(0.59, 0.90, "Internal", 13)
 
-    if "four" in args.infiles[0]:
-        text="4-par global fit"
-    elif "five" in args.infiles[0]:
-        text="5-par global fit"
-    elif "nlo" in  args.infiles[0]:
-        text="NLOFit"
-        if "constr" in args.infiles[0]:
-            s=re.findall(r'constr\d+', args.infiles[0])[0]
-            s=int(s[6:])
-            text="NLOFit, %d#sigma constraints" % s
+    #if "four" in args.infiles[0]:
+    #    text="4-par global fit"
+    #elif "five" in args.infiles[0]:
+    #    text="5-par global fit"
+    #elif "nlo" in  args.infiles[0]:
+    #    text="NLOFit"
+    #    if "constr" in args.infiles[0]:
+    #        s=re.findall(r'constr\d+', args.infiles[0])[0]
+    #        s=int(s[6:])
+    #        text="NLOFit, %d#sigma constraints" % s
 
-    ROOT.myText(0.92, 0.84, 1, text, 33)
+    #ROOT.myText(0.92, 0.84, 1, text, 33)
 
     l=ROOT.TLegend(0.65,0.66, 0.92, 0.78)
     l.AddEntry(h_out, "%d toys" % len(chi2), "l")
@@ -111,8 +113,7 @@ def main(args):
 
     c.Update()
 
-    # c.Print(args.outfile.replace(".root", ".png"))
-    # c.Print(args.outfile.replace(".root", ".pdf"))
+    c.Print(args.outfile.replace(".root", ".pdf"))
 
     f_out.Close()
 

@@ -8,6 +8,8 @@ from glob import glob
 
 # Use -b as last cmdline argument to plotLimits.py to activate batch mode and get proper transparent png output
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
@@ -146,7 +148,7 @@ def main(args):
         g.Draw("pl")
         leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "lp")
         
-    ATLASLabel(0.20, 0.90, "Work in progress", 13)
+    ATLASLabel(0.20, 0.90, "Simulation Internal", 13)
     myText(0.20, 0.85, 1, "95% CL_{s} upper limits", 13)
     myText(0.20, 0.80, 1, "#sqrt{s}=13 TeV, %.1f fb^{-1}" % (lumi/1000.), 13)
 

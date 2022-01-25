@@ -109,12 +109,13 @@ class PostfitExtractor:
 
 
             # TODO: Should this be rebinned with the same binning as the other output?
-            binEdges = []
+            cbinEdges = []
             nBins = hpdf.GetNbinsX()
+            firstbin = self.h_data.FindBin(self.datafirstbin) - 1
             for i in range(1, nBins+2):
-                binEdges.append(self.h_data.GetBinLowEdge(i+self.datafirstbin))
+                cbinEdges.append(self.h_data.GetBinLowEdge(i+firstbin))
 
-            h_postfit = TH1D("postfit_1", "postfit", nBins, array.array('d', binEdges))
+            h_postfit = TH1D("postfit_1", "postfit", nBins, array.array('d', cbinEdges))
             h_postfit.SetDirectory(0)
 
             for ibin in range(1, nBins+1):
@@ -126,10 +127,10 @@ class PostfitExtractor:
             maskedchi2bins = 0
 
             for ibin in range(1, nBins+1):
-                binCenter = self.h_data.GetBinCenter(self.datafirstbin+ibin)
+                binCenter = self.h_data.GetBinCenter(firstbin+ibin)
 
-                valueErrorData = self.h_data.GetBinError(self.datafirstbin+ibin)
-                valueData = self.h_data.GetBinContent(self.datafirstbin+ibin)
+                valueErrorData = self.h_data.GetBinError(firstbin+ibin)
+                valueData = self.h_data.GetBinContent(firstbin+ibin)
                 postFitValue = h_postfit.GetBinContent(ibin)
 
                 binSig = 0.
@@ -171,6 +172,7 @@ class PostfitExtractor:
             h_chi2.GetXaxis().SetBinLabel(6, "pval")
 
             if self.rebinfile and self.rebinhist and not self.binEdges:
+                print("Rebinning histogram based on template")
                 f_rebin = ROOT.TFile(self.rebinfile, "READ")
                 h_rebin = f_rebin.Get(self.rebinhist)
 
@@ -185,9 +187,10 @@ class PostfitExtractor:
                 f_rebin.Close()
             
             if self.binEdges:
+                print("Rebinning histogram based on list of bins")
                 h_postfit = h_postfit.Rebin(len(self.binEdges)-1, "postfit", array.array('d', self.binEdges))
                 self.h_data = self.h_data.Rebin(len(self.binEdges)-1, self.datahist, array.array('d', self.binEdges))
-                self.datafirstbin = 0
+                firstbin = 0
                 self.h_data.SetDirectory(0)
                 h_postfit.SetDirectory(0)
 
@@ -196,8 +199,8 @@ class PostfitExtractor:
             h_residuals.Reset("M")
 
             for ibin in range(1, h_residuals.GetNbinsX()+1):
-                valueErrorData = self.h_data.GetBinError(ibin+self.datafirstbin)
-                valueData = self.h_data.GetBinContent(ibin+self.datafirstbin)
+                valueErrorData = self.h_data.GetBinError(ibin+firstbin)
+                valueData = self.h_data.GetBinContent(ibin+firstbin)
                 postFitValue = h_postfit.GetBinContent(ibin)
 
                 binSig = 0.
@@ -321,7 +324,7 @@ def main(args):
     parser = argparse.ArgumentParser(description='%prog [options]')
     parser.add_argument('--datafile', dest='datafile', type=str, default='../Input/data/dijetTLAnlo/data_J75yStar03_range400_2079.root', help='original data file name (to get binning from)')
     parser.add_argument('--datahist', dest='datahist', type=str, default='data', help='original data hist name (to get binning from)')
-    parser.add_argument('--datafirstbin', dest='datafirstbin', type=int, default=0, help='First bin in data histogram considered in fit. 0 for first non-underflow bin')
+    parser.add_argument('--datafirstbin', dest='datafirstbin', type=int, default=0, help='First bin edge in data histogram considered in fit. 0 for first non-underflow bin')
     parser.add_argument('--wsfile', dest='wsfile', type=str, help='Workspace file name')
     parser.add_argument('--wsname', dest='wsname', type=str, default='combWS', help='Name of workspace')
     parser.add_argument('--modelname', dest='modelname', type=str, default='ModelConfig', help='Name of model in workspace')

@@ -1,5 +1,10 @@
 import sys, ROOT, math, glob, os
 from color import getColorSteps
+import sys, re, os, math, argparse
+
+
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 
 def getMode(h):
     numBins = h.GetXaxis().GetNbins();
@@ -13,14 +18,16 @@ def getMode(h):
 
     return max_bin_center
 
+
+parser = argparse.ArgumentParser(description='%prog [options]')
+parser.add_argument('--inpath', dest='inpath', type=str, default="../TestData/DummyCoverageTest.root", help='Input file name')
+parser.add_argument('--outfile', dest='outfile', type=str, default='pulls.root', help='Output file name')
+args = parser.parse_args(args)
+
+
 ROOT.gROOT.SetStyle("ATLAS")
 
-if len(sys.argv) > 1:
-    inpath = sys.argv[1]
-else:
-    inpath = "../TestData/DummyCoverageTest.root"
-
-infile = ROOT.TFile(inpath)
+infile = ROOT.TFile(args.inpath)
 
 graphs_lim = {}
 for k in infile.GetListOfKeys():
@@ -89,17 +96,17 @@ legend = ROOT.TLegend(0.45,0.25,0.87,0.60)
 # legend.AddEntry(0,"Window half-width = 9 (J100)","")
 
 text = "global fit"
-if "four" in inpath:
+if "four" in args.inpath:
     text += " 4 par"
-if "five" in inpath:
+if "five" in args.inpath:
     text += " 5 par"
-if "nloFit" in inpath:
+if "nloFit" in args.inpath:
     text = "NLOFit"
 
 lumi = 29
-if "lumi" in inpath:
+if "lumi" in args.inpath:
     try:
-        lumi=int(inpath.split("lumi")[0].split("_")[-1])
+        lumi=int(args.inpath.split("lumi")[0].split("_")[-1])
     except:
         pass
     text2 = ", %d fb^{-1}" % lumi
@@ -156,7 +163,7 @@ for mass in masses:
 legend.Draw()
 canvas.Update()
 # canvas.Print("FalseExclusionRate.png")
-canvas.Print(os.path.basename(inpath).replace(".root", ".png"))
+canvas.Print(os.path.basename(args.inpath).replace(".root", ".png"))
 
 
 raw_input("Wait...")

@@ -7,6 +7,8 @@ from math import sqrt
 from glob import glob
 from color import getColorSteps
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")

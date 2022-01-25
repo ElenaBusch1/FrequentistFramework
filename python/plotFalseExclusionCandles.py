@@ -2,6 +2,9 @@ import sys, ROOT, math, glob, os, re
 from array import array
 from color import getColorSteps
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
+
 def natural_sort(l):
     convert = lambda text: int(text) if text.isdigit() else text.lower() 
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 

@@ -6,6 +6,8 @@ import sys, re, os, math, argparse
 from ROOT import *
 import math
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
@@ -13,14 +15,16 @@ ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 def main(args):
     parser = argparse.ArgumentParser(description='%prog [options]')
-    parser.add_argument('--wsfile', dest='wsfile', type=str, default='../run/FitResult.root', help='Input workspace file name')
+    parser.add_argument('--pdfile', dest='wsfile', type=str, default='jjj/PD_swift_fivePar_bkgonly_range_300_1700.root', help='Input workspace file name')
+    parser.add_argument('--nominalName', dest='nominalName', type=str, default='jjj/PostFit_swift_fivePar_bkgonly_range_300_1200.root', help='Input workspace file name')
+    #parser.add_argument('--minMjj', dest='minMjj', type=str, default='300', help='Minimum value of mjj')
+    #parser.add_argument('--maxMjj', dest='maxMjj', type=str, default='1000', help='Maximum value of mjj')
     parser.add_argument('--outfile', dest='outfile', type=str, default='plots/fitStability.root', help='Output file name')
     parser.add_argument('--nToys', dest='nToys', type=int, default=50, help='Number of toys to run')
     
     args = parser.parse_args(args)
 
-    nominalName = "ajj/PostFit_ajj_simpleTrig_yStar0p825_1GeVBin_GlobalFit300to1000_0.root"
-    nominalFile = ROOT.TFile(nominalName, "READ")
+    nominalFile = ROOT.TFile(args.nominalName, "READ")
     nominalFit = nominalFile.Get("postfit")
     nominalFit.SetDirectory(0)
     tmpError = nominalFit.Clone("tmpError")
@@ -28,7 +32,6 @@ def main(args):
     relError.SetDirectory(0)
 
     for toy in range(args.nToys):
-       #toyName = "plots/BkgFitTest_pd_%d.root"%(toy)
        toyName = "ajj/PostFitPD_ajj_simpleTrig_yStar0p825_1GeVBin_GlobalFit300to1000_%d.root"%(toy)
        toyFile = ROOT.TFile(toyName, "READ")
        toyFit = toyFile.Get("postfit")

@@ -5,6 +5,7 @@
 import ROOT
 import sys, re, os, math, argparse
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
@@ -17,6 +18,7 @@ def main(args):
     parser.add_argument('--inResidualHist', dest='residualhist', type=str, default='residuals', help='Input residual hist name')
     parser.add_argument('--inDataName', dest='datahist', type=str, default='data', help='Data hist name')
     parser.add_argument('--outfile', dest='outfile', type=str, default='pulls.root', help='Output file name')
+    parser.add_argument('--atlasLabel', dest='outfile', type=str, default='Simulation Internal', help='Output file name')
 
     args = parser.parse_args(args)
 
@@ -32,8 +34,7 @@ def main(args):
       h_pulls.Fill( residualHist.GetBinContent(i+1)*1.0 );
     f1 = ROOT.TF1("f1","[area] * ROOT::Math::normal_pdf(x, [sigma], [mean]) ", -5, 5);
     # TODO: need to figure out how to normalize this correctly
-    #f1.SetParameter("area",residualHist.GetNbinsX()*1.0);
-    f1.SetParameter("area", 80);
+    f1.SetParameter("area", h_pulls.Integral("width"))
     f1.SetParameter("mean", 0.);
     f1.SetParameter("sigma",1.);
 
@@ -54,7 +55,7 @@ def main(args):
    
     ks = h_pulls.KolmogorovTest(h_fit)
 
-    ROOT.ATLASLabel(0.15, 0.85, "Simulation Internal", 11)
+    ROOT.ATLASLabel(0.15, 0.85, args.atlasLabel, 11)
     ROOT.myText(0.25, 0.80, 1, "5-par fit", 31)
     ROOT.myText(0.25, 0.76, 1, "KS Test, %.3f"%ks)
 

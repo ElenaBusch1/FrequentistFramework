@@ -23,6 +23,27 @@ def fluctuatePoisson(hist):
 
     return result;
 
+def generatePseudoData(infile, inhist, outfile, outhist, nreplicas, scaling):
+    f_in = ROOT.TFile(infile, "READ")
+    h_in = f_in.Get(inhist)
+    h_in.SetDirectory(0)
+    f_in.Close()
+
+    h_in.Scale(scaling)
+
+    f_out = ROOT.TFile(outfile, "RECREATE")
+    f_out.cd()
+
+    for i in range(0, nreplicas):
+        if (i%(nreplicas/20) == 0):
+            print i,"/",nreplicas
+
+        gRand.SetSeed(i)
+        h_out = fluctuatePoisson(h_in)
+        h_out.Write("%s_%d" % (outhist, i))
+
+    f_out.Close()
+
 
 def main(args):
     global gRand
@@ -37,25 +58,8 @@ def main(args):
     
     args = parser.parse_args(args)
 
-    f_in = ROOT.TFile(args.infile, "READ")
-    h_in = f_in.Get(args.inhist)
-    h_in.SetDirectory(0)
-    f_in.Close()
+    generatePseudoData(infile=args.infile, inhist=args.inhist, outhist=args.outhist, nreplicas=args.nreplicas, scaling=args.scaling)
 
-    h_in.Scale(args.scaling)
-
-    f_out = ROOT.TFile(args.outfile, "RECREATE")
-    f_out.cd()
-
-    for i in range(0, args.nreplicas):
-        if (i%(args.nreplicas/20) == 0):
-            print i,"/",args.nreplicas
-
-        gRand.SetSeed(i)
-        h_out = fluctuatePoisson(h_in)
-        h_out.Write("%s_%d" % (args.outhist, i))
-
-    f_out.Close()
 
 if __name__ == "__main__":  
    sys.exit(main(sys.argv[1:]))   

@@ -2,6 +2,8 @@
 import ROOT
 import sys, re, os, math, argparse
 
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
