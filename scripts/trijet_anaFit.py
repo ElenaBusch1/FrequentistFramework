@@ -9,8 +9,7 @@ channelName="BkgLow_3_alpha0_SR1_tagged"
 rangelow=300
 rangehigh=1200
 
-
-fitFunction="dijetISR/background_ajj_simpleTrig_yStar0p825_fivePar.xml"
+fitFunction = config.fitFunctions["fivePar"]["Config"]
 
 nbkg="1E7,0,1E8"
 topfile=config.samples[channelName]["topfile"]

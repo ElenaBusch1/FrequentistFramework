@@ -178,7 +178,6 @@ def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.95, dy = 0.04, text_size 
     dy = dy / height
     if sampleName != "":
           sampleName = ", " + sampleName
-    #AS.ATLASLabel(x_pos, y_pos, 1, x_pos -.1, dy, atlasLabel)
     AS.ATLASLabel(x_pos, y_pos, 1, x_pos, dy, atlasLabel)
     y_pos -= dy
     AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, 44.3 fb^{-1}  %s"%(sampleName))
@@ -256,7 +255,8 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
 def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = "HIST", styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True):
   canvas.cd()
   canvas.SetLogx(isLogX)
-  upperPad = r.TPad("pad1%s"%outName, "pad1",0.05,0.35,0.95,0.95)
+
+  upperPad = r.TPad("pad1%s"%outName, "pad1",0.0,0.35,1.0,1.0)
   upperPad.SetTopMargin(0.05)
   upperPad.SetBottomMargin(0.01)
   upperPad.SetLeftMargin(0.15)
@@ -268,7 +268,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   r.SetOwnership(upperPad, False)
 
   canvas.cd();
-  lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.05,0.05,0.95,0.35)
+  lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.0,0.05,1.0,0.35)
   lowerPad.SetBottomMargin(0.4)
   lowerPad.SetTopMargin(-0.05)
   lowerPad.SetLeftMargin(0.15)
@@ -283,7 +283,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   deltaHists=0.1
   if len(hists) > 4:
     deltaHists = 0.06
-  legend = r.TLegend(0.5,0.9-(len(hists))*deltaHists,.85,0.90)
+  legend = r.TLegend(0.7,0.9-(len(hists))*deltaHists,.9,0.90)
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions, 0.95-0.35)
   SetStyleOptions(Ratios, styleOptions, 0.95-0.35)
@@ -301,12 +301,12 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   legend.Draw()
 
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35)
+  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85)
   lowerPad.cd()
 
   rDrawOptions = drawOptions
-  Ratios[1].Draw("%s"%(drawOptions))
-  #Ratios[0].Draw("%s"%(drawOptions))
+  #Ratios[1].Draw("%s"%(drawOptions))
+  Ratios[0].Draw("%s"%(drawOptions))
   rDrawOptions = drawOptions + "SAME"
   #for hist in range(len(Ratios)):
   for ratio in Ratios:
