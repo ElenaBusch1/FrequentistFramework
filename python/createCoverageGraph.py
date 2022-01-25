@@ -5,6 +5,7 @@ from array import array
 from ROOT import *
 from math import sqrt
 from glob import glob
+import config as config
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -14,55 +15,20 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 lumi = 130000
 
-def main(args):
-    SetAtlasStyle()
- 
-    parser = optparse.OptionParser(description='%prog [options] INPUT')
-    parser.add_option('--outfile', dest='outfile', type=str, default='limitGraphs.root', help='Output file name')
-    
-    options, args = parser.parse_args(args)
 
-    paths = args
-    sigmeans = set()
-    sigwidths = set()
-    sigamps = set()
-    dict_file = {}
-
-    for p in paths:
-        res=re.search(r'mean(\d+)_width(\d+)(:?_amp\d+)?', p)
-        m=int(res.group(1))
-        w=int(res.group(2))
-        
-        sigmeans.add(m)
-        sigwidths.add(w)
-
-        try:
-            a=int(res.group(3)[4:])
-        except:
-            a=0
-        sigamps.add(a)
-            
-        if (m, w, a) in dict_file:
-            dict_file[(m, w, a)].append(p)
-        else:
-            dict_file[(m, w, a)]=[p]
-            
-    sigmeans = list(sigmeans)
-    sigwidths = list(sigwidths)
-    sigamps = list(sigamps)
-
+def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, cdir, channelName, rangelow, rangehigh):
     sigmeans.sort()
     sigwidths.sort()
     sigamps.sort()
 
     colors = [kBlue, kRed+1, kOrange-3]
 
-    fout = TFile(options.outfile, "RECREATE")
+    fout = TFile(outfile+".root", "RECREATE")
 
     for i,sigwidth in enumerate(sigwidths):
-        
+
         for j,sigmean in enumerate(sigmeans):
-            
+
             g = TGraph()
             g_exp = TGraph()
             g_exp_2u = TGraph()
@@ -72,20 +38,28 @@ def main(args):
             sqrtB = None
 
             for k,sigamp in enumerate(sigamps):
-    
+
                 #find number of injected events:
-              
+
                 try:
-                    tmp_path_limits = dict_file[(sigmean, sigwidth, sigamp)]
+                    print cdir, channelName
+                    print rangelow, rangehigh
+                    print sigmean, sigwidth, sigamp
+                    print paths
+                    tmp_path_limits = config.getFileName(paths, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_0.txt"
+                    print tmp_path_limits
                 except:
                     print "WARNING: No limit file for", sigmean, sigwidth, sigamp
                     continue
 
                 if sigamp > 0:
-                    tmp_path_injection = tmp_path_limits.replace("Limits", "PD").replace(".txt", ".root")
+                    #tmp_path_injection = tmp_path_limits.replace("Limits", "PD").replace(".txt", ".root")
+                    tmp_path_injection = config.getFileName(inputPD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+                    #tmp_path_injection = tmp_path_limits.replace("Limits", "PD").replace(".txt", ".root")
+                    print tmp_path_injection, tmp_path_limits
 
                     try:
-                        f = TFile(tmp_path_injection[0])
+                        f = TFile(tmp_path_injection)
                         h = f.Get("pseudodata_0_injection")
                         n_injected = h.Integral(0, h.GetNbinsX()+1)
                         f.Close()
@@ -98,11 +72,12 @@ def main(args):
                 if sqrtB == None:
                     sqrtB = (n_injected / sigamp) if sigamp != 0 else 1
                     # print "setting sqrtB to", sqrtB
-                
+
                 inj_limit = []
                 nans = 0
 
-                for path in tmp_path_limits:
+                path_limits = [tmp_path_limits]
+                for path in path_limits:
                     with open(path) as f:
                         limits = f.readline().split()
                         limit = float(limits[0])
@@ -111,12 +86,12 @@ def main(args):
                         limit_exp1u = float(limits[3])
                         limit_exp1d = float(limits[4])
                         limit_exp2d = float(limits[5])
-                        
+
                     # print n_injected, limit
                     inj_limit.append((n_injected, limit, limit_exp, limit_exp2u, limit_exp1u, limit_exp1d, limit_exp2d))
                     if math.isnan(limit):
                         nans += 1
-                
+
                 print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
                 # if float(nans) / len(inj_limit) < 0.02:
                 for t in inj_limit:
@@ -128,7 +103,7 @@ def main(args):
                     g_exp_2d.SetPoint(g_exp_2d.GetN(), t[0]/sqrtB, t[6]/sqrtB)
                 # else:
                 #     print "skipping", inj_limit[0][0], "due to NaNs"
-   
+
             fout.cd()
 
             g.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
@@ -151,6 +126,26 @@ def main(args):
 
 
     fout.Close()
+
+
+
+
+
+def main(args):
+    SetAtlasStyle()
+ 
+    parser = optparse.OptionParser(description='%prog [options] INPUT')
+    parser.add_option('--outfile', dest='outfile', type=str, default='limitGraphs.root', help='Output file name')
+    
+    options, args = parser.parse_args(args)
+
+    paths = args
+    sigmeans = set()
+    sigwidths = set()
+    sigamps = set()
+    dict_file = {}
+    createCoverageGraph(paths=paths, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=options.outfile)
+
 
 if __name__ == "__main__":  
    sys.exit(main(sys.argv[1:]))   

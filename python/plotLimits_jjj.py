@@ -6,6 +6,7 @@ from ROOT import *
 from math import sqrt
 from math import isnan
 from glob import glob
+import config as config
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -49,7 +50,7 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, rangelow, rangehigh):
     SetAtlasStyle()
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
@@ -75,7 +76,7 @@ def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
         g_exp1d = []
         g_exp2d = []
 
-        for i,sigwidth in enumerate(sigwidths[dataset]):
+        for i,sigwidth in enumerate(sigwidths):
 
             g_obs.append( TGraph() )
             g_exp.append( TGraph() )
@@ -84,22 +85,21 @@ def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
             g_exp1d.append( TGraph() )
             g_exp2d.append( TGraph() )
 
-            for j,sigmean in enumerate(sigmeans[dataset]):
+            for j,sigmean in enumerate(sigmeans):
 
                 tmp_path = paths[dataset]
-                tmp_path = tmp_path.replace("MEAN", str(sigmean))
-                tmp_path = tmp_path.replace("WIDTH", str(sigwidth))
+                tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_0.root"
 
                 f = TFile(tmp_path, "READ")
                 if f.IsZombie():
                     continue
                 h = f.Get("limit")
-                obs = h.GetBinContent(h.GetXaxis().FindBin("Observed")) / lumis[dataset]
-                exp = h.GetBinContent(h.GetXaxis().FindBin("Expected")) / lumis[dataset]
-                exp1u = h.GetBinContent(h.GetXaxis().FindBin("+1sigma")) / lumis[dataset]
-                exp2u = h.GetBinContent(h.GetXaxis().FindBin("+2sigma")) / lumis[dataset]
-                exp1d = h.GetBinContent(h.GetXaxis().FindBin("-1sigma")) / lumis[dataset]
-                exp2d = h.GetBinContent(h.GetXaxis().FindBin("-2sigma")) / lumis[dataset]
+                obs = h.GetBinContent(h.GetXaxis().FindBin("Observed")) / lumis
+                exp = h.GetBinContent(h.GetXaxis().FindBin("Expected")) / lumis
+                exp1u = h.GetBinContent(h.GetXaxis().FindBin("+1sigma")) / lumis
+                exp2u = h.GetBinContent(h.GetXaxis().FindBin("+2sigma")) / lumis
+                exp1d = h.GetBinContent(h.GetXaxis().FindBin("-1sigma")) / lumis
+                exp2d = h.GetBinContent(h.GetXaxis().FindBin("-2sigma")) / lumis
 
                 g_exp[i].SetPoint(g_exp[i].GetN(), sigmean, exp)
                 g_exp1u[i].SetPoint(g_exp1u[i].GetN(), sigmean, exp1u)
@@ -149,7 +149,7 @@ def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
     g_exp_datasets[0][0].GetYaxis().SetTitleOffset(1.0)
     g_exp_datasets[0][0].GetHistogram().SetMinimum(minY)
     g_exp_datasets[0][0].GetHistogram().SetMaximum(maxY)
-    g_exp_datasets[0][0].GetXaxis().SetLimits(min(sigmeans[0])-49.9, max(sigmeans[-1])+49.9)
+    g_exp_datasets[0][0].GetXaxis().SetLimits(min(sigmeans)-49.9, max(sigmeans)+49.9)
 
     c.Modified()
 
@@ -158,7 +158,7 @@ def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
         if dataset != len(paths)-1:
 
             l=TLine()
-            l.DrawLineNDC(xToNDC(sigmeans[dataset][-1]), gPad.GetBottomMargin(), xToNDC(sigmeans[dataset][-1]), 0.72)
+            l.DrawLineNDC(xToNDC(sigmeans[-1]), gPad.GetBottomMargin(), xToNDC(sigmeans[-1]), 0.72)
 
         g_exp2_datasets[dataset][0].Draw("f")
         g_exp1_datasets[dataset][0].Draw("f")
@@ -166,17 +166,17 @@ def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
         for i,g in enumerate(g_exp_datasets[dataset]):
             g.Draw("l")
             if (dataset==0):
-                leg_exp.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[dataset][i]/100.), "l")
+                leg_exp.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "l")
         for i,g in enumerate(g_obs_datasets[dataset]):
             g.Draw("pl")
             if (dataset==0):
-                leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[dataset][i]/100.), "lp")
+                leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "lp")
 
 
     ATLASLabel(0.20, 0.90, "Simulation Internal", 13)
     myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
     myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV", 13)
-    myText(0.2, 0.72, 1, "%.1f fb^{-1}" % (lumis[0]*0.001), 13)
+    myText(0.2, 0.72, 1, "%.1f fb^{-1}" % (lumis*0.001), 13)
 
     myText(0.65, 0.90, 1, "Observed:", 13)
     myText(0.65, 0.67, 1, "Expected:", 13)
@@ -190,10 +190,10 @@ def plotLmits(sigmeans, sigwidths, paths, lumis, outdir):
 
 def main(args):
   paths = [ "jjj/Limits_sigPlusBkg_Fit_300_1200_Sig_MEAN_width_WIDTH_amp_1_3.root",]
-  sigmeans  = [ [ 550, 650], ]
-  sigwidths = [ [ 7, ], ]
+  sigmeans  =  [ 550, 650]
+  sigwidths =  [ 7, ]
   lumis = [ 29300 ]
-  plotLmits(sigmeans=sigmeans, sigwidths=sigwidths, paths=paths, lumis=lumis, outdir="jjj")
+  plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=paths, lumis=lumis, outdir="jjj")
   
 
 

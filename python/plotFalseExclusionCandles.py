@@ -1,6 +1,7 @@
 import sys, ROOT, math, glob, os, re
 from array import array
 from color import getColorSteps
+import DrawingFunctions as df
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -12,15 +13,12 @@ def natural_sort(l):
 
 ROOT.gROOT.SetStyle("ATLAS")
 
-if len(sys.argv) > 1:
-    inpath = sys.argv[1]
-else:
-    inpath = "../TestData/DummyCoverageTest.root"
+def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, channelName, cdir):
 
-infile = ROOT.TFile(inpath)
+  infile = ROOT.TFile(inpath)
 
-graphs_lim = {}
-for k in infile.GetListOfKeys():
+  graphs_lim = {}
+  for k in infile.GetListOfKeys():
     name = k.GetName()
     g = infile.Get(name)
     if not isinstance(g, ROOT.TGraph):
@@ -29,19 +27,19 @@ for k in infile.GetListOfKeys():
     graphs_lim[g.GetTitle()] = g
     print "adding", g.GetTitle()
 
-################################################
+  ################################################
 
-x_min = 0
-x_max = 0
+  x_min = 0
+  x_max = 0
 
-graphs_frac_above = {}
-graphs_frac_below = {}
-h2_all_points = {}
-bin_edges = []
+  graphs_frac_above = {}
+  graphs_frac_below = {}
+  h2_all_points = {}
+  bin_edges = []
 
-masses = natural_sort(graphs_lim.keys())
+  masses = natural_sort(graphs_lim.keys())
 
-for mass in masses:
+  for mass in masses:
     graph = graphs_lim[mass]
     above = {}
     total = {}
@@ -111,43 +109,35 @@ for mass in masses:
         h2_all_points[mass].Fill(ninj, ulim)
     
     
+  canvas = df.setup_canvas()
 
-canvas=ROOT.TCanvas("c","c", 900, 600)
-canvas.SetRightMargin(0.10)
-# canvas.SetLogx(1)
-#canvas.SetLogy(1)
-ROOT.gStyle.SetLegendFillColor(0)
-ROOT.gStyle.SetLegendBorderSize(0)
-ROOT.gStyle.SetLegendFont(43)
-ROOT.gStyle.SetLegendTextSize(20)
-ROOT.gStyle.SetOptStat(0)
+  legend = ROOT.TLegend(0.2,0.6,0.6,0.9)
 
-# legend = ROOT.TLegend(0.45,0.25,0.87,0.60)
-legend = ROOT.TLegend(0.2,0.6,0.6,0.9)
-
-text = "global fit"
-if "four" in inpath:
+  text = "global fit"
+  if "four" in inpath:
     text += " 4 par"
-if "five" in inpath:
+  if "five" in inpath:
     text += " 5 par"
-if "nloFit" in inpath:
+  if "nloFit" in inpath:
     text = "NLOFit"
 
-lumi = 29
-if "lumi" in inpath:
+  lumi = 29
+  if "lumi" in inpath:
     try:
         lumi=int(inpath.split("lumi")[0].split("_")[-1])
     except:
         pass
     text2 = ", %d fb^{-1}" % lumi
+  else:
+    text2 = ""
 
 
-legend.AddEntry(0,text+text2,"")
-legend.SetBorderSize(0)
-colors = getColorSteps(len(masses))
-i = 0
-axisExists = 0
-for mass in masses:
+  legend.AddEntry(0,text+text2,"")
+  legend.SetBorderSize(0)
+  colors = getColorSteps(len(masses))
+  i = 0
+  axisExists = 0
+  for mass in masses:
     print i, mass
     # graph = graphs_frac_above[mass]
     # graph.SetMarkerStyle(ROOT.kOpenCircle)
@@ -188,40 +178,48 @@ for mass in masses:
     line.SetLineColor(ROOT.kGray+1)
     line.Draw()
 
-legend.Draw()
-canvas.Update()
-canvas.Print(os.path.basename(inpath).replace(".root", ".png"))
+  legend.Draw()
+  canvas.Update()
+  canvas.Print(os.path.basename(inpath).replace(".root", ".png"))
 
-canvas2 = ROOT.TCanvas()
+  canvas2 = ROOT.TCanvas()
 
-hs = ROOT.THStack("hs","")
-for i,mass in enumerate(masses):
+  hs = ROOT.THStack("hs","")
+  for i,mass in enumerate(masses):
 
     h2_all_points[mass].SetLineColor(colors[i])
     h2_all_points[mass].SetMarkerColor(colors[i])
 
     hs.Add(h2_all_points[mass], "CANDLEX(00112011)") #(zhpawMmb)
 
-hs.Draw("CANDLEX(00112011)")
-hs.GetYaxis().SetLimits(0.,10.)
-hs.GetXaxis().SetTitle("N_{inj} / #sqrt{N_{bkg}}")
-hs.GetYaxis().SetTitle("95% limit / #sqrt{N_{bkg}}")
+  hs.Draw("CANDLEX(00112011)")
+  hs.GetYaxis().SetLimits(0.,10.)
+  hs.GetXaxis().SetTitle("N_{inj} / #sqrt{N_{bkg}}")
+  hs.GetYaxis().SetTitle("95% limit / #sqrt{N_{bkg}}")
    
-line = ROOT.TLine(0, 0, bin_edges[-1], bin_edges[-1])
-line.SetLineWidth(2)
-line.SetLineStyle(7)
-line.SetLineColor(ROOT.kGray+1)
-line.Draw()
+  line = ROOT.TLine(0, 0, bin_edges[-1], bin_edges[-1])
+  line.SetLineWidth(2)
+  line.SetLineStyle(7)
+  line.SetLineColor(ROOT.kGray+1)
+  line.Draw()
 
-legend2=legend.Clone()
-legend2.SetX1NDC(0.2)
-legend2.SetY1NDC(0.6)
-legend2.SetX2NDC(0.6)
-legend2.SetY2NDC(0.9)
-legend2.Draw()    
+  legend2=legend.Clone()
+  legend2.SetX1NDC(0.2)
+  legend2.SetY1NDC(0.6)
+  legend2.SetX2NDC(0.6)
+  legend2.SetY2NDC(0.9)
+  legend2.Draw()    
 
 
-canvas_name = os.path.basename(inpath).replace(".root", "_candleplot.png")
-canvas2.Print(canvas_name)
+  canvas_name = os.path.basename(inpath).replace(".root", "_candleplot.png")
+  canvas2.Print(canvas_name)
     
-#raw_input("Wait...")
+
+
+####################################
+
+#if len(sys.argv) > 1:
+#    inpath = sys.argv[1]
+#else:
+#    inpath = "../TestData/DummyCoverageTest.root"
+

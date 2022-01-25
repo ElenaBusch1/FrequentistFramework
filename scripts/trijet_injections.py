@@ -16,7 +16,7 @@ if not os.path.exists(outputdir):
 
 sigmeans = [550, 650]
 #sigamps = [0, 1]
-sigamps = [1]
+sigamps = [5]
 rangelow=300
 rangehigh=1200
 

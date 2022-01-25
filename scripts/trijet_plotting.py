@@ -1,32 +1,56 @@
 import scripts.config as config
-import python.createExtractionGraphs as createExtractionGraphs
+import python.createExtractionGraph as createExtractionGraph
+import python.createCoverageGraph as createCoverageGraph
 import python.plotLimits_jjj as plotLimits_jjj
 import python.getChi2Distribution as getChi2Distribution
+import python.plotFalseExclusionCandles as plotFalseExclusionCandles
+
+cdir = config.cdir
 
 
-
-
-infileExtraction='jjj/FitResult_sigPlusBkg_Fit_300_1200_Sig_MEAN_width_WIDTH_amp_AMP_*.root'
-infilePD='run/PD_swift_fivePar_bkgonly_range_300_1200_injected_meanMEAN_widthWIDTH_ampAMP.root'
-outfileExtraction='run/PD_swift_fivePar_bkgonly_range_300_1200_injected_meanMEAN_widthWIDTH_ampAMP.root'
 sigmeans=[ 550]
 sigwidths=[ 7 ]
-sigamps=[1, 5, 10 ]
-lumis = [ 29300 ]
+# These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
+#sigamps=[5,1,0]
+sigamps=[5,1]
+rangelow=300
+rangehigh=1200
+channelName="BkgLow_3_alpha0_SR1_tagged"
+lumis =  29300
 
 
 
-createExtractionGraphs.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction)
+# Extraction graphs
+infileExtraction='FitResult_sigPlusBkg'
+infilePD='PD_bkgonly'
+outfileExtraction = "PD_extraction_bkgonly"
+createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/")
 
-pathsLimits = [ config.cdir+"/run/jjj/Limits_sigPlusBkg_Fit_300_1200_Sig_MEAN_width_WIDTH_amp_1_3.root",]
-plotLimits_jjj.plotLmits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumis, outdir="jjj")
+
+sigmeans=[ 550, 650]
+# Limits
+pathsLimits = [ "Limits_sigPlusBkg"]
+plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumis, outdir=channelName, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
+
+inputPDCoverage='PD_bkgonly'
+outfileCoverage='Coverage'
+createCoverageGraph.createCoverageGraph(pathsLimits[0], inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
+plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage.root", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir)
 
 
-infilesChi2 = [config.cdir+"/run/jjj/PostFit_sigPlusBkg_Fit_300_1200_Sig_550_width_7_amp_0_10.root", config.cdir+"/run/jjj/PostFit_sigPlusBkg_Fit_300_1200_Sig_550_width_7_amp_0_9.root", config.cdir+"/run/jjj/PostFit_sigPlusBkg_Fit_300_1200_Sig_550_width_7_amp_0_8.root"]
-inhistChi2="chi2"
-outfileChi2="chi2.root"
-outhistChi2="chi2"
-getChi2Distribution.getChi2Distribution.py(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, outhist=outhistChi2)
+
+
+# Chi2
+for sigamp in sigamps:
+  for sigmean in sigmeans:
+    for sigwidth in sigwidths:
+
+      infilesChi2 = "PostFit_sigPlusBkg"
+      inhistChi2="chi2"
+      outfileChi2 = config.getFileName("chi2", cdir + "/scripts/", channelName, rangelow, rangehigh)
+      outhistChi2="chi2"
+
+      getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, outhist=outhistChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=sigmean, sigwidth=sigwidth, sigamp=sigamp)
 
 
 
