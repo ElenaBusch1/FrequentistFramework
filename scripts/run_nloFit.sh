@@ -15,15 +15,16 @@
     rangehigh=2997
     constr=10
     outputfile=run/FitResult_nloFit_J100yStar06_templates2021_CT14nnlo_scaledOnly_constr${constr}_bkgonly.root
-    externalchi2file=Input/model/dijetTLAnlo/templates2021/LO_CT14nnlo_reducedNPs_scaledOnly_reweightedNLO/chi2/chi2_PD_lumi130_scaledOnly_constr${constr}_fit_scaledOnly_constr${constr}.root
+    externalchi2file=Input/model/dijetTLAnlo/templates2021/LO_CT14nnlo_reducedNPs_scaledOnly_reweightedNLO/chi2/chi2_PD_lumi130_scaledOnly_constr${constr}_fit_scaledOnly_constr${constr}_531_2997.root
     externalchi2fct=fit
+    externalchi2bins=55
     datafile=Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217_fixedBins.root
     datahist=data
     nbkg="2E8,0,3E8"
-    maskthreshold=1
-    dosignal=1
+    maskthreshold=0.01
     doinitialpars=1
-    dolimit=1
+    dosignal=0
+    dolimit=0
 
     flags=""
     if (( $doinitialpars )); then flags="$flags --doinitialpars"; fi
@@ -48,6 +49,7 @@
 	--constr $constr \
 	--externalchi2file $externalchi2file \
 	--externalchi2fct $externalchi2fct \
+	--externalchi2bins $externalchi2bins \
 	--maskthreshold $maskthreshold \
 	$flags
 }
