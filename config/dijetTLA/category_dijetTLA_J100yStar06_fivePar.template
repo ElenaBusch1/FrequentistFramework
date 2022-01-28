@@ -4,10 +4,6 @@
 
   <!-- <Sample Name="background" InputFile="config/dijetTLA/background_dijetTLA_J100yStar06_fourPar.xml" MultiplyLumi="0" ImportSyst=":self:"> -->
   <Sample Name="background" InputFile="config/dijetTLA/background_dijetTLA_J100yStar06_fivePar.xml" MultiplyLumi="0" ImportSyst=":self:">
-    <!-- 29/fb: -->
-    <!-- <NormFactor Name="nbkg[0.2E8,0,0.3E8]"/> -->
-    <!-- 130/fb: -->
-    <!-- <NormFactor Name="nbkg[9E8,0,15E8]"/>  -->
     <NormFactor Name="nbkg[NBKG]"/>
   </Sample>
 
