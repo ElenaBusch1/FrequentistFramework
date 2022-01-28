@@ -85,6 +85,7 @@ def main(args):
 
     ROOT.ATLASLabel(0.59, 0.90, "Work in progress", 13)
 
+    text=""
     if "four" in args.infiles[0]:
         text="4-par global fit"
     elif "five" in args.infiles[0]:
