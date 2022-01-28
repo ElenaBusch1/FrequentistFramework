@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import ROOT
-import sys, re, os, math, argparse
+import sys, re, os, math, optparse
 from array import array
 from ROOT import *
 from math import sqrt
@@ -30,28 +30,53 @@ colors = getColorSteps(len(sigmeans))
 
 def main(args):
     SetAtlasStyle()
- 
-    parser = argparse.ArgumentParser(description='%prog [options]')
-    parser.add_argument('--infile', dest='infile', type=str, default='/data/scratch/users/bartels/FarmOutput/TLA/quickFit_injections_globalFit_fivepar_lumi29_201202/quickFit_globalFit_J100_${MEAN}_${WIDTH}_${AMP}_sbFit/output.*/run/FitResult_*.root', help='Input FitResult paths')
-    parser.add_argument('--outfile', dest='outfile', type=str, default='extractionGraphs.root', help='Output file name')
+
+    parser = optparse.OptionParser(description='%prog [options] INPUT')
+    parser.add_option('--outfile', dest='outfile', type=str, default='extractionGraphs.root', help='Output file name')
     
-    args = parser.parse_args(args)
+    options, args = parser.parse_args(args)
 
-    path_fitresult = args.infile
-    path_injection = path_fitresult.replace("FitResult", "PD")
+    paths = args
+    sigmeans = set()
+    sigwidths = set()
+    sigamps = set()
+    dict_file = {}
 
-    fout = TFile(args.outfile, "RECREATE")
+    for p in paths:
+        res=re.search(r'mean(\d+)_width(\d+)(:?_amp\d+)?', p)
+        m=int(res.group(1))
+        w=int(res.group(2))
+        
+        sigmeans.add(m)
+        sigwidths.add(w)
+
+        try:
+            a=int(res.group(3)[4:])
+        except:
+            a=0
+        sigamps.add(a)
+            
+        if (m, w, a) in dict_file:
+            dict_file[(m, w, a)].append(p)
+        else:
+            dict_file[(m, w, a)]=[p]
+            
+    sigmeans = list(sigmeans)
+    sigwidths = list(sigwidths)
+    sigamps = list(sigamps)
+
+    sigmeans.sort()
+    sigwidths.sort()
+    sigamps.sort()
+
+    fout = TFile(options.outfile, "RECREATE")
 
     profile_list = []
     allPoints_list = []
 
     for j,sigmean in enumerate(sigmeans):
         
-        # c1 = TCanvas("c1","",800,600)
-        # leg = TLegend(0.3,0.64,0.9,0.84)
-
         for i,sigwidth in enumerate(sigwidths):
-
 
             g_allPoints = TGraph()
             g_profile   = TGraphErrors()
@@ -59,45 +84,45 @@ def main(args):
 
             for k,sigamp in enumerate(sigamps):
     
+                try:
+                    tmp_path_fitresult = dict_file[(sigmean, sigwidth, sigamp)]
+                except:
+                    print "WARNING: No fitresult file for", sigmean, sigwidth, sigamp
+                    continue
+
                 #find number of injected events:
-
                 if sigamp > 0:
-                    tmp_path_injection = path_injection
-                    tmp_path_injection = tmp_path_injection.replace("${MEAN}", str(sigmean))
-                    tmp_path_injection = tmp_path_injection.replace("${WIDTH}", str(sigwidth))
-                    tmp_path_injection = tmp_path_injection.replace("${AMP}", str(sigamp))
-                    # print tmp_path_injection 
-                    tmp_path_injection = glob(tmp_path_injection)
+                    tmp_path_injection = tmp_path_fitresult.replace("FitResult", "PD")
 
-                    if len(tmp_path_injection) == 0:
-                        continue
-
-                    f = TFile(tmp_path_injection[0])
-                    h = f.Get("pseudodata_0_injection")
-                    n_injected = h.Integral(0, h.GetNbinsX()+1)
-                    f.Close()
+                    try:
+                        f = TFile(tmp_path_injection[0])
+                        h = f.Get("pseudodata_0_injection")
+                        n_injected = h.Integral(0, h.GetNbinsX()+1)
+                        f.Close()
+                    except:
+                        print "WARNING: Could not find injection file for tmp_path_limits. Using n_injected=0 now."
+                        n_injected = 0
                 else:
                     n_injected = 0
                 
-   
-                tmp_path_fitresult = path_fitresult
-                tmp_path_fitresult = tmp_path_fitresult.replace("${MEAN}", str(sigmean))
-                tmp_path_fitresult = tmp_path_fitresult.replace("${WIDTH}", str(sigwidth))
-                tmp_path_fitresult = tmp_path_fitresult.replace("${AMP}", str(sigamp))
-                # print tmp_path_fitresult
-                tmp_path_fitresult = glob(tmp_path_fitresult)
-                if len(tmp_path_fitresult) == 0:
-                    continue
-
                 inj_extr = []
                 nans = 0
                 
+                parNames = {}
+                parLists = {}
+                
                 for path in tmp_path_fitresult:
-                    fpe = efp.FitParameterExtractor(path)
                     try:
-                        nsig = fpe.GetNsig()
+                        f = TFile(path)
+                        h = f.Get("postfit_params")
+                        for i in range(1, h.GetNbinsX()+1):
+                            p = h.GetBinContent(i)
+                            if not i in parNames:
+                                parNames[i] = h.GetXaxis().GetBinLabel(i)
+                                parLists[i] = []
+                            parLists[i].append(p)
                     except:
-                        print "Couldn't read nsig from", path
+                        print "Couldn't read fit parameters from", path
                         continue
                         
                     # print n_injected, nsig
@@ -106,9 +131,9 @@ def main(args):
                         nans += 1
                     
                 print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
-                if float(nans) / len(inj_extr) < 0.02:
-                    for t in inj_extr:
-                        g_allPoints.SetPoint(g_allPoints.GetN(), t[0], t[1])
+                # if float(nans) / len(inj_extr) < 0.02:
+                for t in inj_extr:
+                    g_allPoints.SetPoint(g_allPoints.GetN(), t[0], t[1])
    
                 arr = numpy.array([x[1] for x in inj_extr])
                 nFit = numpy.mean(arr)
@@ -184,7 +209,7 @@ def main(args):
 
     # raw_input("enter")
 
-    c.Print(args.outfile.replace(".root", ".png"))
+    c.Print(options.outfile.replace(".root", ".png"))
     
 if __name__ == "__main__":  
    sys.exit(main(sys.argv[1:]))   
