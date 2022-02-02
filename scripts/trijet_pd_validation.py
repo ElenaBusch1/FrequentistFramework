@@ -7,8 +7,8 @@ import python.fitQualityTests as fitQualityTests
 
 # May want to loop over these at some point?
 cdir = config.cdir
-#channelName="BkgLow_3_alpha0_SR1_tagged"
 channelName="BkgLow_2_alpha0_SR1_tagged"
+lumi =  config.samples[channelName]["lumi"]
 
 
 #rangeslow=[200, 250, 275, 300, 350, 400]
@@ -25,13 +25,13 @@ for rangelow in rangeslow:
     infiles = [config.getFileName("PostFit_PD_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"]
 
     outfileFits = config.getFileName("fits_PD", cdir + "/scripts/", channelName, rangelow, rangehigh)
-    plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_0")
+    plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_0")
 
     outfilePulls = config.getFileName("pulls_PD", cdir + "/scripts/", channelName, rangelow, rangehigh)
-    plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, atlasLabel=config.atlasLabel, suffix="_0")
+    plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, lumi=lumi, atlasLabel=config.atlasLabel, suffix="_0")
 
 
-    fitQualityTests.fitQualityTests("PostFit_PD_bkgonly", "PostFit_PD_bkgonly", "FitQuality", config.nToys, rangelow, rangehigh, 0, 0, 0, cdir + "/scripts/", channelName)
+    fitQualityTests.fitQualityTests("PostFit_PD_bkgonly", "PostFit_PD_bkgonly", "FitQuality", config.nToys, rangelow, rangehigh, 0, 0, 0, lumi=lumi, cdir + "/scripts/", channelName)
 
 
 

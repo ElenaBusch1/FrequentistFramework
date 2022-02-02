@@ -13,7 +13,7 @@ ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 
-def plotPulls(infiles, outfile, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
+def plotPulls(infiles, outfile, lumi, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
   for infileName in infiles:
     inFile = ROOT.TFile(infileName, "READ")
         

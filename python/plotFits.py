@@ -13,7 +13,7 @@ ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix=""):
+def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix=""):
     AS.SetAtlasStyle()
 
     c = df.setup_canvas()
@@ -93,7 +93,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simu
     # TODO fix these labels
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt)
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi)
 
     inFile.Close()
 

@@ -9,6 +9,8 @@ cdir = config.cdir
 #channelName="BkgLow_3_alpha0_SR1_tagged"
 channelName="BkgLow_2_alpha0_SR1_tagged"
 fitFunction = "fivePar"
+lumi =  config.samples[channelName]["lumi"]
+
 
 
 #rangeslow=[200, 250, 275, 300, 350, 400]
@@ -24,9 +26,9 @@ for rangelow in rangeslow:
     infiles = [config.getFileName("PostFit_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"]
 
     outfileFits = config.getFileName("fits", cdir + "/scripts/", channelName, rangelow, rangehigh)
-    plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, rebinedges=rebinedges, atlasLabel=config.atlasLabel)
+    plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel)
 
     outfilePulls = config.getFileName("pulls", cdir + "/scripts/", channelName, rangelow, rangehigh)
-    plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, atlasLabel=config.atlasLabel)
+    plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, lumi=lumi, atlasLabel=config.atlasLabel)
 
 

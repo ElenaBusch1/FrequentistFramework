@@ -194,14 +194,14 @@ def get_mass_plot_style(is_signal = 0):
                              )
 
 
-def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.95, dy = 0.04, text_size = 0.035, sampleName="", atlasLabel = "Simulation Internal", height = 1.0):
+def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.95, dy = 0.04, text_size = 0.035, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
     text_size = text_size / height
     dy = dy / height
     if sampleName != "":
           sampleName = ", " + sampleName
     AS.ATLASLabel(x_pos, y_pos, 1, x_pos, dy, atlasLabel)
     y_pos -= dy
-    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, 44.3 fb^{-1}  %s"%(sampleName))
+    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %.1f fb^{-1}  %s"%(lumi, sampleName))
     y_pos -= dy
 
     for label in labels:
@@ -250,7 +250,7 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
   for hist in hists:
     hist.GetYaxis().SetRangeUser(minimum, maximum)
 
-def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, isLogX=0):
+def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, isLogX=0, lumi=0):
   canvas.cd()
 
   if len(hists) ==0:
@@ -277,7 +277,7 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
   return legend
 
 
-def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True):
+def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0):
   canvas.cd()
   canvas.SetLogx(isLogX)
 

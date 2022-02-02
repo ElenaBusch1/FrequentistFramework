@@ -19,7 +19,7 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 
-def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, atlasLabel="Simulation Internal"):
+def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal"):
     # # colors = [kBlue, kRed+1, kOrange-3]
     # colors = [kMagenta+3, kRed+1, kOrange-3, kSpring+5, kTeal+5, kCyan-1, kAzure-6]
     colors = getColorSteps(len(sigmeans))
@@ -113,14 +113,9 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                 if sqrtB == None:
                     sqrtB = (n_injected / sigamp) if sigamp != 0 else 1
 
-                #print sqrtB, sigmean, sigwidth, sigamp, n_injected, sigamp, nFit, numpy.median(arr)
-                print sigmean, sigwidth, sigamp, n_injected, sigamp, nFit, numpy.mean(chi2s), numpy.mean(pvals)
-
-                #print (sigamp, nFit, sqrtB, nFit/sqrtB)
                 g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
                 g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
 
-                # print "Setting point at", sigamp, nFit / sqrtB
 
             fout.cd()
             g_allPoints.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
@@ -161,13 +156,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
     l.SetLineStyle(7)
     l.Draw()
 
-    lumi = 29
-    if "lumi" in infile:
-        try:
-            lumi=int(infile.split("lumi")[-1].split("_")[0])
-        except:
-            pass
-    text1 = "Pseudodata %d fb^{-1}" % lumi
+    text1 = "Pseudodata %d fb^{-1}" % (lumi/1000.)
 
     text2 = "global fit"
     if "four" in  infile:
@@ -181,9 +170,6 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
 
     myText(0.2, 0.82, 1, text)
     AS.ATLASLabel(0.15, 0.9, 1, 0.15, 0.05, atlasLabel)
-
-
-    # raw_input("enter")
 
     outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     c.Print(outfileName)

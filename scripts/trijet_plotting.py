@@ -26,7 +26,7 @@ sigamps=[5,4,3,2,1,0]
 rangelow=300
 rangehigh=900
 channelName="BkgLow_2_alpha0_SR1_tagged"
-lumis =  29300
+lumi =  config.samples[channelName]["lumi"]
 
 
 
@@ -59,7 +59,7 @@ for sigmean in sigmeans:
 infileExtraction="FitParameters_sigPlusBkg"
 infilePD='PD_bkgonly'
 outfileExtraction = "PD_extraction"
-#createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/")
+#createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
 
 
 infileExtraction="FitParameters_spuriousSignal"
@@ -70,7 +70,7 @@ outfileSpurious = "PD_spurious_bkgonly"
 
 # Limits
 pathsLimits = [ "Limits_limits"]
-#plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumis, outdir=channelName, cdir=cdir+"/scripts/",channelName=channelName,rangelow=rangelow, rangehigh=rangehigh)
+#plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=channelName, cdir=cdir+"/scripts/",channelName=channelName,rangelow=rangelow, rangehigh=rangehigh)
 
 sigamps=[5, 2, 1, 0]
 #sigamps=[5]
