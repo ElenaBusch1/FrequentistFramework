@@ -5,7 +5,7 @@ import os
 
 #. scripts/setup_buildAndFit.sh
 dosignal=1
-dolimit=0
+dolimit=1
 
 #fitFunction = config.fitFunctions["fourPar"]["Config"]
 fitFunction = config.fitFunctions["fivePar"]["Config"]
@@ -16,11 +16,13 @@ if not os.path.exists(outputdir):
       os.makedirs(outputdir)
 
 #sigmeans = [350, 450, 550, 650, 750, 850]
+#sigmeans = [450, 550, 650, 750, 850]
 sigmeans = [450, 550, 650, 750, 850]
-#sigmeans = [450, 550]
-#sigmeans = [650, 750, 850]
+#sigmeans = [0]
+#sigmeans = [850]
 #sigamps = [0, 1, 5]
-sigamps = [0]
+#sigamps = [1, 2, 5]
+sigamps = [0, 1, 2, 5]
 sigwidth=7
 
 rangelow=300
@@ -43,9 +45,9 @@ for sigmean in sigmeans:
     dataFile=config.samples[channelName]["inputFile"]
 
     # Output file names, which will be written to outputdir
-    wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-    outputfile = config.getFileName("FitResult_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-    outputstring = "FitResult_sigPlusBkg_%d"%(sigamp)
+    wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+    outputfile = config.getFileName("FitResult_limits", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+    outputstring = "FitResult_limits_%d"%(sigamp)
     #binedges = config.getBinning(rangelow, rangehigh, delta=25)
     binedges = None
 
@@ -72,6 +74,7 @@ for sigmean in sigmeans:
            dolimit = dolimit,
            loopstart=0,
            loopend=config.nToys,
+           #loopend=5,
            rebinedges=binedges,
            rebinfile=None,
            rebinhist=None,

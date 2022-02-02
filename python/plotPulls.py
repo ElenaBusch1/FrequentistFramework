@@ -13,13 +13,13 @@ ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 
-def plotPulls(infiles, outfile, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal"):
+def plotPulls(infiles, outfile, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
   for infileName in infiles:
     inFile = ROOT.TFile(infileName, "READ")
         
-    residualHist = inFile.Get(residualhist)
-    dataHist = inFile.Get(datahist)
-    fitHist = inFile.Get("postfit")
+    residualHist = inFile.Get(residualhist+suffix)
+    dataHist = inFile.Get(datahist+suffix)
+    fitHist = inFile.Get("postfit"+suffix)
 
     h_pulls = ROOT.TH1F("h_pulls", ";Pull;", 100, -5, 5)
     for i in range(residualHist.GetNbinsX()):

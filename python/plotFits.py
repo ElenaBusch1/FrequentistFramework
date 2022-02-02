@@ -13,7 +13,7 @@ ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit"):
+def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix=""):
     AS.SetAtlasStyle()
 
     c = df.setup_canvas()
@@ -29,11 +29,13 @@ def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simu
 
     for index, infileName in zip(range(len(infiles)), infiles):
       inFile = ROOT.TFile(infileName, "READ")
+      if not inFile:
+        print "Did not find file ", inFile
 
-      dataHist = inFile.Get(datahistName)
-      fitHist = inFile.Get(fithistName)
-      residualHist = inFile.Get(residualhistName)
-      chi2Hist = inFile.Get("chi2")
+      dataHist = inFile.Get(datahistName + suffix)
+      fitHist = inFile.Get(fithistName + suffix)
+      residualHist = inFile.Get(residualhistName + suffix)
+      chi2Hist = inFile.Get("chi2"+suffix)
       chi2 = chi2Hist.GetBinContent(2)
       pval = chi2Hist.GetBinContent(6)
 
@@ -41,14 +43,15 @@ def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simu
       fitHist.SetDirectory(0)
       residualHist.SetDirectory(0)
 
-      dataHist.SetName("%s_%s"%(dataHist.GetName(), infileName))
-      fitHist.SetName("%s_%s"%(fitHist.GetName(), infileName))
-      residualHist.SetName("%s_%s"%(residualHist.GetName(), infileName))
+      dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
+      fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
+      residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
 
 
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       residualHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
+      residualHist.SetFillColor(ROOT.kRed)
 
     
       if rebinedges:
@@ -66,13 +69,15 @@ def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simu
       legNames.append("fit")
 
 
-      label = "#chi^2 / ndof = %.2f, p-value = %.1f %%"%(chi2, pval)
+      label = "#chi^{2} / ndof = %.2f, p-value = %.2f %%"%(chi2, pval)
       labels.append(label)
 
 
+
     # TODO fix these labels
+    df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = "HIST", outName=outname, isLogX = False)
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt)
 
     inFile.Close()
 

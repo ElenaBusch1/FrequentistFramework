@@ -84,6 +84,25 @@ def get_finalist_style_opt(count=0):
                              )
         return finalist_style_options
 
+def get_fit_style_opt(count=0):
+        markers = [34,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
+        #colors = ['#000000','#3c3c3c','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        colors = ['#000000','#FF0000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        #colors = ['#000000','#D74061']
+        #colors = ['#000000','#5656d7','#D74061','#36bdbd']
+        lineStyles = [1, 1, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4]
+        count = int(math.fmod(count, len(colors)))
+
+        finalist_style_options= StyleOptions(
+                             line_color   = colors[count],
+                             line_style   = lineStyles[count],
+                             marker_color = colors[count],
+                             marker_size = 1,
+                             marker_style = markers[count],
+                             )
+        return finalist_style_options
+
+
 def get_rainbow_style_opt(count):
     colors = ["#3c3c3c", "#8A293E", "#D74061", "#BD4D37", "#D69340", "#BDA637",
               "#3A4213", "#B6D640", "#36BDBD", "#5656D7", "#2D2D70", "#49288A"]
@@ -229,21 +248,21 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
   for hist in hists:
     hist.GetYaxis().SetRangeUser(minimum, maximum)
 
-def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = "HIST", styleOptions=get_finalist_style_opt, isLogX=0):
-  #AS.SetAtlasStyle()
+def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, isLogX=0):
   canvas.cd()
   canvas.SetLogx(isLogX)
+
   if len(hists) ==0:
     return
   legend = r.TLegend(0.65,0.9-(len(hists))*0.05,.94,0.90)
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions)
-  hists[0].Draw("AXIS")
   if(isLogX):
     hists[0].GetXaxis().SetMoreLogLabels()
+  hists[0].Draw("AXIS")
 
   for hist in range(len(hists)):
-    hists[hist].Draw("%s"%drawOptions+"SAME")
+    hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
     legend.AddEntry(hists[hist], legendNames[hist] , "lp")
 
   legend.Draw()
@@ -252,7 +271,7 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
   return legend
 
 
-def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = "HIST", styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True):
+def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True):
   canvas.cd()
   canvas.SetLogx(isLogX)
 
@@ -287,16 +306,11 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions, 0.95-0.35)
   SetStyleOptions(Ratios, styleOptions, 0.95-0.35)
-  rDrawOptions = drawOptions
 
-  for hist in range(len(hists)-1):
-    hists[hist].Draw("%s"%rDrawOptions)
+  for hist in range(len(hists)):
+    hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
     legend.AddEntry(hists[hist], legendNames[hist] , "l")
-    rDrawOptions = drawOptions + "SAME"
-  hists[0].Draw("%s"%rDrawOptions)
-  hists[ len(hists)-1 ].SetLineWidth(6)
-  hists[ len(hists)-1 ].Draw("l SAME")
-  legend.AddEntry(hists[len(hists)-1], legendNames[len(hists)-1] , "l")
+  hists[0].Draw("%s SAME"%(drawOptions[0]))
 
   legend.Draw()
 
@@ -304,13 +318,12 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85)
   lowerPad.cd()
 
-  rDrawOptions = drawOptions
-  #Ratios[1].Draw("%s"%(drawOptions))
-  Ratios[0].Draw("%s"%(drawOptions))
-  rDrawOptions = drawOptions + "SAME"
+  rDrawOptions = "B"
+  Ratios[0].Draw("%s"%(rDrawOptions))
   #for hist in range(len(Ratios)):
   for ratio in Ratios:
-    ratio.Draw("%s"%rDrawOptions)
+    ratio.SetFillStyle(1000)
+    ratio.Draw("%s SAME"%rDrawOptions)
 
   SaveCanvas(canvas, outName)
 

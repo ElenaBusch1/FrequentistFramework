@@ -15,7 +15,7 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
         
         if not histname in histNameFile:
             continue
-        print histNameFile, histname
+
         #if firsttoy != None and lasttoy != None and re.search(r'.*_(\d+)', histNameFile):
         #    #reduce size by omitting all other toys
         #    toy = int(re.search(r'.*_(\d+)', histNameFile).group(1))
@@ -54,9 +54,6 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
                 hgaus.FillRandom('mygaus', nSig) 
                 hinj.Add(hgaus)
 
-        # TODO This thing shouldn't be included for the PD histograms, since it's already there
-        # This is just a stopgap to do some studies
-        #hinj.Write(histname + "_0")
         hinj.Write(histNameFile )
         hist.Write(histNameFile+"_beforeInjection")
         hgaus.Write(histNameFile+"_injection")

@@ -223,29 +223,32 @@ class PostfitExtractor:
         fd.Close()
         f.Close()
 
-    def WriteRoot(self, outfile, dirPerCategory=False):
+    def WriteRoot(self, outfile, dirPerCategory=False, suffix = "", doRecreate=True):
         if not self.h_data:
             self.Extract()
 
-        fout = ROOT.TFile(outfile, "RECREATE")
+        if doRecreate:
+          fout = ROOT.TFile(outfile, "RECREATE")
+        else:
+          fout = ROOT.TFile(outfile, "UPDATE")
 
         if dirPerCategory:
             for channelname in self.channel_chi2:
                 d = fout.mkdir(channelname)
                 d.cd()
 
-                self.h_data.Write("data")
-                self.channel_hpostfit[channelname].Write("postfit")
-                self.channel_hresiduals[channelname].Write("residuals")
-                # self.channel_hresiduals[channelname].Write("postFitSigma")
-                self.channel_hchi2[channelname].Write("chi2")
+                self.h_data.Write("data%s"%(suffix))
+                self.channel_hpostfit[channelname].Write("postfit%s"%(suffix))
+                self.channel_hresiduals[channelname].Write("residuals%s"%(suffix))
+                # self.channel_hresiduals[channelname].Write("postFitSigma%s"%(suffix))
+                self.channel_hchi2[channelname].Write("chi2%s"%(suffix))
         else:
             # just take first (and hopefully only) channel
-            self.h_data.Write("data")
-            next(iter(self.channel_hpostfit.values())).Write("postfit")
-            next(iter(self.channel_hresiduals.values())).Write("residuals")
-            # next(iter(self.channel_hresiduals.values())).Write("postFitSigma")
-            next(iter(self.channel_hchi2.values())).Write("chi2")
+            self.h_data.Write("data%s"%(suffix))
+            next(iter(self.channel_hpostfit.values())).Write("postfit%s"%(suffix))
+            next(iter(self.channel_hresiduals.values())).Write("residuals%s"%(suffix))
+            # next(iter(self.channel_hresiduals.values())).Write("postFitSigma%s"%(suffix))
+            next(iter(self.channel_hchi2.values())).Write("chi2%s"%(suffix))
 
         fout.Close()
 

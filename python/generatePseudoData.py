@@ -35,10 +35,10 @@ def generatePseudoData(infile, inhist, outfile, outhist, nreplicas, scaling):
     f_out.cd()
 
     for i in range(0, nreplicas):
-        if (i%(nreplicas/20) == 0):
+        if nreplicas > 20 and (i%(nreplicas/20) == 0):
             print i,"/",nreplicas
 
-        gRand.SetSeed(i)
+        gRand.SetSeed(i*h_in.GetNbinsX())
         h_out = fluctuatePoisson(h_in)
         h_out.Write("%s_%d" % (outhist, i))
 

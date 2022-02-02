@@ -13,10 +13,33 @@ class FitParameterExtractor:
         self.h2_cor = None
         self.nsig = None
         self.nsigErr = None
+        self.suffix = ""
+
+    def ExtractFromFile(self, suffix):
+        f_in = ROOT.TFile(self.wsfile, "READ")
+
+        self.h1_params = f_in.Get("postfit_params%s"%(suffix))
+        self.h2_cov    = f_in.Get("h2_cov%s"%(suffix))
+        self.h2_cor    = f_in.Get("h2_cor%s"%(suffix))
+
+        self.h1_params.SetDirectory(0)
+        self.h2_cov.SetDirectory(0)
+        self.h2_cor.SetDirectory(0)
+
+
+        for i in range(self.h1_params.GetNbinsX()):
+            name = self.h1_params.GetXaxis().GetBinLabel(i)
+
+            if "nsig" in name:
+                self.nsig = self.h1_params.GetBinContent(i)
+                self.nsigErr = self.h1_params.GetBinError(i)
+
+        f_in.Close()
+
 
     def Extract(self):
         f_in = ROOT.TFile(self.wsfile, "READ")
-        r = f_in.Get("fitResult")
+        r = f_in.Get("fitResult%s"%(self.suffix))
 
         # r.Print()
 
@@ -82,15 +105,18 @@ class FitParameterExtractor:
             self.Extract()
         return self.nsigErr
 
-    def WriteRoot(self, outfile):
+    def WriteRoot(self, outfile, doRecreate=True, suffix=""):
         if not self.h1_params:
             self.Extract()
 
-        f_out = ROOT.TFile(outfile, "RECREATE")
+        if doRecreate:
+          f_out = ROOT.TFile(outfile, "RECREATE")
+        else:
+          f_out = ROOT.TFile(outfile, "UPDATE")
 
-        self.h1_params.Write()
-        self.h2_cov.Write()
-        self.h2_cor.Write()
+        self.h1_params.Write("%s%s"%(self.h1_params.GetName(), suffix))
+        self.h2_cov.Write("%s%s"%(self.h2_cov.GetName(), suffix))
+        self.h2_cor.Write("%s%s"%(self.h2_cor.GetName(), suffix))
 
         f_out.Close()
 
