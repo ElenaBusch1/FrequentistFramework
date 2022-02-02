@@ -60,6 +60,22 @@ def plotFits(infiles, outfile, minMjj, maxMjj, rebinedges=None, atlasLabel="Simu
         fitHist = fitHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
         residualHist = residualHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
 
+        for ibin in range(1, dataHist.GetNbinsX()+1):
+            valueErrorData = dataHist.GetBinError(ibin)
+            valueData = dataHist.GetBinContent(ibin)
+            postFitValue = fitHist.GetBinContent(ibin)
+
+            binSig = 0.
+            if valueErrorData > 0. and postFitValue > 0.:
+                binSig = (valueData - postFitValue)/valueErrorData
+
+                residualHist.SetBinContent(ibin, binSig)
+                residualHist.SetBinError(ibin, 0)
+
+
+
+
+
       dataHists.append(dataHist)
       fitHists.append(fitHist)
       residualHists.append(residualHist)

@@ -16,17 +16,19 @@ ROOT.gROOT.SetStyle("ATLAS")
 
 def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, channelName, cdir):
 
-  infile = ROOT.TFile(inpath)
+  infile = ROOT.TFile(config.getFileName(inpath, cdir, channelName, rangelow, rangehigh) +".root")
 
   graphs_lim = {}
   for k in infile.GetListOfKeys():
     name = k.GetName()
     g = infile.Get(name)
+    if name.find("g1_limit")< 0:
+       continue
+    print name
     if not isinstance(g, ROOT.TGraph):
         continue
 
     graphs_lim[g.GetTitle()] = g
-    #print "adding", g.GetTitle()
 
   ################################################
 
@@ -39,17 +41,19 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
   bin_edges = []
 
   masses = natural_sort(graphs_lim.keys())
+  existMasses = []
 
   for mass in masses:
     graph = graphs_lim[mass]
+    #print graph.GetName(), graph.GetTitle()
+    # Number of toys where # of extracted signal is above # of injected signal
     above = {}
+    # Number of toys
     total = {}
+    
     ninj_list = []
     graphs_frac_above[mass] = ROOT.TGraphErrors();
     graphs_frac_below[mass] = ROOT.TGraphErrors();
-
-    y_min = -1
-    y_max = 0
 
     for n in range(graph.GetN()):
         ninj = graph.GetX()[n]
@@ -58,28 +62,25 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
             ulim = 0.
 
         if ninj not in ninj_list: ninj_list.append(ninj)
-
         if ninj not in above: above[ninj] = 0
         if ninj not in total: total[ninj] = 0
         total[ninj] += 1
         if ulim > ninj:
             above[ninj] += 1
-        if ulim > y_max:
-            y_max = ulim
-        if ulim < y_max:
-            y_min = ulim
 
     ninj_list.sort()
     for n in ninj_list:
-        value = above[n]*1./total[n]
-        error = math.sqrt( (above[n]+1.)*(above[n]+2.)/(total[n]+2.)/(total[n]+3.) - (above[n]+1.)**2/(total[n]+2.)**2 )
-        graphs_frac_above[mass].SetPoint(graphs_frac_above[mass].GetN(), n, value )
-        graphs_frac_above[mass].SetPointError(graphs_frac_above[mass].GetN()-1, 0, error)
+        #print mass, n, above[n], total[n]
+        valueAbove = above[n]*1./total[n]
+        errorAbove = math.sqrt( (above[n]+1.)*(above[n]+2.)/(total[n]+2.)/(total[n]+3.) - (above[n]+1.)**2/(total[n]+2.)**2 )
+        graphs_frac_above[mass].SetPoint(graphs_frac_above[mass].GetN(), n, valueAbove )
+        graphs_frac_above[mass].SetPointError(graphs_frac_above[mass].GetN()-1, 0, errorAbove)
         below = total[n] - above[n]
-        value = below*1./total[n]
-        error = math.sqrt( (below+1.)*(below+2.)/(total[n]+2.)/(total[n]+3.) - (below+1.)**2/(total[n]+2.)**2 )
-        graphs_frac_below[mass].SetPoint(graphs_frac_below[mass].GetN(), n, value )
-        graphs_frac_below[mass].SetPointError(graphs_frac_below[mass].GetN()-1, 0, error)
+        valueBelow = below*1./total[n]
+        errorBelow = math.sqrt( (below+1.)*(below+2.)/(total[n]+2.)/(total[n]+3.) - (below+1.)**2/(total[n]+2.)**2 )
+        graphs_frac_below[mass].SetPoint(graphs_frac_below[mass].GetN(), n, valueBelow )
+        graphs_frac_below[mass].SetPointError(graphs_frac_below[mass].GetN()-1, 0, errorBelow)
+        #print mass, n, total[n], above[n], valueAbove, errorAbove, valueBelow, errorBelow
         
         if n > x_max:
             x_max = 1.1*n
@@ -87,7 +88,10 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
             x_min = 1.1*n
 
     # for candle plot:
-    bin_width = ninj_list[-1] / 15. if ninj_list[-1] > 0. else 1
+    try:
+      bin_width = ninj_list[-1] / 15. if ninj_list[-1] > 0. else 1
+    except:
+      continue
 
     if bin_edges == []:
         #only set it once so all histograms have same binning. Necessary for the THStack later
@@ -99,6 +103,7 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
         bin_edges = array('d', bin_edges)
 
 
+    existMasses.append(mass)
     h2_all_points[mass] = ROOT.TH2D("h2_"+str(mass), "", len(bin_edges)-1, bin_edges, 1000, 0, 5*bin_edges[-1]);
 
     for n in range(graph.GetN()):
@@ -138,15 +143,15 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
   colors = getColorSteps(len(masses))
   i = 0
   axisExists = 0
-  for mass in masses:
+  for mass in existMasses:
     #print i, mass
-    # graph = graphs_frac_above[mass]
-    # graph.SetMarkerStyle(ROOT.kOpenCircle)
-    # graph.SetMarkerSize(1)
-    # graph.SetMarkerColor(colors[i])
-    # graph.SetLineColor(colors[i])
-    # graph.SetLineWidth(2)
-    # graph.SetLineStyle(ROOT.kDotted)
+    graph = graphs_frac_above[mass]
+    graph.SetMarkerStyle(ROOT.kOpenCircle)
+    graph.SetMarkerSize(1)
+    graph.SetMarkerColor(colors[i])
+    graph.SetLineColor(colors[i])
+    graph.SetLineWidth(2)
+    graph.SetLineStyle(ROOT.kDotted)
 
     graph_below = graphs_frac_below[mass]
     graph_below.SetMarkerStyle(ROOT.kFullCircle)
@@ -181,22 +186,21 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
 
   legend.Draw()
   canvas.Update()
-  outfileName = config.getFileName(os.path.basename(inpath), cdir, channelName, rangelow, rangehigh) + ".pdf"
 
   canvas2 = ROOT.TCanvas()
 
-  hs = ROOT.THStack("hs","")
-  for i,mass in enumerate(masses):
-
+  hstack = ROOT.THStack("hstack","")
+  for i,mass in enumerate(existMasses):
     h2_all_points[mass].SetLineColor(colors[i])
     h2_all_points[mass].SetMarkerColor(colors[i])
 
-    hs.Add(h2_all_points[mass], "CANDLEX(00112011)") #(zhpawMmb)
+    hstack.Add(h2_all_points[mass], "CANDLEX(00112011)") #(zhpawMmb)
 
-  hs.Draw("CANDLEX(00112011)")
-  hs.GetYaxis().SetLimits(0.,10.)
-  hs.GetXaxis().SetTitle("N_{inj} / #sqrt{N_{bkg}}")
-  hs.GetYaxis().SetTitle("95% limit / #sqrt{N_{bkg}}")
+  #hstack.Draw("CANDLEX(00112011)")
+  hstack.Draw("CANDLEX")
+  hstack.GetYaxis().SetLimits(0.,10.)
+  hstack.GetXaxis().SetTitle("N_{inj} / #sqrt{N_{bkg}}")
+  hstack.GetYaxis().SetTitle("95% limit / #sqrt{N_{bkg}}")
    
   line = ROOT.TLine(0, 0, bin_edges[-1], bin_edges[-1])
   line.SetLineWidth(2)
@@ -213,8 +217,9 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
 
 
   #canvas_name = os.path.basename(inpath).replace(".root", "_candleplot.png")
-  canvas_name = config.getFileName(os.path.basename(inpath).replace(".root", "_candleplot"), cdir, channelName, rangelow, rangehigh) + ".pdf"
-  canvas2.Print(canvas_name)
+  #canvas_name = config.getFileName(os.path.basename(inpath).replace(".root", "_candleplot"), cdir, channelName, rangelow, rangehigh) + ".pdf"
+  outfile = config.getFileName(inpath + "_candleplot", cdir, channelName, rangelow, rangehigh) +".pdf"
+  canvas2.Print(outfile)
     
 
 

@@ -17,12 +17,13 @@ if not os.path.exists(outputdir):
 
 #sigmeans = [350, 450, 550, 650, 750, 850]
 #sigmeans = [450, 550, 650, 750, 850]
-sigmeans = [450, 550, 650, 750, 850]
+#sigmeans = [450, 550, 650, 750, 850]
+sigmeans = [750]
 #sigmeans = [0]
 #sigmeans = [850]
 #sigamps = [0, 1, 5]
 #sigamps = [1, 2, 5]
-sigamps = [0, 1, 2, 5]
+sigamps = [5]
 sigwidth=7
 
 rangelow=300

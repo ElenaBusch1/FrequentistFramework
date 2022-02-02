@@ -19,11 +19,12 @@ lumi = 130000
 def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, cdir, channelName, rangelow, rangehigh):
     sigmeans.sort()
     sigwidths.sort()
-    sigamps.sort()
+    # If we sort, then this causes issues for sigamp == 0 in determining sqrtB
+    #sigamps.sort()
 
     colors = [kBlue, kRed+1, kOrange-3]
 
-    fout = TFile(outfile+".root", "RECREATE")
+    fout = TFile(config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) +".root", "RECREATE")
 
     for i,sigwidth in enumerate(sigwidths):
 
@@ -38,28 +39,24 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
             sqrtB = None
 
             for k,sigamp in enumerate(sigamps):
-
                 #find number of injected events:
-
                 try:
-                    print cdir, channelName
-                    print rangelow, rangehigh
-                    print sigmean, sigwidth, sigamp
-                    print paths
-                    tmp_path_limits = config.getFileName(paths, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_0.txt"
-                    print tmp_path_limits
+                    tmp_path_limits = config.getFileName(paths, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_*.txt"
                 except:
                     print "WARNING: No limit file for", sigmean, sigwidth, sigamp
                     continue
 
                 if sigamp > 0:
-                    #tmp_path_injection = tmp_path_limits.replace("Limits", "PD").replace(".txt", ".root")
                     tmp_path_injection = config.getFileName(inputPD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-                    #tmp_path_injection = tmp_path_limits.replace("Limits", "PD").replace(".txt", ".root")
-                    print tmp_path_injection, tmp_path_limits
+                    try:
+                      tmp_path_injections = glob(tmp_path_injection)
+                      cfile = tmp_path_injections[0]
+                    except:
+                      continue
 
                     try:
-                        f = TFile(tmp_path_injection)
+                        #f = TFile(tmp_path_injection)
+                        f = TFile(cfile)
                         h = f.Get("pseudodata_0_injection")
                         n_injected = h.Integral(0, h.GetNbinsX()+1)
                         f.Close()
@@ -71,14 +68,15 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
 
                 if sqrtB == None:
                     sqrtB = (n_injected / sigamp) if sigamp != 0 else 1
-                    # print "setting sqrtB to", sqrtB
+                    #print "setting sqrtB to", sqrtB
 
                 inj_limit = []
                 nans = 0
 
-                path_limits = [tmp_path_limits]
+                path_limits = glob(tmp_path_limits)
                 for path in path_limits:
-                    with open(path) as f:
+                    try:
+                      with open(path) as f:
                         limits = f.readline().split()
                         limit = float(limits[0])
                         limit_exp = float(limits[1])
@@ -86,8 +84,10 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
                         limit_exp1u = float(limits[3])
                         limit_exp1d = float(limits[4])
                         limit_exp2d = float(limits[5])
+                    except:
+                       continue
 
-                    # print n_injected, limit
+                    print n_injected, limit, n_injected/sqrtB, limit/sqrtB
                     inj_limit.append((n_injected, limit, limit_exp, limit_exp2u, limit_exp1u, limit_exp1d, limit_exp2d))
                     if math.isnan(limit):
                         nans += 1

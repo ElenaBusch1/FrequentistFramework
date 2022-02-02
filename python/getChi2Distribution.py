@@ -13,16 +13,17 @@ def ChiSquareDistr(x, par):
     return ROOT.Math.chisquared_pdf(x[0], par[0])
 
 
-def getChi2Distribution(infiles, inhist, outfile, outhist, cdir, channelName, rangelow, rangehigh, nToys, sigmean, sigwidth, sigamp=0, nofit=0, chi2bin=1, pvalbin=0):
+def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, rangehigh, nToys, sigmean, sigwidth, sigamp=0, nofit=0, chi2bin=1, pvalbin=0):
     chi2 = []
     pval = []
     bins = None
 
+    path = config.getFileName(infiles, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
     for toy in range(nToys):
-        path = config.getFileName(infiles, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_%d.root"%toy
 
         f_in = ROOT.TFile(path, "READ")
-        h_in = f_in.Get(inhist)
+
+        h_in = f_in.Get(inhist+ "_%d"%(toy))
 
         if not bins:
             bins = h_in.GetBinContent(3)
@@ -35,7 +36,8 @@ def getChi2Distribution(infiles, inhist, outfile, outhist, cdir, channelName, ra
 
     mean = sum(chi2) / len(chi2)
 
-    f_out = ROOT.TFile(outfile, "RECREATE")
+    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+    f_out = ROOT.TFile(outfileName, "RECREATE")
     f_out.cd()
 
     h_out = ROOT.TH1D("chi2", "chi2;#chi^{2};# toys, normalised", 250, 0, 3*mean)
@@ -72,24 +74,8 @@ def getChi2Distribution(infiles, inhist, outfile, outhist, cdir, channelName, ra
 
         f1.Write("fit")
 
-    print "hist integral:", h_out.Integral("width")
-    if not nofit:
-        print "fct  integral:", f1.Integral(0,2000)
-
     ROOT.ATLASLabel(0.59, 0.90, "Internal", 13)
 
-    #if "four" in infiles[0]:
-    #    text="4-par global fit"
-    #elif "five" in infiles[0]:
-    #    text="5-par global fit"
-    #elif "nlo" in  infiles[0]:
-    #    text="NLOFit"
-    #    if "constr" in infiles[0]:
-    #        s=re.findall(r'constr\d+', infiles[0])[0]
-    #        s=int(s[6:])
-    #        text="NLOFit, %d#sigma constraints" % s
-
-    #ROOT.myText(0.92, 0.84, 1, text, 33)
 
     l=ROOT.TLegend(0.65,0.66, 0.92, 0.78)
     l.AddEntry(h_out, "%d toys" % len(chi2), "l")
@@ -104,7 +90,8 @@ def getChi2Distribution(infiles, inhist, outfile, outhist, cdir, channelName, ra
 
     c.Update()
 
-    c.Print(outfile + ".pdf")
+    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) 
+    c.Print(outfileName + ".pdf")
 
     f_out.Close()
 

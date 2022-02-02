@@ -81,6 +81,8 @@ def get_finalist_style_opt(count=0):
                              line_style   = lineStyles[count],
                              marker_color = colors[count],
                              marker_style = markers[count],
+                             marker_size = 1,
+                             line_width = 4,
                              )
         return finalist_style_options
 
@@ -233,8 +235,8 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
       maximum = maximum * 10
     minimum = minimum / 1.5
   else:
-
-    maximum = maximum + delta*1.
+    #maximum = maximum + delta*1.
+    maximum = maximum + delta*0.25
     minimum = minimum - delta*0.2
     if minimum < minMin:
       minimum = minMin
@@ -250,15 +252,17 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
 
 def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, isLogX=0):
   canvas.cd()
-  canvas.SetLogx(isLogX)
 
   if len(hists) ==0:
     return
   legend = r.TLegend(0.65,0.9-(len(hists))*0.05,.94,0.90)
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions)
+
+  canvas.SetLogx(isLogX)
   if(isLogX):
     hists[0].GetXaxis().SetMoreLogLabels()
+
   hists[0].Draw("AXIS")
 
   for hist in range(len(hists)):
@@ -266,8 +270,10 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
     legend.AddEntry(hists[hist], legendNames[hist] , "lp")
 
   legend.Draw()
+
   draw_atlas_details(labels=labels, sampleName=sampleName)
-  hists[0].Draw("AXIS SAME")
+
+  #hists[0].Draw("AXIS SAME")
   return legend
 
 

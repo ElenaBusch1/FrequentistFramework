@@ -150,7 +150,8 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
     mg.GetXaxis().SetLimits(-0.5, max(sigamps)+0.5)
     # mg.GetYaxis().SetLimits(-0.5, 15)
     mg.SetMinimum(-0.5)
-    mg.SetMaximum(max(sigamps)+8)
+    #mg.SetMaximum(max(sigamps)+8)
+    mg.SetMaximum(max(sigamps)+4)
     c.Update()
 
     c.BuildLegend(0.2,0.54,0.5,0.78)

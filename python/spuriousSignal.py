@@ -23,7 +23,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
     for j,sigmean in enumerate(sigmeans):
         for i,sigwidth in enumerate(sigwidths):
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 300, -60000, 60000)
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 80, -20000, 20000)
             h_allPoints.SetDirectory(0)
 
             tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
@@ -60,22 +60,21 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     graphs = []
     legendNames = []
     for sigwidth in sigwidths:
-       g_avg = TGraph()
+       g_avg = TGraphErrors()
        g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
        g_avg.GetXaxis().SetTitle("m_{jj}")
        g_avg.GetYaxis().SetTitle("<N_{sig}>")
        for sigmean, i in zip(sigmeansExists, range(len(sigmeansExists))):
-         g_avg.SetPoint(g_avg.GetN(), sigmean, h_allPoints_list[i].GetMean())
-         g_avg.SetLineWidth(2)
-         #g_avg.SetLineColor(colors[i])
-         #g_avg.SetMarkerColor(colors[i])
+         n = g_avg.GetN()
+         g_avg.SetPoint(n, sigmean, h_allPoints_list[i].GetMean())
+         g_avg.SetPointError(n, 0.001, h_allPoints_list[i].GetStdDev())
        graphs.append(g_avg)
        legendNames.append("#sigma / m = %.2d"%sigwidth)
 
          
 
     outfileName = config.getFileName(outfile + "Test", cdir, channelName, rangelow, rangehigh) + ".pdf"
-    leg = df.DrawHists(c, graphs, legendNames, [], sampleName = "", drawOptions = ["APL", "P"], styleOptions=df.get_finalist_style_opt, isLogX=0)
+    leg = df.DrawHists(c, graphs, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_finalist_style_opt, isLogX=0)
     c.Print(outfileName)
 
 
@@ -84,6 +83,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
       legendNames.append("m_{Z'} = %d"%mean)
  
     outfileName = config.getFileName("SpuriousSignal", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    df.SetRange(h_allPoints_list, myMin=0)
     df.SetStyleOptions(h_allPoints_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_allPoints_list, legendNames, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_finalist_style_opt, isLogX=0)
     c.Print(outfileName)
