@@ -93,7 +93,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel
     # TODO fix these labels
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi)
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
 
     inFile.Close()
 

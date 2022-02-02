@@ -250,7 +250,7 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
   for hist in hists:
     hist.GetYaxis().SetRangeUser(minimum, maximum)
 
-def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, isLogX=0, lumi=0):
+def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, isLogX=0, lumi=0, atlasLabel="Simulation Internal"):
   canvas.cd()
 
   if len(hists) ==0:
@@ -271,13 +271,13 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
 
   legend.Draw()
 
-  draw_atlas_details(labels=labels, sampleName=sampleName)
+  draw_atlas_details(labels=labels, sampleName=sampleName, atlasLabel=atlasLabel)
 
   #hists[0].Draw("AXIS SAME")
   return legend
 
 
-def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0):
+def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal"):
   canvas.cd()
   canvas.SetLogx(isLogX)
 
@@ -321,7 +321,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   legend.Draw()
 
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85)
+  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel)
   lowerPad.cd()
 
   rDrawOptions = "B"

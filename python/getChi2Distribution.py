@@ -2,6 +2,7 @@
 import ROOT
 import sys, re, os, math, argparse
 import config as config
+import python.DrawingFunctions as df
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -13,7 +14,7 @@ def ChiSquareDistr(x, par):
     return ROOT.Math.chisquared_pdf(x[0], par[0])
 
 
-def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, rangehigh, nToys, sigmean, sigwidth, sigamp=0, nofit=0, chi2bin=1, pvalbin=0):
+def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, rangehigh, nToys, sigmean, sigwidth, sigamp=0, nofit=0, chi2bin=1, pvalbin=0, lumi=0, atlasLabel="Simulation Internal"):
     chi2 = []
     pval = []
     bins = None
@@ -56,10 +57,12 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
         h_pval_out.Scale(1./h_pval_out.Integral("width"))
         h_pval_out.Write("pval")
 
-    c = ROOT.TCanvas("c1", "c1", 800, 600)
+    #c = ROOT.TCanvas("c1", "c1", 800, 600)
+    c = df.setup_canvas()
 
     # h_out.GetXaxis().SetRangeUser(1250, 1950)
-    h_out.Draw("hist")
+    #h_out.Draw("hist")
+    leg = df.DrawHists(c, [h_out], ["%d toys"%(len(chi2))], [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_finalist_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
 
     if not nofit:
         print "Fitting with chi2 distribution"
@@ -77,8 +80,8 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
     ROOT.ATLASLabel(0.59, 0.90, "Internal", 13)
 
 
+
     l=ROOT.TLegend(0.65,0.66, 0.92, 0.78)
-    l.AddEntry(h_out, "%d toys" % len(chi2), "l")
     if not nofit:
         ROOT.myText(0.75, 0.57, 1, "ndf:", 33)
         ROOT.myText(0.92, 0.57, 1, "%.1f #pm %.1f" % (f1.GetParameter(0), f1.GetParError(0)), 33)

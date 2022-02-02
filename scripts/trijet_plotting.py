@@ -27,6 +27,7 @@ rangelow=300
 rangehigh=900
 channelName="BkgLow_2_alpha0_SR1_tagged"
 lumi =  config.samples[channelName]["lumi"]
+atlasLabel = "Simulation Internal"
 
 
 
@@ -82,7 +83,6 @@ pathsLimits = "Limits_limits"
 
 
 
-'''
 # Chi2
 for sigamp in sigamps:
   for sigmean in sigmeans:
@@ -92,8 +92,7 @@ for sigamp in sigamps:
       inhistChi2="chi2"
       outfileChi2="chi2"
 
-      getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=sigmean, sigwidth=sigwidth, sigamp=sigamp)
-'''
+      getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=sigmean, sigwidth=sigwidth, sigamp=sigamp, lumi=lumi, atlasLabel=atlasLabel)
 
 
 
