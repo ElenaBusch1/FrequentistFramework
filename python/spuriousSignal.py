@@ -13,10 +13,10 @@ import DrawingFunctions as df
 import AtlasStyle as AS
 import config as config
 
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
 def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, atlasLabel="Simulation Internal"):
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     h_allPoints_list = []
     sigmeansExists = []
@@ -42,7 +42,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                     fpe.ExtractFromFile( "_%d"%(toy))
                     nsig = fpe.GetNsig()
                 except:
-                    print "Couldn't read nsig from", path
+                    #print "Couldn't read nsig from", path
                     continue
 
                 if nsig == None or  math.isnan(nsig):
@@ -68,6 +68,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
          n = g_avg.GetN()
          g_avg.SetPoint(n, sigmean, h_allPoints_list[i].GetMean())
          g_avg.SetPointError(n, 0.001, h_allPoints_list[i].GetStdDev())
+         print sigmean,  h_allPoints_list[i].GetMean(),  h_allPoints_list[i].GetMean(),  h_allPoints_list[i].GetMean()/h_allPoints_list[i].GetStdDev()
        graphs.append(g_avg)
        legendNames.append("#sigma / m = %.2d"%sigwidth)
 

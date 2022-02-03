@@ -12,29 +12,28 @@ from color import getColorSteps
 import DrawingFunctions as df
 import AtlasStyle as AS
 
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
-gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 
 def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal"):
-    colors = getColorSteps(len(sigmeans))
-    fout = TFile(outfile, "RECREATE")
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     profile_list = []
     allPoints_list = []
+    c = df.setup_canvas()
 
     for j,sigmean in enumerate(sigmeans):
-
 
         for i,sigwidth in enumerate(sigwidths):
             g_allPoints = TGraph()
             g_profile   = TGraphErrors()
 
             sqrtB = None
+
+            h_nsigs = []
+            legs = []
             for k,sigamp in enumerate(sigamps):
+                h_nsig = ROOT.TH1D("nsig_%d_%d_%d"%(sigmean, sigwidth, sigamp), ";N_{sig, extracted};# toys, normalised", 50,  0, 10)
+                h_nsig.SetDirectory(0)
                 chi2s = []
                 pvals = []
 
@@ -65,6 +64,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                     continue
 
                 inj_extr = []
+                pvals = []
                 nans = 0
 
                 for path in tmp_path_fitresults:
@@ -79,7 +79,8 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                     pval = chi2Hist.GetBinContent(6)
                     f2.Close()
                     chi2s.append(chi2)
-                    pvals.append(pval)
+                    if(pval < 0.01):
+                      continue
                    
                     fpe = efp.FitParameterExtractor(path)
                     fpe.suffix = "_%d"%(toy)
@@ -90,7 +91,6 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                         print "Couldn't read nsig from", path
                         continue
 
-                    #print n_injected, nsig
                     if nsig == None or  math.isnan(nsig):
                         nans += 1
                     if nsig == None:
@@ -98,6 +98,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                         #continue
 
                     inj_extr.append((n_injected, nsig))
+                    pvals.append(pval)
 
                 print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
                 if float(nans) / len(inj_extr) < 0.02:
@@ -111,63 +112,46 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                 if sqrtB == None:
                     sqrtB = (n_injected / sigamp) if sigamp != 0 else 1
 
+                for i in range(len(inj_extr)):
+                  h_nsig.Fill(inj_extr[i][1]/sqrtB)
+                  #print inj_extr[i][1]/sqrtB, sigamp, pvals[i]
+
                 g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
                 g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
+                h_nsigs.append(h_nsig)
+                legs.append("Signal amplitude = %d, average = %.2f"%(sigamp, nFit/sqrtB))
 
 
-            fout.cd()
+            leg = df.DrawHists(c, h_nsigs, legs, [], sampleName = "", drawOptions = ["HIST"], styleOptions=df.get_finalist_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
+            outfileNameTmp = config.getFileName("NsigDistributions_" + outfile, cdir, channelName, rangelow, rangehigh) 
+            c.Print("%s.pdf"%(outfileNameTmp))
+
             g_allPoints.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
-            g_allPoints.Write("g1_extraction_gauss_%d_%d" % (sigmean, sigwidth))
 
             g_profile.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
-            g_profile.Write("g1_profile_gauss_%d_%d" % (sigmean, sigwidth))
+            g_profile.GetXaxis().SetTitle("Injected N_{sig} / #sqrt{N_{bkg}}")
+            g_profile.GetYaxis().SetTitle("Extracted N_{sig} / #sqrt{N_{bkg}}")
+            g_profile.GetXaxis().SetLimits(-0.5, max(sigamps)+0.5)
+            g_profile.SetMinimum(-0.5)
+            g_profile.SetMaximum(max(sigamps)+4)
 
             allPoints_list.append(g_allPoints)
             profile_list.append(g_profile)
 
-    fout.Close()
 
-    # Plotting:
-    c = df.setup_canvas()
-    mg = TMultiGraph()
-
-    for i,g in enumerate(profile_list):
-        g.SetLineWidth(2)
-        g.SetLineColor(colors[i])
-        g.SetMarkerColor(colors[i])
-        mg.Add(g, "")
-
-    mg.Draw("APL")
-    mg.GetXaxis().SetTitle("Injected N_{sig} / #sqrt{N_{bkg}}")
-    mg.GetYaxis().SetTitle("Extracted N_{sig} / #sqrt{N_{bkg}}")
-    mg.GetXaxis().SetLimits(-0.5, max(sigamps)+0.5)
-    mg.SetMinimum(-0.5)
-    mg.SetMaximum(max(sigamps)+4)
-    c.Update()
-
-    c.BuildLegend(0.2,0.54,0.5,0.78)
+    text1 = "Pseudodata"
+    labels = [text1]
+    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
+    legendNames = []
+    for i in profile_list:
+      legendNames.append(i.GetTitle())
+    leg = df.DrawHists(c, profile_list, legendNames, labels, sampleName = "", drawOptions = ["ALP", "LP", "LP", "LP", "LP"], styleOptions=df.get_finalist_style_opt, isLogX=0, atlasLabel=atlasLabel, lumi=lumi)
 
     l = TLine(-0.5,-0.5,max(sigamps)+0.5, max(sigamps)+0.5)
     l.SetLineColor(kGray+2)
     l.SetLineStyle(7)
     l.Draw()
 
-    text1 = "Pseudodata %d fb^{-1}" % (lumi/1000.)
-
-    text2 = "global fit"
-    if "four" in  infile:
-        text2 += " 4 par"
-    if "five" in  infile:
-        text2 += " 5 par"
-    if "nloFit" in infile:
-        text2 = "NLOFit"
-
-    text = text1 + ", " + text2
-
-    myText(0.2, 0.82, 1, text)
-    AS.ATLASLabel(0.15, 0.9, 1, 0.15, 0.05, atlasLabel)
-
-    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     c.Print(outfileName)
 
 

@@ -60,8 +60,6 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
     #c = ROOT.TCanvas("c1", "c1", 800, 600)
     c = df.setup_canvas()
 
-    # h_out.GetXaxis().SetRangeUser(1250, 1950)
-    #h_out.Draw("hist")
     leg = df.DrawHists(c, [h_out], ["%d toys"%(len(chi2))], [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_finalist_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
 
     if not nofit:
