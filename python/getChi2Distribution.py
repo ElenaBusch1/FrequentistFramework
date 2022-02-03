@@ -4,17 +4,17 @@ import sys, re, os, math, argparse
 import config as config
 import python.DrawingFunctions as df
 
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
+#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
+#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
+#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 def ChiSquareDistr(x, par):
     return ROOT.Math.chisquared_pdf(x[0], par[0])
 
 
 def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, rangehigh, nToys, sigmean, sigwidth, sigamp=0, nofit=0, chi2bin=1, pvalbin=0, lumi=0, atlasLabel="Simulation Internal"):
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
     chi2 = []
     pval = []
     bins = None
@@ -38,8 +38,6 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
     mean = sum(chi2) / len(chi2)
 
     outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-    f_out = ROOT.TFile(outfileName, "RECREATE")
-    f_out.cd()
 
     h_out = ROOT.TH1D("chi2", "chi2;#chi^{2};# toys, normalised", 250, 0, 3*mean)
     h_pval_out = ROOT.TH1D("pval", "pval;#chi^{2} #it{p}-value;# toys, normalised", 100, 0, 1)
@@ -51,13 +49,10 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
         h_pval_out.Fill(p)
 
     h_out.Scale(1./h_out.Integral("width"))
-    h_out.Write("chi2")
 
     if pvalbin:
         h_pval_out.Scale(1./h_pval_out.Integral("width"))
-        h_pval_out.Write("pval")
 
-    #c = ROOT.TCanvas("c1", "c1", 800, 600)
     c = df.setup_canvas()
 
     leg = df.DrawHists(c, [h_out], ["%d toys"%(len(chi2))], [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_finalist_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
@@ -73,12 +68,6 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
 
         h_out.Fit(f1,"MERN")
 
-        f1.Write("fit")
-
-    ROOT.ATLASLabel(0.59, 0.90, "Internal", 13)
-
-
-
     l=ROOT.TLegend(0.65,0.66, 0.92, 0.78)
     if not nofit:
         ROOT.myText(0.75, 0.57, 1, "ndf:", 33)
@@ -86,15 +75,13 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
         l.AddEntry(f1, "#chi^{2} distribution fit", "l")
     l.Draw()
 
-    ROOT.myText(0.75, 0.63, 1, "bins:", 33)
-    ROOT.myText(0.92, 0.63, 1, "%d" % bins, 33)
+    ROOT.myText(0.75, 0.63, 1, "bins: %d"%(bins), 13)
 
     c.Update()
 
     outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) 
     c.Print(outfileName + ".pdf")
 
-    f_out.Close()
 
 
 def main(args):

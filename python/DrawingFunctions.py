@@ -67,6 +67,22 @@ def SetStyleOptions(hists, styleDef, height = 1.0):
     set_style_options(hists[hist], styleDef(hist), height)
 
 
+def get_extraction_style_opt(count=0):
+        markers = [34,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
+        colors = ["#00CC99", "#CC3366", "#669933", "#3366CC", "#DD9933", "#9933CC"]
+        lineStyles = [1, 1, 1, 1, 1, 1, 1]
+        count = int(math.fmod(count, len(colors)))
+
+        finalist_style_options= StyleOptions(
+                             line_color   = colors[count],
+                             line_style   = lineStyles[count],
+                             marker_color = colors[count],
+                             marker_style = markers[count],
+                             marker_size = 1,
+                             line_width = 4,
+                             )
+        return finalist_style_options
+
 def get_finalist_style_opt(count=0):
         markers = [34,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
         #colors = ['#000000','#3c3c3c','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
@@ -277,7 +293,7 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
   return legend
 
 
-def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal"):
+def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal", ratioDrawOptions = ["B"]):
   canvas.cd()
   canvas.SetLogx(isLogX)
 
@@ -324,16 +340,14 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel)
   lowerPad.cd()
 
-  rDrawOptions = "B"
-  Ratios[0].Draw("%s"%(rDrawOptions))
-  #for hist in range(len(Ratios)):
-  for ratio in Ratios:
-    ratio.SetFillStyle(1000)
-    ratio.Draw("%s SAME"%rDrawOptions)
+  Ratios[0].Draw("%s"%(ratioDrawOptions[0]))
+  for hist in range(len(Ratios)):
+    Ratios[hist].SetFillStyle(1000)
+    Ratios[hist].Draw("%s SAME"%(ratioDrawOptions[hist%len(ratioDrawOptions)]))
 
   SaveCanvas(canvas, outName)
 
-  return legend
+  return legend, upperPad, lowerPad
 
 
 

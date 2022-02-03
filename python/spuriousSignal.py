@@ -58,24 +58,32 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
 
     graphs = []
+    ratios = []
     legendNames = []
     for sigwidth in sigwidths:
        g_avg = TGraphErrors()
        g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
        g_avg.GetXaxis().SetTitle("m_{jj}")
        g_avg.GetYaxis().SetTitle("<N_{sig}>")
+       g_ratio = TGraphErrors()
+       g_ratio.GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
        for sigmean, i in zip(sigmeansExists, range(len(sigmeansExists))):
          n = g_avg.GetN()
          g_avg.SetPoint(n, sigmean, h_allPoints_list[i].GetMean())
          g_avg.SetPointError(n, 0.001, h_allPoints_list[i].GetStdDev())
-         print sigmean,  h_allPoints_list[i].GetMean(),  h_allPoints_list[i].GetMean(),  h_allPoints_list[i].GetMean()/h_allPoints_list[i].GetStdDev()
+         g_ratio.SetPoint(n, sigmean, h_allPoints_list[i].GetMean() / h_allPoints_list[i].GetStdDev())
        graphs.append(g_avg)
+       ratios.append(g_ratio)
        legendNames.append("#sigma / m = %.2d"%sigwidth)
 
          
 
     outfileName = config.getFileName(outfile + "Test", cdir, channelName, rangelow, rangehigh) + ".pdf"
-    leg = df.DrawHists(c, graphs, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_finalist_style_opt, isLogX=0)
+    leg = df.DrawHists(c, graphs, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0)
+    c.Print(outfileName)
+
+    outfileName = config.getFileName(outfile + "Ratio", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    leg, upperPad, lowerPad = df.DrawRatioHists(c, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
     c.Print(outfileName)
 
 
@@ -86,7 +94,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     outfileName = config.getFileName("SpuriousSignal", cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_allPoints_list, myMin=0)
     df.SetStyleOptions(h_allPoints_list, df.get_finalist_style_opt)
-    leg = df.DrawHists(c, h_allPoints_list, legendNames, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_finalist_style_opt, isLogX=0)
+    leg = df.DrawHists(c, h_allPoints_list, legendNames, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
 

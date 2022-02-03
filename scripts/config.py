@@ -1,5 +1,5 @@
 cdir="/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest"
-nToys = 100
+nToys = 1000
 atlasLabel="Simulation Internal"
 
 samples = {}

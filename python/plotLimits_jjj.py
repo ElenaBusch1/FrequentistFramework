@@ -22,13 +22,6 @@ def xToNDC(x):
     xndc = (rm-lm)*((gPad.XtoPad(x)-gPad.GetUxmin())/(gPad.GetUxmax()-gPad.GetUxmin()))+lm
     return xndc
 
-def yToNDC(y):
-    gPad.Update()
-    tm = 1.-gPad.GetTopMargin()
-    bm = gPad.GetBottomMargin()
-    yndc = (tm-bm)*((gPad.YtoPad(y)-gPad.GetUymin())/(gPad.GetUymax()-gPad.GetUymin()))+bm
-    return yndc
-
 def createFillBetweenGraphs(g1, g2):
   g_fill = TGraph()
   
@@ -50,7 +43,7 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, rangelow, rangehigh):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, rangelow, rangehigh, atlasLabel="Simulation Internal"):
     SetAtlasStyle()
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
@@ -88,9 +81,9 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
             for j,sigmean in enumerate(sigmeans):
 
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
+                # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[dataset]
                 tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_0.root"
-                #tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
 
                 f = TFile(tmp_path, "READ")
                 if f.IsZombie():
@@ -178,7 +171,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
                 leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "lp")
 
 
-    ATLASLabel(0.20, 0.90, "Simulation Internal", 13)
+    ATLASLabel(0.20, 0.90, atlasLabel, 13)
     myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
     myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV", 13)
     myText(0.2, 0.72, 1, "%.1f fb^{-1}" % (lumis*0.001), 13)

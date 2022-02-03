@@ -32,8 +32,6 @@ def plotPulls(infiles, outfile, lumi, residualhist="residuals", datahist="data",
 
 
     c = df.setup_canvas()
-    c.SetRightMargin(0.10)
-    c.SetLeftMargin(0.10)
     h_pulls.Draw("HIST")
     h_pulls.Fit("gaus");
     f1.SetLineColor(ROOT.kBlue)
