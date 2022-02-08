@@ -142,9 +142,11 @@ class PostfitExtractor:
                 f_chi2 = TFile(self.externalchi2file)
                 tf1_chi2 = f_chi2.Get(self.externalchi2fct)
                 ndof = chi2bins - self.externalchi2bins + tf1_chi2.GetParameter(0)
+                ndoferr = tf1_chi2.GetParError(0)
                 f_chi2.Close()
             else:
                 ndof = chi2bins - npars
+                ndoferr = 0.
 
             pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
 
@@ -155,6 +157,7 @@ class PostfitExtractor:
             h_chi2.SetBinContent(3, chi2bins)
             h_chi2.SetBinContent(4, npars)
             h_chi2.SetBinContent(5, ndof)
+            h_chi2.SetBinError(5, ndoferr)
             h_chi2.SetBinContent(6, pval)
 
             h_chi2.GetXaxis().SetBinLabel(1, "chi2")

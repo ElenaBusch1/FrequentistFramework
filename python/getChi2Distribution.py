@@ -85,13 +85,18 @@ def main(args):
 
     ROOT.ATLASLabel(0.59, 0.90, "Work in progress", 13)
 
+    text=""
     if "four" in args.infiles[0]:
         text="4-par global fit"
     elif "five" in args.infiles[0]:
         text="5-par global fit"
     elif "nlo" in  args.infiles[0]:
         text="NLOFit"
-        if "constr" in args.infiles[0]:
+        if "constrSigma" in args.infiles[0]:
+            s=re.findall(r'constrSigma\d+', args.infiles[0])[0]
+            s=int(s[11:])
+            text="NLOFit, %d#sigma constraints" % s
+        elif "constr" in args.infiles[0]:
             s=re.findall(r'constr\d+', args.infiles[0])[0]
             s=int(s[6:])
             text="NLOFit, %d#sigma constraints" % s

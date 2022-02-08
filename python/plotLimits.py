@@ -61,7 +61,7 @@ def main(args):
     sigmeans.sort()
     sigwidths.sort()
 
-    colors = [kBlue, kRed+1, kOrange-3]
+    colors = [kBlue, kRed+1, kOrange-3, kGreen, kPink]
 
     g_obs = []
     g_exp = []
@@ -172,4 +172,5 @@ def main(args):
     fout.Close()
     
 if __name__ == "__main__":  
-   sys.exit(main(sys.argv[1:]))   
+   args=[x for x in sys.argv[1:] if not x.startswith("-")]
+   sys.exit(main(args))   

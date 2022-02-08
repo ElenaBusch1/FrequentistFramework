@@ -63,7 +63,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, combinefile=None, externalchi2file=None, externalchi2fct=None):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, combinefile=None, externalchi2file=None, externalchi2fct=None, externalchi2bins=40):
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -104,6 +104,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmax=maskmax,
         externalchi2file=externalchi2file,
         externalchi2fct=externalchi2fct,
+        externalchi2bins=externalchi2bins,
     )
     pval = pfe.GetPval()
     pfe.WriteRoot(postfitfile)
@@ -128,6 +129,7 @@ def run_nloFit(datafile,
                constr=1,
                externalchi2file=None,
                externalchi2fct=None,
+               externalchi2bins=40,
                doinitialpars=False,
                dosignal=False,
                dolimit=False,
@@ -203,7 +205,8 @@ def run_nloFit(datafile,
                                                                 poi=poi,
                                                                 combinefile=tmpcombinefile,
                                                                 externalchi2file=externalchi2file,
-                                                                externalchi2fct=externalchi2fct,)
+                                                                externalchi2fct=externalchi2fct,
+                                                                externalchi2bins=externalchi2bins,)
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -252,7 +255,8 @@ def run_nloFit(datafile,
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])),
                                             combinefile=tmpcombinefilemasked,
                                             externalchi2file=externalchi2file,
-                                            externalchi2fct=externalchi2fct,)
+                                            externalchi2fct=externalchi2fct,
+                                            externalchi2bins=externalchi2bins,)
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
 
@@ -293,6 +297,7 @@ def main(args):
     parser.add_argument('--constr', dest='constr', type=int, default=1, help='Constraint term of NPs (in sigma)')
     parser.add_argument('--externalchi2file', dest='externalchi2file', type=str, help='Input file containing TF1 to use for p(chi2) calculation')
     parser.add_argument('--externalchi2fct', dest='externalchi2fct', type=str, help='Name of TF1 to use for p(chi2) calculation')
+    parser.add_argument('--externalchi2bins', dest='externalchi2bins', type=int, default=40, help='Number of bins in external chi2 function')
     parser.add_argument('--doinitialpars', dest='doinitialpars', action="store_true", help='Initialise with empiric fit parameters != 0')
     parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
@@ -317,6 +322,7 @@ def main(args):
                constr=args.constr,
                externalchi2file=args.externalchi2file,
                externalchi2fct=args.externalchi2fct,
+               externalchi2bins=args.externalchi2bins,
                doinitialpars=args.doinitialpars,
                dosignal=args.dosignal,
                dolimit=args.dolimit,
