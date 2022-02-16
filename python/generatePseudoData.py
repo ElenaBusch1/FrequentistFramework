@@ -13,13 +13,25 @@ def fluctuatePoisson(hist):
     nBinsX = hist.GetNbinsX();
     nBinsY = hist.GetNbinsY();
 
+    '''
     for i in range(0, nBinsX+2):
         for j in range(0, nBinsY+2):
             ibin = hist.GetBin(i, j);
             fluc = gRand.Poisson(hist.GetBinContent(ibin));
+            print ibin, hist.GetBinContent(ibin), fluc
             if fluc >= 0:
                 result.SetBinContent(ibin, fluc);
                 result.SetBinError(ibin, math.sqrt(fluc));
+    '''
+
+    for ibin in range(0, nBinsX+2):
+            fluc = gRand.Poisson(hist.GetBinContent(ibin));
+            #print ibin, hist.GetBinContent(ibin), fluc
+            if fluc >= 0:
+                result.SetBinContent(ibin, fluc);
+                result.SetBinError(ibin, math.sqrt(fluc));
+
+
 
     return result;
 

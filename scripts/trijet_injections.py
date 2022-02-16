@@ -7,8 +7,8 @@ import os
 dosignal=1
 dolimit=0
 
-#fitFunction = config.fitFunctions["fourPar"]["Config"]
-fitFunction = config.fitFunctions["fivePar"]["Config"]
+fitFunction = config.fitFunctions["fourPar"]["Config"]
+#fitFunction = config.fitFunctions["fivePar"]["Config"]
 cdir = config.cdir
 channelName="BkgLow_2_alpha0_SR1_tagged"
 outputdir = channelName
@@ -17,10 +17,10 @@ if not os.path.exists(outputdir):
 
 #sigmeans = [350, 450, 550, 650, 750, 850]
 #sigmeans = [450, 550, 650, 750, 850]
-sigmeans = [650]
+sigmeans = [450]
 #sigmeans = [650, 750, 850]
 #sigamps = [0, 1, 5]
-sigamps = [4]
+sigamps = [0, 1, 3, 5]
 sigwidth=7
 
 rangelow=300

@@ -6,6 +6,7 @@ import ROOT
 import sys, re, os, math, argparse
 import python.DrawingFunctions as df
 import AtlasStyle as AS
+import config as config
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
@@ -13,9 +14,12 @@ ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 
-def plotPulls(infiles, outfile, lumi, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
-  for infileName in infiles:
-    inFile = ROOT.TFile(infileName, "READ")
+def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelName, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
+  for infileName, fitName in zip(infiles, fitNames):
+    path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj) + ".root"
+
+    #inFile = ROOT.TFile(infileName, "READ")
+    inFile = ROOT.TFile(path, "READ")
         
     residualHist = inFile.Get(residualhist+suffix)
     dataHist = inFile.Get(datahist+suffix)
@@ -46,15 +50,16 @@ def plotPulls(infiles, outfile, lumi, residualhist="residuals", datahist="data",
 
     ks = h_pulls.KolmogorovTest(h_fit)
 
-    ROOT.myText(0.15, 0.80, 1, "5-par fit", 13)
-    ROOT.myText(0.15, 0.76, 1, "KS Test = %.2f"%(ks), 13)
+    labels = []
+    labels.append(fitName)
+    labels.append("KS Test = %.2f"%(ks))
 
-    l=ROOT.TLegend(0.8, 0.75, 0.6, 0.85)
+    l=ROOT.TLegend(0.65, 0.75, 0.9, 0.9)
     l.AddEntry(h_pulls, "Pulls", "l")
     l.AddEntry(f1, "Normal gaussian distribution", "l")
     l.Draw()
 
-    l2=ROOT.TLegend(0.60, 0.65, 0.80, 0.75)
+    l2=ROOT.TLegend(0.65, 0.65, 0.9, 0.75)
     l2.AddEntry(f2, "#splitline{Gaussian fit}{mean = %.3f #pm %.3f}"%(f2.GetParameter(1), f2.GetParError(1)), "l")
 
     isProblematicFit = False
@@ -68,9 +73,12 @@ def plotPulls(infiles, outfile, lumi, residualhist="residuals", datahist="data",
     if isProblematicFit:
       l2.SetTextColor(ROOT.kRed)
     l2.Draw()
-    AS.ATLASLabel(0.15, 0.9, 1, 0.15, 0.05, atlasLabel)
+    #AS.ATLASLabel(0.17, 0.9, 1, 0.15, 0.05, atlasLabel)
+    df.draw_atlas_details(labels=labels,x_pos= 0.18,y_pos = 0.95, dy = 0.04, text_size = 0.035, atlasLabel = atlasLabel, lumi=lumi/1000.)
 
-    c.Print(outfile + ".pdf")
+
+    outpath = config.getFileName(outfile + "_%s"%(fitName), cdir, channelName, minMjj, maxMjj) + ".pdf"
+    c.Print(outpath)
 
     inFile.Close()
 

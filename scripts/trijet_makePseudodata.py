@@ -5,20 +5,27 @@ import os
 
 
 cdir = config.cdir
-channelName="BkgLow_2_alpha0_SR1_tagged"
-outputdir = channelName
-if not os.path.exists(outputdir):
-      os.makedirs(outputdir)
+#channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
+channelNames = ["MassOrdered_2"]
 
-rangelow=300
-rangehigh=900
+rangelow=200
+rangehigh=800
+
+fitNames = ["fivePar", "sixPar"]
+#fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
+
 
 # First make the pseudodata
 # TODO: maybe make a flag to decide whether to run this?
-pdInputFile = config.getFileName("PostFit_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
-pdFile = config.getFileName("PD_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
-pdHistName = "pseudodata"
-generatePseudoData.generatePseudoData( infile=pdInputFile, inhist ="postfit", nreplicas=config.nToys, scaling=1, outfile=pdFile, outhist=pdHistName)
+for fitName in fitNames:
+  for channelName in channelNames:
+    outputdir = channelName
+    if not os.path.exists(outputdir):
+      os.makedirs(outputdir)
+    pdInputFile = config.getFileName("PostFit_%s_bkgonly"%(fitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+    pdFile = config.getFileName("PD_%s_bkgonly"%(fitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+    pdHistName = "pseudodata"
+    generatePseudoData.generatePseudoData( infile=pdInputFile, inhist ="postfit", nreplicas=config.nToys, scaling=1, outfile=pdFile, outhist=pdHistName)
 
 
 

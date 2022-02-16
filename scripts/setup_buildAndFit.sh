@@ -20,3 +20,5 @@ if [[ -z $_DIRFIT ]]; then
 fi
 
 mkdir -p run
+
+PYTHONPATH=$PWD:$PYTHONPATH

@@ -42,9 +42,17 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                     tmp_path_injection = infilePD
                     tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
 
+                    checkPath = glob(tmp_path_injection)
+                    if len(checkPath) == 0:
+                        continue
+
                     f = TFile(tmp_path_injection)
-                    h = f.Get("pseudodata_0_injection")
-                    n_injected = h.Integral(0, h.GetNbinsX()+1)
+                    try:
+                      h = f.Get("pseudodata_0_injection")
+                      n_injected = h.Integral(0, h.GetNbinsX()+1)
+                    except:
+                      f.Close()
+                      continue
                     f.Close()
                 else:
                     n_injected = 0
@@ -59,6 +67,10 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                 for toy in range(config.nToys):
                     try:
                       path2 = tmp_path_fitresult.replace("FitParameters", "PostFit")
+                      checkPath = glob(path2)
+                      if len(checkPath) == 0:
+                        continue
+
                       f2 = TFile(path2)
                       chi2Hist = f2.Get("chi2_%d"%(toy))
                       chi2 = chi2Hist.GetBinContent(2)
@@ -76,7 +88,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                     try:
                         nsig = fpe.GetNsig()
                     except:
-                        print "Couldn't read nsig from", tmp_path_fitresult
+                        #print "Couldn't read nsig from", tmp_path_fitresult
                         continue
 
                     if nsig == None or  math.isnan(nsig):
@@ -88,7 +100,8 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                     pvals.append(pval)
 
                 print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
-                if float(nans) / len(inj_extr) < 0.02:
+                
+                if len(inj_extr) > 0 and  float(nans) / len(inj_extr) < 0.02:
                     for t in inj_extr:
                         g_allPoints.SetPoint(g_allPoints.GetN(), t[0], t[1])
 

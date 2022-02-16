@@ -25,6 +25,8 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
         f_in = ROOT.TFile(path, "READ")
 
         h_in = f_in.Get(inhist+ "_%d"%(toy))
+        if not h_in:
+          continue
 
         if not bins:
             bins = h_in.GetBinContent(3)
@@ -43,6 +45,8 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
     h_pval_out = ROOT.TH1D("pval", "pval;#chi^{2} #it{p}-value;# toys, normalised", 100, 0, 1)
 
     for c in chi2:
+        if c > 3*mean:
+          c = 3*mean-0.5
         h_out.Fill(c)
 
     for p in pval:
@@ -68,14 +72,15 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
 
         h_out.Fit(f1,"MERN")
 
+    h_out.SetStats(0)
+
     l=ROOT.TLegend(0.65,0.66, 0.92, 0.78)
     if not nofit:
-        ROOT.myText(0.75, 0.57, 1, "ndf:", 33)
-        ROOT.myText(0.92, 0.57, 1, "%.1f #pm %.1f" % (f1.GetParameter(0), f1.GetParError(0)), 33)
+        ROOT.myText(0.63, 0.57, 1, "ndf: %.1f #pm %.1f"% (f1.GetParameter(0), f1.GetParError(0)), 13)
         l.AddEntry(f1, "#chi^{2} distribution fit", "l")
     l.Draw()
 
-    ROOT.myText(0.75, 0.63, 1, "bins: %d"%(bins), 13)
+    ROOT.myText(0.63, 0.63, 1, "bins: %d"%(bins), 13)
 
     c.Update()
 

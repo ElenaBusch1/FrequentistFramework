@@ -7,16 +7,17 @@ import sys, re, os, math, argparse
 import DrawingFunctions as df
 import python.AtlasStyle as AS
 import array
+import config as config
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
+#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
+#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
+#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix=""):
+def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix=""):
     AS.SetAtlasStyle()
 
-    c = df.setup_canvas()
+    c = df.setup_canvas(outfile)
     c.SetLogy()
 
     dataHists = []
@@ -28,9 +29,12 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel
     labels = []
 
     for index, infileName in zip(range(len(infiles)), infiles):
-      inFile = ROOT.TFile(infileName, "READ")
+      path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj) + ".root"
+
+      #inFile = ROOT.TFile(infileName, "READ")
+      inFile = ROOT.TFile(path, "READ")
       if not inFile:
-        print "Did not find file ", inFile
+        print "Did not find file ", path
 
       dataHist = inFile.Get(datahistName + suffix)
       fitHist = inFile.Get(fithistName + suffix)
@@ -39,9 +43,6 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel
       chi2 = chi2Hist.GetBinContent(2)
       pval = chi2Hist.GetBinContent(6)
 
-      dataHist.SetDirectory(0)
-      fitHist.SetDirectory(0)
-      residualHist.SetDirectory(0)
 
       dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
       fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
@@ -51,11 +52,10 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       residualHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
-      residualHist.SetFillColor(ROOT.kRed)
+      #residualHist.SetFillColor(ROOT.kRed)
 
     
       if rebinedges:
-        print("Rebinning histogram based on list of bins")
         dataHist = dataHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
         fitHist = fitHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
         residualHist = residualHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
@@ -74,15 +74,26 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel
 
 
 
+      dataHist.SetDirectory(0)
+      fitHist.SetDirectory(0)
+      residualHist.SetDirectory(0)
 
+      if index == 0:
+        dataRes = residualHist.Clone("Residuals_zero")
+        dataRes.Reset()
+        dataRes.GetYaxis().SetRangeUser(-5,5)
+        dataRes.SetDirectory(0)
+        residualHists.append(dataRes)
+        plotHists.append(dataHist)
+        legNames.append("data")
 
       dataHists.append(dataHist)
       fitHists.append(fitHist)
       residualHists.append(residualHist)
-      plotHists.append(dataHist)
+
       plotHists.append(fitHist)
-      legNames.append("data")
-      legNames.append("fit")
+      legNames.append("%s fit"%(infileName))
+
 
 
       label = "#chi^{2} / ndof = %.2f, p-value = %.2f %%"%(chi2, pval)
@@ -90,10 +101,11 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, rebinedges=None, atlasLabel
 
 
 
-    # TODO fix these labels
+    print plotHists
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    c.Print(outname + ".pdf")
 
     inFile.Close()
 

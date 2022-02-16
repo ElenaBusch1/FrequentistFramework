@@ -54,7 +54,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmax=-1
 
     print("running quickfit")
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minTolerance 1E-4 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -141,8 +141,6 @@ def run_anaFit(datafile,
         ("BINS", str(nbins)),
         ("NBKG", nbkg),
         ("NSIG", nsig),
-        #("NSIG", "0,0,1e6"),
-        #("NSIG", "0,-1e6,1e6"),
     ])    
 
     if dosignal:

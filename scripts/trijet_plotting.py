@@ -15,22 +15,30 @@ cdir = config.cdir
 
 #sigmeans=[ 550]
 #sigmeans=[ 350, 450, 550, 650, 750, 850]
-sigmeans=[ 450, 550, 650, 750, 850]
-#sigmeans=[ 650]
-#sigmeans=[ 750]
-#sigmeans=[ 450, 550]
+#sigmeans=[ 450, 550, 650, 750, 850]
+#sigmeans=[ 450, 650]
+#sigmeans=[ 450]
+#sigmeans=[ 450, 550, 650]
+sigmeans=[ 250, 350, 450, 550, 650]
 sigwidths=[ 7 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[5,1,0]
 #sigamps=[20, 10, 8, 7, 5, 3, 1, 0]
-sigamps=[5,4,3,2,1,0]
-rangelow=300
-rangehigh=900
-channelName="BkgLow_2_alpha0_SR1_tagged"
+#sigamps=[5,4,3,2,1,0]
+sigamps=[5,3,1,0]
+rangelow=200
+rangehigh=800
+#channelName="BkgLow_2_alpha0_SR1_tagged"
+channelName="MassOrdered_2"
 lumi =  config.samples[channelName]["lumi"]
 atlasLabel = "Simulation Internal"
 
 
+pdFitName = "sixPar"
+#pdFitName = "fivePar"
+#fitName = "fiveParV3"
+fitName = "fourPar"
+#fitName = "fivePar"
 
 rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
 #rebinedges = None
@@ -38,23 +46,54 @@ rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
 '''
 for sigmean in sigmeans:
   for sigwidth in sigwidths:
-    infiles = [config.getFileName("PostFit_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 5) + ".root"]
+    #infiles = [config.getFileName("PostFit_%s_sigPlusBkg"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"]
+    infiles = [config.getFileName("PostFit_spuriousSignal", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"]
 
+    #for toy in range(10):
+    #  outfileFits = config.getFileName("fits_PD_%d"%(toy), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0)
+    #  plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_%d"%(toy))
+
+    infile = config.getFileName("PostFit_spuriousSignal", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
+    infileBkgOnly = config.getFileName("PostFit_PD_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+    #infilePD = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
+    infilePD = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
     for toy in range(10):
-      outfileFits = config.getFileName("fits_PD_%d"%(toy), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 5)
-      plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_%d"%(toy))
-
-    infile = config.getFileName("PostFit_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 10) + "_0.root"
-    infilePD = config.getFileName("PD_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 10) + ".root"
-    outfileSignalInj = config.getFileName("SignalInjection_PD", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 10)
-    #plotSignalInjection.plotFits(infileName=infile, infilePDName = infilePD, outfile=outfileSignalInj, rangelow=rangelow, rangehigh=rangehigh, sigmean=sigmean, sigwidth=sigwidth, sigamp=10, rebinedges=rebinedges, atlasLabel=config.atlasLabel)
+      outfileSignalInj = config.getFileName("SignalInjection_PD", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_%d"%(toy)
+      plotSignalInjection.plotFits(infileName=infile, infilePDName = infilePD, outfile=outfileSignalInj, rangelow=rangelow, rangehigh=rangehigh, sigmean=sigmean, sigwidth=sigwidth, sigamp=0, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_%d"%(toy), infileNameBkgOnly = infileBkgOnly)
 
     #outfilePulls = config.getFileName("pulls_PD", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0)
     #plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, atlasLabel=config.atlasLabel)
 
-    #fitQualityTests.fitQualityTests("PostFit_sigPlusBkg", "PostFit_sigPlusBkg", "FitQuality", config.nToys, rangelow, rangehigh, sigmean, sigwidth, 0, cdir + "/scripts/", channelName)
+    #outfilePulls = config.getFileName("pulls_PD_spuriousSignal", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0)
+    #plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, atlasLabel=config.atlasLabel)
 
+    #fitQualityTests.fitQualityTests("PostFit_sigPlusBkg", "PostFit_sigPlusBkg", "FitQuality", config.nToys, rangelow, rangehigh, sigmean, sigwidth, 0, cdir + "/scripts/", channelName)
 '''
+
+
+
+
+infilesChi2 = "PostFit_PD_bkgonly"
+inhistChi2="chi2"
+outfileChi2="chi2"
+#getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=0, sigwidth=0, sigamp=0, lumi=lumi, atlasLabel=atlasLabel)
+
+
+infilesChi2 = "PostFit_spuriousSignal"
+inhistChi2="chi2"
+outfileChi2="chi2_spuriousSignal"
+#for sigmean in sigmeans:
+#  for sigwidth in sigwidths:
+#    getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=sigmean, sigwidth=sigwidth, sigamp=0, lumi=lumi, atlasLabel=atlasLabel)
+
+
+
+
+infileExtraction="FitParameters_spuriousSignal_%s_%s"%(pdFitName, fitName)
+infilePD='PD_%s_bkgonly'%(pdFitName)
+outfileSpurious = "PD_spurious_%s_%s_bkgonly"%(pdFitName, fitName)
+spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/")
+
 
 
 
@@ -63,12 +102,6 @@ infileExtraction="FitParameters_sigPlusBkg"
 infilePD='PD_bkgonly'
 outfileExtraction = "PD_extraction"
 #createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
-
-
-infileExtraction="FitParameters_spuriousSignal"
-infilePD='PD_bkgonly'
-outfileSpurious = "PD_spurious_bkgonly"
-#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/")
 
 
 # Limits
@@ -81,7 +114,7 @@ inputPDCoverage='PD_bkgonly'
 outfileCoverage='Coverage'
 pathsLimits = "Limits_limits"
 #createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
-plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
+#plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
 
 
 

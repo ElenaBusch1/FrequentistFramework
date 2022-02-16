@@ -81,7 +81,7 @@ def AtlasStyle():
 
 
 def SetAtlasStyle():
-    print "Applying ATLAS style settings...\n"
+    #print "Applying ATLAS style settings...\n"
     atlasStyle = AtlasStyle()
     gROOT.SetStyle("ATLAS")
     gROOT.ForceStyle()

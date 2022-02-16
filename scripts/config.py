@@ -12,6 +12,17 @@ samples["BkgLow_3_alpha0_SR1_tagged"] = {
                  "lumi": 139000,
                }
 
+
+samples["SR1_cutval7"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_3_alpha0_SR1_tagged",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_7.root",
+                 "lumi": 139000,
+               }
+
+
+
 samples["BkgLow_4_alpha0_SR1_tagged"] = {
                  "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
                  "topfile": "../config/dijetISR/jjj_SR1.template",
@@ -36,6 +47,35 @@ samples["BkgLow_2_alpha0_SR1_tagged"] = {
                  "lumi": 139000,
                }
 
+samples["BkgLow_2_alpha0_SR1_tagged"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_1_alpha0_SR1_tagged",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
+                 "lumi": 139000,
+               }
+
+samples["BkgMid_2_alpha0_SR2_tagged"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgMid_2_alpha0_SR2_tagged",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
+                 "lumi": 139000,
+               }
+
+
+samples["MassOrdered_2"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_1_alpha0_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_test_SRAlpha_100_BkgAlpha_0_dimVars_pt_cutVal_6.root",
+                 "lumi": 139000,
+               }
+
+
+
+
+
 
 fitFunctions = {}
 fitFunctions["sixPar"] = {
@@ -45,6 +85,17 @@ fitFunctions["sixPar"] = {
 fitFunctions["fivePar"] = {
                             "Name" : "5-par fit",
                             "Config" : "dijetISR/background_ajj_simpleTrig_yStar0p825_fivePar.xml",
+                          }
+
+
+fitFunctions["fiveParV2"] = {
+                            "Name" : "5-par fit",
+                            "Config" : "dijetISR/background_ajj_simpleTrig_yStar0p825_fiveParV2.xml",
+                          }
+
+fitFunctions["fiveParV3"] = {
+                            "Name" : "5-par fit",
+                            "Config" : "dijetISR/background_ajj_simpleTrig_yStar0p825_fiveParV3.xml",
                           }
 
 fitFunctions["fourPar"] = { 

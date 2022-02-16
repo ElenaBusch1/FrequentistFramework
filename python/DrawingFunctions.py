@@ -152,7 +152,7 @@ def draw_text(x, y, color, tsize, text, angle,set_NDC = False):
     l.DrawLatex(x,y,text)
 
 def setup_canvas(name=""):
-  #AS.SetAtlasStyle()
+  AS.SetAtlasStyle()
   r.gROOT.SetBatch(r.kTRUE)
 
   canvas = r.TCanvas("Canvas_%s"%(name),"",800,600)
@@ -289,7 +289,6 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
 
   draw_atlas_details(labels=labels, sampleName=sampleName, atlasLabel=atlasLabel)
 
-  #hists[0].Draw("AXIS SAME")
   return legend
 
 
@@ -299,9 +298,9 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
 
   upperPad = r.TPad("pad1%s"%outName, "pad1",0.0,0.35,1.0,1.0)
   upperPad.SetTopMargin(0.05)
-  upperPad.SetBottomMargin(0.01)
+  upperPad.SetBottomMargin(0.0)
   upperPad.SetLeftMargin(0.15)
-  upperPad.SetRightMargin(0.05)
+  upperPad.SetRightMargin(0.03)
   upperPad.Draw()
   upperPad.SetLogx(isLogX)
   upperPad.SetLogy(isLogY)
@@ -309,11 +308,11 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   r.SetOwnership(upperPad, False)
 
   canvas.cd();
-  lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.0,0.05,1.0,0.35)
-  lowerPad.SetBottomMargin(0.4)
-  lowerPad.SetTopMargin(-0.05)
+  lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.0,0.0,1.0,0.35)
+  lowerPad.SetBottomMargin(0.35)
+  lowerPad.SetTopMargin(0.00)
   lowerPad.SetLeftMargin(0.15)
-  lowerPad.SetRightMargin(0.05)
+  lowerPad.SetRightMargin(0.03)
   lowerPad.Draw()
   lowerPad.SetLogx(isLogX)
   r.SetOwnership(lowerPad, False)
@@ -326,8 +325,8 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
     deltaHists = 0.06
   legend = r.TLegend(0.7,0.9-(len(hists))*deltaHists,.9,0.90)
   legend.SetFillStyle(0)
-  SetStyleOptions(hists, styleOptions, 0.95-0.35)
-  SetStyleOptions(Ratios, styleOptions, 0.95-0.35)
+  SetStyleOptions(hists, styleOptions,1.0-0.35)
+  SetStyleOptions(Ratios, styleOptions, 0.35)
 
   for hist in range(len(hists)):
     hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
@@ -336,16 +335,17 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
 
   legend.Draw()
 
-
   draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel)
   lowerPad.cd()
 
   Ratios[0].Draw("%s"%(ratioDrawOptions[0]))
+  #Ratios[0].Draw("HIST")
   for hist in range(len(Ratios)):
-    Ratios[hist].SetFillStyle(1000)
+    #Ratios[hist].SetFillStyle(1000)
+    #print hist
+    #print Ratios[hist].GetBinContent(3)
     Ratios[hist].Draw("%s SAME"%(ratioDrawOptions[hist%len(ratioDrawOptions)]))
-
-  SaveCanvas(canvas, outName)
+    #Ratios[hist].Draw("HIST SAME")
 
   return legend, upperPad, lowerPad
 
