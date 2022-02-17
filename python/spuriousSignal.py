@@ -22,6 +22,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     h_p2_list = []
     h_p3_list = []
     h_p4_list = []
+    h_p5_list = []
     sigmeansExists = []
 
     minMean = min(sigmeans)
@@ -29,16 +30,18 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
     for j,sigmean in enumerate(sigmeans):
         for i,sigwidth in enumerate(sigwidths):
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 50, -15000, 15000)
-            h_p1 = TH1F("p1_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 80, 0, 15000)
-            h_p2 = TH1F("p2_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 80, 0, 100)
-            h_p3 = TH1F("p3_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 80, -5, 10)
-            h_p4 = TH1F("p4_%d_%d"%(sigmean, sigwidth), ";nsig;No. of toys", 80, -2, 2)
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 50, -15000, 15000)
+            h_p1 = TH1F("p1_%d_%d"%(sigmean, sigwidth), ";p1;No. of toys", 80, 12000, 15000)
+            h_p2 = TH1F("p2_%d_%d"%(sigmean, sigwidth), ";p2;No. of toys", 80, 0, 100)
+            h_p3 = TH1F("p3_%d_%d"%(sigmean, sigwidth), ";p3;No. of toys", 80, -5, 10)
+            h_p4 = TH1F("p4_%d_%d"%(sigmean, sigwidth), ";p4;No. of toys", 80, -1, 3)
+            h_p5 = TH1F("p5_%d_%d"%(sigmean, sigwidth), ";p5;No. of toys", 80, -0.5, 1)
             h_allPoints.SetDirectory(0)
             h_p1.SetDirectory(0)
             h_p2.SetDirectory(0)
             h_p3.SetDirectory(0)
             h_p4.SetDirectory(0)
+            h_p5.SetDirectory(0)
 
             tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
             tmp_path_fitresults = glob(tmp_path_fitresult)
@@ -70,7 +73,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                 #if chi2ndof > 1.1:
                 #  continue
                 #if pval < 0.05:
-                if pval < 0.05:
+                if pval < 0.01:
                    continue
 
                 try:
@@ -90,6 +93,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                 h_p2.Fill(params.GetBinContent(4))
                 h_p3.Fill(params.GetBinContent(5))
                 h_p4.Fill(params.GetBinContent(6))
+                h_p5.Fill(params.GetBinContent(7))
                 #print nsig, chi2, params.GetBinContent(3), params.GetBinContent(4), params.GetBinContent(5), params.GetBinContent(6)
 
             h_allPoints_list.append(h_allPoints)
@@ -97,18 +101,20 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
             h_p2_list.append(h_p2)
             h_p3_list.append(h_p3)
             h_p4_list.append(h_p4)
+            h_p5_list.append(h_p5)
 
 
-
-    ''''
+    '''
     h_p1 = TH1F("p1", ";nsig;No. of toys", 80, 0, 15000)
     h_p2 = TH1F("p2", ";nsig;No. of toys", 80, 0, 100)
     h_p3 = TH1F("p3", ";nsig;No. of toys", 80, -5, 10)
     h_p4 = TH1F("p4", ";nsig;No. of toys", 80, -2, 2)
+    h_p5 = TH1F("p5", ";nsig;No. of toys", 80, -2, 2)
     h_p1.SetDirectory(0)
     h_p2.SetDirectory(0)
     h_p3.SetDirectory(0)
     h_p4.SetDirectory(0)
+    h_p5.SetDirectory(0)
 
     tmp_path_fitBkg = config.getFileName("FitParameters_PD_bkgonly", cdir, channelName, rangelow, rangehigh, 0, 0, 0) + ".root"
     fpeBkg = efp.FitParameterExtractor(tmp_path_fitBkg)
@@ -127,11 +133,13 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
         h_p2.Fill(params.GetBinContent(3))
         h_p3.Fill(params.GetBinContent(4))
         h_p4.Fill(params.GetBinContent(5))
+        h_p5.Fill(params.GetBinContent(6))
 
     h_p1_list.append(h_p1)
     h_p2_list.append(h_p2)
     h_p3_list.append(h_p3)
     h_p4_list.append(h_p4)
+    h_p5_list.append(h_p5)
     '''
 
 
@@ -164,13 +172,20 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
        legendNames.append("#sigma / m = %d%%"%sigwidth)
 
     c2 = df.setup_canvas()
+    graphs[0].GetYaxis().SetTitle("N_{extracted signal}")
     ratios[0].GetYaxis().SetRangeUser(-1,1)
+    ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
     outfileName = config.getFileName(outfile + "Ratio", cdir, channelName, rangelow, rangehigh) + ".pdf"
     leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
+    upperPad.cd()
+    line = ROOT.TLine(minMean-50, 0.0, maxMean+50, 0.0)
+    line.Draw()
     lowerPad.cd()
     line0 = ROOT.TLine(minMean-50, 0.0, maxMean+50, 0.0)
     line1 = ROOT.TLine(minMean-50, 0.5, maxMean+50, 0.5)
     line2 = ROOT.TLine(minMean-50, -0.5, maxMean+50, -0.5)
+    line1.SetLineStyle(2)
+    line2.SetLineStyle(2)
     line0.Draw()
     line1.Draw()
     line2.Draw()
@@ -221,6 +236,13 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     df.SetStyleOptions(h_p4_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_p4_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
+
+    outfileName = config.getFileName("p5", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    df.SetRange(h_p5_list, myMin=0)
+    df.SetStyleOptions(h_p5_list, df.get_finalist_style_opt)
+    leg = df.DrawHists(c, h_p5_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
+    c.Print(outfileName)
+
 
 
 

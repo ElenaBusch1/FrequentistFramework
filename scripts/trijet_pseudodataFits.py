@@ -13,15 +13,16 @@ pdFitNames = ["sixPar"]
 
 #pdFitName = "fivePar"
 
-fitName = "fivePar"
+fitName = "fiveParV3"
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-channelNames=["BkgLow_3_alpha0_SR1_tagged"]
+channelNames = ["PtOrdered2"]
+
 
 sigmeans = [0]
 sigamps = [0]
 
-rangelow=300
+rangelow=200
 rangehigh=900
 
 

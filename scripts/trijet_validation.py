@@ -22,14 +22,15 @@ fitNames = ["fourPar", "fivePar", "sixPar"]
 #rangeshigh=[900]
 
 
-channelNames=["MassOrdered_2"]
+#channelNames=["MassOrdered_2"]
+channelNames=["PtOrdered2"]
 #rangeslow=[200, 250, 275, 300, 350, 400]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
 #rangeshigh=[700, 800, 900, 1000, 1100]
 #rangeslow=[200, 300]
 #rangeshigh=[800, 900]
-rangeslow=[200]
-rangeshigh=[800]
+rangeslow=[150, 200]
+rangeshigh=[800, 900]
 
 for rangelow in rangeslow:
   for rangehigh in rangeshigh:

@@ -6,24 +6,24 @@ import sys, re, os, math, argparse
 from ROOT import *
 import math
 import config as config
-
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
+import DrawingFunctions as df
 
 
-def fitQualityTests(pdfile, nominalname, outfile, ntoys, rangelow, rangehigh, lumi, sigmean, sigwidth, sigamp, cdir, channelName):
+
+def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, outfile, ntoys, rangelow, rangehigh, lumi, sigmean, sigwidth, sigamp, cdir, channelName):
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     nominalFileName = config.getFileName(nominalname, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
     nominalFile = ROOT.TFile(nominalFileName, "READ")
 
     nominalFit = nominalFile.Get("postfit_0")
     nominalFit.SetDirectory(0)
+
     tmpError = nominalFit.Clone("tmpError")
     relError = nominalFit.Clone("RelError")
     relError.SetDirectory(0)
+    relError.GetXaxis().SetTitle("m_{jj}")
+
 
     for toy in range(ntoys):
        toyName = config.getFileName(pdfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
@@ -42,19 +42,30 @@ def fitQualityTests(pdfile, nominalname, outfile, ntoys, rangelow, rangehigh, lu
     for xbin in range(nominalFit.GetNbinsX()):
        nominalFit.SetBinError(xbin+1, math.sqrt(tmpError.GetBinContent(xbin+1)))
        relError.SetBinError(xbin+1, math.sqrt(tmpError.GetBinContent(xbin+1)) / nominalFit.GetBinContent(xbin+1) )
-       relError.SetBinContent(xbin+1, 1 )
+       relError.SetBinContent(xbin+1, 0 )
 
-    outFile = ROOT.TFile(outfile, "RECREATE")
-    nominalFit.Write("FitWithError")
-    outFile.Close()
+    fit1Name = config.getFileName(fitFunction1File, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
+    fit1File = ROOT.TFile(fit1Name, "READ")
+    Fit1 = fit1File.Get("postfit")
+    Fit1.SetDirectory(0)
 
+    fit2Name = config.getFileName(fitFunction2File, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
+    fit2File = ROOT.TFile(fit2Name, "READ")
+    Fit2 = fit2File.Get("postfit")
+    Fit2.SetDirectory(0)
+
+    relErrorFit = nominalFit.Clone("RelErrorFit")
+    relErrorFit.SetDirectory(0)
+    relErrorFit.GetXaxis().SetTitle("m_{jj}")
+    for xbin in range(nominalFit.GetNbinsX()):
+       relErrorFit.SetBinError(xbin+1, (Fit2.GetBinContent(xbin+1) - Fit1.GetBinContent(xbin+1)) / Fit1.GetBinContent(xbin+1) )
+       relErrorFit.SetBinContent(xbin+1, 0 )
 
 
     c = ROOT.TCanvas("c1", "c1", 800, 600)
-    c.SetRightMargin(0.10)
-    c.SetLeftMargin(0.10)
-    relError.Draw("ex0")
-    c.Print("plots/fit.pdf")
+    leg = df.DrawHists(c, [relError, relErrorFit], ["Stat uncertainty on fit", "Function choice"], [], drawOptions = ["ex0"], styleOptions=df.get_extraction_style_opt, isLogX=0)
+    path = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
+
 
 
 
@@ -63,8 +74,6 @@ def main(args):
     parser = argparse.ArgumentParser(description='%prog [options]')
     parser.add_argument('--pdfile', dest='pdfile', type=str, default='jjj/PD_swift_fivePar_bkgonly_range_300_1700.root', help='Input workspace file name')
     parser.add_argument('--nominalName', dest='nominalName', type=str, default='jjj/PostFit_swift_fivePar_bkgonly_range_300_1200.root', help='Input workspace file name')
-    #parser.add_argument('--minMjj', dest='minMjj', type=str, default='300', help='Minimum value of mjj')
-    #parser.add_argument('--maxMjj', dest='maxMjj', type=str, default='1000', help='Maximum value of mjj')
     parser.add_argument('--outfile', dest='outfile', type=str, default='plots/fitStability.root', help='Output file name')
     parser.add_argument('--nToys', dest='nToys', type=int, default=50, help='Number of toys to run')
     

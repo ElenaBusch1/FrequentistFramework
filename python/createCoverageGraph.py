@@ -49,13 +49,14 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
                 if sigamp > 0:
                     tmp_path_injection = config.getFileName(inputPD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
                     try:
-                      tmp_path_injections = glob(tmp_path_injection)
-                      cfile = tmp_path_injections[0]
+                      #tmp_path_injections = glob(tmp_path_injection)
+                      #cfile = tmp_path_injections[0]
+                      cfile = tmp_path_injection
                     except:
+                      print "Warning: no injection file for ", tmp_path_injection
                       continue
 
                     try:
-                        #f = TFile(tmp_path_injection)
                         f = TFile(cfile)
                         h = f.Get("pseudodata_0_injection")
                         n_injected = h.Integral(0, h.GetNbinsX()+1)
@@ -87,12 +88,12 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
                     except:
                        continue
 
-                    print n_injected, limit, n_injected/sqrtB, limit/sqrtB
+                    #print n_injected, limit, n_injected/sqrtB, limit/sqrtB
                     inj_limit.append((n_injected, limit, limit_exp, limit_exp2u, limit_exp1u, limit_exp1d, limit_exp2d))
                     if math.isnan(limit):
                         nans += 1
 
-                print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
+                #print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
                 # if float(nans) / len(inj_limit) < 0.02:
                 for t in inj_limit:
                     g.SetPoint(g.GetN(), t[0]/sqrtB, t[1]/sqrtB)

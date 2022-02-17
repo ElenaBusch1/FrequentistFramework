@@ -8,38 +8,43 @@ import python.getChi2Distribution as getChi2Distribution
 
 # May want to loop over these at some point?
 cdir = config.cdir
-channelName="BkgLow_2_alpha0_SR1_tagged"
-lumi =  config.samples[channelName]["lumi"]
+channelNames = ["PtOrdered2"]
+pdFitName = "sixPar"
+fitName = "fiveParV3"
+
 
 atlasLabel = "Simulation Internal"
 
-#rangeslow=[200, 250, 275, 300, 350, 400]
-#rangeshigh=[1000, 1200, 1400, 1600, 1800]
-rangeslow=[300]
+rangeslow=[200]
 rangeshigh=[900]
 
-for rangelow in rangeslow:
-  for rangehigh in rangeshigh:
+for channelName in channelNames:
+  lumi =  config.samples[channelName]["lumi"]
+  for rangelow in rangeslow:
+    for rangehigh in rangeshigh:
 
-    infilesChi2 = "PostFit_PD_bkgonly"
-    inhistChi2="chi2"
-    outfileChi2="chi2"
+      infilesChi2 = "PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName)
+      inhistChi2="chi2"
+      outfileChi2="chi2"
 
-    getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=0, sigwidth=0, sigamp=0, lumi=lumi, atlasLabel=atlasLabel)
+      getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=0, sigwidth=0, sigamp=0, lumi=lumi, atlasLabel=atlasLabel)
 
-    rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
-    #rebinedges=None
+      rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
+  
+      infiles = ["PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName)]
+      outfileFits = config.getFileName("fits_PD_%s_%s"%(pdFitName, fitName), cdir + "/scripts/", channelName, rangelow, rangehigh)
+      plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, lumi=lumi, channelName=channelName, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_0", cdir=cdir+"/scripts/")
 
-    infiles = [config.getFileName("PostFit_PD_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"]
+  
+      outfilePulls = config.getFileName("pulls_PD_%s_%s"%(pdFitName, fitName), cdir + "/scripts/", channelName, rangelow, rangehigh)
+      plotPulls.plotPulls(infiles=infiles, fitNames = ["five par"], outfile=outfilePulls, lumi=lumi, atlasLabel=config.atlasLabel, suffix="_0", cdir=cdir+"/scripts/", channelName=channelName, minMjj=rangelow, maxMjj=rangehigh)
+  
 
-    outfileFits = config.getFileName("fits_PD", cdir + "/scripts/", channelName, rangelow, rangehigh)
-    plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_0")
-
-    outfilePulls = config.getFileName("pulls_PD", cdir + "/scripts/", channelName, rangelow, rangehigh)
-    plotPulls.plotPulls(infiles=infiles, outfile=outfilePulls, lumi=lumi, atlasLabel=config.atlasLabel, suffix="_0")
+      fit1 = "PostFit_fivePar_bkgonly"
+      fit2 = "PostFit_sixPar_bkgonly"
+      fitQualityTests.fitQualityTests("PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName), "PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName), fit1, fit2, "FitQuality", config.nToys, rangelow, rangehigh, lumi, 0, 0, 0, cdir + "/scripts/", channelName)
 
 
-    #fitQualityTests.fitQualityTests("PostFit_PD_bkgonly", "PostFit_PD_bkgonly", "FitQuality", config.nToys, rangelow, rangehigh, 0, 0, 0, cdir + "/scripts/", channelName, lumi=lumi)
 
 
 

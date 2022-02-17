@@ -6,10 +6,11 @@ import os
 
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-channelNames = ["MassOrdered_2"]
+#channelNames = ["MassOrdered_2"]
+channelNames = ["PtOrdered2"]
 
 rangelow=200
-rangehigh=800
+rangehigh=900
 
 fitNames = ["fivePar", "sixPar"]
 #fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]

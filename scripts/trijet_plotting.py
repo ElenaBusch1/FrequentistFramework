@@ -19,7 +19,8 @@ cdir = config.cdir
 #sigmeans=[ 450, 650]
 #sigmeans=[ 450]
 #sigmeans=[ 450, 550, 650]
-sigmeans=[ 250, 350, 450, 550, 650]
+#sigmeans=[ 250, 350, 450, 550, 650, 750]
+sigmeans=[ 350, 450, 550, 650]
 sigwidths=[ 7 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[5,1,0]
@@ -27,9 +28,10 @@ sigwidths=[ 7 ]
 #sigamps=[5,4,3,2,1,0]
 sigamps=[5,3,1,0]
 rangelow=200
-rangehigh=800
+rangehigh=900
 #channelName="BkgLow_2_alpha0_SR1_tagged"
-channelName="MassOrdered_2"
+#channelName="MassOrdered_2"
+channelName="PtOrdered2"
 lumi =  config.samples[channelName]["lumi"]
 atlasLabel = "Simulation Internal"
 
@@ -37,8 +39,9 @@ atlasLabel = "Simulation Internal"
 pdFitName = "sixPar"
 #pdFitName = "fivePar"
 #fitName = "fiveParV3"
-fitName = "fourPar"
+#fitName = "fourPar"
 #fitName = "fivePar"
+fitName = "fiveParV3"
 
 rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
 #rebinedges = None
@@ -108,13 +111,14 @@ outfileExtraction = "PD_extraction"
 pathsLimits = [ "Limits_limits"]
 #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=channelName, cdir=cdir+"/scripts/",channelName=channelName,rangelow=rangelow, rangehigh=rangehigh, atlasLabel=atlasLabel)
 
-sigamps=[5, 2, 1, 0]
+#sigamps=[5, 2, 1, 0]
+sigamps=[5, 1, 0]
 #sigamps=[5]
-inputPDCoverage='PD_bkgonly'
+inputPDCoverage='PD_%s_bkgonly'%(pdFitName)
 outfileCoverage='Coverage'
 pathsLimits = "Limits_limits"
-#createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
-#plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
+createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
+plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
 
 
 

@@ -6,10 +6,11 @@ import os
 # May want to loop over these at some point?
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-channelNames=["MassOrdered_2"]
+#channelNames=["MassOrdered_2"]
+channelNames=["PtOrdered2"]
 #rangeslow=[200, 250, 275, 300, 350, 400]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
-rangeslow=[200, 300]
+rangeslow=[150, 200, 300]
 rangeshigh=[800, 900]
 #rangeslow=[150, 200, 300]
 #rangeshigh=[700, 800, 900, 1000, 1100]

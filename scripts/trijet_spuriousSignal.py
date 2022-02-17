@@ -13,12 +13,13 @@ dolimit=0
 pdFitNames = ["sixPar"]
 #pdFitNames = ["fivePar"]
 #pdFitName = "fiveParV2"
-fitName = "fourPar"
-#fitName = "fivePar"
+#fitName = "fourPar"
+fitName = "fiveParV3"
 fitFunction = config.fitFunctions[fitName]["Config"]
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-channelNames=["MassOrdered_2"]
+#channelNames=["MassOrdered_2"]
+channelNames=["PtOrdered2"]
 
 #sigmeans = [350, 450, 550, 650, 750, 850]
 #sigmeans = [450, 550, 650, 750, 850]
@@ -27,7 +28,7 @@ sigamps = [0]
 sigwidth=7
 
 rangelow=200
-rangehigh=800
+rangehigh=900
 binedges = config.getBinning(rangelow, rangehigh, delta=25)
 
 

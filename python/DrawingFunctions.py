@@ -23,15 +23,15 @@ class StyleOptions:
         line_width     = 4,
         legend_options = "l",
         y_divisions    = None,
-        x_label_size   = 0.04,
+        x_label_size   = 0.05,
         x_title_size   = 0.05,
         x_title_offset = 1.0,
         x_axis_label_offset = None,
         y_axis_label_offset = None,
-        y_label_size   = 0.04,
+        y_label_size   = 0.05,
         y_title_size   = 0.05,
         #y_title_offset = 0.5,
-        y_title_offset = 1.25,
+        y_title_offset = 1.3,
         z_label_size        = None,
         z_title_size        = None,
         z_title_offset      = None,
@@ -181,11 +181,13 @@ def set_style_options(hist,style_options, height):
     hist .GetXaxis().SetLabelSize(style_options.x_label_size / height)
     hist .GetXaxis().SetTitleSize(style_options.x_title_size / height)
 
-    hist .GetXaxis().SetTitleOffset(style_options.x_title_offset )
-    hist .GetYaxis().SetLabelSize(style_options.y_label_size / height)
-    #hist .GetYaxis().SetTitleOffset(style_options.y_title_offset )
-    hist .GetYaxis().SetTitleOffset(style_options.y_title_offset / height )
-    hist .GetYaxis().SetTitleSize(style_options.y_title_size / height)
+    hist.GetXaxis().SetTitleOffset(style_options.x_title_offset )
+    hist.GetYaxis().SetLabelSize(style_options.y_label_size / height)
+    #hist.GetYaxis().SetTitleOffset(style_options.y_title_offset )
+    #hist.GetYaxis().SetTitleOffset(style_options.y_title_offset / height )
+    #hist.GetYaxis().SetTitleOffset(style_options.y_title_offset)
+    hist.GetYaxis().SetTitleOffset(style_options.y_title_offset*height)
+    hist.GetYaxis().SetTitleSize(style_options.y_title_size / height)
 
     hist.SetMarkerSize((style_options.marker_size))
 
@@ -210,7 +212,7 @@ def get_mass_plot_style(is_signal = 0):
                              )
 
 
-def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.95, dy = 0.04, text_size = 0.035, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
+def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.04, text_size = 0.035, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
     text_size = text_size / height
     dy = dy / height
     if sampleName != "":
@@ -323,7 +325,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   deltaHists=0.1
   if len(hists) > 4:
     deltaHists = 0.06
-  legend = r.TLegend(0.7,0.9-(len(hists))*deltaHists,.9,0.90)
+  legend = r.TLegend(0.65,0.9-(len(hists))*deltaHists,.95,0.90)
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions,1.0-0.35)
   SetStyleOptions(Ratios, styleOptions, 0.35)
@@ -341,11 +343,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   Ratios[0].Draw("%s"%(ratioDrawOptions[0]))
   #Ratios[0].Draw("HIST")
   for hist in range(len(Ratios)):
-    #Ratios[hist].SetFillStyle(1000)
-    #print hist
-    #print Ratios[hist].GetBinContent(3)
     Ratios[hist].Draw("%s SAME"%(ratioDrawOptions[hist%len(ratioDrawOptions)]))
-    #Ratios[hist].Draw("HIST SAME")
 
   return legend, upperPad, lowerPad
 
