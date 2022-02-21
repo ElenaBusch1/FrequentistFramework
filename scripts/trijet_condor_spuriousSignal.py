@@ -3,27 +3,26 @@ import os
 
 cdir = config.cdir
 
-rangelow=200
-rangehigh=900
+pdFitName = config.cPDFitName
+fitName = config.cFitName
+channelName=config.cSample
+rangelow=config.cRangeLow
+rangehigh=config.cRangeHigh
+signalfile =  config.cSignal
 
 
 pdHistName = "pseudodata"
-#pdFitName = "fiveParV2"
-pdFitName = "fivePar"
-fitName = "fourPar"
-#pdFitName = "sixPar"
-#fitName = "fivePar"
-channelName = "PtOrdered6"
 sigmeans = [250, 350, 450, 550, 650, 750, 850]
 sigwidths = [7]
 
 
 for sigmean in sigmeans:
-    for sigwidth in sigwidths:
+  for sigwidth in sigwidths:
 
       cmd = "python -b "+cdir + "/scripts/trijet_spuriousSignal.py" +  \
                            " --pdFitName=" + pdFitName + \
                            " --fitName=" + fitName + \
+                           " --signalFile=" + signalfile + \
                            " --channelName=" + channelName + \
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
@@ -32,7 +31,7 @@ for sigmean in sigmeans:
                            " --isBatch=1"
 
 
-      runfile = "batch/runSpurious_" + str(sigmean) + "_" + str(sigwidth) +  "_" + pdFitName + "_" + fitName + "_" + channelName + ".sh"
+      runfile = "batch/runSpurious_" + str(sigmean) + "_" + str(sigwidth) +  "_" + pdFitName + "_" + fitName + "_" + channelName + "_" + signalfile + ".sh"
       fr=open(runfile,'w')
       fr.write('#!/bin/sh\n')
       fr.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')

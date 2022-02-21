@@ -2,123 +2,27 @@ cdir="/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest"
 nToys = 1000
 atlasLabel="Simulation Internal"
 
+cSample = "PtOrdered6"
+cRangeLow = 200
+cRangeHigh = 900
+cPDFitName = "fivePar"
+cFitName = "fourPar"
+#cPDFitName = "sixPar"
+#cFitName = "fivePar"
+cSignal = "Gaussian"
+#cSignal = "PtOrdered6"
+
+
+#####################################################################################
+# Input mjj distributions
+#####################################################################################
 samples = {}
-
-samples["BkgLow_3_alpha0_SR1_tagged"] = { 
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_3_alpha0_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
-
-samples["SR1_cutval7"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_3_alpha0_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_7.root",
-                 "lumi": 139000,
-               }
-
-
-
-samples["BkgLow_4_alpha0_SR1_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_4_alpha0_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
-samples["BkgLow_5_alpha0_SR1_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_5_alpha0_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
-samples["BkgLow_2_alpha0_SR1_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_2_alpha0_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
-samples["BkgLow_2_alpha0_SR1_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_1_alpha0_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
-samples["BkgMid_2_alpha0_SR2_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgMid_2_alpha0_SR2_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_ptOrdered_vars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
-
-samples["MassOrdered_2"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_1_alpha0_SR1",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectra_test_SRAlpha_100_BkgAlpha_0_dimVars_pt_cutVal_6.root",
-                 "lumi": 139000,
-               }
-
 
 samples["PtOrdered"] = {
                  "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
                  "topfile": "../config/dijetISR/jjj_SR1.template",
                  "histname": "BkgLow_2_alpha100_SR1",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
-                 "lumi": 139000,
-               }
-
-
-samples["PtOrdered2"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_3_alpha100_SR1",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
-                 "lumi": 139000,
-               }
-
-samples["PtOrderedSR1_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_3_alpha100_SR1_tagged",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
-                 "lumi": 139000,
-               }
-
-samples["PtOrderedSR2_tagged"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgMid_3_alpha100_SR2",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
-                 "lumi": 139000,
-               }
-
-samples["PtOrdered3"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_3_alpha100_SR1",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_5.root",
-                 "lumi": 139000,
-               }
-
-samples["PtOrdered4"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-                 "topfile": "../config/dijetISR/jjj_SR1.template",
-                 "histname": "BkgLow_3_alpha100_SR1",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_6.root",
                  "lumi": 139000,
                }
 
@@ -140,28 +44,9 @@ samples["PtOrdered5Tagged"] = {
                  "lumi": 139000,
                }
 
-
-#samples["PtOrdered6"] = {
-#                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
-#                 "topfile": "../config/dijetISR/jjj_SR1.template",
-#                 "histname": "BkgLow_SR1",
-#                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6.root",
-#                 "lumi": 139000,
-#               }
-
-
-
-#samples["PtOrdered6"] = {
-#                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1_signalTest.template",
-#                 "topfile": "../config/dijetISR/jjj_SR1_signalTest.template",
-#                 "histname": "BkgLow_SR1",
-#                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6.root",
-#                 "lumi": 139000,
-#               }
-
 samples["PtOrdered6"] = {
-                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1_signalTemplate.template",
-                 "topfile": "../config/dijetISR/jjj_SR1_signalTemplate.template",
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
                  "histname": "BkgLow_SR1",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6.root",
                  "lumi": 139000,
@@ -169,10 +54,12 @@ samples["PtOrdered6"] = {
 
 
 
-
-
-
+#####################################################################################
+# Signals
+#####################################################################################
 signals = {}
+
+# Signal template (can include systematics)
 signals["PtOrdered6"] = {
                  "signalfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/signalGauss_meanM_template.xml",
                  "workspacefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mRMEAN.root",
@@ -180,7 +67,7 @@ signals["PtOrdered6"] = {
                  "histname": "SigLow_1_alpha200_SR1",
                }
 
-
+# Generic gaussian distribution
 signals["Gaussian"] = {
                  "signalfile"  : "../config/dijetISR/signalGauss_meanM_widthW.xml",
                  "workspacefile": "",
@@ -193,17 +80,17 @@ signals["Gaussian"] = {
 
 
 
-
-
-
+#####################################################################################
+# Fit functions
+#####################################################################################
 fitFunctions = {}
 fitFunctions["sixPar"] = {
                             "Name" : "6-par fit",
-                            "Config" : "dijetISR/background_ajj_simpleTrig_yStar0p825_sixPar.xml",
+                            "Config" : "config/background_sixPar.xml",
                           }
 fitFunctions["fivePar"] = {
                             "Name" : "5-par fit",
-                            "Config" : "dijetISR/background_ajj_simpleTrig_yStar0p825_fivePar.xml",
+                            "Config" : "config/background_fivePar.xml",
                           }
 
 
@@ -219,7 +106,7 @@ fitFunctions["fiveParV3"] = {
 
 fitFunctions["fourPar"] = { 
                             "Name" : "4-par fit",
-                            "Config" : "dijetISR/background_ajj_simpleTrig_yStar0p825_fourPar.xml",
+                            "Config" : "config/background_fourPar.xml",
                           }
 
 

@@ -13,6 +13,7 @@ parser = OptionParser()
 parser.add_option('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
 parser.add_option('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
 parser.add_option('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--signalFile', dest='signalFile', type=str, default=None, help='Name of the signal file')
 parser.add_option('--channelName', dest='channelName', type=str, help='Output workspace file')
 parser.add_option('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
 parser.add_option('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
@@ -32,19 +33,26 @@ if args.isBatch:
   sigwidths = [args.sigwidth]
   rangelow = args.rangelow
   rangehigh = args.rangehigh
+  signalfile = args.signalFile
 
 
 else:
-  pdFitName = "sixPar"
-  fitName = "fiveParV3"
-  channelName="PtOrdered2"
+  pdFitNames = [config.cPDFitName]
+  fitName = config.cFitName
+  channelNames=[config.cSample]
+  sigmeans = [250]
+  sigamps = [0]
+  sigwidths = [7]
+  rangelow=config.cRangeLow
+  rangehigh=config.cRangeHigh
+  signalfile =  config.cSignal
+
 
   sigmeans = [650]
   sigamps = [3]
   sigwidths=[7]
 
-  rangelow=200
-  rangehigh=900
+
 
 fitFunction = config.fitFunctions[fitName]["Config"]
 cdir = config.cdir
@@ -70,8 +78,8 @@ for sigmean in sigmeans:
 
           # Output file names, which will be written to outputdir
           wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-          outputfile = config.getFileName("FitResult_limits", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-          outputstring = "FitResult_limits_%d_%d"%(sigamp, sigmean)
+          outputfile = config.getFileName("FitResult_limits_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+          outputstring = "FitResult_limits_%d_%d_%s"%(sigamp, sigmean, signalfile)
           binedges = None
 
           # Then run the injection
@@ -89,6 +97,7 @@ for sigmean in sigmeans:
                nbkg=nbkg,
                nsig=nsig,
                rangelow=rangelow,
+               signalfile=signalfile,
                rangehigh=rangehigh,
                outputfile=outputfile,
                outputstring=outputstring,

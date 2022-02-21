@@ -11,6 +11,7 @@ parser = OptionParser()
 parser.add_option('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
 parser.add_option('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
 parser.add_option('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--signalFile', dest='signalFile', type=str, default=None, help='Name of the signal file')
 parser.add_option('--channelName', dest='channelName', type=str, help='Output workspace file')
 parser.add_option('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
 parser.add_option('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
@@ -30,17 +31,19 @@ if args.isBatch:
   sigwidths = [args.sigwidth]
   rangelow = args.rangelow
   rangehigh = args.rangehigh
+  signalfile = args.signalFile
+
 
 else:
-  pdFitNames = ["sixPar"]
-  fitName = "fiveParV3"
-  channelNames=["PtOrdered2"]
+  pdFitNames = [config.cPDFitName]
+  fitName = config.cFitName
+  channelNames=[config.cSample]
   sigmeans = [250]
   sigamps = [0]
-  sigwidth = [7]
-  rangelow=200
-  rangehigh=900
-
+  sigwidths = [7]
+  rangelow=config.cRangeLow
+  rangehigh=config.cRangeHigh
+  signalfile =  config.cSignal
 
 
 
@@ -48,7 +51,8 @@ else:
 dosignal=1
 dolimit=0
 
-fitFunction = config.fitFunctions[fitName]["Config"]
+#fitFunction = config.fitFunctions[fitName]["Config"]
+fitFunction = fitName
 cdir = config.cdir
 
 binedges = config.getBinning(rangelow, rangehigh, delta=25)
@@ -72,7 +76,7 @@ for sigmean in sigmeans:
   
           # Output file names, which will be written to outputdir
           wsfile = config.getFileName("FitResult_spuriousSignal_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-          outputfile = config.getFileName("FitResult_spuriousSignal_%s_%s"%(pdFitName, fitName), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+          outputfile = config.getFileName("FitResult_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
   
           # Then run the injection
           #run_injections_anaFit.run_injections_anaFit(
@@ -86,12 +90,12 @@ for sigmean in sigmeans:
                wsfile=wsfile,
                sigmean=sigmean,
                sigwidth=sigwidth,
-               #sigamp=sigamp,
                nbkg=nbkg,
                rangelow=rangelow,
                rangehigh=rangehigh,
                outputfile=outputfile,
-               outputstring="SS_%s_%s_%d_%d_%d"%(pdFitName, fitName, sigmean, sigamp, rangehigh),
+               signalfile = signalfile,
+               outputstring="SS_%s_%s_%d_%d_%d_%s"%(pdFitName, fitName, sigmean, sigamp, rangehigh, signalfile),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,

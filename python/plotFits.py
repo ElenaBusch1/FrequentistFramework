@@ -14,7 +14,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 #ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 #ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix=""):
+def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix="", fitNames = None):
     AS.SetAtlasStyle()
 
     c = df.setup_canvas(outfile)
@@ -26,9 +26,12 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     plotHists = []
     legNames = []
 
+    if not fitNames:
+      fitNames = infiles
+
     labels = []
 
-    for index, infileName in zip(range(len(infiles)), infiles):
+    for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
       path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj) + ".root"
 
       #inFile = ROOT.TFile(infileName, "READ")
@@ -71,17 +74,21 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
                 residualHist.SetBinContent(ibin, binSig)
                 residualHist.SetBinError(ibin, 0)
+                residualHist.GetXaxis().SetTitle("m_{jj}")
+                residualHist.GetYaxis().SetTitle("Residuals (#sigma)")
 
 
 
       dataHist.SetDirectory(0)
+      dataHist.GetXaxis().SetTitle("m_{jj}")
+      dataHist.GetYaxis().SetTitle("N_{events}")
       fitHist.SetDirectory(0)
       residualHist.SetDirectory(0)
 
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        dataRes.GetYaxis().SetRangeUser(-5,5)
+        dataRes.GetYaxis().SetRangeUser(-5.2,5.2)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
         plotHists.append(dataHist)
@@ -92,12 +99,12 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       residualHists.append(residualHist)
 
       plotHists.append(fitHist)
-      legNames.append("%s fit"%(infileName))
+      try:
+        tmpName = config.fitFunctions[fitName]["Name"]
+      except:
+        tmpName = fitName
+      legNames.append("%s, #chi^{2} / ndof = %.2f, p-value = %.2f %%"%(tmpName, chi2, pval))
 
-
-
-      label = "#chi^{2} / ndof = %.2f, p-value = %.2f %%"%(chi2, pval)
-      labels.append(label)
 
 
 

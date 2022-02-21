@@ -37,7 +37,10 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
         h_chi2 = f.Get("chi2")
         h_pf   = f.Get("postfit")
         h_data   = f.Get("data")
+        h_data.GetXaxis().SetTitle("m_{jj}")
         h_res  = f.Get("residuals")
+        h_res.GetXaxis().SetTitle("m_{jj}")
+        h_res.GetYaxis().SetTitle("Residual (#sigma)")
 
         if rebinEdges:
           h_res = h_res.Rebin(len(rebinEdges)-1, "postfit", array.array('d', rebinEdges))
@@ -79,7 +82,6 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
         l_res.append(h_res)
         l_chi2.append(chi2)
         l_npars.append(npars)
-        print chi2, npars
         l_ndof.append(ndof)
         legtext = "%s (#chi^{2}/n = %.0f/%.0f)" % (infile, chi2, ndof)
         legNames.append(legtext)

@@ -13,39 +13,20 @@ import python.plotSignalInjection as plotSignalInjection
 cdir = config.cdir
 
 
-#sigmeans=[ 550]
-#sigmeans=[ 350, 450, 550, 650, 750, 850]
-#sigmeans=[ 450, 550, 650, 750, 850]
-#sigmeans=[ 450, 650]
-#sigmeans=[ 450]
-#sigmeans=[ 450, 550, 650]
-#sigmeans=[ 250, 350, 450, 550, 650, 750]
 sigmeans=[ 250, 350, 450, 550, 650, 750]
 sigwidths=[ 7 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
-#sigamps=[5,1,0]
-#sigamps=[20, 10, 8, 7, 5, 3, 1, 0]
-#sigamps=[5,4,3,2,1,0]
 sigamps=[5,4,3,2,1,0]
-rangelow=200
-rangehigh=900
-#channelName="BkgLow_2_alpha0_SR1_tagged"
-#channelName="MassOrdered_2"
-channelName="PtOrdered6"
+
+pdFitName = config.cPDFitName
+fitName = config.cFitName
+channelName=config.cSample
+rangelow=config.cRangeLow
+rangehigh=config.cRangeHigh
+signalfile =  config.cSignal
+
 lumi =  config.samples[channelName]["lumi"]
 atlasLabel = "Simulation Internal"
-
-
-#pdFitName = "fivePar"
-#fitName = "fiveParV3"
-#fitName = "fourPar"
-#fitName = "fivePar"
-pdFitName = "sixPar"
-#fitName = "fiveParV3"
-#pdFitName = "fivePar"
-#fitName = "fourPar"
-#pdFitName = "fiveParV2"
-fitName = "fivePar"
 
 rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
 #rebinedges = None
@@ -80,15 +61,15 @@ for sigmean in sigmeans:
 
 
 
-infilesChi2 = "PostFit_PD_bkgonly"
+infilesChi2 = "PostFit_PD_bkgonly_%s_%s_%s"%(pdFitName, fitName, signalfile)
 inhistChi2="chi2"
-outfileChi2="chi2"
+outfileChi2="chi2_%s_%s_%s"%(pdFitName, fitName, signalfile)
 #getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=0, sigwidth=0, sigamp=0, lumi=lumi, atlasLabel=atlasLabel)
 
 
-infilesChi2 = "PostFit_spuriousSignal"
+infilesChi2 = "PostFit_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile)
 inhistChi2="chi2"
-outfileChi2="chi2_spuriousSignal"
+outfileChi2="chi2_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile)
 #for sigmean in sigmeans:
 #  for sigwidth in sigwidths:
 #    getChi2Distribution.getChi2Distribution(infiles=infilesChi2, inhist=inhistChi2, outfile=outfileChi2, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, nToys = config.nToys, sigmean=sigmean, sigwidth=sigwidth, sigamp=0, lumi=lumi, atlasLabel=atlasLabel)
@@ -96,9 +77,9 @@ outfileChi2="chi2_spuriousSignal"
 
 
 
-infileExtraction="FitParameters_spuriousSignal_%s_%s"%(pdFitName, fitName)
+infileExtraction="FitParameters_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile)
 infilePD='PD_%s_bkgonly'%(pdFitName)
-outfileSpurious = "PD_spurious_%s_%s_bkgonly"%(pdFitName, fitName)
+outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
 spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly)
 
@@ -106,10 +87,10 @@ spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=inf
 
 
 # Extraction graphs
-infileExtraction="FitParameters_sigPlusBkg"
+infileExtraction="FitParameters_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile)
 infilesBkg = "PostFit_%s_PD_bkgonly"%(pdFitName)
 infilePD='PD_bkgonly'
-outfileExtraction = "PD_extraction"
+outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
 createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
 
 
@@ -120,8 +101,8 @@ pathsLimits = [ "Limits_limits"]
 sigamps=[5, 4, 3, 2, 1, 0]
 #sigamps=[5]
 inputPDCoverage='PD_%s_bkgonly'%(pdFitName)
-outfileCoverage='Coverage'
-pathsLimits = "Limits_limits"
+outfileCoverage='Coverage_%s_%s_%s'%(pdFitName, fitName, signalfile)
+pathsLimits = "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)
 #createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
 #plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
 

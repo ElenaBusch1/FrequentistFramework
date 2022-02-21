@@ -3,26 +3,49 @@ import python.run_anaFitWithToys as run_anaFitWithToys
 import python.generatePseudoData as generatePseudoData
 import os
 
-#. scripts/setup_buildAndFit.sh
+
+
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
+parser.add_option('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--channelName', dest='channelName', type=str, help='Output workspace file')
+parser.add_option('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
+parser.add_option('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
+parser.add_option('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
+parser.add_option('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
+parser.add_option('--sigamp', dest='sigamp', type=int, default=0, help='Amplitude of signal Gaussian for s+b fit (in %)')
+(args, test) = parser.parse_args()
+
+
+
+if args.isBatch:
+  pdFitNames = [args.pdFitName]
+  fitName = args.fitName
+  channelNames = [args.channelName]
+  sigmeans = [args.sigmean]
+  sigamps = [args.sigamp]
+  sigwidths = [args.sigwidth]
+  rangelow = args.rangelow
+  rangehigh = args.rangehigh
+
+else:
+  pdFitNames = ["sixPar"]
+  fitName = "fivePar"
+  channelNames=["PtOrdered5"]
+  sigmeans = [250]
+  sigamps = [0]
+  sigwidth = [7]
+  rangelow=200
+  rangehigh=900
+
+
+
 dosignal=0
 dolimit=0
-
-pdFitNames = ["fiveParV2"]
-fitName = "fivePar"
-#pdFitNames = ["fivePar"]
-#fitName = "fourPar"
-#pdFitNames = ["sixPar"]
-#fitName = "fiveParV3"
 cdir = config.cdir
-#channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-channelNames = ["PtOrdered5"]
-
-
-sigmeans = [0]
-sigamps = [0]
-
-rangelow=200
-rangehigh=800
 
 
 for sigmean in sigmeans:

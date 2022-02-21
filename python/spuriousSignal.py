@@ -73,8 +73,8 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                 #if chi2ndof > 1.1:
                 #  continue
                 #if pval < 0.05:
-                if pval < 0.01:
-                   continue
+                #if pval < 0.01:
+                #   continue
 
                 try:
                     fpe.suffix = "_%d"%(toy)
@@ -177,7 +177,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     graphs[0].GetYaxis().SetTitle("N_{extracted signal}")
     ratios[0].GetYaxis().SetRangeUser(-1,1)
     ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
-    outfileName = config.getFileName(outfile + "Ratio", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, channelName, rangelow, rangehigh) + ".pdf"
     leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
     upperPad.cd()
     line = ROOT.TLine(minMean-50, 0.0, maxMean+50, 0.0)
@@ -203,7 +203,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
  
     # Plotting:
     c = df.setup_canvas()
-    outfileName = config.getFileName("SpuriousSignal", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_allPoints_list, myMin=0)
     df.SetStyleOptions(h_allPoints_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
@@ -212,32 +212,32 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     if bkgOnlyFitFile:
       legendNamesMasses.append("Bkg only fit")
 
-    outfileName = config.getFileName("p1", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("Spuriour_p1" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_p1_list, myMin=0)
     df.SetStyleOptions(h_p1_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_p1_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
-    outfileName = config.getFileName("p2", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("Spuriour_p2" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_p2_list, myMin=0)
     df.SetStyleOptions(h_p2_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_p2_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
-    outfileName = config.getFileName("p3", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("Spuriour_p3" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_p3_list, myMin=0)
     df.SetStyleOptions(h_p3_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_p3_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
 
-    outfileName = config.getFileName("p4", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("Spuriour_p4" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_p4_list, myMin=0)
     df.SetStyleOptions(h_p4_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_p4_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
-    outfileName = config.getFileName("p5", cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName("Spuriour_p5" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_p5_list, myMin=0)
     df.SetStyleOptions(h_p5_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_p5_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)

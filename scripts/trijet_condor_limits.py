@@ -3,18 +3,16 @@ import os
 
 cdir = config.cdir
 
-rangelow=200
-rangehigh=900
+pdFitName = config.cPDFitName
+fitName = config.cFitName
+channelName=config.cSample
+rangelow=config.cRangeLow
+rangehigh=config.cRangeHigh
+signalfile =  config.cSignal
+
 
 pdHistName = "pseudodata"
-#pdFitName = "sixPar"
-#fitName = "fiveParV3"
 
-pdFitName = "sixPar"
-fitName = "fivePar"
-#pdFitName = "fivePar"
-#fitName = "fourPar"
-channelName = "PtOrdered5"
 sigmeans = [250, 350, 450, 550, 650, 750]
 sigwidths = [7]
 sigamps = [0,1,2,3,4,5]
@@ -31,12 +29,13 @@ for sigmean in sigmeans:
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
                            " --sigamp=" + str(sigamp) +  \
+                           " --signalFile=" + signalfile +  \
                            " --rangelow=" + str(rangelow) +  \
                            " --rangehigh=" + str(rangehigh) +  \
                            " --isBatch=1"
 
 
-      runfile = "batch/runLimits_" + str(sigmean) + "_" + str(sigwidth) + "_" + str(sigamp) + ".sh"
+      runfile = "batch/runLimits_" + str(sigmean) + "_" + str(sigwidth) + "_" + str(sigamp) + "_" + signalfile ".sh"
       fr=open(runfile,'w')
       fr.write('#!/bin/sh\n')
       fr.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')

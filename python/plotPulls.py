@@ -51,7 +51,11 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
     ks = h_pulls.KolmogorovTest(h_fit)
 
     labels = []
-    labels.append(fitName)
+    try:
+        tmpName = config.fitFunctions[fitName]["Name"]
+    except:
+        tmpName = fitName
+    labels.append(tmpName)
     labels.append("KS Test = %.2f"%(ks))
 
     l=ROOT.TLegend(0.65, 0.75, 0.9, 0.9)

@@ -3,18 +3,21 @@ import os
 
 cdir = config.cdir
 
-rangelow=200
-rangehigh=900
 
 pdHistName = "pseudodata"
-pdFitName = "sixPar"
-#pdFitName = "fiveParV2"
-#fitName = "fiveParV3"
-fitName = "fivePar"
-channelName = "PtOrdered5"
+
+pdFitName = config.cPDFitName
+fitName = config.cFitName
+channelName=config.cSample
+rangelow=config.cRangeLow
+rangehigh=config.cRangeHigh
+signalfile =  config.cSignal
+
+
 sigmeans = [250, 350, 450, 550, 650, 750]
 sigamps = [0,1,2,3,4,5]
 sigwidths = [7]
+
 
 
 for sigmean in sigmeans:
@@ -24,6 +27,7 @@ for sigmean in sigmeans:
       cmd = "python -b "+cdir + "/scripts/trijet_injections.py" +  \
                            " --pdFitName=" + pdFitName + \
                            " --fitName=" + fitName + \
+                           " --signalFile=" + signalfile + \
                            " --channelName=" + channelName + \
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
@@ -33,7 +37,7 @@ for sigmean in sigmeans:
                            " --isBatch=1"
 
 
-      runfile = "batch/runInjections_" + str(sigmean) + "_" + str(sigwidth) + "_" + str(sigamp) + ".sh"
+      runfile = "batch/runInjections_" + str(sigmean) + "_" + str(sigwidth) + "_" + str(sigamp) + "_" + signalfile + ".sh"
       fr=open(runfile,'w')
       fr.write('#!/bin/sh\n')
       fr.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')

@@ -11,6 +11,7 @@ parser = OptionParser()
 parser.add_option('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
 parser.add_option('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
 parser.add_option('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--signalFile', dest='signalFile', type=str, default=None, help='Name of the signal file')
 parser.add_option('--channelName', dest='channelName', type=str, help='Output workspace file')
 parser.add_option('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
 parser.add_option('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
@@ -30,21 +31,19 @@ if args.isBatch:
   sigwidths = [args.sigwidth]
   rangelow = args.rangelow
   rangehigh = args.rangehigh
+  signalfile = args.signalFile
 
 else:
+  pdFitNames = [config.cPDFitName]
+  fitName = config.cFitName
+  channelNames=[config.cSample]
+  sigmeans = [250]
+  sigamps = [0]
+  sigwidths = [7]
+  rangelow=config.cRangeLow
+  rangehigh=config.cRangeHigh
+  signalfile =  config.cSignal
 
-  #pdFitName = "fiveParV2"
-  pdFitName = "sixPar"
-  fitName = "fivePar"
-  #fitName = "fiveParV3"
-  channelName="PtOrdered6"
-  sigmeans = [450]
-  sigamps = [0, 1, 3, 5]
-  sigwidths=[7]
-  rangelow=200
-  rangehigh=900
-  signalfile =  "Gaussian"
-  #signalfile =  "PtOrdered6"
 
 #. scripts/setup_buildAndFit.sh
 dosignal=1
@@ -73,8 +72,8 @@ for sigmean in sigmeans:
 
       # Output file names, which will be written to outputdir
       wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-      outputfile = config.getFileName("FitResult_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-      outputstring = "FitResult_sigPlusBkg_%d"%(sigamp)
+      outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+      outputstring = "FitResult_sigPlusBkg_%d_%s"%(sigamp, signalfile)
       #binedges = config.getBinning(rangelow, rangehigh, delta=25)
       binedges = None
 

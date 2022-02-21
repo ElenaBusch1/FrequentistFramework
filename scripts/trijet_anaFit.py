@@ -16,8 +16,6 @@ channelNames=["PtOrdered6"]
 #rangeshigh=[800, 900]
 rangeslow=[200]
 rangeshigh=[900]
-#rangeslow=[150, 200, 300]
-#rangeshigh=[700, 800, 900, 1000, 1100]
 
 #channelName="BkgMid_2_alpha0_SR2_tagged"
 ##rangeslow=[200, 250, 275, 300, 350, 400]
@@ -68,6 +66,7 @@ for rangelow in rangeslow:
                rangelow=rangelow,
                rangehigh=rangehigh,
                outputfile=outputfile,
+               signalfile="Gaussian",
                maskthreshold=-0.01,
                dosignal=0,
                dolimit=0,)
