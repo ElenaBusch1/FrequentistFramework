@@ -9,7 +9,7 @@ import python.runFTest as runFTest
 cdir = config.cdir
 #channelNames =["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
 #fitNames = ["fourPar", "fivePar", "fiveParV2", "fiveParV3","sixPar"]
-fitNames = ["fourPar", "fivePar", "sixPar"]
+fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
 #fitNames = ["fourPar", "fivePar", "sixPar"]
 
 
@@ -23,14 +23,29 @@ fitNames = ["fourPar", "fivePar", "sixPar"]
 
 
 #channelNames=["MassOrdered_2"]
-channelNames=["PtOrdered2"]
+#channelNames=["PtOrdered5Tagged"]
+channelNames=["PtOrdered6"]
 #rangeslow=[200, 250, 275, 300, 350, 400]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
 #rangeshigh=[700, 800, 900, 1000, 1100]
 #rangeslow=[200, 300]
 #rangeshigh=[800, 900]
-rangeslow=[150, 200]
-rangeshigh=[800, 900]
+#rangeslow=[150, 200]
+#rangeshigh=[800, 900]
+rangeslow=[200]
+rangeshigh=[900, 1000]
+
+
+
+#channelNames = ["PtOrderedSR2_tagged"]
+#rangeslow=[600, 700]
+#rangeshigh=[1200, 1500]
+
+
+#channelNames = ["PtOrderedSR1_tagged"]
+#rangeslow=[150, 200, 300]
+#rangeshigh=[800, 900]
+
 
 for rangelow in rangeslow:
   for rangehigh in rangeshigh:

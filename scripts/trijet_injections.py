@@ -3,55 +3,84 @@ import python.run_injections_anaFit as run_injections_anaFit
 import python.generatePseudoData as generatePseudoData
 import os
 
+
+
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
+parser.add_option('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
+parser.add_option('--channelName', dest='channelName', type=str, help='Output workspace file')
+parser.add_option('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
+parser.add_option('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
+parser.add_option('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
+parser.add_option('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
+parser.add_option('--sigamp', dest='sigamp', type=int, default=3, help='Amplitude of signal Gaussian for s+b fit (in %)')
+(args, test) = parser.parse_args()
+
+
+
+if args.isBatch:
+  pdFitName = args.pdFitName
+  fitName = args.fitName
+  channelName = args.channelName
+  sigmeans = [args.sigmean]
+  sigamps = [args.sigamp]
+  sigwidths = [args.sigwidth]
+  rangelow = args.rangelow
+  rangehigh = args.rangehigh
+
+else:
+
+  #pdFitName = "fiveParV2"
+  pdFitName = "sixPar"
+  fitName = "fivePar"
+  #fitName = "fiveParV3"
+  channelName="PtOrdered6"
+  sigmeans = [450]
+  sigamps = [0, 1, 3, 5]
+  sigwidths=[7]
+  rangelow=200
+  rangehigh=900
+  signalfile =  "Gaussian"
+  #signalfile =  "PtOrdered6"
+
 #. scripts/setup_buildAndFit.sh
 dosignal=1
 dolimit=0
 
-fitFunction = config.fitFunctions["fourPar"]["Config"]
-#fitFunction = config.fitFunctions["fivePar"]["Config"]
+fitFunction = config.fitFunctions[fitName]["Config"]
 cdir = config.cdir
-channelName="BkgLow_2_alpha0_SR1_tagged"
 outputdir = channelName
 if not os.path.exists(outputdir):
       os.makedirs(outputdir)
 
-#sigmeans = [350, 450, 550, 650, 750, 850]
-#sigmeans = [450, 550, 650, 750, 850]
-sigmeans = [450]
-#sigmeans = [650, 750, 850]
-#sigamps = [0, 1, 5]
-sigamps = [0, 1, 3, 5]
-sigwidth=7
 
-rangelow=300
-rangehigh=900
-
-# First make the pseudodata
-# TODO: maybe make a flag to decide whether to run this?
-pdInputFile = config.getFileName("PostFit_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
-pdFile = config.getFileName("PD_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
 pdHistName = "pseudodata"
 
 
 for sigmean in sigmeans:
   for sigamp in sigamps:
-    nbkg="1E7,0,1E8"
-    nsig="0,0,1e6"
+    for sigwidth in sigwidths:
+      nbkg="1E7,0,1E8"
+      nsig="0,0,1e6"
+  
+      topfile=config.samples[channelName]["topfile"]
+      categoryfile=config.samples[channelName]["categoryfile"]
+      dataFile=config.samples[channelName]["inputFile"]
 
-    topfile=config.samples[channelName]["topfile"]
-    categoryfile=config.samples[channelName]["categoryfile"]
-    dataFile=config.samples[channelName]["inputFile"]
-
-    # Output file names, which will be written to outputdir
-    wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-    outputfile = config.getFileName("FitResult_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-    outputstring = "FitResult_sigPlusBkg_%d"%(sigamp)
-    #binedges = config.getBinning(rangelow, rangehigh, delta=25)
-    binedges = None
+      # Output file names, which will be written to outputdir
+      wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+      outputfile = config.getFileName("FitResult_sigPlusBkg", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+      outputstring = "FitResult_sigPlusBkg_%d"%(sigamp)
+      #binedges = config.getBinning(rangelow, rangehigh, delta=25)
+      binedges = None
 
 
-    # Then run the injection
-    run_injections_anaFit.run_injections_anaFit(
+      # Then run the injection
+      run_injections_anaFit.run_injections_anaFit(
            datafile=pdFile, 
            datahist=pdHistName,
            categoryfile=categoryfile,
@@ -73,6 +102,7 @@ for sigmean in sigmeans:
            loopstart=0,
            loopend=config.nToys,
            rebinedges=binedges,
+           signalfile = signalfile,
            rebinfile=None,
            rebinhist=None,
            maskthreshold=-0.01,

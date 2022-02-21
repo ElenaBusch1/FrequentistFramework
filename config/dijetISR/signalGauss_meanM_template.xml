@@ -1,0 +1,6 @@
+<!-- Template to generate signal xml files with the appropraite script -->
+<!DOCTYPE Model  SYSTEM '/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/AnaWSBuilder.dtd'>
+  <Model Type="External" Input="/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mRMEAN.root" WSName="combined" ModelName="SigLow_1_alpha200_SR1_model" ObservableName="obs_x_SigLow_1_alpha200_SR1">
+ <Item Name="unit[1]" />
+ <Rename OldName="Lumi" NewName="unit" />
+</Model>

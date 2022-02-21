@@ -20,28 +20,32 @@ cdir = config.cdir
 #sigmeans=[ 450]
 #sigmeans=[ 450, 550, 650]
 #sigmeans=[ 250, 350, 450, 550, 650, 750]
-sigmeans=[ 350, 450, 550, 650]
+sigmeans=[ 250, 350, 450, 550, 650, 750]
 sigwidths=[ 7 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[5,1,0]
 #sigamps=[20, 10, 8, 7, 5, 3, 1, 0]
 #sigamps=[5,4,3,2,1,0]
-sigamps=[5,3,1,0]
+sigamps=[5,4,3,2,1,0]
 rangelow=200
 rangehigh=900
 #channelName="BkgLow_2_alpha0_SR1_tagged"
 #channelName="MassOrdered_2"
-channelName="PtOrdered2"
+channelName="PtOrdered6"
 lumi =  config.samples[channelName]["lumi"]
 atlasLabel = "Simulation Internal"
 
 
-pdFitName = "sixPar"
 #pdFitName = "fivePar"
 #fitName = "fiveParV3"
 #fitName = "fourPar"
 #fitName = "fivePar"
-fitName = "fiveParV3"
+pdFitName = "sixPar"
+#fitName = "fiveParV3"
+#pdFitName = "fivePar"
+#fitName = "fourPar"
+#pdFitName = "fiveParV2"
+fitName = "fivePar"
 
 rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
 #rebinedges = None
@@ -95,30 +99,31 @@ outfileChi2="chi2_spuriousSignal"
 infileExtraction="FitParameters_spuriousSignal_%s_%s"%(pdFitName, fitName)
 infilePD='PD_%s_bkgonly'%(pdFitName)
 outfileSpurious = "PD_spurious_%s_%s_bkgonly"%(pdFitName, fitName)
-spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/")
+infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
+spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly)
 
 
 
 
 # Extraction graphs
 infileExtraction="FitParameters_sigPlusBkg"
+infilesBkg = "PostFit_%s_PD_bkgonly"%(pdFitName)
 infilePD='PD_bkgonly'
 outfileExtraction = "PD_extraction"
-#createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
+createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
 
 
 # Limits
 pathsLimits = [ "Limits_limits"]
 #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=channelName, cdir=cdir+"/scripts/",channelName=channelName,rangelow=rangelow, rangehigh=rangehigh, atlasLabel=atlasLabel)
 
-#sigamps=[5, 2, 1, 0]
-sigamps=[5, 1, 0]
+sigamps=[5, 4, 3, 2, 1, 0]
 #sigamps=[5]
 inputPDCoverage='PD_%s_bkgonly'%(pdFitName)
 outfileCoverage='Coverage'
 pathsLimits = "Limits_limits"
-createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
-plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
+#createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
+#plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
 
 
 

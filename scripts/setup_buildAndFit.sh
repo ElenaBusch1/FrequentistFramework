@@ -9,13 +9,13 @@ fi
 
 if [[ -z $_DIRXMLWSBUILDER ]]; then
     cd xmlAnaWSBuilder/
-    source setup_lxplus.sh
+    source ./setup_lxplus.sh
     cd ..
 fi
 
 if [[ -z $_DIRFIT ]]; then
     cd quickFit/
-    source setup_lxplus.sh
+    source ./setup_lxplus.sh
     cd ..
 fi
 

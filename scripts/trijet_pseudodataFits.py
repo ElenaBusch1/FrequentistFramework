@@ -7,23 +7,22 @@ import os
 dosignal=0
 dolimit=0
 
-pdFitNames = ["sixPar"]
-#pdFitNames = ["fivePar", "sixPar"]
-#pdFitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
-
-#pdFitName = "fivePar"
-
-fitName = "fiveParV3"
+pdFitNames = ["fiveParV2"]
+fitName = "fivePar"
+#pdFitNames = ["fivePar"]
+#fitName = "fourPar"
+#pdFitNames = ["sixPar"]
+#fitName = "fiveParV3"
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-channelNames = ["PtOrdered2"]
+channelNames = ["PtOrdered5"]
 
 
 sigmeans = [0]
 sigamps = [0]
 
 rangelow=200
-rangehigh=900
+rangehigh=800
 
 
 for sigmean in sigmeans:

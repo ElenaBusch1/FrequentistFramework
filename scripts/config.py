@@ -73,6 +73,125 @@ samples["MassOrdered_2"] = {
                }
 
 
+samples["PtOrdered"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_2_alpha100_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
+                 "lumi": 139000,
+               }
+
+
+samples["PtOrdered2"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_3_alpha100_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
+                 "lumi": 139000,
+               }
+
+samples["PtOrderedSR1_tagged"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_3_alpha100_SR1_tagged",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
+                 "lumi": 139000,
+               }
+
+samples["PtOrderedSR2_tagged"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgMid_3_alpha100_SR2",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_7.root",
+                 "lumi": 139000,
+               }
+
+samples["PtOrdered3"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_3_alpha100_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_5.root",
+                 "lumi": 139000,
+               }
+
+samples["PtOrdered4"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_3_alpha100_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_test_SRAlpha_100_BkgAlpha_100_dimVars_pt_cutVal_6.root",
+                 "lumi": 139000,
+               }
+
+samples["PtOrdered5"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_5.root",
+                 "lumi": 139000,
+               }
+
+
+
+samples["PtOrdered5Tagged"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+                 "topfile": "../config/dijetISR/jjj_SR1.template",
+                 "histname": "BkgLow_2_SR1_tagged",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_5.root",
+                 "lumi": 139000,
+               }
+
+
+#samples["PtOrdered6"] = {
+#                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1.template",
+#                 "topfile": "../config/dijetISR/jjj_SR1.template",
+#                 "histname": "BkgLow_SR1",
+#                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6.root",
+#                 "lumi": 139000,
+#               }
+
+
+
+#samples["PtOrdered6"] = {
+#                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1_signalTest.template",
+#                 "topfile": "../config/dijetISR/jjj_SR1_signalTest.template",
+#                 "histname": "BkgLow_SR1",
+#                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6.root",
+#                 "lumi": 139000,
+#               }
+
+samples["PtOrdered6"] = {
+                 "categoryfile"  : "../config/dijetISR/category_jjj_SR1_signalTemplate.template",
+                 "topfile": "../config/dijetISR/jjj_SR1_signalTemplate.template",
+                 "histname": "BkgLow_SR1",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6.root",
+                 "lumi": 139000,
+               }
+
+
+
+
+
+
+signals = {}
+signals["PtOrdered6"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mRMEAN.root",
+                 "templatefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6_MEAN.root",
+                 "histname": "SigLow_1_alpha200_SR1",
+               }
+
+
+signals["Gaussian"] = {
+                 "signalfile"  : "../config/dijetISR/signalGauss_meanM_widthW.xml",
+                 "workspacefile": "",
+                 "templatefile"  : "",
+                 "histname": "",
+               }
+
+
+
+
+
 
 
 

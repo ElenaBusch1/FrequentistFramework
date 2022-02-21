@@ -79,6 +79,7 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
         l_res.append(h_res)
         l_chi2.append(chi2)
         l_npars.append(npars)
+        print chi2, npars
         l_ndof.append(ndof)
         legtext = "%s (#chi^{2}/n = %.0f/%.0f)" % (infile, chi2, ndof)
         legNames.append(legtext)

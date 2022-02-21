@@ -14,7 +14,7 @@ import config as config
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, atlasLabel="Simulation Internal"):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     h_allPoints_list = []
@@ -104,45 +104,47 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
             h_p5_list.append(h_p5)
 
 
-    '''
-    h_p1 = TH1F("p1", ";nsig;No. of toys", 80, 0, 15000)
-    h_p2 = TH1F("p2", ";nsig;No. of toys", 80, 0, 100)
-    h_p3 = TH1F("p3", ";nsig;No. of toys", 80, -5, 10)
-    h_p4 = TH1F("p4", ";nsig;No. of toys", 80, -2, 2)
-    h_p5 = TH1F("p5", ";nsig;No. of toys", 80, -2, 2)
-    h_p1.SetDirectory(0)
-    h_p2.SetDirectory(0)
-    h_p3.SetDirectory(0)
-    h_p4.SetDirectory(0)
-    h_p5.SetDirectory(0)
+    if bkgOnlyFitFile:
+      h_p1 = h_p1_list[0].Clone("p1")
+      h_p2 = h_p2_list[0].Clone("p2")
+      h_p3 = h_p3_list[0].Clone("p3")
+      h_p4 = h_p4_list[0].Clone("p4")
+      h_p5 = h_p5_list[0].Clone("p5")
+      h_p1.Reset()
+      h_p2.Reset()
+      h_p3.Reset()
+      h_p4.Reset()
+      h_p5.Reset()
+      h_p1.SetDirectory(0)
+      h_p2.SetDirectory(0)
+      h_p3.SetDirectory(0)
+      h_p4.SetDirectory(0)
+      h_p5.SetDirectory(0)
 
-    tmp_path_fitBkg = config.getFileName("FitParameters_PD_bkgonly", cdir, channelName, rangelow, rangehigh, 0, 0, 0) + ".root"
-    fpeBkg = efp.FitParameterExtractor(tmp_path_fitBkg)
-    for toy in range(config.nToys):
-        try:
-           fpeBkg.suffix = "_%d"%(toy)
-           fpeBkg.ExtractFromFile( "_%d"%(toy))
-           params = fpeBkg.GetH1Params()
-        except:
-           #print "Couldn't read nsig from", path
-           continue
-
-        #print params.GetBinContent(2), params.GetBinContent(3), params.GetBinContent(4), params.GetBinContent(5), params.GetBinContent(6)
-
-        h_p1.Fill(params.GetBinContent(2))
-        h_p2.Fill(params.GetBinContent(3))
-        h_p3.Fill(params.GetBinContent(4))
-        h_p4.Fill(params.GetBinContent(5))
-        h_p5.Fill(params.GetBinContent(6))
-
-    h_p1_list.append(h_p1)
-    h_p2_list.append(h_p2)
-    h_p3_list.append(h_p3)
-    h_p4_list.append(h_p4)
-    h_p5_list.append(h_p5)
-    '''
-
-
+      tmp_path_fitBkg = config.getFileName(bkgOnlyFitFile, cdir, channelName, rangelow, rangehigh, 0, 0, 0) + ".root"
+      fpeBkg = efp.FitParameterExtractor(tmp_path_fitBkg)
+      for toy in range(config.nToys):
+          try:
+             fpeBkg.suffix = "_%d"%(toy)
+             fpeBkg.ExtractFromFile( "_%d"%(toy))
+             params = fpeBkg.GetH1Params()
+          except:
+             #print "Couldn't read nsig from", path
+             continue
+  
+          #print params.GetBinContent(2), params.GetBinContent(3), params.GetBinContent(4), params.GetBinContent(5), params.GetBinContent(6)
+  
+          h_p1.Fill(params.GetBinContent(2))
+          h_p2.Fill(params.GetBinContent(3))
+          h_p3.Fill(params.GetBinContent(4))
+          h_p4.Fill(params.GetBinContent(5))
+          h_p5.Fill(params.GetBinContent(6))
+  
+      h_p1_list.append(h_p1)
+      h_p2_list.append(h_p2)
+      h_p3_list.append(h_p3)
+      h_p4_list.append(h_p4)
+      h_p5_list.append(h_p5)
 
 
 
@@ -194,24 +196,22 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
 
          
-    # Plotting:
-    c = df.setup_canvas()
-
-    #outfileName = config.getFileName(outfile + "Test", cdir, channelName, rangelow, rangehigh) + ".pdf"
-    #leg = df.DrawHists(c, graphs, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0)
-    #c.Print(outfileName)
 
     legendNamesMasses = []
     for mean in sigmeansExists:
       legendNamesMasses.append("m_{Z'} = %d"%mean)
  
+    # Plotting:
+    c = df.setup_canvas()
     outfileName = config.getFileName("SpuriousSignal", cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_allPoints_list, myMin=0)
     df.SetStyleOptions(h_allPoints_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
-    legendNamesMasses.append("Bkg only fit")
+    if bkgOnlyFitFile:
+      legendNamesMasses.append("Bkg only fit")
+
     outfileName = config.getFileName("p1", cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_p1_list, myMin=0)
     df.SetStyleOptions(h_p1_list, df.get_finalist_style_opt)

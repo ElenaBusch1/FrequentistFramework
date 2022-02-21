@@ -5,6 +5,7 @@ import os,sys,re,argparse,subprocess,shutil
 import json
 from ExtractPostfitFromWS import PostfitExtractor
 from ExtractFitParameters import FitParameterExtractor
+import config as config
 
 def execute(cmd):  
     print("EXECUTE:", cmd)
@@ -102,6 +103,7 @@ def run_anaFit(datafile,
                rangelow,
                rangehigh,
                outdir,
+               signalfile,
                dosignal=False,
                dolimit=False,
                sigmean=1000,
@@ -125,14 +127,36 @@ def run_anaFit(datafile,
 
     tmpcategoryfile="%s/run/category_dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
     tmptopfile="%s/run/dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
+    tmpsignalfile="%s/run/dijetTLACat_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
+
+    signalWSName = config.signals[signalfile]["workspacefile"]
+    signalfile = config.signals[signalfile]["signalfile"]
 
     print(topfile, categoryfile)
     shutil.copy2(topfile, tmptopfile) 
+    shutil.copy2(signalfile, tmpsignalfile) 
+    tmpsignalfile.replace("MEAN", str(sigmean))
     
     replaceinfile(tmptopfile, 
                   [("CATEGORYFILE", tmpcategoryfile),
                    ("CDIR", cdir),
-                   ("OUTPUTFILE", wsfile),])
+                   ("MEAN", str(sigmean)),
+                   ("WIDTH", str(sigwidth)),
+                   ("SIGNALFILE", tmpsignalfile),
+                   ("OUTPUTFILE", wsfile),
+                  ])
+
+    replaceinfile(tmpsignalfile,
+                  [
+                   ("WORKSPACEFILE", signalWSName),
+                   ("CDIR", cdir),
+                   ("MEAN", str(sigmean)),
+                   ("WPERCENT", str(sigwidth/100.)),
+                   ("WIDTH", str(sigwidth)),
+                   ("OUTPUTFILE", wsfile),
+                  ])
+
+
 
     for toy in range(ntoys):
       shutil.copy2(categoryfile, tmpcategoryfile) 
@@ -142,15 +166,19 @@ def run_anaFit(datafile,
         ("DATAHIST", datahist + "_%d"%(toy)) ,
         ("FITFUNC", fitFunction),
         ("CDIR", cdir),
+        ("SIGNALFILE", tmpsignalfile),
         ("RANGELOW", str(rangelow)),
         ("RANGEHIGH", str(rangehigh)),
         ("BINS", str(nbins)),
         ("NBKG", nbkg),
         ("NSIG", nsig),
+        ("MEAN", str(sigmean)),
+        ("WIDTH", str(sigwidth)),
       ])    
 
       if dosignal:
-          poi="nsig_mean%s_width%s" % (sigmean, sigwidth)
+          #poi="nsig_mean%s_width%s" % (sigmean, sigwidth)
+          poi="nsig_mean%s" % (sigmean)
       else:
           poi=None
 
