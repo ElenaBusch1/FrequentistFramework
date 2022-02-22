@@ -3,8 +3,9 @@
 from __future__ import print_function
 import os,sys,re,argparse
 from InjectGaussian import InjectGaussian
+from InjectTemplate import InjectTemplate
 from run_anaFitWithToys import run_anaFit
-#import config as config
+import config as config
 
 def run_injections_anaFit(datafile, 
                           datahist, 
@@ -38,10 +39,13 @@ def run_injections_anaFit(datafile,
     if (sigamp > 0):
         print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
 
-        injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f.root" % (sigmean, sigwidth, sigamp))
+        injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
         print("Injected file ", injecteddatafile)
 
-        InjectGaussian(infile=datafile,
+
+
+        if config.signals[signalfile]["histname"] == "":
+          InjectGaussian(infile=datafile,
                        histname=datahist,
                        sigmean=sigmean,
                        sigwidth=sigwidth,
@@ -49,6 +53,18 @@ def run_injections_anaFit(datafile,
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1)
+        else:
+          InjectTemplate(infile=datafile,
+                       histname=datahist,
+                       sigmean=sigmean,
+                       sigwidth=sigwidth,
+                       sigamp=sigamp,
+                       outfile=injecteddatafile,
+                       firsttoy=loopstart,
+                       lasttoy=loopend-1,
+                       wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean),
+                       wspdf = config.signals[signalfile]["histname"],
+                       )
     else:
        injecteddatafile = datafile
 

@@ -62,9 +62,11 @@ def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, out
        relErrorFit.SetBinContent(xbin+1, 0 )
 
 
-    c = ROOT.TCanvas("c1", "c1", 800, 600)
+    c = df.setup_canvas("canvas")
+    relError.GetYaxis().SetRangeUser(-0.03, 0.03)
     leg = df.DrawHists(c, [relError, relErrorFit], ["Stat uncertainty on fit", "Function choice"], [], drawOptions = ["ex0"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     path = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
+    c.Print(path)
 
 
 

@@ -161,7 +161,7 @@ def setup_canvas(name=""):
   canvas.SetLeftMargin(0.15)
   canvas.SetRightMargin(0.05)
   canvas.SetBottomMargin(0.15)
-  canvas.SetTopMargin(0.01)
+  canvas.SetTopMargin(0.05)
   r.gStyle.SetLegendBorderSize(0)
   #r.gStyle.SetLegendTextSize(0.025)
   r.gStyle.SetLegendFont(42)

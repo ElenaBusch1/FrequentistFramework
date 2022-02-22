@@ -5,12 +5,12 @@ atlasLabel="Simulation Internal"
 cSample = "PtOrdered6"
 cRangeLow = 200
 cRangeHigh = 900
-cPDFitName = "fivePar"
-cFitName = "fourPar"
-#cPDFitName = "sixPar"
-#cFitName = "fivePar"
-cSignal = "Gaussian"
-#cSignal = "PtOrdered6"
+#cPDFitName = "fivePar"
+#cFitName = "fourPar"
+cPDFitName = "sixPar"
+cFitName = "fivePar"
+#cSignal = "Gaussian"
+cSignal = "PtOrdered6"
 
 
 #####################################################################################
@@ -63,7 +63,8 @@ signals = {}
 signals["PtOrdered6"] = {
                  "signalfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/signalGauss_meanM_template.xml",
                  "workspacefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mRMEAN.root",
-                 "templatefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6_MEAN.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/massSpectraFullTrain_decorr2_SRAlpha_200_BkgAlpha_200_dimVars_pt_cutVal_6_MEAN.root",
+                 "templatefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mRMEAN.root",
                  "histname": "SigLow_1_alpha200_SR1",
                }
 
