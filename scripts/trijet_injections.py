@@ -37,7 +37,7 @@ else:
   pdFitName = config.cPDFitName
   fitName = config.cFitName
   channelName=config.cSample
-  sigmeans = [650]
+  sigmeans = [350]
   sigamps = [5]
   sigwidths = [7]
   rangelow=config.cRangeLow
@@ -72,7 +72,7 @@ for sigmean in sigmeans:
       # Output file names, which will be written to outputdir
       wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
       outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-      outputstring = "FitResult_sigPlusBkg_%d_%s"%(sigamp, signalfile)
+      outputstring = "FitResult_injections_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
       #binedges = config.getBinning(rangelow, rangehigh, delta=25)
       binedges = None
 

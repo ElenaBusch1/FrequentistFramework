@@ -14,7 +14,8 @@ rangehigh=900
 
 #fitNames = ["fiveParV2"]
 #fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
-fitNames = ["sixPar"]
+#fitNames = ["sixPar"]
+fitNames = ["UA2"]
 #fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
 
 

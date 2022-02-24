@@ -127,8 +127,9 @@ def run_anaFit(datafile,
     signalWSName = config.signals[signalfile]["workspacefile"]
     signalfile = config.signals[signalfile]["signalfile"]
 
-    print(topfile, categoryfile)
+    print(topfile, categoryfile, tmpcategoryfile)
     shutil.copy2(topfile, tmptopfile)
+    shutil.copy2(categoryfile, tmpcategoryfile)
     shutil.copy2(signalfile, tmpsignalfile)
     tmpsignalfile.replace("MEAN", str(sigmean))
 
@@ -136,6 +137,8 @@ def run_anaFit(datafile,
     tmpfitfile="%s/run/dijetFit_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
     fitfile = cdir + "/" + config.fitFunctions[fitFunction]["Config"]
     shutil.copy2(fitfile, tmpfitfile)
+
+
     replaceinfile(tmpfitfile,
                   [
                    ("CDIR", cdir),
@@ -161,17 +164,21 @@ def run_anaFit(datafile,
                   ])
 
 
+
     print ("Running with datafile ", datafile)
     replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
         ("DATAHIST", datahist),
         ("RANGELOW", str(rangelow)),
         ("FITFUNC", tmpfitfile),
+        ("SIGNALFILE", tmpsignalfile),
         ("CDIR", cdir),
         ("RANGEHIGH", str(rangehigh)),
         ("BINS", str(nbins)),
         ("NBKG", nbkg),
         ("NSIG", nsig),
+        ("MEAN", str(sigmean)),
+        ("WIDTH", str(sigwidth)),
     ])    
 
     if dosignal:

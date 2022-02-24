@@ -37,9 +37,9 @@ if args.isBatch:
 
 
 else:
-  pdFitNames = [config.cPDFitName]
+  pdFitName = config.cPDFitName
   fitName = config.cFitName
-  channelNames=[config.cSample]
+  channelName=config.cSample
   sigmeans = [250]
   sigamps = [0]
   sigwidths = [7]
@@ -54,7 +54,6 @@ else:
 
 
 
-fitFunction = config.fitFunctions[fitName]["Config"]
 cdir = config.cdir
 if not os.path.exists(cdir + "/scripts/" + channelName):
       os.makedirs(cdir + "/scripts/" + channelName)
@@ -79,8 +78,11 @@ for sigmean in sigmeans:
           # Output file names, which will be written to outputdir
           wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit", cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
           outputfile = config.getFileName("FitResult_limits_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-          outputstring = "FitResult_limits_%d_%d_%s"%(sigamp, sigmean, signalfile)
-          binedges = None
+          outputstring = "FitResult_limits_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
+          #binedges = None
+          binedges = config.getBinning(rangelow, rangehigh, delta=25)
+
+
 
           # Then run the injection
           run_injections_anaFit.run_injections_anaFit(
@@ -88,7 +90,7 @@ for sigmean in sigmeans:
                datahist=pdHistName,
                categoryfile=categoryfile,
                topfile=topfile,
-               fitFunction=fitFunction,
+               fitFunction=fitName,
                cdir=cdir,
                wsfile=wsfile,
                sigmean=sigmean,

@@ -7,8 +7,9 @@ import os
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
 #channelNames=["MassOrdered_2"]
-#channelNames=["PtOrdered5Tagged"]
-channelNames=["PtOrdered6"]
+#channelNames=["PtOrdered6"]
+#channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj"]
+channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
 #channelNames = ["PtOrderedSR1_tagged"]
 #rangeslow=[200, 250, 275, 300, 350, 400]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
@@ -16,20 +17,18 @@ channelNames=["PtOrdered6"]
 #rangeshigh=[800, 900]
 rangeslow=[200]
 rangeshigh=[900]
+#rangeshigh=[1000, 1200]
 
-#channelName="BkgMid_2_alpha0_SR2_tagged"
-##rangeslow=[200, 250, 275, 300, 350, 400]
-##rangeshigh=[700, 800, 900, 1000, 1200, 1400]
-#rangeslow=[550]
-#rangeshigh=[1050]
-
-#channelNames = ["PtOrderedSR2_tagged"]
-#rangeslow=[600, 700]
-#rangeshigh=[1200, 1500]
 
 
 #fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
+#fitNames = ["fourPar", "fivePar", "sixPar", "sevenPar"]
+#fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
 fitNames = ["fourPar", "fivePar", "sixPar"]
+#fitNames = ["UA2"]
+#fitNames = ["threePar"]
+#fitNames = ["sixPar"]
+#fitNames = ["fivePar"]
 #fitNames = ["fiveParV2"]
 
 for rangelow in rangeslow:
@@ -57,7 +56,7 @@ for rangelow in rangeslow:
                datahist=datahist,
                categoryfile=categoryfile,
                topfile=topfile,
-               fitFunction=fitFunction,
+               fitFunction=fitName,
                cdir=cdir ,
                wsfile=wsfile,
                nbkg=nbkg,

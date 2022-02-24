@@ -35,14 +35,21 @@ if args.isBatch:
 
 
 else:
-  pdFitNames = [config.cPDFitName]
-  fitName = config.cFitName
+  #pdFitNames = [config.cPDFitName]
+  pdFitNames = ["fullSwift"]
+  #fitName = config.cFitName
+  #fitName = "sixPar"
+  #fitName = "fivePar"
+  #pdFitNames = ["fivePar"]
+  fitName = "fourPar"
   channelNames=[config.cSample]
-  sigmeans = [250]
+  sigmeans = [650]
   sigamps = [0]
   sigwidths = [7]
-  rangelow=config.cRangeLow
-  rangehigh=config.cRangeHigh
+  rangelow=200
+  rangehigh=800
+  #rangelow=config.cRangeLow
+  #rangehigh=config.cRangeHigh
   signalfile =  config.cSignal
 
 
@@ -68,7 +75,7 @@ for sigmean in sigmeans:
           outputdir = channelName
           if not os.path.exists(outputdir):
               os.makedirs(outputdir)
-          nbkg="1E7,0,1E8"
+          nbkg="1E7,0,1E9"
           nsig="0,-1e6,1e6"
           topfile=config.samples[channelName]["topfile"]
           categoryfile=config.samples[channelName]["categoryfile"]
@@ -95,7 +102,7 @@ for sigmean in sigmeans:
                rangehigh=rangehigh,
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="SS_%s_%s_%d_%d_%d_%s"%(pdFitName, fitName, sigmean, sigamp, rangehigh, signalfile),
+               outputstring="SS_%s_%s_%d_%d_%d_%d_%s"%(pdFitName, fitName, sigmean, sigamp, sigwidth, rangehigh, signalfile),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,

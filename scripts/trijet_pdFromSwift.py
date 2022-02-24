@@ -10,7 +10,7 @@ cdir = config.cdir
 channelNames = ["PtOrdered6"]
 
 rangelow=200
-rangehigh=900
+rangehigh=800
 
 # First make the pseudodata
 # TODO: maybe make a flag to decide whether to run this?
@@ -18,7 +18,7 @@ for channelName in channelNames:
   outputdir = channelName
   if not os.path.exists(outputdir):
     os.makedirs(outputdir)
-  pdInputFile = config.getFileName("PostFit_fullSwift", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
+  pdInputFile = config.getFileName("PostFit_fullSwift_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
   pdFile = config.getFileName("PD_fullSwift_bkgonly", cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
   pdHistName = "pseudodata"
   generatePseudoData.generatePseudoData( infile=pdInputFile, inhist ="postfit", nreplicas=config.nToys, scaling=1, outfile=pdFile, outhist=pdHistName)

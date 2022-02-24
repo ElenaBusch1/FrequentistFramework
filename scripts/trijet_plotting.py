@@ -14,16 +14,26 @@ cdir = config.cdir
 
 
 sigmeans=[ 250, 350, 450, 550, 650, 750]
+#sigmeans=[ 250, 350, 450, 500, 550, 600, 650, 750]
 sigwidths=[ 7 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 sigamps=[5,4,3,2,1,0]
 
+#pdFitName = "fivePar"
+#fitName = "fourPar"
 pdFitName = config.cPDFitName
-fitName = config.cFitName
+#fitName = config.cFitName
+#fitName = "fourPar"
+#fitName = "sixPar"
+#fitName = "fivePar"
+fitName = "fourPar"
 channelName=config.cSample
-rangelow=config.cRangeLow
-rangehigh=config.cRangeHigh
 signalfile =  config.cSignal
+
+rangelow=200
+rangehigh=800
+#rangelow=config.cRangeLow
+#rangehigh=config.cRangeHigh
 
 lumi =  config.samples[channelName]["lumi"]
 atlasLabel = "Simulation Internal"

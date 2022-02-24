@@ -9,18 +9,33 @@ import python.runFTest as runFTest
 cdir = config.cdir
 #fitNames = ["fourPar", "fivePar", "fiveParV2", "fiveParV3","sixPar"]
 #fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
+#fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar", "sevenPar"]
+#fitNames = ["fourPar", "fivePar", "sixPar", "UA2"]
 fitNames = ["fourPar", "fivePar", "sixPar"]
+#fitNames = ["fourPar", "fivePar", "sixPar", "UA2", "fullSwift"]
+#fitNames = ["fourPar", "fivePar", "sixPar", "fullSwift"]
+#fitNames = ["fivePar", "sixPar", "fullSwift", "UA2"]
 
 
-channelNames=[config.cSample]
-rangeslow=[config.cRangeLow]
-rangeshigh=[config.cRangeHigh]
+#channelNames=[config.cSample]
+channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
+
+#channelNames=["Btagged70_23_ystar"]
+#channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj"]
+
+rangeslow=[200]
+rangeshigh=[900]
+#rangeshigh=[800]
+#rangeshigh=[1000, 1200]
+#rangeslow=[config.cRangeLow]
+#rangeshigh=[config.cRangeHigh]
 signalfile =  config.cSignal
 
 
 for rangelow in rangeslow:
   for rangehigh in rangeshigh:
-    rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
+    #rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
+    rebinedges = config.getBinning(rangelow, rangehigh, delta=20)
     for channelName in channelNames:
       lumi =  config.samples[channelName]["lumi"]
       infiles = []
@@ -35,6 +50,7 @@ for rangelow in rangeslow:
 
 
 
+fitNames = ["fourPar", "fivePar", "sixPar"]
 for rangelow in rangeslow:
   for rangehigh in rangeshigh:
     rebinedges = config.getBinning(rangelow, rangehigh, delta=25)

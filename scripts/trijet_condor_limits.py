@@ -35,7 +35,7 @@ for sigmean in sigmeans:
                            " --isBatch=1"
 
 
-      runfile = "batch/runLimits_" + str(sigmean) + "_" + str(sigwidth) + "_" + str(sigamp) + "_" + signalfile ".sh"
+      runfile = "batch/runLimits_" + str(sigmean) + "_" + str(sigwidth) + "_" + str(sigamp) + "_" + signalfile +".sh"
       fr=open(runfile,'w')
       fr.write('#!/bin/sh\n')
       fr.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')

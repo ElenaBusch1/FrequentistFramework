@@ -28,7 +28,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, toy=0, poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None):
     print("starting fit extractor")
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
     #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
@@ -81,7 +81,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     )
 
     doRecreate = (toy==0)
-    suffix = "_%d"%(toy)
+    suffix = "%s"%(toyString)
 
     pval = pfe.GetPval()
     pfe.WriteRoot(postfitfile, doRecreate=doRecreate, suffix=suffix)
@@ -167,11 +167,15 @@ def run_anaFit(datafile,
 
 
     for toy in range(ntoys):
+      if ntoys == 1:
+        toyString = ""
+      else:
+        toyString = "_%d"%(toy)
       shutil.copy2(categoryfile, tmpcategoryfile) 
       print ("Running with datafile ", datafile)
       replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
-        ("DATAHIST", datahist + "_%d"%(toy)) ,
+        ("DATAHIST", datahist + "%s"%(toyString)) ,
         ("FITFUNC", tmpfitfile),
         ("CDIR", cdir),
         ("SIGNALFILE", tmpsignalfile),
@@ -194,7 +198,7 @@ def run_anaFit(datafile,
       # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
       pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile, 
-                                                                datahist=datahist + "_%d"%(toy), 
+                                                                datahist=datahist + "%s"%(toyString), 
                                                                 datafirstbin=rangelow, 
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
@@ -203,6 +207,7 @@ def run_anaFit(datafile,
                                                                 rebinHist=rebinHist,
                                                                 rebinEdges=rebinEdges,
                                                                 toy=toy,
+                                                                toyString=toyString,
                                                                 )
 
       print("Finished fit extractor")
@@ -250,7 +255,7 @@ def run_anaFit(datafile,
 
         pval_masked,_,_ = build_fit_extract(tmptopfilemasked,
                                             datafile=datafile, 
-                                            datahist=datahist + "_%d"%(toy), 
+                                            datahist=datahist + "%s"%(toyString), 
                                             datafirstbin=rangelow, 
                                             wsfile=wsfilemasked, 
                                             fitresultfile=outfilemasked, 
@@ -259,6 +264,7 @@ def run_anaFit(datafile,
                                             rebinHist=rebinHist,
                                             rebinEdges=rebinEdges,
                                             toy=toy,
+                                            toyString=toyString,
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
@@ -277,7 +283,7 @@ def run_anaFit(datafile,
       if dolimit and dosignal and pval_global > maskthreshold:
       #if dolimit and dosignal:
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
-          rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
+          rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

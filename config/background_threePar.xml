@@ -1,0 +1,4 @@
+<!DOCTYPE Model  SYSTEM 'CDIR/config/dijetISR/AnaWSBuilder.dtd'>
+<Model Type="UserDef">
+  <ModelItem Name="EXPR::background('@1*TMath::Power(1-@0/8000,@2)/TMath::Power(@0/8000, @3)', :observable:, p1[1,1,1], p2[30., 1., 40.], p3[2., -1., 10])"/>
+</Model>

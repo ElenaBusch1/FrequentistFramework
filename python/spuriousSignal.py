@@ -30,7 +30,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
     for j,sigmean in enumerate(sigmeans):
         for i,sigwidth in enumerate(sigwidths):
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 50, -15000, 15000)
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 50, -30000, 30000)
             h_p1 = TH1F("p1_%d_%d"%(sigmean, sigwidth), ";p1;No. of toys", 80, 12000, 15000)
             h_p2 = TH1F("p2_%d_%d"%(sigmean, sigwidth), ";p2;No. of toys", 80, 0, 100)
             h_p3 = TH1F("p3_%d_%d"%(sigmean, sigwidth), ";p3;No. of toys", 80, -5, 10)
@@ -73,7 +73,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                 #if chi2ndof > 1.1:
                 #  continue
                 #if pval < 0.05:
-                #if pval < 0.01:
+                ##if pval < 0.01:
                 #   continue
 
                 try:

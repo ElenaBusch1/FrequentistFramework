@@ -42,9 +42,13 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       dataHist = inFile.Get(datahistName + suffix)
       fitHist = inFile.Get(fithistName + suffix)
       residualHist = inFile.Get(residualhistName + suffix)
-      chi2Hist = inFile.Get("chi2"+suffix)
-      chi2 = chi2Hist.GetBinContent(2)
-      pval = chi2Hist.GetBinContent(6)
+      try:
+        chi2Hist = inFile.Get("chi2"+suffix)
+        chi2 = chi2Hist.GetBinContent(2)
+        pval = chi2Hist.GetBinContent(6)
+      except:
+        chi2 = -1
+        pval = -1
 
 
       dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
