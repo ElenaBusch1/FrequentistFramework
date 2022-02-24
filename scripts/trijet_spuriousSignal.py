@@ -58,11 +58,7 @@ else:
 dosignal=1
 dolimit=0
 
-#fitFunction = config.fitFunctions[fitName]["Config"]
-fitFunction = fitName
 cdir = config.cdir
-
-binedges = config.getBinning(rangelow, rangehigh, delta=25)
 
 
 for sigmean in sigmeans:
@@ -86,13 +82,12 @@ for sigmean in sigmeans:
           outputfile = config.getFileName("FitResult_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
   
           # Then run the injection
-          #run_injections_anaFit.run_injections_anaFit(
           run_anaFit.run_anaFit(
                datafile=pdFile, 
                datahist=pdHistName,
                categoryfile=categoryfile,
                topfile=topfile,
-               fitFunction=fitFunction,
+               fitFunction=fitName,
                cdir=cdir,
                wsfile=wsfile,
                sigmean=sigmean,
@@ -107,9 +102,6 @@ for sigmean in sigmeans:
                dolimit = dolimit,
                nsig=nsig,
                ntoys=config.nToys,
-               #rebinedges=binedges,
-               #rebinfile=None,
-               #rebinhist=None,
                maskthreshold=-0.01,
                outdir=outputdir,
               )

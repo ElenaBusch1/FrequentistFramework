@@ -1,5 +1,5 @@
 import scripts.config as config
-import python.run_anaFit as run_anaFit
+import python.run_fitRangeFinder as run_fitRangeFinder
 import os
 
 
@@ -7,16 +7,16 @@ import os
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
 #channelNames=["MassOrdered_2"]
-#channelNames=["PtOrdered6"]
+channelNames=["PtOrdered6"]
 #channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj"]
-channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
+#channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
 #channelNames = ["PtOrderedSR1_tagged"]
 #rangeslow=[200, 250, 275, 300, 350, 400]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
 #rangeslow=[150, 200, 300]
 #rangeshigh=[800, 900]
-rangeslow=[200]
-rangeshigh=[900]
+rangeslow=[140]
+rangeshigh=[1000]
 #rangeshigh=[1000, 1200]
 
 
@@ -24,7 +24,8 @@ rangeshigh=[900]
 #fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
 #fitNames = ["fourPar", "fivePar", "sixPar", "sevenPar"]
 #fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
-fitNames = ["fourPar", "fivePar", "sixPar"]
+#fitNames = ["fourPar", "fivePar", "sixPar"]
+fitNames = ["fourPar"]
 #fitNames = ["UA2"]
 #fitNames = ["threePar"]
 #fitNames = ["sixPar"]
@@ -51,7 +52,7 @@ for rangelow in rangeslow:
         if not os.path.exists(outputdir):
             os.makedirs(outputdir)
 
-        run_anaFit.run_anaFit(
+        run_fitRangeFinder.run_fitRangeFinder(
                datafile=dataFile, 
                datahist=datahist,
                categoryfile=categoryfile,
@@ -60,16 +61,16 @@ for rangelow in rangeslow:
                cdir=cdir ,
                wsfile=wsfile,
                nbkg=nbkg,
-               ntoys = 0,
                outdir=outputdir,
                outputstring="%s"%(fitName),
                rangelow=rangelow,
                rangehigh=rangehigh,
+               minWindow = 500,
+               pvalMin = 0.05,
+               deltaWindow = 20,
                outputfile=outputfile,
                signalfile="Gaussian",
                maskthreshold=-0.01,
-               dosignal=0,
-               dolimit=0,
                )
   
 
