@@ -60,6 +60,7 @@ for rangelow in rangeslow:
                cdir=cdir ,
                wsfile=wsfile,
                nbkg=nbkg,
+               ntoys = 0,
                outdir=outputdir,
                outputstring="%s"%(fitName),
                rangelow=rangelow,

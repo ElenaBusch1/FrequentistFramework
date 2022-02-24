@@ -28,11 +28,10 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None):
     print("starting fit extractor")
-    #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
-    rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
-    #XMLReader -x ${tmptopfile} -o "logy integral" -s 0 -v 0 -m Minuit2 -t $tolXML -n 1 -p 0 -b 1
+    rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
+    #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
 
     print("done with xml")
     if rtv != 0:
@@ -55,7 +54,8 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmax=-1
 
     print("running quickfit")
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minTolerance 1E-4 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 0 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 0.0005 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -79,11 +79,15 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmin=maskmin,
         maskmax=maskmax
     )
+
+    doRecreate = (toy==0)
+    suffix = "%s"%(toyString)
+
     pval = pfe.GetPval()
-    pfe.WriteRoot(postfitfile)
+    pfe.WriteRoot(postfitfile, doRecreate=doRecreate, suffix=suffix)
 
     fpe = FitParameterExtractor(wsfile=fitresultfile)
-    fpe.WriteRoot(parameterfile)
+    fpe.WriteRoot(parameterfile,  doRecreate=doRecreate, suffix=suffix)
 
     return (pval, postfitfile, parameterfile)
 
@@ -104,6 +108,7 @@ def run_anaFit(datafile,
                dolimit=False,
                sigmean=1000,
                sigwidth=7,
+               ntoys=10,
                maskthreshold=0.01,
                nsig="0,0,1e6",
                rebinFile=None,
@@ -120,31 +125,27 @@ def run_anaFit(datafile,
     if not os.path.isfile("%s/run/AnaWSBuilder.dtd"%(cdir)):
         execute("ln -s ../config/dijetTLA/AnaWSBuilder.dtd %s/run/AnaWSBuilder.dtd"%(cdir))
 
-    tmpcategoryfile="%s/run/category_dijet_fromTemplate_%s.xml"%(cdir, outputstring)
-    tmptopfile="%s/run/dijet_fromTemplate_%s.xml"%(cdir, outputstring)
+    tmpcategoryfile="%s/run/category_dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
+    tmptopfile="%s/run/dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
     tmpsignalfile="%s/run/dijetTLACat_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
 
     signalWSName = config.signals[signalfile]["workspacefile"]
     signalfile = config.signals[signalfile]["signalfile"]
 
-    print(topfile, categoryfile, tmpcategoryfile)
-    shutil.copy2(topfile, tmptopfile)
-    shutil.copy2(categoryfile, tmpcategoryfile)
-    shutil.copy2(signalfile, tmpsignalfile)
+    shutil.copy2(topfile, tmptopfile) 
+    shutil.copy2(signalfile, tmpsignalfile) 
     tmpsignalfile.replace("MEAN", str(sigmean))
-
 
     tmpfitfile="%s/run/dijetFit_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
     fitfile = cdir + "/" + config.fitFunctions[fitFunction]["Config"]
     shutil.copy2(fitfile, tmpfitfile)
 
-
     replaceinfile(tmpfitfile,
                   [
                    ("CDIR", cdir),
                   ])
-
-    replaceinfile(tmptopfile,
+    
+    replaceinfile(tmptopfile, 
                   [("CATEGORYFILE", tmpcategoryfile),
                    ("CDIR", cdir),
                    ("MEAN", str(sigmean)),
@@ -165,32 +166,39 @@ def run_anaFit(datafile,
 
 
 
-    print ("Running with datafile ", datafile)
-    replaceinfile(tmpcategoryfile, [
+    for toy in range(max(ntoys, 1)):
+      if ntoys == 0:
+        toyString = ""
+      else:
+        toyString = "_%d"%(toy)
+      shutil.copy2(categoryfile, tmpcategoryfile) 
+      print ("Running with datafile ", datafile)
+      replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
-        ("DATAHIST", datahist),
-        ("RANGELOW", str(rangelow)),
+        ("DATAHIST", datahist + "%s"%(toyString)) ,
         ("FITFUNC", tmpfitfile),
-        ("SIGNALFILE", tmpsignalfile),
         ("CDIR", cdir),
+        ("SIGNALFILE", tmpsignalfile),
+        ("RANGELOW", str(rangelow)),
         ("RANGEHIGH", str(rangehigh)),
         ("BINS", str(nbins)),
         ("NBKG", nbkg),
         ("NSIG", nsig),
         ("MEAN", str(sigmean)),
         ("WIDTH", str(sigwidth)),
-    ])    
+      ])    
 
-    if dosignal:
-        poi="nsig_mean%s_width%s" % (sigmean, sigwidth)
-    else:
-        poi=None
+      if dosignal:
+          #poi="nsig_mean%s_width%s" % (sigmean, sigwidth)
+          poi="nsig_mean%s" % (sigmean)
+      else:
+          poi=None
 
-    print("running fit extractor")
-    # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
-    pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
+      print("running fit extractor")
+      # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
+      pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile, 
-                                                                datahist=datahist, 
+                                                                datahist=datahist + "%s"%(toyString), 
                                                                 datafirstbin=rangelow, 
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
@@ -198,15 +206,17 @@ def run_anaFit(datafile,
                                                                 rebinFile=rebinFile,
                                                                 rebinHist=rebinHist,
                                                                 rebinEdges=rebinEdges,
+                                                                toy=toy,
+                                                                toyString=toyString,
                                                                 )
 
-    print("Finished fit extractor")
-    print ("Global fit p(chi2)=%.3f" % pval_global)
+      print("Finished fit extractor")
+      print ("Global fit p(chi2)=%.3f" % pval_global)
 
-    if pval_global > maskthreshold:
+      if pval_global > maskthreshold:
         print("p(chi2) threshold passed. Exiting with succesful fit.")
         #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson run/BHresults.json; deactivate" % (postfitfile))
-    else:
+      else:
         print("p(chi2) threshold not passed.")
         print("Now running BH for masking.")
 
@@ -245,7 +255,7 @@ def run_anaFit(datafile,
 
         pval_masked,_,_ = build_fit_extract(tmptopfilemasked,
                                             datafile=datafile, 
-                                            datahist=datahist, 
+                                            datahist=datahist + "%s"%(toyString), 
                                             datafirstbin=rangelow, 
                                             wsfile=wsfilemasked, 
                                             fitresultfile=outfilemasked, 
@@ -253,6 +263,8 @@ def run_anaFit(datafile,
                                             rebinFile=rebinFile,
                                             rebinHist=rebinHist,
                                             rebinEdges=rebinEdges,
+                                            toy=toy,
+                                            toyString=toyString,
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
@@ -267,12 +279,13 @@ def run_anaFit(datafile,
             
  
       
-    # blindrange not yet implemented with quickLimit
-    if dolimit and dosignal and pval_global > maskthreshold:
-    #if dolimit and dosignal:
-        rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
-        if rtv != 0:
-            print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
+      # blindrange not yet implemented with quickLimit
+      if dolimit and dosignal and pval_global > maskthreshold:
+      #if dolimit and dosignal:
+          #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
+          rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          if rtv != 0:
+              print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
     return 0
 

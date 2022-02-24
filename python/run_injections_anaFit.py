@@ -4,7 +4,7 @@ from __future__ import print_function
 import os,sys,re,argparse
 from InjectGaussian import InjectGaussian
 from InjectTemplate import InjectTemplate
-from run_anaFitWithToys import run_anaFit
+from run_anaFit import run_anaFit
 import config as config
 
 def run_injections_anaFit(datafile, 

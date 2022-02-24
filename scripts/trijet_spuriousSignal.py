@@ -2,7 +2,7 @@ import scripts.config as config
 import python.run_injections_anaFit as run_injections_anaFit
 import python.generatePseudoData as generatePseudoData
 import os
-import python.run_anaFitWithToys as run_anaFitWithToys
+import python.run_anaFit as run_anaFit
 
 
 from optparse import OptionParser
@@ -87,7 +87,7 @@ for sigmean in sigmeans:
   
           # Then run the injection
           #run_injections_anaFit.run_injections_anaFit(
-          run_anaFitWithToys.run_anaFit(
+          run_anaFit.run_anaFit(
                datafile=pdFile, 
                datahist=pdHistName,
                categoryfile=categoryfile,
