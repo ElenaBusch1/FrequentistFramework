@@ -7,10 +7,12 @@ from ROOT import *
 import math
 import config as config
 import DrawingFunctions as df
+import ExtractFitParameters as efp
 
 
 
-def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, outfile, ntoys, rangelow, rangehigh, lumi, sigmean, sigwidth, sigamp, cdir, channelName):
+
+def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, outfile, ntoys, rangelow, rangehigh, lumi, sigmean, sigwidth, sigamp, cdir, channelName, fitName = ""):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     nominalFileName = config.getFileName(nominalname, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
@@ -23,6 +25,33 @@ def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, out
     relError = nominalFit.Clone("RelError")
     relError.SetDirectory(0)
     relError.GetXaxis().SetTitle("m_{jj}")
+
+
+    #toyName = config.getFileName(pdfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
+    h_pars = []
+    configName = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/" + config.fitFunctions[fitName]["Config"]
+
+    with open(configName) as f:
+      lines = f.readlines()
+      configFile = lines[2]
+
+    parNum = 1 
+    while configFile.find("p%d"%(parNum)) >= 0:
+      index1 = configFile.find("p%d["%(parNum))
+      substr1 = configFile[index1:-1]
+      substr2 = substr1[3:substr1.find("]")]
+      substr3 = substr2[substr2.find(",")+1:]
+      substr4 = substr3[0:substr3.find(",")]
+      substr5 = substr3[substr3.find(",")+1:]
+      pMin = float(substr4)
+      pMax = float(substr5)
+      if pMin < pMax:
+        h_p = TH1F("p%d_%d_%d"%(parNum, sigmean, sigwidth), "p%d;p%d;No. of toys"%(parNum,parNum), 80, pMin, pMax)
+        h_p.SetDirectory(0)
+        h_pars.append(h_p)
+
+      parNum += 1
+
 
 
     for toy in range(ntoys):
@@ -38,6 +67,21 @@ def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, out
        toyFit.Multiply(toyFit)
 
        tmpError.Add(toyFit)
+
+       efpName = pdfile.replace("PostFit", "FitParameters")
+       tmp_path_fitBkg = config.getFileName(efpName, cdir, channelName, rangelow, rangehigh, 0) + ".root"
+       fpeBkg = efp.FitParameterExtractor(tmp_path_fitBkg)
+       try:
+         fpeBkg.suffix = "_%d"%(toy)
+         fpeBkg.ExtractFromFile( "_%d"%(toy))
+         params = fpeBkg.GetH1Params()
+       except:
+         continue
+
+       for parIndex in range(len(h_pars)):
+         h_pars[parIndex].Fill(params.GetBinContent(2+parIndex))
+
+
 
     for xbin in range(nominalFit.GetNbinsX()):
        nominalFit.SetBinError(xbin+1, math.sqrt(tmpError.GetBinContent(xbin+1)))
@@ -67,6 +111,11 @@ def fitQualityTests(pdfile, nominalname, fitFunction1File, fitFunction2File, out
     leg = df.DrawHists(c, [relError, relErrorFit], ["Stat uncertainty on fit", "Function choice"], [], drawOptions = ["ex0"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     path = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     c.Print(path)
+
+    for h_par in h_pars:
+      leg = df.DrawHists(c, [h_par], ["Bkg-only fits"], [], drawOptions = ["hist"], styleOptions=df.get_extraction_style_opt, isLogX=0)
+      path = config.getFileName(h_par.GetTitle(), cdir, channelName, rangelow, rangehigh) + ".pdf"
+      c.Print(path)
 
 
 

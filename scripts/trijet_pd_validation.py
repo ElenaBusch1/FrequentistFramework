@@ -42,7 +42,7 @@ for channelName in channelNames:
       
       fit1 = "PostFit_%s_bkgonly"%(fitName)
       fit2 = "PostFit_%s_bkgonly"%(pdFitName)
-      fitQualityTests.fitQualityTests("PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName), "PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName), fit1, fit2, "FitQuality_%s"%(channelName), config.nToys, rangelow, rangehigh, lumi, 0, 0, 0, cdir + "/scripts/", channelName)
+      fitQualityTests.fitQualityTests("PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName), "PostFit_%s_PD_%s_bkgonly"%(pdFitName, fitName), fit1, fit2, "FitQuality_%s"%(channelName), config.nToys, rangelow, rangehigh, lumi, 0, 0, 0, cdir + "/scripts/", channelName, fitName = fitName)
 
 
 
