@@ -1,0 +1,18 @@
+<!DOCTYPE Channel SYSTEM 'AnaWSBuilder.dtd'>
+<Channel Name="J100yStar06" Type="shape" Lumi="1">
+  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_channel[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
+
+  <!-- <Sample Name="background" InputFile="config/dijetTLA/background_dijetTLA_J100yStar06_fourPar.xml" MultiplyLumi="0" ImportSyst=":self:"> -->
+  <Sample Name="background" InputFile="config/dijetTLA/background_dijetTLA_J100yStar06_threePar.xml" MultiplyLumi="0" ImportSyst=":self:">
+    <!-- 29/fb: -->
+    <!-- <NormFactor Name="nbkg[0.2E8,0,0.3E8]"/> -->
+    <!-- 130/fb: -->
+    <!-- <NormFactor Name="nbkg[9E8,0,15E8]"/>  -->
+    <NormFactor Name="nbkg[NBKG]"/>
+  </Sample>
+
+  <Sample Name="signal_mRMASS_gq0p1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_zprime_gq0p1_mRMASS.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mRMASS_gq0p1[0,0,1E6]"/>
+  </Sample>
+
+</Channel>
