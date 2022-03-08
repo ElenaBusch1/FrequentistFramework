@@ -56,7 +56,6 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     parameterfile=fitresultfile.replace("FitResult","FitParameters")
 
     if notrebin:
-      print("Not rebinning results")
       rebinfile=None
       rebinhist=None
     else:
@@ -229,9 +228,6 @@ def main(args):
     parser.add_argument('--notrebin', dest='notrebin', action='store_true', help='Don\'t rebin post fit result.')
 
     args = parser.parse_args(args)
-
-
-    print("Don't rebin? {}".format(args.notrebin))
 
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
