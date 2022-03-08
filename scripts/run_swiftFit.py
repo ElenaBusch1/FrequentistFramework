@@ -1,8 +1,14 @@
 #!/usr/bin/env python
-import ROOT
 import array
 import subprocess, os, sys, argparse
 from condor_handler import CondorHandler
+from ROOT import *
+
+gROOT.LoadMacro("atlasstyle-00-04-02/AtlasLabels.C")
+gROOT.LoadMacro("atlasstyle-00-04-02/AtlasStyle.C")
+gROOT.LoadMacro("atlasstyle-00-04-02/AtlasUtils.C")
+
+SetAtlasStyle()
 
 # First attempt of SWiFT fit:
 # quickFit currently works on 1 GeV bins
@@ -32,10 +38,10 @@ from condor_handler import CondorHandler
 
 ################################# CHECK THIS ##########################
 
-# Condor or local/lxplus?
-useBatch = True
+# Condor or local/lxplus? Not implemented yet!
+useBatch = False
 # Execute or printout commands?
-quiteMode = True
+quietMode = False
 # None: submit all fits sequentially, or doNJobs fits per submission
 doNJobs = 10 # not implemented yet
 
@@ -44,44 +50,50 @@ fixLow = 1
 truncateRight = 0
 fixHigh = 0
 
+# Output folder -- where everything is stored:
+# default in python/run_anaFit.py is run/
+outFolder = "run/Swift_WHW{0}_fixLow{1}_TR{2}_fixHigh{3}_3par/".format(WHW,fixLow, truncateRight, fixHigh)
+
 # Datafile:
 datafile = "Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root"
 datahist = "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data"
-nbkg = "2E8,0,3E8"
+
+# Use previous window to initialize nbkg parameter:
+doReadPreviousFit = True
+# Initial values
+nbkg = "2E8,0,3E8"  # some windows fail if initial value is given, e.g.: window from 1186-1472 with 5par fit.
+#nbkg ="0,3E8"
 
 # whole fitting range:
 analysisRange = [ 531, 2997 ]
 
 # Provide resolution bins:
-resolutionBinsFile = "/home/mariana/Nube/TLA/FrequentistFramework/Input/data/dijetTLAnlo/data_J100yStar06_range171_3217.root"
+resolutionBinsFile = "Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root"
 resolutionBinsHisto = "data"
 
 # xml template cards:
 topfile = "config/dijetTLA/dijetTLA_J100yStar06_zprime.template"
 # reminder: category file points to which bkg fitting function!
-categoryfile = "config/dijetTLA/category_dijetTLA_J100yStar06_fivePar_zprime.template"
-
-# Output folder -- where everything is stored:
-# default in python/run_anaFit.py is run/
-outFolder = "run/SWiFt_14022022/"
+#categoryfile = "config/dijetTLA/category_dijetTLA_J100yStar06_fivePar_zprime.template"
+categoryfile = "config/dijetTLA/category_dijetTLA_J100yStar06_threePar_zprime.template"
 
 # brackets for fit number:
-wsfile = "dijetTLA_combWS_swift_{}.root"
-outputfile = "FitResult_fivePar_J100yStar_bOnly_{}.root"
+wsfile = "dijetTLA_combWS_swift_ibin{0}_{1}_{2}.root"
+outputfile = "FitResult_fivePar_J100yStar_bOnly_ibin{0}_{1}_{2}.root"
 
 # Signal:
 # dummy: it's a b-only fit, for now
-sigmean = 'bOnly'
+sigmean = 1000
 sigwidth = -999
 
 ##########################################################################
 
 ############ styling and setup
-ROOT.gStyle.SetOptStat(0)
-ROOT.gErrorIgnoreLevel = ROOT.kWarning
+gStyle.SetOptStat(0)
+gErrorIgnoreLevel = kWarning
 # Always do batch mode!
-ROOT.gROOT.SetBatch(True)
-ROOT.gStyle.SetOptTitle(0)
+gROOT.SetBatch(True)
+gStyle.SetOptTitle(0)
 
 ############ Create output folder:
 
@@ -108,15 +120,44 @@ else:
   
   folder = outFolder
 
+##############################
+
+wsfile = folder + wsfile
+outputfile = folder + outputfile
+
+###############################
+
+def computeResiduals(data, fit, histoName="residuals"):
+    h = fit.Clone(histoName)
+    h.SetDirectory(0)
+    h.Reset("M")
+    
+    for ibin in range(1, fit.GetNbinsX()+1):
+        valueErrorData = data.GetBinError(ibin)
+        valueData = data.GetBinContent(ibin)
+        valueFit = fit.GetBinContent(ibin)
+
+        binSig = 0.
+        if valueErrorData > 0. and valueFit > 0.:
+            binSig = (valueData - valueFit)/ valueErrorData
+            h.SetBinContent(ibin, binSig)
+            h.SetBinError(ibin, 0)
+    
+    return h
+
 ############# Prepare Commands:
-command = "python python/run_anaFit.py --datafile {0} --datahist {1} --topfile {2} --categoryfile {3} --wsfile {4} --outputfile {5} --nbkg {6} --rangelow {7} --rangehigh {8} --sigmean {9} --sigwidth {10} --folder {11}"
+
+# No BH, no rebinning
+
+command = "python python/run_anaFit.py --datafile {0} --datahist {1} --topfile {2} --categoryfile {3} --wsfile {4} --outputfile {5} --nbkg {6} --rangelow {7} --rangehigh {8} --sigmean {9} --sigwidth {10} --folder {11} --notrebin --maskthreshold 1e-8"
 
 # IMPORTANT: assuming resolution bins range is equal to or larger than data binning
 # 1) Retrieve resolution bins:
-resFile = ROOT.TFile(resolutionBinsFile, 'read')
+resFile = TFile(resolutionBinsFile, 'read')
 resHisto = resFile.Get(resolutionBinsHisto)
-resBins = array.array('d',[ resHisto.GetBinLowEdge(i) for i in range(1, resHisto.GetNbinsX() + 2) ])
-# print "Resolution bins are:", resBins
+binEdges = [ resHisto.GetBinLowEdge(i) for i in range(1, resHisto.GetNbinsX() + 2) ]
+resBins = array.array( 'd', binEdges )
+print "Resolution bins are:", resBins
 
 binsToFit = []
 for ibin, binEdge in enumerate(resBins):
@@ -130,9 +171,9 @@ lastBinToFit  = binsToFit[-1]
 # 2) For plotting window cross check:
 ybins = array.array('d',range(1, len(binsToFit)+2))
 # Easier handling of bins and bin edges:
-swiftCheck = ROOT.TH2D("Swift_Range","",len(resBins)-1,resBins,len(binsToFit), ybins)
+swiftCheck = TH2D("Swift_Range","",len(resBins)-1,resBins,len(binsToFit), ybins)
 # Nice plot for window visualization -- annoying to handle bins:
-swiftPoly  = ROOT.TH2Poly()
+swiftPoly  = TH2Poly()
 swiftPoly.SetName("swiftPoly")
 for ix in range(0, len(resBins)-1):
     xval1 = resBins[ix]
@@ -149,12 +190,11 @@ print "Range determined by resolution bin edges: {0}-{1}".format( swiftCheck.Get
 
 # to first order it's one fit per resolution bin
 # -- FIXME not really though:
+
 for i in range(firstBinToFit, lastBinToFit+1):
   j = i - firstBinToFit + 1
   
   # i is the bin to fit -- let's paint it with a 2
-  outputfile.format(i)
-  wsfile.format(i)
   swiftCheck.SetBinContent(i,j, 2)
   swiftPoly.Fill( swiftCheck.GetXaxis().GetBinCenter(i), swiftCheck.GetYaxis().GetBinCenter(j), 2)
   
@@ -197,7 +237,7 @@ for i in range(firstBinToFit, lastBinToFit+1):
       lowBin = i-WHW
       # check that there are enough bins beyond the analysis
       # range to extend the window:
-      bins_to_the_right = swiftCheck.GetXaxis().GetNbins() - lastBinToFit
+      bins_to_the_right = swiftCheck.GetXaxis().GetNbins() - i
       if abs(bins_to_the_right) < WHW:
         upBin = swiftCheck.GetXaxis().GetNbins()
       else:
@@ -207,37 +247,52 @@ for i in range(firstBinToFit, lastBinToFit+1):
         swiftCheck.SetBinContent(r,j,1)
         swiftPoly.Fill( swiftCheck.GetXaxis().GetBinCenter(r), swiftCheck.GetYaxis().GetBinCenter(j), 1)
  
-  low = swiftCheck.GetXaxis().GetBinLowEdge(lowBin)
-  high = swiftCheck.GetXaxis().GetBinUpEdge(upBin) 
+  # FIXME Assumes bin edges are INTs -- same as run_anaFit.py
+  low =  int(swiftCheck.GetXaxis().GetBinLowEdge(lowBin))
+  high = int(swiftCheck.GetXaxis().GetBinUpEdge(upBin)) 
   
-  print "Submitting fit for window #{0} with fitting range ({1},{2})".format(j,low, high)
-  thisCommand =  command.format(datafile, datahist, topfile, categoryfile, wsfile, outputfile, nbkg, low, high, sigmean, sigwidth, folder) 
-  commands.append( thisCommand )
+  print "Preparing fit for window #{0} with fitting range ({1},{2})".format(i,low, high)
+  thisCommand =  command.format(datafile, datahist, topfile, categoryfile, wsfile.format(i,low, high), outputfile.format(i,low,high), nbkg, low, high, sigmean, sigwidth, folder) 
   print thisCommand
+  
+ # Submit the Jobs! -- al sequential for now
+  if not quietMode:
+    if not useBatch:
+      subprocess.call(thisCommand, shell=True)
+      # Fitting done, now let's retrieve nbkg estimation to
+      # initialize next window fit!
+      paramsFileName = outputfile.format(i, low, high).replace("FitResult", "FitParameters")
+      paramsFile = TFile(paramsFileName, 'read')
+      paramsHisto = paramsFile.Get("postfit_params")
+      for p in range(1,paramsHisto.GetNbinsX()+1):
+	if paramsHisto.GetXaxis().GetBinLabel(p) == "nbkg":
+	  updated_Nbkg = str(round(paramsHisto.GetBinContent(p)))
+	  print updated_Nbkg
+	  previous_Nbkg = nbkg.split(",")
+	  previous_Nbkg[0] = updated_Nbkg
+	  print previous_Nbkg
+	  nbkg = ','.join(previous_Nbkg)
+	  print "Updated nbkg: {}".format(nbkg)
 
+  print " "
 
 # Save cross check windows plot:
-outputFile = ROOT.TFile( outFolder + "/swiftCrossCheck.root",'recreate')
+outputFile = TFile( outFolder + "/swiftCrossCheck.root",'recreate')
 outputFile.cd()
 swiftCheck.Write()
 swiftPoly.Write()
 outputFile.Close()
 
-canvas = ROOT.TCanvas()
-canvas.SetGrayScale()
+canvas = TCanvas()
+gStyle.SetPalette(kRainBow)
 swiftPoly.GetXaxis().SetTitle("m_{jj} [GeV]")
 swiftPoly.GetYaxis().SetTitle("SWiFt Iteration")
 swiftPoly.Draw("COL0 L")
-canvas.Print( outFolder + "/swiftCrossCheck.png")
+myText(0.2, 0.90, 1, "fixLow = {}".format(fixLow), 12)
+myText(0.2, 0.85, 1, "truncateRight = {}".format(truncateRight), 12)
+myText(0.2, 0.80, 1, "fixHigh = {}".format(fixHigh), 12)
 
-# Submit the Jobs! -- al sequential for now
-if not quietMode:
-  if not useBatch:
-    for c in commands:
-      subprocess.call(c, shell=True)
-  else:
-    run_command = '\n'.join(commands) + '\n'
-    batchmanager.send_job( run_command, outFolder )
+canvas.Print( outFolder + "/swiftCrossCheck.png")
 
 # We got some stitching up to do now:
 

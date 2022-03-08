@@ -27,7 +27,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, notrebin=False):
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -55,13 +55,21 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     postfitfile=fitresultfile.replace("FitResult","PostFit")
     parameterfile=fitresultfile.replace("FitResult","FitParameters")
 
+    if notrebin:
+      print("Not rebinning results")
+      rebinfile=None
+      rebinhist=None
+    else:
+      rebinfile="Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root"
+      rebinhist="data"
+
     pfe = PostfitExtractor(
         datafile=datafile,
         datahist=datahist,
         datafirstbin=datafirstbin,
         wsfile=fitresultfile,
-        rebinfile="Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root",
-        rebinhist="data",
+        rebinfile=rebinfile,
+        rebinhist=rebinhist,
         maskmin=maskmin,
         maskmax=maskmax
     )
@@ -87,7 +95,8 @@ def run_anaFit(datafile,
                sigmean=1000,
                sigwidth=7,
                maskthreshold=0.01,
-	       folder="run/"):
+	       folder="run/",
+	       notrebin=False):
 
     nbins=rangehigh - rangelow
 
@@ -135,7 +144,8 @@ def run_anaFit(datafile,
                                                                 datafirstbin=rangelow, 
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
-                                                                poi=poi)
+                                                                poi=poi,
+								notrebin=notrebin)
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -216,8 +226,12 @@ def main(args):
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
+    parser.add_argument('--notrebin', dest='notrebin', action='store_true', help='Don\'t rebin post fit result.')
 
     args = parser.parse_args(args)
+
+
+    print("Don't rebin? {}".format(args.notrebin))
 
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
@@ -233,7 +247,8 @@ def main(args):
                sigmean=args.sigmean,
                sigwidth=args.sigwidth,
                maskthreshold=args.maskthreshold,
-	       folder=args.folder)
+	       folder=args.folder,
+	       notrebin=args.notrebin)
 
 
 if __name__ == "__main__":  
