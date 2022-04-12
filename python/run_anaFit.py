@@ -73,6 +73,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmax=maskmax
     )
     pval = pfe.GetPval()
+    # pfe.WriteRoot(postfitfile, dirPerCategory=True)
     pfe.WriteRoot(postfitfile)
 
     fpe = FitParameterExtractor(wsfile=fitresultfile)
@@ -89,6 +90,7 @@ def run_anaFit(datafile,
                nbkg,
                rangelow,
                rangehigh,
+               backgroundfile=None,
                dosignal=False,
                dolimit=False,
                sigmean=1000,
@@ -129,7 +131,11 @@ def run_anaFit(datafile,
 	("MASS", str(sigmean)),
     ])    
 
-    
+    if backgroundfile:
+        replaceinfile(tmpcategoryfile, 
+                      [("BACKGROUNDFILE", backgroundfile)])
+
+
     if dosignal:
         poi="nsig_mean%s_width%s" % (sigmean, sigwidth)
 	if sigwidth == -999:
@@ -214,6 +220,7 @@ def main(args):
     parser.add_argument('--datahist', dest='datahist', type=str, required=True, help='Input finebinned data histogram name')
     parser.add_argument('--topfile', dest='topfile', type=str, required=True, help='Input top-level xml card')
     parser.add_argument('--categoryfile', dest='categoryfile', type=str, required=True, help='Input category xml card')
+    parser.add_argument('--backgroundfile', dest='backgroundfile', type=str, help='Input background xml card')
     parser.add_argument('--wsfile', dest='wsfile', type=str, required=True, help='Output workspace file')
     parser.add_argument('--outputfile', dest='outputfile', type=str, required=True, help='Output fitresult file')
     parser.add_argument('--nbkg', dest='nbkg', type=str, required=True, help='Initial value and range of nbkg par (e.g. "2E8,0,3E8")')
@@ -233,6 +240,7 @@ def main(args):
                datahist=args.datahist,
                topfile=args.topfile,
                categoryfile=args.categoryfile,
+               backgroundfile=args.backgroundfile,
                wsfile=args.wsfile,
                outputfile=args.outputfile,
                nbkg=args.nbkg,

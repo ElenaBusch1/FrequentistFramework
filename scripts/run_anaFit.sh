@@ -3,7 +3,8 @@
 {
     . scripts/setup_buildAndFit.sh
 
-    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_fivePar.template
+    backgroundfile=config/dijetTLA/background_dijetTLA_J100yStar06_fivePar.xml
+    categoryfile=config/dijetTLA/category_dijetTLA.template
     topfile=config/dijetTLA/dijetTLA_J100yStar06.template
     wsfile=run/dijetTLA_combWS_swift.root
     sigmean=1000
@@ -11,8 +12,8 @@
     dosignal=1
     dolimit=1
     outputfile=run/FitResult_swift_fivePar_J100yStar06_bkgonly.root
-    rangelow=531
-    rangehigh=2058
+    rangelow=457
+    rangehigh=2997
     datafile=Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root
     datahist=Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data
     nbkg="2E8,0,3E8"
@@ -24,6 +25,7 @@
     ./python/run_anaFit.py \
     	--datafile $datafile \
     	--datahist $datahist \
+    	--backgroundfile $backgroundfile \
     	--categoryfile $categoryfile \
     	--topfile $topfile \
     	--wsfile $wsfile \
