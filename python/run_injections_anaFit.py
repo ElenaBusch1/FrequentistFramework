@@ -22,6 +22,8 @@ def main(args):
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
+    parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
+    parser.add_argument('--notrebin', dest='notrebin', action='store_true', help='Don\'t rebin post fit result.')
     parser.add_argument('--sigamp', dest='sigamp', type=float, default=0, help='Amplitude of Gaussian to inject (in sigma)')
     parser.add_argument('--loopstart', dest='loopstart', type=int, help='First toy to fit')
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
@@ -62,7 +64,9 @@ def main(args):
                        dolimit=args.dolimit,
                        sigmean=args.sigmean,
                        sigwidth=args.sigwidth,
-                       maskthreshold=args.maskthreshold)
+                       maskthreshold=args.maskthreshold,
+		       notrebin=args.notrebin,
+		       folder=args.folder)
     else:
         print("Running run_anaFit with datahist %s" % args.datahist)
         run_anaFit(datafile=args.datafile,
@@ -78,7 +82,9 @@ def main(args):
                    dolimit=args.dolimit,
                    sigmean=args.sigmean,
                    sigwidth=args.sigwidth,
-                   maskthreshold=args.maskthreshold)
+                   maskthreshold=args.maskthreshold,
+		   notrebin=args.notrebin,
+		   folder=args.folder)
 
 
 if __name__ == "__main__":  
