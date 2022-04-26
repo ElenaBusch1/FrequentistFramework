@@ -16,6 +16,16 @@ FILE_TEMPLATES="Input/model/dijetTLA/zprime/HLT_j0_perf_ds1_L1J100/SignalTemplat
 # python python/PrepareTemplates/cutHistRange.py --rangeMin $rangeMin --rangeMax $rangeMax $FILE_TEMPLATES
 #FILE_TEMPLATES=${FILE_TEMPLATES/.root/_range${rangeMin}_${rangeMax}.root}
 
+##### Inject ghosts 
+
+echo "Injecting ghosts"
+OUT_FILE=${FILE_TEMPLATES/.root/_wGhosts.root}
+echo python python/PrepareTemplates/injectGhosts.py --infile ${FILE_TEMPLATES} --output ${OUT_FILE}
+python python/PrepareTemplates/injectGhosts.py --infile ${FILE_TEMPLATES} --output ${OUT_FILE}
+FILE_TEMPLATES=${OUT_FILE}
+
+##### BUILD HistFactory
+
 for mass in ${mR[@]}
 do
   echo "Processing mass point $mass"
