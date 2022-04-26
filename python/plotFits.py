@@ -4,6 +4,7 @@
 
 import ROOT
 import sys, re, os, math, argparse
+import LocalFunctions as lf
 import DrawingFunctions as df
 import python.AtlasStyle as AS
 import array
@@ -14,7 +15,7 @@ import ExtractFitParameters as efp
 
 def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, 
              atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", 
-             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=0):
+             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None):
 
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     AS.SetAtlasStyle()
@@ -35,13 +36,13 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
     for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
       path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj, sigmean, sigwidth, sigamp) + ".root"
-      inFile = ROOT.TFile(path, "READ")
-      if not inFile:
-        print "Did not find file ", path
+      dataHist = lf.read_histogram(path, datahistName + suffix)
+      fitHist = lf.read_histogram(path, fithistName + suffix)
+      residualHist = lf.read_histogram(path, residualhistName + suffix)
+      dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
+      fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
+      residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
 
-      dataHist = inFile.Get(datahistName + suffix)
-      fitHist = inFile.Get(fithistName + suffix)
-      residualHist = inFile.Get(residualhistName + suffix)
       try:
         chi2Hist = inFile.Get("chi2"+suffix)
         chi2 = chi2Hist.GetBinContent(2)
@@ -49,23 +50,25 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       except:
         chi2 = -1
         pval = -1
-      inFile.Close()
 
       fitPath = path
       fitPath = fitPath.replace("PostFit","FitParameters")
       nsig=0
       try:
         fpe = efp.FitParameterExtractor(fitPath)
-        fpe.suffix = "_%d"%(toy)
-        fpe.ExtractFromFile( "_%d"%(toy))
+        if toy:
+          fpe.suffix = "_%d"%(toy)
+          fpe.ExtractFromFile( "_%d"%(toy))
+        else:
+          fpe.suffix = ""
+          fpe.ExtractFromFile( "")
         nsig = fpe.GetNsig()
         labels.append("N_{sig, extracted} = %.3f"%nsig)
       except:
-        print "no luck"
+        print "Unable to find fit parameters,", fitPath
 
-      dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
-      fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
-      residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
+      if not dataHist or not fitHist or not residualHist:
+        continue
 
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       dataHist.SetTitle(config.samples[channelName]["legend"])
@@ -74,9 +77,12 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     
       # This allows us to rebin the histograms using resolution binning, if we want
       if rebinedges:
-        dataHist = dataHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
-        fitHist = fitHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
-        residualHist = residualHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
+        dataHist = dataHist.Rebin(len(rebinedges)-1, "dataHist_%s"%(infileName), array.array('d', rebinedges))
+        fitHist = fitHist.Rebin(len(rebinedges)-1, "fitHist_%s"%(infileName), array.array('d', rebinedges))
+        residualHist = residualHist.Rebin(len(rebinedges)-1, "residual_%s"%(infileName), array.array('d', rebinedges))
+        dataHist.SetDirectory(0)
+        fitHist.SetDirectory(0)
+        residualHist.SetDirectory(0)
 
         for ibin in range(1, dataHist.GetNbinsX()+1):
           valueErrorData = dataHist.GetBinError(ibin)
@@ -93,11 +99,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
             residualHist.GetYaxis().SetTitle("Residuals (#sigma)")
 
 
-      dataHist.SetDirectory(0)
       dataHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
       dataHist.GetYaxis().SetTitle("N_{events}")
-      fitHist.SetDirectory(0)
-      residualHist.SetDirectory(0)
 
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")

@@ -3,6 +3,7 @@ import ROOT
 import sys, re, os, math, optparse
 from color import getColorSteps
 import DrawingFunctions as df
+import LocalFunctions as lf
 import python.AtlasStyle as AS
 import config as config
 import array
@@ -11,7 +12,6 @@ import array
 def calcFpF(chi2_nom, chi2_alt, npars_nom, npars_alt, nbins):
     F_num = (chi2_nom - chi2_alt) / (npars_alt - npars_nom)
     F_den = chi2_alt / (nbins - npars_alt)
-
     F = F_num / F_den
     pF = ROOT.Math.fdistribution_cdf_c( F, npars_alt-npars_nom, nbins-npars_alt)
 
@@ -19,6 +19,7 @@ def calcFpF(chi2_nom, chi2_alt, npars_nom, npars_alt, nbins):
 
 
 def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atlasLabel="Simulation Internal", chi2bin=1, nbinsbin=3, nparsbin=4, ndofbin=5, usendof=0, rebinEdges=None):
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
     l_pf = []
     l_res = []
     l_chi2 = []
@@ -31,14 +32,12 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
 
     for infile in infiles:
         tmp_path = config.getFileName(infile, cdir, channelName, rangelow, rangehigh) + ".root"
-        print tmp_path
-        f = ROOT.TFile(tmp_path)
 
-        h_chi2 = f.Get("chi2")
-        h_pf   = f.Get("postfit")
-        h_data   = f.Get("data")
+        h_chi2 = lf.read_histogram(tmp_path,"chi2")
+        h_pf   = lf.read_histogram(tmp_path,"postfit")
+        h_data   = lf.read_histogram(tmp_path,"data")
+        h_res  = lf.read_histogram(tmp_path, "residuals")
         h_data.GetXaxis().SetTitle("m_{jj}")
-        h_res  = f.Get("residuals")
         h_res.GetXaxis().SetTitle("m_{jj}")
         h_res.GetYaxis().SetTitle("Residual (#sigma)")
 
@@ -58,10 +57,6 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
 
                 h_res.SetBinContent(ibin, binSig)
                 h_res.SetBinError(ibin, 0)
-
-
-        h_pf.SetDirectory(0)
-        h_res.SetDirectory(0)
 
         chi2  = h_chi2.GetBinContent(chi2bin)
         _nbins = h_chi2.GetBinContent(nbinsbin)
@@ -86,9 +81,6 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
         legtext = "%s (#chi^{2}/n = %.0f/%.0f)" % (infile, chi2, ndof)
         legNames.append(legtext)
 
-
-
-
     labels = []
     for i in range(len(l_chi2)-1):
 
@@ -106,15 +98,10 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
 
         labels.append("p(F_{^{%s #rightarrow %s par}}) = %.2f" % (infiles[i], infiles[i+1], pF))
 
-    AS.SetAtlasStyle()
-
     c = df.setup_canvas(outfile)
-    #c.SetLogy()
-
     df.SetRange(l_res, myMin=-5, myMax=5, isLog=False)
     outname = outfile.replace(".root", "")
     leg = df.DrawHists(c, l_res, legNames, labels, "", drawOptions = ["HIST", "HIST"], styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
-
 
     c.Print("%s/%s/FTest_%s.pdf"%(cdir, channelName, outfile))
 
@@ -122,9 +109,6 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
 
 
 def main(args):
-    ROOT.gROOT.SetBatch(ROOT.kTRUE)
-
-    ROOT.SetAtlasStyle()
 
     parser = optparse.OptionParser(description='%prog [options] INPUT')
     parser.add_option('--chi2bin', dest='chi2bin', type=int, default=1, help='bin of the chi2 value in the chi2 histogram')

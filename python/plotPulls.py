@@ -5,35 +5,30 @@
 import ROOT
 import sys, re, os, math, argparse
 import python.DrawingFunctions as df
+import python.LocalFunctions as lf
 import AtlasStyle as AS
 import config as config
 
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
-
 
 def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelName, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
+  ROOT.gROOT.SetBatch(ROOT.kTRUE)
   for infileName, fitName in zip(infiles, fitNames):
     path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj) + ".root"
-
-    #inFile = ROOT.TFile(infileName, "READ")
-    inFile = ROOT.TFile(path, "READ")
         
-    residualHist = inFile.Get(residualhist+suffix)
-    dataHist = inFile.Get(datahist+suffix)
-    fitHist = inFile.Get("postfit"+suffix)
+    residualHist = lf.read_histogram(path, residualhist+suffix)
+    dataHist = lf.read_histogram(path, datahist+suffix)
+    fitHist = lf.read_histogram(path, "postfit"+suffix)
 
     h_pulls = ROOT.TH1F("h_pulls", ";Pull;", 100, -5, 5)
+    h_pulls.SetDirectory(0)
     for i in range(residualHist.GetNbinsX()):
       h_pulls.Fill( residualHist.GetBinContent(i+1)*1.0 );
     f1 = ROOT.TF1("f1","[area] * ROOT::Math::normal_pdf(x, [sigma], [mean]) ", -5, 5);
+
     # TODO: need to figure out how to normalize this correctly
     f1.SetParameter("area", h_pulls.Integral("width"))
     f1.SetParameter("mean", 0.);
     f1.SetParameter("sigma",1.);
-
 
     c = df.setup_canvas()
     h_pulls.Draw("HIST")
@@ -66,6 +61,7 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
     l2=ROOT.TLegend(0.65, 0.65, 0.9, 0.75)
     l2.AddEntry(f2, "#splitline{Gaussian fit}{mean = %.3f #pm %.3f}"%(f2.GetParameter(1), f2.GetParError(1)), "l")
 
+    # Trying to add some visualization for when our fits fail
     isProblematicFit = False
     if f2.GetParameter(1) > 0 and f2.GetParameter(1) - f2.GetParError(1) > 0:
       isProblematicFit = True
@@ -77,14 +73,12 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
     if isProblematicFit:
       l2.SetTextColor(ROOT.kRed)
     l2.Draw()
-    #AS.ATLASLabel(0.17, 0.9, 1, 0.15, 0.05, atlasLabel)
     df.draw_atlas_details(labels=labels,x_pos= 0.18,y_pos = 0.9, dy = 0.04, text_size = 0.035, atlasLabel = atlasLabel, lumi=lumi/1000.)
 
 
     outpath = config.getFileName(outfile + "_%s"%(fitName), cdir, channelName, minMjj, maxMjj) + ".pdf"
     c.Print(outpath)
 
-    inFile.Close()
 
 
 def main(args):
