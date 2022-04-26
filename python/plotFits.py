@@ -8,13 +8,15 @@ import DrawingFunctions as df
 import python.AtlasStyle as AS
 import array
 import config as config
+import ExtractFitParameters as efp
 
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
-#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-#ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", fithistName="postfit", suffix="", fitNames = None):
+
+def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, 
+             atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", 
+             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=0):
+
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
     AS.SetAtlasStyle()
 
     c = df.setup_canvas(outfile)
@@ -32,9 +34,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     labels = []
 
     for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
-      path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj) + ".root"
-
-      #inFile = ROOT.TFile(infileName, "READ")
+      path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj, sigmean, sigwidth, sigamp) + ".root"
       inFile = ROOT.TFile(path, "READ")
       if not inFile:
         print "Did not find file ", path
@@ -49,42 +49,52 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       except:
         chi2 = -1
         pval = -1
+      inFile.Close()
 
+      fitPath = path
+      fitPath = fitPath.replace("PostFit","FitParameters")
+      nsig=0
+      try:
+        fpe = efp.FitParameterExtractor(fitPath)
+        fpe.suffix = "_%d"%(toy)
+        fpe.ExtractFromFile( "_%d"%(toy))
+        nsig = fpe.GetNsig()
+        labels.append("N_{sig, extracted} = %.3f"%nsig)
+      except:
+        print "no luck"
 
       dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
       fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
       residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
 
-
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
+      dataHist.SetTitle(config.samples[channelName]["legend"])
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       residualHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
-      #residualHist.SetFillColor(ROOT.kRed)
-
     
+      # This allows us to rebin the histograms using resolution binning, if we want
       if rebinedges:
         dataHist = dataHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
         fitHist = fitHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
         residualHist = residualHist.Rebin(len(rebinedges)-1, "postfit", array.array('d', rebinedges))
 
         for ibin in range(1, dataHist.GetNbinsX()+1):
-            valueErrorData = dataHist.GetBinError(ibin)
-            valueData = dataHist.GetBinContent(ibin)
-            postFitValue = fitHist.GetBinContent(ibin)
+          valueErrorData = dataHist.GetBinError(ibin)
+          valueData = dataHist.GetBinContent(ibin)
+          postFitValue = fitHist.GetBinContent(ibin)
 
-            binSig = 0.
-            if valueErrorData > 0. and postFitValue > 0.:
-                binSig = (valueData - postFitValue)/valueErrorData
+          binSig = 0.
+          if valueErrorData > 0. and postFitValue > 0.:
+            binSig = (valueData - postFitValue)/valueErrorData
 
-                residualHist.SetBinContent(ibin, binSig)
-                residualHist.SetBinError(ibin, 0)
-                residualHist.GetXaxis().SetTitle("m_{jj}")
-                residualHist.GetYaxis().SetTitle("Residuals (#sigma)")
-
+            residualHist.SetBinContent(ibin, binSig)
+            residualHist.SetBinError(ibin, 0)
+            residualHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
+            residualHist.GetYaxis().SetTitle("Residuals (#sigma)")
 
 
       dataHist.SetDirectory(0)
-      dataHist.GetXaxis().SetTitle("m_{jj}")
+      dataHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
       dataHist.GetYaxis().SetTitle("N_{events}")
       fitHist.SetDirectory(0)
       residualHist.SetDirectory(0)
@@ -95,8 +105,9 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         dataRes.GetYaxis().SetRangeUser(-5.2,5.2)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
+        dataHist.SetTitle(config.samples[channelName]["legend"])
         plotHists.append(dataHist)
-        legNames.append("data")
+        legNames.append(config.samples[channelName]["legend"])
 
       dataHists.append(dataHist)
       fitHists.append(fitHist)
@@ -107,18 +118,15 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         tmpName = config.fitFunctions[fitName]["Name"]
       except:
         tmpName = fitName
-      legNames.append("%s, #chi^{2} / ndof = %.2f, p-value = %.2f %%"%(tmpName, chi2, pval))
+      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-value = %.2f %%}"%(tmpName, chi2, pval))
 
 
-
-
-    print plotHists
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
+
     leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
     c.Print(outname + ".pdf")
 
-    inFile.Close()
 
 
 

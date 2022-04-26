@@ -37,7 +37,7 @@ else:
   pdFitName = config.cPDFitName
   fitName = config.cFitName
   channelName=config.cSample
-  sigmeans = [350]
+  sigmeans = [450]
   sigamps = [5]
   sigwidths = [7]
   rangelow=config.cRangeLow
@@ -62,7 +62,7 @@ pdHistName = "pseudodata"
 for sigmean in sigmeans:
   for sigamp in sigamps:
     for sigwidth in sigwidths:
-      nbkg="1E7,0,1E8"
+      nbkg="1E7,0,5E8"
       nsig="0,0,1e6"
   
       topfile=config.samples[channelName]["topfile"]

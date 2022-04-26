@@ -2,7 +2,7 @@
 import ROOT
 import sys, re, os, math, argparse
 
-def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firsttoy=None, lasttoy=None):
+def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, firsttoy=None, lasttoy=None):
     f_in = ROOT.TFile(infile, "READ")
     f_out = ROOT.TFile(outfile, "RECREATE")
     f_out.cd()
@@ -27,7 +27,7 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
         hinj = hist.Clone()
         hgaus = hist.Clone("injectedSignal") 
         hgaus.Reset("M")
-        print "found", hist
+        #print "found", hist
 
         # define the parameters of the gaussian and fill it
         if sigmean > 0.0:
@@ -38,6 +38,8 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
             binLow = hist.FindBin(rangeLow)
             binHigh = hist.FindBin(rangeHigh)
             nBkg = hist.Integral(binLow, binHigh)
+            if nBkg == 0:
+               nBkg = 1
 
             if nBkg > 0.0:
                 sigma = (sigwidth*0.01) * sigmean 
@@ -45,13 +47,13 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
                 mygaus.SetParameters(1.0, sigmean, sigma) 
 
                 fSig = 0.762 #integral from -1.18 sigma to +1.18 sigma
-                nSig = int(math.sqrt(nBkg)*sigamp / fSig)
+                nSigNew = int(math.sqrt(nBkg)*sigamp / fSig)
 
-                print 'Injecting Signal with mean = ', sigmean, ' Number of events = ', nSig, 
-                print ' (ntimes = ', sigamp, ') Width = ', sigwidth
+                #print ' (ntimes = ', sigamp, ') Width = ', sigwidth
 
                 gRand.SetSeed(seed)
-                hgaus.FillRandom('mygaus', nSig) 
+                hgaus.FillRandom('mygaus', nSigNew) 
+                #print 'Injecting Signal with mean = ', sigmean, ' Number of events = ', nSigNew, "Integral: ", hgaus.Integral(), "n_bkg: ", nBkg
                 hinj.Add(hgaus)
 
         hinj.Write(histNameFile )
@@ -61,6 +63,7 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile, firstto
         seed += 1
             
     f_out.Close()
+    return nBkg
 
 
 def main(args):

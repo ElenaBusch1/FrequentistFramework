@@ -7,26 +7,37 @@ import python.runFTest as runFTest
 
 # May want to loop over these at some point?
 cdir = config.cdir
-#fitNames = ["fourPar", "fivePar", "fiveParV2", "fiveParV3","sixPar"]
 #fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
-#fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar", "sevenPar"]
-#fitNames = ["fourPar", "fivePar", "sixPar", "UA2"]
+#fitNames = ["fourPar", "fivePar", "sixPar", "fullSwift"]
 fitNames = ["fourPar", "fivePar", "sixPar"]
-#fitNames = ["fourPar", "fivePar", "sixPar", "UA2", "fullSwift"]
+#fitNames = ["threePar_swift"]
 #fitNames = ["fourPar", "fivePar", "sixPar", "fullSwift"]
 #fitNames = ["fivePar", "sixPar", "fullSwift", "UA2"]
 
 
-#channelNames=[config.cSample]
-channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
+#channelNames=["test3"]
+channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
+
+#channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
 
 #channelNames=["Btagged70_23_ystar"]
 #channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj"]
 
 rangeslow=[200]
-rangeshigh=[900]
-#rangeshigh=[800]
-#rangeshigh=[1000, 1200]
+rangeshigh=[1200]
+
+#channelNames=["ambulance_4j"]
+#rangeslow=[2000]
+#rangeshigh=[9000]
+##fitNames = ["fiveParAmb", "fiveParAmbMod", "fiveParAmbPow"]
+#fitNames = ["threeParAmb", "fourParAmb", "fiveParAmb"]
+
+#channelNames=["ambulance_2javg"]
+#rangeslow=[800]
+#rangeshigh=[3500]
+#fitNames = ["threeParAmb", "fourParAmb"]
+
+
 #rangeslow=[config.cRangeLow]
 #rangeshigh=[config.cRangeHigh]
 signalfile =  config.cSignal
@@ -34,8 +45,8 @@ signalfile =  config.cSignal
 
 for rangelow in rangeslow:
   for rangehigh in rangeshigh:
-    #rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
-    rebinedges = config.getBinning(rangelow, rangehigh, delta=20)
+    rebinedges = config.getBinning(rangelow, rangehigh, delta=25)
+    #rebinedges = config.getBinning(rangelow, rangehigh, delta=100)
     for channelName in channelNames:
       lumi =  config.samples[channelName]["lumi"]
       infiles = []

@@ -6,12 +6,14 @@ from ROOT import *
 
 class FitParameterExtractor:
 
-    def __init__(self, wsfile):
+    def __init__(self, wsfile, nbkg=None):
         self.wsfile = wsfile
         self.h1_params = None
+        self.h1_nbkg = None
         self.h2_cov = None
         self.h2_cor = None
         self.nsig = None
+        self.nbkg = nbkg
         self.nsigErr = None
         self.suffix = ""
 
@@ -21,11 +23,14 @@ class FitParameterExtractor:
         self.h1_params = f_in.Get("postfit_params%s"%(suffix))
         self.h2_cov    = f_in.Get("h2_cov%s"%(suffix))
         self.h2_cor    = f_in.Get("h2_cor%s"%(suffix))
+        self.h1_nbkg    = f_in.Get("nbkg%s"%(suffix))
 
         self.h1_params.SetDirectory(0)
         self.h2_cov.SetDirectory(0)
         self.h2_cor.SetDirectory(0)
+        self.h1_nbkg.SetDirectory(0)
 
+        self.nbkg = self.h1_nbkg.GetBinContent(1)
 
         for i in range(self.h1_params.GetNbinsX()):
             name = self.h1_params.GetXaxis().GetBinLabel(i)
@@ -51,10 +56,14 @@ class FitParameterExtractor:
         self.h1_params = TH1D("postfit_params", "postfit parameters", len(argset), 0, len(argset))
         self.h2_cov    = TH2D("h2_cov", "covariance matrix", len(argset), 0, len(argset), len(argset), 0, len(argset))
         self.h2_cor    = TH2D("h2_cor", "correlation matrix", len(argset), 0, len(argset), len(argset), 0, len(argset))
+        self.h1_nbkg = TH1D("nbkg", "nbkg", 1, 0, 1)
     
         self.h1_params.SetDirectory(0)
         self.h2_cov.SetDirectory(0)
         self.h2_cor.SetDirectory(0)
+        self.h1_nbkg.SetDirectory(0)
+
+        self.h1_nbkg.SetBinContent(1, self.nbkg)
 
         for i,arg in enumerate(argset):
             name = arg.namePtr().GetName() 
@@ -100,6 +109,11 @@ class FitParameterExtractor:
             self.Extract()
         return self.nsig
 
+    def GetNbkg(self):
+        if not self.nbkg:
+            self.Extract()
+        return self.nbkg
+
     def GetNsigErr(self):
         if not self.nsigErr:
             self.Extract()
@@ -117,6 +131,7 @@ class FitParameterExtractor:
         self.h1_params.Write("%s%s"%(self.h1_params.GetName(), suffix))
         self.h2_cov.Write("%s%s"%(self.h2_cov.GetName(), suffix))
         self.h2_cor.Write("%s%s"%(self.h2_cor.GetName(), suffix))
+        self.h1_nbkg.Write("%s%s"%(self.h1_nbkg.GetName(), suffix))
 
         f_out.Close()
 

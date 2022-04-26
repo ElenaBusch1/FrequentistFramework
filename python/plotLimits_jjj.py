@@ -84,11 +84,9 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
                 # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[dataset]
                 tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_0.root"
-
                 f = TFile(tmp_path, "READ")
+
                 if f.IsZombie():
-                    tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_1.root"
-                    f = TFile(tmp_path, "READ")
                     if f.IsZombie():
                       continue
                 h = f.Get("limit")
@@ -135,11 +133,12 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
     c = TCanvas("c1", "c1", 800, 600)
     c.SetLogy()
 
-    leg_obs = TLegend(0.65,0.70,0.85,0.85)
-    leg_exp = TLegend(0.65,0.47,0.85,0.62)
+    leg_obs = TLegend(0.65,0.76,0.85,0.86)
+    leg_exp = TLegend(0.65,0.6,0.85,0.7)
 
-    minY = 0.02
-    maxY = 500
+    #minY = 0.005
+    minY = 0.00001
+    maxY = 0.7
 
     g_exp_datasets[0][0].Draw("af")
     g_exp_datasets[0][0].GetXaxis().SetTitle("M_{G} [GeV]")
@@ -176,8 +175,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
     myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV", 13)
     myText(0.2, 0.72, 1, "%.1f fb^{-1}" % (lumis*0.001), 13)
 
-    myText(0.65, 0.90, 1, "Observed:", 13)
-    myText(0.65, 0.67, 1, "Expected:", 13)
+    myText(0.65, 0.92, 1, "Observed:", 13)
+    myText(0.65, 0.76, 1, "Expected:", 13)
     leg_exp.Draw()
     leg_obs.Draw()
 

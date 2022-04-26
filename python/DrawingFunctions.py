@@ -24,7 +24,7 @@ class StyleOptions:
         legend_options = "l",
         y_divisions    = None,
         x_label_size   = 0.05,
-        x_title_size   = 0.05,
+        x_title_size   = 0.06,
         x_title_offset = 1.0,
         x_axis_label_offset = None,
         y_axis_label_offset = None,
@@ -212,12 +212,13 @@ def get_mass_plot_style(is_signal = 0):
                              )
 
 
-def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.04, text_size = 0.035, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
+def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
     text_size = text_size / height
     dy = dy / height
     if sampleName != "":
           sampleName = ", " + sampleName
-    AS.ATLASLabel(x_pos, y_pos, 1, x_pos, dy, atlasLabel)
+    AS.ATLASLabel(x_pos, y_pos, 1, 0.13, text_size, atlasLabel)
+
     y_pos -= dy
     AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %.1f fb^{-1}  %s"%(lumi, sampleName))
     y_pos -= dy

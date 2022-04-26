@@ -16,7 +16,7 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 lumi = 130000
 
 
-def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, cdir, channelName, rangelow, rangehigh):
+def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, cdir, channelName, rangelow, rangehigh, signalfile):
     sigmeans.sort()
     sigwidths.sort()
     # If we sort, then this causes issues for sigamp == 0 in determining sqrtB
@@ -47,7 +47,7 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
                     continue
 
                 if sigamp > 0:
-                    tmp_path_injection = config.getFileName(inputPD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+                    tmp_path_injection = config.getFileName(inputPD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_Sig_" + signalfile + ".root"
                     try:
                       #tmp_path_injections = glob(tmp_path_injection)
                       #cfile = tmp_path_injections[0]
@@ -66,6 +66,9 @@ def createCoverageGraph(paths, inputPD, sigmeans, sigwidths, sigamps, outfile, c
                         n_injected = 0
                 else:
                     n_injected = 0
+
+                if sigamp == 0 or n_injected == 0:
+                  continue
 
                 if sqrtB == None:
                     sqrtB = (n_injected / sigamp) if sigamp != 0 else 1

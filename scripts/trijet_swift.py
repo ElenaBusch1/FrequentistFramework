@@ -8,14 +8,22 @@ cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
 #channelNames=["MassOrdered_2"]
 channelNames=["PtOrdered6"]
-#rangeslow=[200, 300, 400, 500, 600, 700]
-#rangeshigh=[400, 500, 600, 700, 800, 900]
-rangeslow=[200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700]
-rangeshigh=[400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900]
+rangeslow=[200, 300, 400, 500, 600, 700]
+rangeshigh=[400, 500, 600, 700, 800, 900]
+#rangeslow=[200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700]
+#rangeshigh=[400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900]
 #rangeslow=[200, 350, 500]
 #rangeshigh=[500, 650, 800]
 
 
+#rangeslow = range(200, 700, 10)
+#rangeshigh = range(400, 900, 10)
+rangeslow = range(700, 900, 10)
+rangeshigh = range(900, 1100, 10)
+
+
+#rangeslow=[200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800]
+#rangeshigh=[300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900]
 
 fitNames = ["threePar"]
 
@@ -47,6 +55,7 @@ for rangelow, rangehigh in zip(rangeslow, rangeshigh):
                cdir=cdir ,
                wsfile=wsfile,
                nbkg=nbkg,
+               ntoys = 0,
                outdir=outputdir,
                outputstring="%s"%(fitName),
                rangelow=rangelow,

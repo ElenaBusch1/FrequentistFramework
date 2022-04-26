@@ -12,13 +12,14 @@ signalfile =  config.cSignal
 
 
 pdHistName = "pseudodata"
-sigmeans = [250, 350, 450, 550, 650, 750, 850]
-sigwidths = [5, 7, 10, 15]
+sigmeans = [250, 350, 450, 550, 650]
+#sigmeans = [250, 450, 650]
+#sigwidths = [5, 7, 10, 15]
+sigwidths = [7]
 
 
 for sigmean in sigmeans:
   for sigwidth in sigwidths:
-
       cmd = "python -b "+cdir + "/scripts/trijet_spuriousSignal.py" +  \
                            " --pdFitName=" + pdFitName + \
                            " --fitName=" + fitName + \

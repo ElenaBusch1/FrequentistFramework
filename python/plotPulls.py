@@ -78,7 +78,7 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
       l2.SetTextColor(ROOT.kRed)
     l2.Draw()
     #AS.ATLASLabel(0.17, 0.9, 1, 0.15, 0.05, atlasLabel)
-    df.draw_atlas_details(labels=labels,x_pos= 0.18,y_pos = 0.95, dy = 0.04, text_size = 0.035, atlasLabel = atlasLabel, lumi=lumi/1000.)
+    df.draw_atlas_details(labels=labels,x_pos= 0.18,y_pos = 0.9, dy = 0.04, text_size = 0.035, atlasLabel = atlasLabel, lumi=lumi/1000.)
 
 
     outpath = config.getFileName(outfile + "_%s"%(fitName), cdir, channelName, minMjj, maxMjj) + ".pdf"

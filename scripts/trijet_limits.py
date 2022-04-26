@@ -40,16 +40,13 @@ else:
   pdFitName = config.cPDFitName
   fitName = config.cFitName
   channelName=config.cSample
-  sigmeans = [250]
-  sigamps = [0]
-  sigwidths = [7]
   rangelow=config.cRangeLow
   rangehigh=config.cRangeHigh
   signalfile =  config.cSignal
 
 
-  sigmeans = [650]
-  sigamps = [3]
+  sigmeans = [950]
+  sigamps = [0]
   sigwidths=[7]
 
 
@@ -65,6 +62,9 @@ pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", cha
 pdHistName = "pseudodata"
 dosignal=1
 dolimit=1
+
+nToys = 3
+#nToys = config.nToys
 
 for sigmean in sigmeans:
   for sigamp in sigamps:
@@ -106,7 +106,7 @@ for sigmean in sigmeans:
                dosignal = dosignal,
                dolimit = dolimit,
                loopstart=0,
-               loopend=config.nToys,
+               loopend=nToys,
                rebinedges=binedges,
                rebinfile=None,
                rebinhist=None,

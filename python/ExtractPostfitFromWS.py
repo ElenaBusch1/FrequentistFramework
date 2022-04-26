@@ -42,7 +42,8 @@ class PostfitExtractor:
                  externalchi2fct=None, 
                  externalchi2bins=40, 
                  maskmin=-1, 
-                 maskmax=-1):
+                 maskmax=-1,
+                 ):
 
         self.wsfile = wsfile
         self.datafile = datafile

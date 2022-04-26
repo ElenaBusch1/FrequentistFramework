@@ -14,9 +14,12 @@ rangehigh=config.cRangeHigh
 signalfile =  config.cSignal
 
 
+#sigmeans = [250]
 sigmeans = [250, 350, 450, 550, 650, 750]
 sigamps = [0,1,2,3,4,5]
-sigwidths = [7]
+#sigamps = [2, 5]
+#sigwidths = [5, 7, 10]
+sigwidths = [7, 10]
 
 
 

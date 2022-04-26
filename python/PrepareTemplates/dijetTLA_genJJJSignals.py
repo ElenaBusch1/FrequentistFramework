@@ -1,7 +1,18 @@
 import ROOT
 import sys, re, os, math, argparse
 
-def generateSignalWS():
+
+
+def getVars(varFileName):
+  varNames = []
+  fp = open(varFileName + ".txt")
+  varNames = fp.readlines()
+  for varName in range(len(varNames)):
+    varNames[varName] = varNames[varName]. rstrip('\n')
+
+  return varNames
+
+def generateSignalWS(infile, histName, doSysts):
   ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.WARNING)
 
   meas = ROOT.RooStats.HistFactory.Measurement("meas", "meas")
@@ -18,22 +29,30 @@ def generateSignalWS():
   meas.SetLumi(1.0)
   # meas.SetLumiRelErr(0)
 
-  chan = ROOT.RooStats.HistFactory.Channel( "SigLow_1_alpha200_SR1" )
+  chan = ROOT.RooStats.HistFactory.Channel( histName )
 
   # Retrieve names from rootfile:
   inFile = ROOT.TFile(args.infile, "READ")
 
   # for some mass points there are morphed and original templates: pick up original ones.
-  nominalName = "SigLow_1_alpha200_SR1"
+  nominalName = histName
+  systs = getVars("systematics")
+
+  signal = ROOT.RooStats.HistFactory.Sample("signal", nominalName, infile)
+  signal.SetNormalizeByTheory(False) #no lumi unc on this
+
+  # Done with this channel
+  # Add it to the measurement:
+  #meas.AddChannel( chan )
  
   # nominal = ROOT.RooStats.HistFactory.Sample( "nominal", "nominal", args.infile )
   # TODO: test including stat uncertainties!
   # background.ActivateStatError( "background1_statUncert", InputFile )
-  signal = ROOT.RooStats.HistFactory.Sample("signal", nominalName, args.infile)
-  signal.SetNormalizeByTheory(False) #no lumi unc on this
- 
-  chan.AddSample( signal )
+  if doSysts:
+    for syst in systs:
+      signal.AddHistoSys(syst, histName+syst+"down", infile, "", histName+syst+"up", infile, "")
 
+  chan.AddSample( signal )
   # Done with this channel
   # Add it to the measurement:
   meas.AddChannel( chan )
@@ -60,9 +79,11 @@ if __name__ == "__main__":
 
   parser = argparse.ArgumentParser(description="%prog [options]", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument('--infile', dest='infile', type=str, default='', help='Input file name')
+  parser.add_argument('--histName', dest='histName', type=str, default='', help='Input file name')
   parser.add_argument('--outfile', dest='outfile', type=str, default='', help='Output file name')
   parser.add_argument('--mass', dest='mass', type=str, default='', help='mass point')
+  parser.add_argument('--doSysts', dest='doSysts', type=int, default=0, help='mass point')
   args = parser.parse_args()
   
-  generateSignalWS()
+  generateSignalWS(infile=args.infile, histName=args.histName, doSysts=args.doSysts)
 

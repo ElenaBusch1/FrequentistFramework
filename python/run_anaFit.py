@@ -28,7 +28,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None, nbkg=0):
     print("starting fit extractor")
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
     #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
@@ -77,7 +77,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         rebinhist=rebinHist,
         binEdges=rebinEdges,
         maskmin=maskmin,
-        maskmax=maskmax
+        maskmax=maskmax,
     )
 
     doRecreate = (toy==0)
@@ -86,7 +86,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     pval = pfe.GetPval()
     pfe.WriteRoot(postfitfile, doRecreate=doRecreate, suffix=suffix)
 
-    fpe = FitParameterExtractor(wsfile=fitresultfile)
+    fpe = FitParameterExtractor(wsfile=fitresultfile, nbkg=nbkg)
     fpe.WriteRoot(parameterfile,  doRecreate=doRecreate, suffix=suffix)
 
     return (pval, postfitfile, parameterfile)
@@ -95,6 +95,7 @@ def run_anaFit(datafile,
                datahist,
                topfile,
                categoryfile,
+               signalfile,
                wsfile,
                outputfile,
                outputstring,
@@ -103,7 +104,6 @@ def run_anaFit(datafile,
                rangelow,
                rangehigh,
                outdir,
-               signalfile,
                dosignal=False,
                dolimit=False,
                sigmean=1000,
@@ -111,6 +111,7 @@ def run_anaFit(datafile,
                ntoys=10,
                maskthreshold=0.01,
                nsig="0,0,1e6",
+               nbkgWindow = 1,
                rebinFile=None,
                rebinHist=None,
                rebinEdges=None,
@@ -130,10 +131,12 @@ def run_anaFit(datafile,
     tmpsignalfile="%s/run/dijetTLACat_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
 
     signalWSName = config.signals[signalfile]["workspacefile"]
-    signalfile = config.signals[signalfile]["signalfile"]
+    signalfileName = config.signals[signalfile]["signalfile"]
+    sighist = config.signals[signalfile]["histname"]
+    sigwsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%(sigmean))
 
     shutil.copy2(topfile, tmptopfile) 
-    shutil.copy2(signalfile, tmpsignalfile) 
+    shutil.copy2(signalfileName, tmpsignalfile) 
     tmpsignalfile.replace("MEAN", str(sigmean))
 
     tmpfitfile="%s/run/dijetFit_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
@@ -161,6 +164,8 @@ def run_anaFit(datafile,
                    ("MEAN", str(sigmean)),
                    ("WPERCENT", str(sigwidth/100.)),
                    ("WIDTH", str(sigwidth)),
+                   ("SIGHIST", str(sighist)),
+                   ("SIGFILE", str(sigwsfile)),
                    ("OUTPUTFILE", wsfile),
                   ])
 
@@ -182,8 +187,8 @@ def run_anaFit(datafile,
         ("RANGELOW", str(rangelow)),
         ("RANGEHIGH", str(rangehigh)),
         ("BINS", str(nbins)),
-        ("NBKG", nbkg),
-        ("NSIG", nsig),
+        ("NBKG", str(nbkg)),
+        ("NSIG", str(nsig)),
         ("MEAN", str(sigmean)),
         ("WIDTH", str(sigwidth)),
       ])    
@@ -208,6 +213,7 @@ def run_anaFit(datafile,
                                                                 rebinEdges=rebinEdges,
                                                                 toy=toy,
                                                                 toyString=toyString,
+                                                                nbkg=nbkgWindow,
                                                                 )
 
       print("Finished fit extractor")
@@ -220,11 +226,8 @@ def run_anaFit(datafile,
         print("p(chi2) threshold not passed.")
         print("Now running BH for masking.")
 
-
-
         # TODO: Need to use the actual path, since this will only run if working in the correct directory
         # need to unset pythonpath in order to not use cvmfs numpy
-        #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s --outputjson %s; deactivate" % (postfitfile, "run/BHresults.json"))
         execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json; deactivate" % (postfitfile, cdir, outdir))
 
         # pass results of pyBH via this json file
@@ -233,11 +236,7 @@ def run_anaFit(datafile,
 
         tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
         tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
-        # We don't make a new file, and this seems to behave correctly, so I think this is ok to comment out
-        #wsfilemasked=wsfile.replace(".root","_masked.root")
-        #outfilemasked=outputfile.replace(".root","_masked.root")
 
-        #tmptopfilemasked=tmptopfile
         outfilemasked=outputfile
         wsfilemasked=wsfile
 
@@ -281,7 +280,6 @@ def run_anaFit(datafile,
       
       # blindrange not yet implemented with quickLimit
       if dolimit and dosignal and pval_global > maskthreshold:
-      #if dolimit and dosignal:
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
           rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:

@@ -11,142 +11,91 @@ from color import getColorSteps
 import DrawingFunctions as df
 import AtlasStyle as AS
 import config as config
+import FittingFunctions as ff
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     h_allPoints_list = []
-    h_p1_list = []
-    h_p2_list = []
-    h_p3_list = []
-    h_p4_list = []
-    h_p5_list = []
     sigmeansExists = []
 
     minMean = min(sigmeans)
     maxMean = max(sigmeans)
 
+    # This is a hacky way of getting all of the fit parameters, and the ranges that they are allowed to span, just to make some plots of this
+    h_pars = []
+    h_parList = []
+    configName = cdir + "/" + config.fitFunctions[fitName]["Config"]
+
+    with open(configName) as f:
+      lines = f.readlines()
+      configFile = lines[2]
+
+    parNum = 1
+    while configFile.find("p%d"%(parNum)) >= 0:
+      index1 = configFile.find("p%d["%(parNum))
+      substr1 = configFile[index1:-1]
+      substr2 = substr1[3:substr1.find("]")]
+      substr3 = substr2[substr2.find(",")+1:]
+      substr4 = substr3[0:substr3.find(",")]
+      substr5 = substr3[substr3.find(",")+1:]
+      pMin = float(substr4)
+      pMax = float(substr5)
+      # When pMin == pMax, the fit parameter is fixed, and it won't show up in this plot
+      if pMin < pMax:
+        h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 500, pMin, pMax)
+        h_p.SetDirectory(0)
+        h_pars.append(h_p)
+        clist = []
+        h_parList.append(clist)
+      parNum += 1
+
+
+    massIndex = 0
     for j,sigmean in enumerate(sigmeans):
         for i,sigwidth in enumerate(sigwidths):
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 50, -30000, 30000)
-            h_p1 = TH1F("p1_%d_%d"%(sigmean, sigwidth), ";p1;No. of toys", 80, 12000, 15000)
-            h_p2 = TH1F("p2_%d_%d"%(sigmean, sigwidth), ";p2;No. of toys", 80, 0, 100)
-            h_p3 = TH1F("p3_%d_%d"%(sigmean, sigwidth), ";p3;No. of toys", 80, -5, 10)
-            h_p4 = TH1F("p4_%d_%d"%(sigmean, sigwidth), ";p4;No. of toys", 80, -1, 3)
-            h_p5 = TH1F("p5_%d_%d"%(sigmean, sigwidth), ";p5;No. of toys", 80, -0.5, 1)
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 20, -crange, crange)
             h_allPoints.SetDirectory(0)
-            h_p1.SetDirectory(0)
-            h_p2.SetDirectory(0)
-            h_p3.SetDirectory(0)
-            h_p4.SetDirectory(0)
-            h_p5.SetDirectory(0)
 
-            tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
-            tmp_path_fitresults = glob(tmp_path_fitresult)
+            path = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
+            tmp_path_fitresults = glob(path)
 
             if len(tmp_path_fitresults) == 0:
+                # Depending on how the code is run, we might be missing some inputs
                 print "No fit results for ", sigmean, sigwidth, tmp_path_fitresult
                 continue
             sigmeansExists.append(sigmean)
 
-            tmp_path_fitpar = config.getFileName(infile.replace("FitParameters", "PostFit"), cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"
-            tmp_path_fitpars = glob(tmp_path_fitpar)
+            for hpar, index in zip(h_pars, range(len(h_pars))):
+              h_parMass = hpar.Clone("%s_%d_%d"%(hpar.GetTitle(), sigmean, sigwidth))
+              h_parMass.SetDirectory(0)
+              h_parList[index].append(h_parMass)
 
-            if len(tmp_path_fitresults) == 0:
-                print "No fit results for ", sigmean, sigwidth, tmp_path_fitresult
-                continue
-
-            for path in tmp_path_fitresults:
-              fpe = efp.FitParameterExtractor(path)
-              test = ROOT.TFile(tmp_path_fitpar)
-              
-              for toy in range(config.nToys):
-                h_in = test.Get("chi2_%d"%(toy))
-                if not h_in:
+            fpe = efp.FitParameterExtractor(path)
+            
+            for toy in range(config.nToys):
+              try:
+                  fpe.suffix = "_%d"%(toy)
+                  fpe.ExtractFromFile( "_%d"%(toy))
+                  nsig = fpe.GetNsig()
+                  params = fpe.GetH1Params()
+              except:
+                  # Note: not writing an error message, because this makes it cleaner 
+                  #       if we haven't finished running all of the toys
                   continue
 
-                chi2 = (h_in.GetBinContent(1))
-                chi2ndof = (h_in.GetBinContent(2))
-                pval = (h_in.GetBinContent(6))
-                #if chi2ndof > 1.1:
-                #  continue
-                #if pval < 0.05:
-                ##if pval < 0.01:
-                #   continue
+              if nsig == None or  math.isnan(nsig):
+                  continue
 
-                try:
-                    fpe.suffix = "_%d"%(toy)
-                    fpe.ExtractFromFile( "_%d"%(toy))
-                    nsig = fpe.GetNsig()
-                    params = fpe.GetH1Params()
-                except:
-                    #print "Couldn't read nsig from", path
-                    continue
+              h_allPoints.Fill(nsig)
+              for index in range(len(h_pars)):
+                # The first 2 parameters are the number of background and number of signal, and the indexing starts at 1 --> 3+index
+                h_parList[index][massIndex].Fill(params.GetBinContent(3+index))
+            massIndex += 1
 
-                if nsig == None or  math.isnan(nsig):
-                    continue
-
-                h_allPoints.Fill(nsig)
-                h_p1.Fill(params.GetBinContent(3))
-                h_p2.Fill(params.GetBinContent(4))
-                h_p3.Fill(params.GetBinContent(5))
-                h_p4.Fill(params.GetBinContent(6))
-                h_p5.Fill(params.GetBinContent(7))
-                #print nsig, chi2, params.GetBinContent(3), params.GetBinContent(4), params.GetBinContent(5), params.GetBinContent(6)
-
-            h_allPoints_list.append(h_allPoints)
-            h_p1_list.append(h_p1)
-            h_p2_list.append(h_p2)
-            h_p3_list.append(h_p3)
-            h_p4_list.append(h_p4)
-            h_p5_list.append(h_p5)
-
-
-    if bkgOnlyFitFile:
-      h_p1 = h_p1_list[0].Clone("p1")
-      h_p2 = h_p2_list[0].Clone("p2")
-      h_p3 = h_p3_list[0].Clone("p3")
-      h_p4 = h_p4_list[0].Clone("p4")
-      h_p5 = h_p5_list[0].Clone("p5")
-      h_p1.Reset()
-      h_p2.Reset()
-      h_p3.Reset()
-      h_p4.Reset()
-      h_p5.Reset()
-      h_p1.SetDirectory(0)
-      h_p2.SetDirectory(0)
-      h_p3.SetDirectory(0)
-      h_p4.SetDirectory(0)
-      h_p5.SetDirectory(0)
-
-      tmp_path_fitBkg = config.getFileName(bkgOnlyFitFile, cdir, channelName, rangelow, rangehigh, 0, 0, 0) + ".root"
-      fpeBkg = efp.FitParameterExtractor(tmp_path_fitBkg)
-      for toy in range(config.nToys):
-          try:
-             fpeBkg.suffix = "_%d"%(toy)
-             fpeBkg.ExtractFromFile( "_%d"%(toy))
-             params = fpeBkg.GetH1Params()
-          except:
-             #print "Couldn't read nsig from", path
-             continue
-  
-          #print params.GetBinContent(2), params.GetBinContent(3), params.GetBinContent(4), params.GetBinContent(5), params.GetBinContent(6)
-  
-          h_p1.Fill(params.GetBinContent(2))
-          h_p2.Fill(params.GetBinContent(3))
-          h_p3.Fill(params.GetBinContent(4))
-          h_p4.Fill(params.GetBinContent(5))
-          h_p5.Fill(params.GetBinContent(6))
-  
-      h_p1_list.append(h_p1)
-      h_p2_list.append(h_p2)
-      h_p3_list.append(h_p3)
-      h_p4_list.append(h_p4)
-      h_p5_list.append(h_p5)
-
-
+          h_allPoints_list.append(h_allPoints)
 
 
     graphs = []
@@ -155,11 +104,11 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     for sigwidth in sigwidths:
        g_avg = TGraphErrors()
        g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
-       g_avg.GetXaxis().SetTitle("m_{jj}")
+       g_avg.GetXaxis().SetTitle("m_{Z'}")
        g_avg.GetYaxis().SetTitle("<N_{sig}>")
        g_ratio = TGraphErrors()
        g_ratio.GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
-       g_ratio.GetXaxis().SetTitle("m_{jj}")
+       g_ratio.GetXaxis().SetTitle("m_{Z'}")
        for sigmean, i in zip(sigmeansExists, range(len(sigmeansExists))):
          n = g_avg.GetN()
          g_avg.SetPoint(n, sigmean, h_allPoints_list[i].GetMean())
@@ -175,7 +124,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
     c2 = df.setup_canvas()
     graphs[0].GetYaxis().SetTitle("N_{extracted signal}")
-    ratios[0].GetYaxis().SetRangeUser(-1,1)
+    ratios[0].GetYaxis().SetRangeUser(-1.2,1.2)
     ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
     outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, channelName, rangelow, rangehigh) + ".pdf"
     leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
@@ -191,10 +140,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     line0.Draw()
     line1.Draw()
     line2.Draw()
-
     c2.Print(outfileName)
-
-
          
 
     legendNamesMasses = []
@@ -205,47 +151,14 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     c = df.setup_canvas()
     outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     df.SetRange(h_allPoints_list, myMin=0)
-    df.SetStyleOptions(h_allPoints_list, df.get_finalist_style_opt)
     leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
     c.Print(outfileName)
 
-    if bkgOnlyFitFile:
-      legendNamesMasses.append("Bkg only fit")
-
-    outfileName = config.getFileName("Spuriour_p1" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
-    df.SetRange(h_p1_list, myMin=0)
-    df.SetStyleOptions(h_p1_list, df.get_finalist_style_opt)
-    leg = df.DrawHists(c, h_p1_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
-    c.Print(outfileName)
-
-    outfileName = config.getFileName("Spuriour_p2" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
-    df.SetRange(h_p2_list, myMin=0)
-    df.SetStyleOptions(h_p2_list, df.get_finalist_style_opt)
-    leg = df.DrawHists(c, h_p2_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
-    c.Print(outfileName)
-
-    outfileName = config.getFileName("Spuriour_p3" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
-    df.SetRange(h_p3_list, myMin=0)
-    df.SetStyleOptions(h_p3_list, df.get_finalist_style_opt)
-    leg = df.DrawHists(c, h_p3_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
-    c.Print(outfileName)
-
-
-    outfileName = config.getFileName("Spuriour_p4" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
-    df.SetRange(h_p4_list, myMin=0)
-    df.SetStyleOptions(h_p4_list, df.get_finalist_style_opt)
-    leg = df.DrawHists(c, h_p4_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
-    c.Print(outfileName)
-
-    outfileName = config.getFileName("Spuriour_p5" + outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
-    df.SetRange(h_p5_list, myMin=0)
-    df.SetStyleOptions(h_p5_list, df.get_finalist_style_opt)
-    leg = df.DrawHists(c, h_p5_list, legendNamesMasses, [], sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
-    c.Print(outfileName)
-
-
-
-
+    # Plot the fit parameters for the different toys
+    for h_par, i in zip(h_parList, range(len(h_parList))):
+      leg = df.DrawHists(c, h_par, legendNamesMasses, [], drawOptions = ["hist"], styleOptions=df.get_extraction_style_opt, isLogX=0)
+      path = config.getFileName("Spurious_" + h_pars[i].GetTitle(), cdir, channelName, rangelow, rangehigh) + ".pdf"
+      c.Print(path)
 
 
 

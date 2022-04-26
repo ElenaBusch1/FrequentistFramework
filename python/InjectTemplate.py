@@ -4,7 +4,7 @@ import sys, re, os, math, argparse
 
 def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= "", outfile= "", wsfile = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mR550.root", wspdf = "SigLow_1_alpha200_SR1", firsttoy=None, lasttoy=None):
 
-    print wsfile, wspdf
+    #print wsfile, wspdf
     inws = ROOT.TFile.Open(wsfile)
     ws = inws.Get("combined")
     signalPDF = ws.pdf(wspdf + "_model")
@@ -49,8 +49,9 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
 
             # TODO: Ideally the window size should be chosen from the template, not just arbitrary
             fSig = sigHistNom.Integral(binLowSig, binHighSig) #integral from -1.18 sigma to +1.18 sigma
-            nSig = int(math.sqrt(nBkg)*sigamp / fSig)
-            mctoy = signalPDF.generateBinned(ROOT.RooArgSet(mjjVar), nSig)
+            nSigNew = int(math.sqrt(nBkg)*sigamp / fSig)
+
+            mctoy = signalPDF.generateBinned(ROOT.RooArgSet(mjjVar), nSigNew)
             sigHist2 = mctoy.createHistogram("test_%s"%(histKey), mjjVar);
             hgaus = mctoy.fillHistogram(hgaus, ROOT.RooArgList(mjjVar))
 
@@ -65,6 +66,7 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
         seed += 1
             
     f_out.Close()
+    return nBkg
 
 
 def main(args):

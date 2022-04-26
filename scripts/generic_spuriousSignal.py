@@ -1,6 +1,4 @@
 import scripts.config as config
-import python.run_injections_anaFit as run_injections_anaFit
-import python.generatePseudoData as generatePseudoData
 import os
 import python.run_anaFit as run_anaFit
 
@@ -29,28 +27,17 @@ if args.isBatch:
   sigmeans = [args.sigmean]
   sigamps = [args.sigamp]
   sigwidths = [args.sigwidth]
-  rangelow = args.rangelow
-  rangehigh = args.rangehigh
   signalfile = args.signalFile
 
 
 else:
-  #pdFitNames = ["fivePar"]
-  #fitName = "fourPar"
   pdFitNames = ["sixPar"]
   fitName = "fivePar"
   channelNames=["test3"]
   sigmeans = [450]
   sigamps = [0]
   sigwidths = [7]
-  rangelow=200
-  rangehigh=1200
-  #rangelow=config.cRangeLow
-  #rangehigh=config.cRangeHigh
   signalfile =  "test3_NoCut_some"
-  #signalfile =  "Gaussian"
-  #signalfile =  config.cSignal
-
 
 
 #. scripts/setup_buildAndFit.sh
@@ -65,6 +52,8 @@ for sigmean in sigmeans:
     for sigwidth in sigwidths:
       for pdFitName in pdFitNames:
         for channelName in channelNames:
+          rangelow = config.samples[channelName]["rangelow"]
+          rangehigh = config.samples[channelName]["rangehigh"]
           pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
           pdHistName = "pseudodata"
           outputdir = channelName
@@ -73,6 +62,7 @@ for sigmean in sigmeans:
           nbkg="1E7,0,1E9"
           nbkgWindow = 1
           nsig="0,-1e6,1e6"
+
           topfile=config.samples[channelName]["topfile"]
           categoryfile=config.samples[channelName]["categoryfile"]
           dataFile=config.samples[channelName]["inputFile"]
@@ -97,7 +87,7 @@ for sigmean in sigmeans:
                rangehigh=rangehigh,
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="SS_%s_%s_%d_%d_%d_%d_%s"%(pdFitName, fitName, sigmean, sigamp, sigwidth, rangehigh, signalfile),
+               outputstring="SS_%s_%s_%d_%d_%d_%d_%s"%(pdFitName, fitName, sigmean, sigamp, sigwidth, rangehigh, signalfile), # This should be unique
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,

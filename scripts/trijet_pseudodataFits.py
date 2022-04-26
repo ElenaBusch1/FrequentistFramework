@@ -1,5 +1,5 @@
 import scripts.config as config
-import python.run_anaFitWithToys as run_anaFitWithToys
+import python.run_anaFit as run_anaFit
 import python.generatePseudoData as generatePseudoData
 import os
 
@@ -63,7 +63,7 @@ for pdFitName in pdFitNames:
     binedges = config.getBinning(rangelow, rangehigh, delta=25)
 
 
-    run_anaFitWithToys.run_anaFit(
+    run_anaFit.run_anaFit(
              datafile=pdFile,
              datahist=pdHistName,
              categoryfile=categoryfile,

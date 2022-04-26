@@ -117,9 +117,10 @@ def plotFalseExclusionCandles(inpath, masses, widths, rangelow, rangehigh, chann
   ratios = []
   legendNames = []
   for mass in existMasses:
-    graphs.append(h2_all_points[mass])
-    ratios.append(graphs_frac_below[mass])
-    legendNames.append(mass)
+    if( h2_all_points[mass]):
+      graphs.append(h2_all_points[mass])
+      ratios.append(graphs_frac_below[mass])
+      legendNames.append(mass)
 
   canvas3 = df.setup_canvas("Canvas3")
   outfile = config.getFileName(inpath + "_candleplot", cdir, channelName, rangelow, rangehigh) +".pdf"

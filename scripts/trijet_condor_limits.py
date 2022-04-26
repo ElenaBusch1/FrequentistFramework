@@ -13,9 +13,10 @@ signalfile =  config.cSignal
 
 pdHistName = "pseudodata"
 
-sigmeans = [250, 350, 450, 550, 650, 750]
+sigmeans = [250, 350, 450, 550, 650]
 sigwidths = [7]
-sigamps = [0,1,2,3,4,5]
+#sigamps = [0,1,2,3,4,5]
+sigamps = [0]
 
 
 for sigmean in sigmeans:

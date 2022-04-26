@@ -6,30 +6,46 @@ import os
 # May want to loop over these at some point?
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
-#channelNames=["MassOrdered_2"]
-#channelNames=["PtOrdered6"]
-#channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj"]
-channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
+#channelNames = ["test3"]
+
+channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
+#channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj", "ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
+#channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
+#channelNames=["ZeroBtagged70_23_ystar"]
 #channelNames = ["PtOrderedSR1_tagged"]
 #rangeslow=[200, 250, 275, 300, 350, 400]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
 #rangeslow=[150, 200, 300]
-#rangeshigh=[800, 900]
 rangeslow=[200]
-rangeshigh=[900]
-#rangeshigh=[1000, 1200]
+rangeshigh = [1200]
+
+
+#channelNames=["ambulance_2javg"]
+#rangeslow=[800]
+#rangeshigh=[3500]
+#fitNames = ["threeParAmb", "fourParAmb"]
+
+#channelNames=["ambulance_4jMCErr"]
+#rangeslow=[2000]
+#rangeshigh=[9000]
+#fitNames = ["threeParAmb", "fourParAmb", "fiveParAmb"]
+#fitNames = ["fiveParAmb", "fiveParAmbMod", "fiveParAmbPow"]
+#fitNames = ["sixParAmb"]
+
 
 
 
 #fitNames = ["fourPar", "fivePar", "fiveParV3", "sixPar"]
-#fitNames = ["fourPar", "fivePar", "sixPar", "sevenPar"]
-#fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
 fitNames = ["fourPar", "fivePar", "sixPar"]
+#fitNames = ["fourPar", "fivePar", "fiveParV2", "sixPar"]
+#fitNames = ["fiveParAmbPow"]
+#fitNames = ["threeParAmb", "fourParAmb", "fiveParAmb", "sixParAmb"]
 #fitNames = ["UA2"]
 #fitNames = ["threePar"]
 #fitNames = ["sixPar"]
+#fitNames = ["sevenPar"]
 #fitNames = ["fivePar"]
-#fitNames = ["fiveParV2"]
+#fitNames = ["fourPar"]
 
 for rangelow in rangeslow:
   for rangehigh in rangeshigh:
@@ -37,7 +53,7 @@ for rangelow in rangeslow:
       for channelName in channelNames:
         fitFunction = config.fitFunctions[fitName]["Config"]
 
-        nbkg="1E7,0,1E8"
+        nbkg="1E7,0,5E8"
         topfile=config.samples[channelName]["topfile"]
         categoryfile=config.samples[channelName]["categoryfile"]
         dataFile=config.samples[channelName]["inputFile"]

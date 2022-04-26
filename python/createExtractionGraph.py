@@ -14,137 +14,106 @@ import AtlasStyle as AS
 
 
 
-def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal"):
+def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal", isNInjected=False, pdFile = None):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     profile_list = []
-    allPoints_list = []
     c = df.setup_canvas()
 
     for j,sigmean in enumerate(sigmeans):
-        for i,sigwidth in enumerate(sigwidths):
-            g_allPoints = TGraph()
-            g_profile   = TGraphErrors()
+      for i,sigwidth in enumerate(sigwidths):
+        g_allPoints = TGraph()
+        g_profile   = TGraphErrors()
 
-            sqrtB = None
-
-            h_nsigs = []
-            legs = []
-            for k,sigamp in enumerate(sigamps):
-                h_nsig = ROOT.TH1D("nsig_%d_%d_%d"%(sigmean, sigwidth, sigamp), ";N_{sig, extracted};# toys, normalised", 50,  0, 10)
-                h_nsig.SetDirectory(0)
-                chi2s = []
-                pvals = []
-
-                #find number of injected events:
-
-                if sigamp > 0:
-                    tmp_path_injection = infilePD
-                    tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
-
-                    checkPath = glob(tmp_path_injection)
-                    if len(checkPath) == 0:
-                        continue
-
-                    f = TFile(tmp_path_injection)
-                    try:
-                      h = f.Get("pseudodata_0_injection")
-                      n_injected = h.Integral(0, h.GetNbinsX()+1)
-                    except:
-                      f.Close()
-                      continue
-                    f.Close()
-                else:
-                    n_injected = 0
+        h_nsigs = []
+        legs = []
+        for k,sigamp in enumerate(sigamps):
+          print sigmean, sigwidth, sigamp
+          h_nsig = ROOT.TH1D("nsig_%d_%d_%d"%(sigmean, sigwidth, sigamp), ";N_{sig, extracted};# toys, normalised", 50,  0, 10)
+          h_nsig.SetDirectory(0)
 
 
-                tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+          inj_extr = []
+          nans = 0
 
-                inj_extr = []
-                pvals = []
-                nans = 0
+          tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
 
-                for toy in range(config.nToys):
-                    try:
-                      path2 = tmp_path_fitresult.replace("FitParameters", "PostFit")
-                      checkPath = glob(path2)
-                      if len(checkPath) == 0:
-                        continue
+          for toy in range(config.nToys):
+              try:
+                fpe = efp.FitParameterExtractor(tmp_path_fitresult)
+                fpe.suffix = "_%d"%(toy)
+                fpe.ExtractFromFile( "_%d"%(toy))
+                nsig = fpe.GetNsig()
+              except:
+                print "Couldn't read nsig from", tmp_path_fitresult
+                continue
 
-                      f2 = TFile(path2)
-                      chi2Hist = f2.Get("chi2_%d"%(toy))
-                      chi2 = chi2Hist.GetBinContent(2)
-                    except:
-                      continue
-                    pval = chi2Hist.GetBinContent(6)
-                    f2.Close()
-                    chi2s.append(chi2)
-                    if(pval < 0.01):
-                      continue
-                   
-                    fpe = efp.FitParameterExtractor(tmp_path_fitresult)
-                    fpe.suffix = "_%d"%(toy)
-                    fpe.ExtractFromFile( "_%d"%(toy))
-                    try:
-                        nsig = fpe.GetNsig()
-                    except:
-                        #print "Couldn't read nsig from", tmp_path_fitresult
-                        continue
+                if nsig == None or  math.isnan(nsig):
+                  nans += 1
+                if nsig == None:
+                  continue
+   
+              tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_Sig_Gaussian.root"
+              checkPath = glob(tmp_path_injection)
+              if len(checkPath) == 0:
+                  print "Did not find ", tmp_path_injection
+                  continue
 
-                    if nsig == None or  math.isnan(nsig):
-                        nans += 1
-                    if nsig == None:
-                        continue
+              nBkg = fpe.GetNbkg()
+              sqrtB = sqrt(nBkg)
 
-                    inj_extr.append((n_injected, nsig))
-                    pvals.append(pval)
+              f = TFile(tmp_path_injection)
+              h = f.Get("pseudodata_%d_injection"%(toy))
+              n_injected = h.Integral(0, h.GetNbinsX()+1)
 
-                print "n_injected: %d,   NaNs: %d" % (n_injected, nans)
-                
-                if len(inj_extr) > 0 and  float(nans) / len(inj_extr) < 0.02:
-                    for t in inj_extr:
-                        g_allPoints.SetPoint(g_allPoints.GetN(), t[0], t[1])
+              if sqrtB == 0:
+                 sqrtB = 1
 
-                arr = numpy.array([x[1] for x in inj_extr])
-                nFit = numpy.mean(arr)
-                nFitErr = numpy.std(arr, ddof=1) #1/N-1 corrected
+              inj_extr.append((n_injected, nsig, sqrtB))
 
-                if sqrtB == None:
-                    sqrtB = (n_injected / sigamp) if sigamp != 0 else 1
+          if len(inj_extr)==0:
+              continue
+          
+          if len(inj_extr) > 0:
+              for t in inj_extr:
+                  g_allPoints.SetPoint(g_allPoints.GetN(), t[0], t[1])
 
-                for i in range(len(inj_extr)):
-                  h_nsig.Fill(inj_extr[i][1]/sqrtB)
+          arr = numpy.array([x[1] for x in inj_extr])
+          nFit = numpy.mean(arr)
+          nFitErr = numpy.std(arr, ddof=1) #1/N-1 corrected
 
-                g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
-                g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
-                h_nsigs.append(h_nsig)
-                legs.append("Signal amplitude = %d, average = %.2f"%(sigamp, nFit/sqrtB))
+          for i in range(len(inj_extr)):
+            h_nsig.Fill(inj_extr[i][1] /  inj_extr[i][3])
+          h_nsigs.append(h_nsig)
+
+          g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
+          g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
+          legs.append("Signal amplitude = %d, average = %.2f"%(sigamp, nFit/sqrtB))
 
 
-            leg = df.DrawHists(c, h_nsigs, legs, [], sampleName = "", drawOptions = ["HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
-            outfileNameTmp = config.getFileName("NsigDistributions_" + outfile, cdir, channelName, rangelow, rangehigh) 
-            c.Print("%s.pdf"%(outfileNameTmp))
+        df.SetRange(h_nsigs, myMin=0)
+        leg = df.DrawHists(c, h_nsigs, legs, [], sampleName = "", drawOptions = ["HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
+        outfileNameTmp = config.getFileName("NsigDistributions_" + outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) 
+        c.Print("%s.pdf"%(outfileNameTmp))
 
-            g_allPoints.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
+        g_allPoints.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
 
-            g_profile.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
-            g_profile.GetXaxis().SetTitle("Injected N_{sig} / #sqrt{N_{bkg}}")
-            g_profile.GetYaxis().SetTitle("Extracted N_{sig} / #sqrt{N_{bkg}}")
-            g_profile.GetXaxis().SetLimits(-0.5, max(sigamps)+0.5)
-            g_profile.SetMinimum(-0.5)
-            g_profile.SetMaximum(max(sigamps)+4)
+        g_profile.SetTitle("%d GeV Gauss (%d%%)" % (sigmean, sigwidth))
+        g_profile.GetXaxis().SetTitle("Injected N_{sig} / #sqrt{N_{bkg}}")
+        g_profile.GetYaxis().SetTitle("Extracted N_{sig} / #sqrt{N_{bkg}}")
+        g_profile.GetXaxis().SetLimits(-0.5, max(sigamps)+0.5)
+        g_profile.SetMinimum(-0.5)
+        g_profile.SetMaximum(max(sigamps)+4)
 
-            allPoints_list.append(g_allPoints)
-            profile_list.append(g_profile)
+        profile_list.append(g_profile)
 
 
-    text1 = "Pseudodata"
-    labels = [text1]
+    labels = ["Pseudodata"]
     outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
     legendNames = []
     for i in profile_list:
       legendNames.append(i.GetTitle())
-    leg = df.DrawHists(c, profile_list, legendNames, labels, sampleName = "", drawOptions = ["ALP", "LP", "LP", "LP", "LP"], styleOptions=df.get_extraction_style_opt, isLogX=0, atlasLabel=atlasLabel, lumi=lumi)
+    leg = df.DrawHists(c, profile_list, legendNames, labels, sampleName = "", drawOptions = ["ALP", "LP", "LP", "LP", "LP", "LP", "LP"], styleOptions=df.get_extraction_style_opt, isLogX=0, atlasLabel=atlasLabel, lumi=lumi)
 
     l = TLine(-0.5,-0.5,max(sigamps)+0.5, max(sigamps)+0.5)
     l.SetLineColor(kGray+2)

@@ -34,18 +34,14 @@ def run_injections_anaFit(datafile,
                           cdir,
                           outdir,
                          ):
+
+    print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
     injecteddatafile=datafile
-
-    if (sigamp > 0):
-        print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
-
-        injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
-        print("Injected file ", injecteddatafile)
+    injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
 
 
-
-        if config.signals[signalfile]["histname"] == "":
-          InjectGaussian(infile=datafile,
+    if config.signals[signalfile]["histname"] == "":
+      nbkgWindow = InjectGaussian(infile=datafile,
                        histname=datahist,
                        sigmean=sigmean,
                        sigwidth=sigwidth,
@@ -53,8 +49,8 @@ def run_injections_anaFit(datafile,
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1)
-        else:
-          InjectTemplate(infile=datafile,
+    else:
+      nbkgWindow = InjectTemplate(infile=datafile,
                        histname=datahist,
                        sigmean=sigmean,
                        sigwidth=sigwidth,
@@ -65,122 +61,41 @@ def run_injections_anaFit(datafile,
                        wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean),
                        wspdf = config.signals[signalfile]["histname"],
                        )
+
+    if loopstart==None or loopend==None:
+       ntoys=1
     else:
-       injecteddatafile = datafile
+       ntoys = loopend
+
+    print("Running run_anaFit with datahist %s" % datahistName)
+    run_anaFit(datafile=injecteddatafile,
+               datahist=datahist,
+               topfile=topfile,
+               categoryfile=categoryfile,
+               wsfile=wsfile,
+               outputfile=outputfile,
+               outputstring=outputstring,
+               fitFunction=fitFunction,
+               cdir=cdir,
+               nbkg=nbkg,
+               outdir=outdir,
+               rangelow=rangelow,
+               rangehigh=rangehigh,
+               dosignal=dosignal,
+               signalfile = signalfile, 
+               nsig=nsig,
+               nbkgWindow=nbkgWindow,
+               ntoys=ntoys,
+               dolimit=dolimit,
+               sigmean=sigmean,
+               sigwidth=sigwidth,
+               rebinFile=rebinfile,
+               rebinHist=rebinhist,
+               rebinEdges=rebinedges,
+               maskthreshold=maskthreshold
+              )
 
 
-    if loopstart!=None and loopend!=None:
-        datahistName="%s" % (datahist)
-        #datahistName="%s_%d" % (datahist, toy)
-        #coutputfile=outputfile.replace(".root", "_%d.root" % toy)
-        print("Running run_anaFit with datahist %s" % datahistName)
-        run_anaFit(datafile=injecteddatafile,
-                       datahist=datahistName,
-                       topfile=topfile,
-                       categoryfile=categoryfile,
-                       wsfile=wsfile,
-                       outputfile=outputfile,
-                       outputstring=outputstring,
-                       fitFunction=fitFunction,
-                       cdir=cdir,
-                       nbkg=nbkg,
-                       outdir=outdir,
-                       rangelow=rangelow,
-                       rangehigh=rangehigh,
-                       dosignal=dosignal,
-                       signalfile = signalfile, 
-                       nsig=nsig,
-                       ntoys=loopend,
-                       dolimit=dolimit,
-                       sigmean=sigmean,
-                       sigwidth=sigwidth,
-                       rebinFile=rebinfile,
-                       rebinHist=rebinhist,
-                       rebinEdges=rebinedges,
-                       maskthreshold=maskthreshold)
-
-        '''
-        for toy in range(loopstart, loopend+1):
-            datahistName="%s_%d" % (datahist, toy)
-            coutputfile=outputfile.replace(".root", "_%d.root" % toy)
-            print("Running run_anaFit with datahist %s" % datahistName)
-            run_anaFit(datafile=injecteddatafile,
-                       datahist=datahistName,
-                       topfile=topfile,
-                       categoryfile=categoryfile,
-                       wsfile=wsfile,
-                       outputfile=coutputfile,
-                       outputstring=outputstring,
-                       fitFunction=fitFunction,
-                       cdir=cdir,
-                       nbkg=nbkg,
-                       outdir=outdir,
-                       rangelow=rangelow,
-                       rangehigh=rangehigh,
-                       dosignal=dosignal,
-                       nsig=nsig,
-                       dolimit=dolimit,
-                       sigmean=sigmean,
-                       sigwidth=sigwidth,
-                       rebinFile=rebinfile,
-                       rebinHist=rebinhist,
-                       rebinEdges=rebinedges,
-                       maskthreshold=maskthreshold)
-        '''
-    else:
-        print("Running run_anaFit with datahist %s" % datahist)
-
-        run_anaFit(datafile=injecteddatafile,
-                   datahist=datahist,
-                   topfile=topfile,
-                   categoryfile=categoryfile,
-                   wsfile=wsfile,
-                   outputfile=outputfile,
-                   outputstring=outputstring,
-                   fitFunction=fitFunction,
-                   cdir=cdir,
-                   nbkg=nbkg,
-                   outdir=outdir,
-                   signalfile = signalfile, 
-                   rangelow=rangelow,
-                   rangehigh=rangehigh,
-                   dosignal=dosignal,
-                   dolimit=dolimit,
-                   ntoys=1,
-                   nsig=nsig,
-                   sigmean=sigmean,
-                   sigwidth=sigwidth,
-                   rebinFile=rebinfile,
-                   rebinHist=rebinhist,
-                   rebinEdges=rebinedges,
-                   maskthreshold=maskthreshold)
-
-        '''
-
-        run_anaFit(datafile=injecteddatafile,
-                   datahist=datahist,
-                   topfile=topfile,
-                   categoryfile=categoryfile,
-                   wsfile=wsfile,
-                   outputfile=outputfile,
-                   outputstring=outputstring,
-                   fitFunction=fitFunction,
-                   cdir=cdir,
-                   nbkg=nbkg,
-                   outdir=outdir,
-                   rangelow=rangelow,
-                   rangehigh=rangehigh,
-                   dosignal=dosignal,
-                   dolimit=dolimit,
-                   nsig=nsig,
-                   sigmean=sigmean,
-                   sigwidth=sigwidth,
-                   rebinFile=rebinfile,
-                   rebinHist=rebinhist,
-                   rebinEdges=rebinedges,
-                   maskthreshold=maskthreshold)
-
-        '''
 
 
 def main(args):

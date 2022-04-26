@@ -16,6 +16,9 @@ def fluctuatePoisson(hist):
       if fluc >= 0:
           result.SetBinContent(ibin, fluc);
           result.SetBinError(ibin, math.sqrt(fluc));
+      #else:
+      #    result.SetBinContent(ibin, 0);
+      #    result.SetBinError(ibin, 1);
 
     return result;
 
@@ -54,7 +57,7 @@ def main(args):
     
     args = parser.parse_args(args)
 
-    generatePseudoData(infile=args.infile, inhist=args.inhist, outhist=args.outhist, nreplicas=args.nreplicas, scaling=args.scaling)
+    generatePseudoData(infile=args.infile, inhist=args.inhist, outfile=args.outfile,  outhist=args.outhist, nreplicas=args.nreplicas, scaling=args.scaling)
 
 
 if __name__ == "__main__":  

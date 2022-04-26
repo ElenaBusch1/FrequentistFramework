@@ -13,25 +13,33 @@ import python.plotSignalInjection as plotSignalInjection
 cdir = config.cdir
 
 
-sigmeans=[ 250, 350, 450, 550, 650, 750]
+#sigmeans=[ 250, 350, 450, 550, 650, 750, 850, 950]
+sigmeans=[ 250, 350, 450, 550, 650]
+#sigmeans=[ 250, 350, 450, 550, 650, 750]
+#sigmeans=[ 250]
 #sigmeans=[ 250, 350, 450, 500, 550, 600, 650, 750]
 sigwidths=[ 7 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 sigamps=[5,4,3,2,1,0]
 
+#pdFitName = config.cPDFitName
+#fitName = config.cFitName
+pdFitName = "sixPar"
+fitName = "fivePar"
 #pdFitName = "fivePar"
 #fitName = "fourPar"
-pdFitName = config.cPDFitName
-#fitName = config.cFitName
-#fitName = "fourPar"
-#fitName = "sixPar"
-#fitName = "fivePar"
-fitName = "fourPar"
-channelName=config.cSample
-signalfile =  config.cSignal
+channelName="test3"
+#signalfile =  config.cSignal
+#signalfile =  "Gaussian"
+#signalfile =  "test3_NoCut_some"
+#signalfile =  "test3_some"
+#signalfile =  "test3"
+#signalfile =  "test3_NoCut"
+#signalfile =  "test3_inverted"
+signalfile =  "test3_inverted_some"
 
 rangelow=200
-rangehigh=800
+rangehigh=1200
 #rangelow=config.cRangeLow
 #rangehigh=config.cRangeHigh
 
@@ -68,6 +76,18 @@ for sigmean in sigmeans:
     #fitQualityTests.fitQualityTests("PostFit_sigPlusBkg", "PostFit_sigPlusBkg", "FitQuality", config.nToys, rangelow, rangehigh, sigmean, sigwidth, 0, cdir + "/scripts/", channelName)
 '''
 
+'''
+for sigmean in sigmeans:
+  for sigwidth in sigwidths:
+    #infiles = [config.getFileName("PostFit_%s_sigPlusBkg"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + ".root"]
+    infiles = [config.getFileName("PostFit_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 5) + ".root"]
+
+    fitNames = [fitName]
+    for toy in range(10):
+      outfileFits = config.getFileName("fits_PD_%d"%(toy), cdir + "/scripts/", channelName, rangelow, rangehigh, sigmean, sigwidth, 0)
+      plotFits.plotFits(infiles=infiles, outfile=outfileFits, minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName,  lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, suffix="_%d"%(toy), fitNames=fitNames)
+
+'''
 
 
 
@@ -91,7 +111,7 @@ infileExtraction="FitParameters_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, si
 infilePD='PD_%s_bkgonly'%(pdFitName)
 outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
-spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly)
+#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange=50000)
 
 
 
@@ -99,13 +119,13 @@ spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=inf
 # Extraction graphs
 infileExtraction="FitParameters_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile)
 infilesBkg = "PostFit_%s_PD_bkgonly"%(pdFitName)
-infilePD='PD_bkgonly'
+infilePD='PD_%s_bkgonly'%(pdFitName)
 outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
 createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
 
 
 # Limits
-pathsLimits = [ "Limits_limits"]
+pathsLimits = [ "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)]
 #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=channelName, cdir=cdir+"/scripts/",channelName=channelName,rangelow=rangelow, rangehigh=rangehigh, atlasLabel=atlasLabel)
 
 sigamps=[5, 4, 3, 2, 1, 0]
@@ -113,8 +133,8 @@ sigamps=[5, 4, 3, 2, 1, 0]
 inputPDCoverage='PD_%s_bkgonly'%(pdFitName)
 outfileCoverage='Coverage_%s_%s_%s'%(pdFitName, fitName, signalfile)
 pathsLimits = "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)
-#createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh)
-#plotFalseExclusionCandles.plotFalseExclusionCandles("Coverage", sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
+#createCoverageGraph.createCoverageGraph(pathsLimits, inputPDCoverage, sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, outfile=outfileCoverage, cdir=cdir+"/scripts/", channelName=channelName, rangelow=rangelow, rangehigh=rangehigh, signalfile=signalfile)
+#plotFalseExclusionCandles.plotFalseExclusionCandles(outfileCoverage, sigmeans, sigwidths, rangelow, rangehigh, channelName, cdir + "/scripts/", lumi=lumi, atlasLabel=atlasLabel)
 
 
 
