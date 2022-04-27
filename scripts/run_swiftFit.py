@@ -3,6 +3,8 @@ import array
 import subprocess, os, sys, argparse
 from condor_handler import CondorHandler
 from ROOT import *
+sys.path.append("config/dijetTLA/")
+from InitialParameters import initialParameters
 
 gROOT.LoadMacro("atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("atlasstyle-00-04-02/AtlasStyle.C")
@@ -38,48 +40,54 @@ SetAtlasStyle()
 
 ################################# CHECK THIS ##########################
 
-# Condor or local/lxplus? Not implemented yet!
+# Condor or local/lxplus?
 useBatch = False
 # Execute or printout commands?
 quietMode = False
-# None: submit all fits sequentially, or doNJobs fits per submission
-doNJobs = 10 # not implemented yet
 
-WHW = 3
+# Specs
+trigger = "J100"
+dataset = 'partialDataset'  # 'full', 'partialDataset', 'TLA2016'
+
+# SWiFt specs:
+WHW = 10 #22
 fixLow = 1
 truncateRight = 0
 fixHigh = 0
+# Use previous window to initialize nbkg parameter:
+doReadPreviousFit = True
 
 # Output folder -- where everything is stored:
 # default in python/run_anaFit.py is run/
-outFolder = "run/Swift_WHW{0}_fixLow{1}_TR{2}_fixHigh{3}_3par/".format(WHW,fixLow, truncateRight, fixHigh)
-
-# Datafile:
-datafile = "Input/data/dijetTLA/lookInsideTheBoxWithUniformMjj.root"
-datahist = "Nominal/DSJ100yStar06_TriggerJets_J100_yStar06_mjj_finebinned_all_data"
-
-# Use previous window to initialize nbkg parameter:
-doReadPreviousFit = True
-# Initial values
-nbkg = "2E8,0,3E8"  # some windows fail if initial value is given, e.g.: window from 1186-1472 with 5par fit.
-#nbkg ="0,3E8"
+outFolder = "run/PartialDatasets/"+trigger+"/Swift_WHW{0}_fixLow{1}_TR{2}_fixHigh{3}_3par_halvedResBins_260422/".format(WHW,fixLow, truncateRight, fixHigh)
 
 # whole fitting range:
-analysisRange = [ 531, 2997 ]
+analysisRange = [ 
+  initialParameters[dataset][trigger]['low'],
+  initialParameters[dataset][trigger]['high'] 
+]
+
+# Datafile:
+datafile =  initialParameters[dataset][trigger]['datafile']
+datahist =  initialParameters[dataset][trigger]['datahist']
+nbkg	   = initialParameters[dataset][trigger]['nbkg']
 
 # Provide resolution bins:
-resolutionBinsFile = "Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root"
-resolutionBinsHisto = "data"
+#resolutionBinsFile = "Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root"
+resolutionBinsFile = None
+#resolutionBinsHisto = "data"
+
+# halving resolution bins:
+binEdges = [171.0, 180.0, 188.0, 197.0, 206.0, 215.0, 224.0, 234.0, 243.0, 253.0, 262.0, 272.0, 282.0, 292.0, 302.0, 313.0, 323.0, 334.0, 344.0, 355.0, 365.0, 376.0, 387.0, 399.0, 410.0, 422.0, 433.0, 445.0, 457.0, 469.0, 481.0, 494.0, 506.0, 519.0, 531.0, 544.0, 556.0, 569.0, 582.0, 595.0, 608.0, 622.0, 635.0, 649.0, 662.0, 676.0, 690.0, 705.0, 719.0, 734.0, 748.0, 763.0, 778.0, 793.0, 808.0, 824.0, 839.0, 855.0, 871.0, 887.0, 903.0, 920.0, 936.0, 953.0, 970.0, 987.0, 1004.0, 1022.0, 1039.0, 1057.0, 1075.0, 1093.0, 1111.0, 1130.0, 1148.0, 1167.0, 1186.0, 1206.0, 1225.0, 1245.0, 1264.0, 1284.0, 1304.0, 1325.0, 1345.0, 1366.0, 1387.0, 1408.0, 1429.0, 1451.0, 1472.0, 1494.0, 1516.0, 1539.0, 1561.0, 1584.0, 1607.0, 1631.0, 1654.0, 1678.0, 1701.0, 1725.0, 1749.0, 1774.0, 1798.0, 1823.0, 1848.0, 1874.0, 1899.0, 1925.0, 1951.0, 1978.0, 2004.0, 2031.0, 2058.0, 2086.0, 2113.0, 2141.0, 2169.0, 2198.0, 2226.0, 2255.0, 2284.0, 2314.0, 2343.0, 2373.0, 2403.0, 2434.0, 2464.0, 2495.0, 2526.0, 2558.0, 2590.0, 2623.0, 2655.0, 2688.0, 2721.0, 2755.0, 2788.0, 2822.0, 2856.0, 2891.0, 2926.0, 2962.0, 2997.0, 3033.0, 3069.0, 3106.0, 3142.0, 3180.0, 3217.0]
 
 # xml template cards:
-topfile = "config/dijetTLA/dijetTLA_J100yStar06_zprime.template"
-# reminder: category file points to which bkg fitting function!
-#categoryfile = "config/dijetTLA/category_dijetTLA_J100yStar06_fivePar_zprime.template"
-categoryfile = "config/dijetTLA/category_dijetTLA_J100yStar06_threePar_zprime.template"
+topfile 	= "config/dijetTLA/dijetTLA_J100yStar06_zprime.template"
+categoryfile 	= "config/dijetTLA/category_dijetTLA_zprime.template"
+backgroundfile 	= "config/dijetTLA/background_dijetTLA_J100yStar06_threePar.xml"
 
 # brackets for fit number:
 wsfile = "dijetTLA_combWS_swift_ibin{0}_{1}_{2}.root"
-outputfile = "FitResult_fivePar_J100yStar_bOnly_ibin{0}_{1}_{2}.root"
+outputfile = "FitResult_threePar_J100yStar_bOnly_ibin{0}_{1}_{2}.root"
 
 # Signal:
 # dummy: it's a b-only fit, for now
@@ -126,7 +134,7 @@ wsfile = folder + wsfile
 outputfile = folder + outputfile
 
 ###############################
-
+#FIXME Este resiudals se podria sacar
 def computeResiduals(data, fit, histoName="residuals"):
     h = fit.Clone(histoName)
     h.SetDirectory(0)
@@ -145,19 +153,44 @@ def computeResiduals(data, fit, histoName="residuals"):
     
     return h
 
+def update_nbkg(outputfile, i, low, high):
+  paramsFileName = outputfile.format(i, low, high).replace("FitResult", "FitParameters")
+  paramsFile = TFile(paramsFileName, 'read')
+  paramsHisto = paramsFile.Get("postfit_params")
+  for p in range(1,paramsHisto.GetNbinsX()+1):
+    if paramsHisto.GetXaxis().GetBinLabel(p) == "nbkg":
+      updated_Nbkg = str(round(paramsHisto.GetBinContent(p)))
+      # print updated_Nbkg
+      previous_Nbkg = nbkg.split(",")
+      previous_Nbkg[0] = updated_Nbkg
+      # print previous_Nbkg
+      new_nbkg = ','.join(previous_Nbkg)
+      print "Updated nbkg: {}".format(nbkg)
+  paramsFile.Close()
+  return new_nbkg
+
+
 ############# Prepare Commands:
 
 # No BH, no rebinning
 
-command = "python python/run_anaFit.py --datafile {0} --datahist {1} --topfile {2} --categoryfile {3} --wsfile {4} --outputfile {5} --nbkg {6} --rangelow {7} --rangehigh {8} --sigmean {9} --sigwidth {10} --folder {11} --notrebin --maskthreshold 1e-8"
+command = "python python/run_anaFit.py --datafile {0} --datahist {1} --topfile {2} --categoryfile {3} --wsfile {4} --outputfile {5} --nbkg {6} --rangelow {7} --rangehigh {8} --sigmean {9} --sigwidth {10} --folder {11} --backgroundfile {12} --notrebin --maskthreshold 1e-8"
 
 # IMPORTANT: assuming resolution bins range is equal to or larger than data binning
 # 1) Retrieve resolution bins:
-resFile = TFile(resolutionBinsFile, 'read')
-resHisto = resFile.Get(resolutionBinsHisto)
-binEdges = [ resHisto.GetBinLowEdge(i) for i in range(1, resHisto.GetNbinsX() + 2) ]
+if resolutionBinsFile:
+  resFile = TFile(resolutionBinsFile, 'read')
+  resHisto = resFile.Get(resolutionBinsHisto)
+  binEdges = [ resHisto.GetBinLowEdge(i) for i in range(1, resHisto.GetNbinsX() + 2) ]
+else:
+  try:
+    len(binEdges)
+  except:
+    print "Need to provide binEdges as a list"
+    sys.exit()
+
 resBins = array.array( 'd', binEdges )
-print "Resolution bins are:", resBins
+# print "Resolution bins are:", resBins
 
 binsToFit = []
 for ibin, binEdge in enumerate(resBins):
@@ -171,10 +204,10 @@ lastBinToFit  = binsToFit[-1]
 # 2) For plotting window cross check:
 ybins = array.array('d',range(1, len(binsToFit)+2))
 # Easier handling of bins and bin edges:
-swiftCheck = TH2D("Swift_Range","",len(resBins)-1,resBins,len(binsToFit), ybins)
+swiftCheck = TH2D("Swift_Range",";mjj [GeV];iteration;",len(resBins)-1,resBins,len(binsToFit), ybins)
 # Nice plot for window visualization -- annoying to handle bins:
 swiftPoly  = TH2Poly()
-swiftPoly.SetName("swiftPoly")
+swiftPoly.SetNameTitle("swiftPoly",";mjj [GeV];iteration")
 for ix in range(0, len(resBins)-1):
     xval1 = resBins[ix]
     xval2 = resBins[ix+1]
@@ -188,10 +221,15 @@ print "Range determined by resolution bin edges: {0}-{1}".format( swiftCheck.Get
 
 # 3) Determine fit range from sliding window:
 
+# for tomography plot
+tomo_graph = TGraphAsymmErrors()
+k = 0
+
 # to first order it's one fit per resolution bin
-# -- FIXME not really though:
+# -- FIXME not really though, repeating fits :/ :
 
 for i in range(firstBinToFit, lastBinToFit+1):
+  
   j = i - firstBinToFit + 1
   
   # i is the bin to fit -- let's paint it with a 2
@@ -252,27 +290,27 @@ for i in range(firstBinToFit, lastBinToFit+1):
   high = int(swiftCheck.GetXaxis().GetBinUpEdge(upBin)) 
   
   print "Preparing fit for window #{0} with fitting range ({1},{2})".format(i,low, high)
-  thisCommand =  command.format(datafile, datahist, topfile, categoryfile, wsfile.format(i,low, high), outputfile.format(i,low,high), nbkg, low, high, sigmean, sigwidth, folder) 
+  thisCommand =  command.format(datafile, datahist, topfile, categoryfile, wsfile.format(i,low, high), outputfile.format(i,low,high), nbkg, low, high, sigmean, sigwidth, folder, backgroundfile) 
   print thisCommand
   
- # Submit the Jobs! -- al sequential for now
+  # Submit the Jobs! -- al sequential for now
   if not quietMode:
     if not useBatch:
       subprocess.call(thisCommand, shell=True)
       # Fitting done, now let's retrieve nbkg estimation to
-      # initialize next window fit!
-      paramsFileName = outputfile.format(i, low, high).replace("FitResult", "FitParameters")
-      paramsFile = TFile(paramsFileName, 'read')
-      paramsHisto = paramsFile.Get("postfit_params")
-      for p in range(1,paramsHisto.GetNbinsX()+1):
-	if paramsHisto.GetXaxis().GetBinLabel(p) == "nbkg":
-	  updated_Nbkg = str(round(paramsHisto.GetBinContent(p)))
-	  print updated_Nbkg
-	  previous_Nbkg = nbkg.split(",")
-	  previous_Nbkg[0] = updated_Nbkg
-	  print previous_Nbkg
-	  nbkg = ','.join(previous_Nbkg)
-	  print "Updated nbkg: {}".format(nbkg)
+      if doReadPreviousFit:
+	# initialize next window fit!
+	nbkg = update_nbkg( outputfile, i, low, high)
+      
+      # retrieve window pvalue
+      postfitFileName = outputfile.format(i,low,high).replace("FitResult","PostFit")
+      postfitFile = TFile( postfitFileName, 'read')
+      this_pvalue = postfitFile.Get("chi2").GetBinContent(6)
+      postfitFile.Close()
+      tomo_graph.SetPoint(k, swiftCheck.GetXaxis().GetBinCenter(i), this_pvalue)
+      tomo_graph.SetPointEXlow(k, swiftCheck.GetXaxis().GetBinCenter(i) - low)
+      tomo_graph.SetPointEXhigh(k,high - swiftCheck.GetXaxis().GetBinCenter(i))
+      k+=1
 
   print " "
 
@@ -281,6 +319,10 @@ outputFile = TFile( outFolder + "/swiftCrossCheck.root",'recreate')
 outputFile.cd()
 swiftCheck.Write()
 swiftPoly.Write()
+tomo_graph.SetLineWidth(2)
+tomo_graph.SetMarkerStyle(1)
+tomo_graph.SetNameTitle("swift_tomography","SWiFt tomography; mjj [GeV]; window p-value")
+tomo_graph.Write()
 outputFile.Close()
 
 canvas = TCanvas()
@@ -294,6 +336,15 @@ myText(0.2, 0.80, 1, "fixHigh = {}".format(fixHigh), 12)
 
 canvas.Print( outFolder + "/swiftCrossCheck.png")
 
-# We got some stitching up to do now:
-
+canvas.Clear()
+canvas.SetLogy()
+canvas.SetGrid()
+tomo_graph.SetMinimum(0.001)
+tomo_graph.Draw("AP")
+line = TLine(457, 0.01, 2997, 0.01)
+line.SetLineStyle(2)
+line.SetLineWidth(2)
+line.SetLineColor(kRed)
+line.Draw("same")
+canvas.Print( outFolder + "/swiftTomographyPlot.png")
 
