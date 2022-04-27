@@ -128,7 +128,9 @@ class PostfitExtractor:
 
                 binSig = 0.
                 if valueErrorData > 0. and postFitValue > 0.:
-                    binSig = (valueData - postFitValue)/valueErrorData
+                    #binSig = (valueData - postFitValue)/valueErrorData
+		    # low stats: (e.g.: J100, above 2.5 TeV, less than 10 entries per 1GeV bin)
+		    binSig = (valueData - postFitValue)/math.sqrt(postFitValue) 
 
                     if binCenter < self.maskmin or binCenter > self.maskmax:
                         chi2bins += 1
