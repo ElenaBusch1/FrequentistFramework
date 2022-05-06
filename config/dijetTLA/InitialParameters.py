@@ -23,6 +23,7 @@ initialParameters = {
 	  # Analysis range		
 	  'low'  : 457,
 	  'high' : 2997,
+	  'lumi' : 3.6,
 	},
 	
 	'J40'  : {  
@@ -54,6 +55,7 @@ initialParameters = {
 	  'datahist'	: "",
 	  'low'  :457 ,
 	  'high' : 2997,
+	  'lumi' : 133.2,
 	},
 	
 	'J40'  : {  
