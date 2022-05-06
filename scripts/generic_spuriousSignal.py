@@ -37,7 +37,7 @@ else:
   sigmeans = [450]
   sigamps = [0]
   sigwidths = [7]
-  signalfile =  "test3_NoCut_some"
+  signalfile =  "Gaussian"
 
 
 #. scripts/setup_buildAndFit.sh

@@ -27,7 +27,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     # This is a hacky way of getting all of the fit parameters, and the ranges that they are allowed to span, just to make some plots of this
     h_pars = []
     h_parList = []
-    configName = cdir + "/" + config.fitFunctions[fitName]["Config"]
+    configName = config.cdir + "/" + config.fitFunctions[fitName]["Config"]
 
     with open(configName) as f:
       lines = f.readlines()
@@ -95,7 +95,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                 h_parList[index][massIndex].Fill(params.GetBinContent(3+index))
             massIndex += 1
 
-          h_allPoints_list.append(h_allPoints)
+        h_allPoints_list.append(h_allPoints)
 
 
     graphs = []

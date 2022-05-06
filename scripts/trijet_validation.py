@@ -16,7 +16,9 @@ fitNames = ["fourPar", "fivePar", "sixPar"]
 
 
 #channelNames=["test3"]
-channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
+channelNames=["test_cut15"]
+#channelNames=["testSherpa"]
+#channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
 
 #channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
 
@@ -24,7 +26,9 @@ channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
 #channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj"]
 
 rangeslow=[200]
-rangeshigh=[1200]
+rangeshigh=[1000]
+#rangeslow=[200]
+#rangeshigh=[1200]
 
 #channelNames=["ambulance_4j"]
 #rangeslow=[2000]

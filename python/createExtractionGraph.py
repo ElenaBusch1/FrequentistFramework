@@ -39,19 +39,22 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           tmp_path_fitresult = config.getFileName(infile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
 
           for toy in range(config.nToys):
-              try:
-                fpe = efp.FitParameterExtractor(tmp_path_fitresult)
-                fpe.suffix = "_%d"%(toy)
-                fpe.ExtractFromFile( "_%d"%(toy))
-                nsig = fpe.GetNsig()
-              except:
-                print "Couldn't read nsig from", tmp_path_fitresult
-                continue
-
-                if nsig == None or  math.isnan(nsig):
-                  nans += 1
-                if nsig == None:
+              if sigamp > 0:
+                try:
+                  fpe = efp.FitParameterExtractor(tmp_path_fitresult)
+                  fpe.suffix = "_%d"%(toy)
+                  fpe.ExtractFromFile( "_%d"%(toy))
+                  nsig = fpe.GetNsig()
+                except:
+                  print "Couldn't read nsig from", tmp_path_fitresult
                   continue
+              else:
+                nsig = 0
+
+              if nsig == None or  math.isnan(nsig):
+                nans += 1
+              if nsig == None:
+                continue
    
               tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_Sig_Gaussian.root"
               checkPath = glob(tmp_path_injection)

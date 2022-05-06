@@ -20,7 +20,7 @@ def stitchSwift(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebin
       hFull.SetDirectory(0)
       hData.SetDirectory(0)
 
-      for minMass, maxMass, index in zip(minMasses, maxMasses, range(len(maxMasses))):
+      for minMass, maxMass, massIndex in zip(minMasses, maxMasses, range(len(maxMasses))):
         path = config.getFileName(infileName, cdir, channelName, minMass, maxMass) + ".root"
 
         inFile = ROOT.TFile(path, "READ")
@@ -31,40 +31,132 @@ def stitchSwift(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebin
         fitHist = inFile.Get(fithistName + suffix)
         dataHist = inFile.Get("data" + suffix)
 
-        if index == 0:
-          for i in range(int((maxMass - minMass)/4)):
-            cMass = minMass + i
-            cBin = fitHist.FindBin(cMass)
-            cBinData = dataHist.FindBin(cMass)
-            hFull.SetBinContent(i+1, fitHist.GetBinContent(cBin))
-            hData.SetBinContent(i+1, dataHist.GetBinContent(cBinData))
-            hFull.SetBinError(i+1, fitHist.GetBinError(cBin))
-            hData.SetBinError(i+1, dataHist.GetBinError(cBinData))
 
+        deltaMass = 10
+        cRange = deltaMass 
+        for i in range(cRange):
+          cMass = minMass + int((maxMass - minMass)/2) + i  - cRange + 0.5
+          print cMass, (i*1.0/cRange)
+          cBin = fitHist.FindBin(cMass)
+          cBinFull = hFull.FindBin(cMass)
+          cBinData = dataHist.FindBin(cMass)
+          hFull.Fill(cMass, fitHist.GetBinContent(cBin)*(i*1.0/cRange))
+          hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
+          hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+        for i in range(cRange):
+          cMass = minMass + int((maxMass - minMass)/2) + i  + 0.5
+          cBin = fitHist.FindBin(cMass)
+          cBinFull = hFull.FindBin(cMass)
+          cBinData = dataHist.FindBin(cMass)
+          print cMass, (1.-i*1.0/cRange)
+          hFull.Fill(cMass, fitHist.GetBinContent(cBin)*(1.-i*1.0/cRange))
+          hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
+          hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+        #if massIndex == 0:
+        #  for i in range(int((maxMass - minMass)/2)):
+        #    cMass = minMass + i + 0.5
+        #    cBin = fitHist.FindBin(cMass)
+        #    cBinData = dataHist.FindBin(cMass)
+        #    hFull.SetBinContent(i+1, fitHist.GetBinContent(cBin))
+        #    hData.SetBinContent(i+1, dataHist.GetBinContent(cBinData))
+        #    hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+        #if massIndex == len(minMasses)-1:
+        #  for i in range(int((maxMass - minMass)/2)):
+        #    cMass = minMass + (maxMass - minMass)/2 + i + 0.5
+        #    cBin = fitHist.FindBin(cMass)
+        #    cBinFull = hFull.FindBin(cMass)
+        #    cBinData = dataHist.FindBin(cMass)
+        #    hFull.SetBinContent(cBinFull, fitHist.GetBinContent(cBin))
+        #    hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
+        #    hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+
+
+
+
+
+        '''
+        cRange = int((maxMass - minMass)/2)
         for i in range(int((maxMass - minMass)/2)):
-          cMass = minMass + (maxMass - minMass)/4 + i
-          
+          cMass = minMass + i + 0.5
           cBin = fitHist.FindBin(cMass)
           cBinFull = hFull.FindBin(cMass)
           cBinData = dataHist.FindBin(cMass)
           hFull.SetBinContent(cBinFull, fitHist.GetBinContent(cBin))
           hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
-          hFull.SetBinError(cBinFull, fitHist.GetBinError(cBin))
           hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
 
-        if index == len(minMasses)-1:
-          for i in range(int(3*(maxMass - minMass)/4)):
-            cMass = minMass + 3*(maxMass - minMass)/4 + i
+        if massIndex == 0:
+          for i in range(int((maxMass - minMass)/2)):
+            cMass = minMass + i + 0.5
+            cBin = fitHist.FindBin(cMass)
+            cBinData = dataHist.FindBin(cMass)
+            hFull.SetBinContent(i+1, fitHist.GetBinContent(cBin))
+            hData.SetBinContent(i+1, dataHist.GetBinContent(cBinData))
+            hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
 
+        if massIndex == len(minMasses)-1:
+          for i in range(int((maxMass - minMass)/2)):
+            cMass = minMass + (maxMass - minMass)/2 + i + 0.5
             cBin = fitHist.FindBin(cMass)
             cBinFull = hFull.FindBin(cMass)
             cBinData = dataHist.FindBin(cMass)
             hFull.SetBinContent(cBinFull, fitHist.GetBinContent(cBin))
             hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
-            hFull.SetBinError(cBinFull, fitHist.GetBinError(cBin))
+            hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+        '''
+
+
+
+
+
+        '''
+ 
+
+        cRange = int((maxMass - minMass)/2)
+        for i in range(int((maxMass - minMass)/2)):
+          cMass = minMass + i + 0.5
+          cBin = fitHist.FindBin(cMass)
+          cBinFull = hFull.FindBin(cMass)
+          cBinData = dataHist.FindBin(cMass)
+          hFull.Fill(cMass, fitHist.GetBinContent(cBin)*(i*1.0/cRange))
+          hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
+          hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+        for i in range(int((maxMass - minMass)/2)):
+          cMass = minMass + (maxMass - minMass)/2 + i + 0.5
+          cBin = fitHist.FindBin(cMass)
+          cBinFull = hFull.FindBin(cMass)
+          cBinData = dataHist.FindBin(cMass)
+          hFull.Fill(cMass, fitHist.GetBinContent(cBin)*((cRange-i)*1.0/cRange))
+          hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
+          hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+
+        if massIndex == 0:
+          for i in range(int((maxMass - minMass)/2)):
+            cMass = minMass + i + 0.5
+            cBin = fitHist.FindBin(cMass)
+            cBinData = dataHist.FindBin(cMass)
+            hFull.SetBinContent(i+1, fitHist.GetBinContent(cBin))
+            hData.SetBinContent(i+1, dataHist.GetBinContent(cBinData))
+            hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
+
+        if massIndex == len(minMasses)-1:
+          for i in range(int((maxMass - minMass)/2)):
+            cMass = minMass + (maxMass - minMass)/2 + i + 0.5
+            cBin = fitHist.FindBin(cMass)
+            cBinFull = hFull.FindBin(cMass)
+            cBinData = dataHist.FindBin(cMass)
+            hFull.SetBinContent(cBinFull, fitHist.GetBinContent(cBin))
+            hData.SetBinContent(cBinFull, dataHist.GetBinContent(cBinData))
             hData.SetBinError(cBinFull, dataHist.GetBinError(cBinData))
 
 
+        '''
 
       chi2 = 0.
       chi2bins = 0

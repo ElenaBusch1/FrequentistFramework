@@ -8,14 +8,27 @@
     <NormFactor Name="nbkg[NBKG]"/>
   </Sample>
 
+  <Sample Name="signal_mean250_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean250_width7.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean250_width7[NSIG]" />
+  </Sample>
+  <Sample Name="signal_mean350_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean350_width7.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean350_width7[NSIG]" />
+  </Sample>
+  <Sample Name="signal_mean450_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean450_width7.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean450_width7[NSIG]" />
+  </Sample>
   <Sample Name="signal_mean550_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean550_width7.xml" MultiplyLumi="1" >
     <NormFactor Name="nsig_mean550_width7[NSIG]" />
   </Sample>
-  <Sample Name="signal_mean650_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean550_width7.xml" MultiplyLumi="1" >
+  <Sample Name="signal_mean650_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean650_width7.xml" MultiplyLumi="1" >
     <NormFactor Name="nsig_mean650_width7[NSIG]" />
   </Sample>
   <Sample Name="signal_mean750_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean750_width7.xml" MultiplyLumi="1" >
     <NormFactor Name="nsig_mean750_width7[NSIG]" />
   </Sample>
+  <Sample Name="signal_mean850_width7" InputFile="CDIR/config/dijetISR/signal/signalGauss_mean850_width7.xml" MultiplyLumi="1" >
+    <NormFactor Name="nsig_mean850_width7[NSIG]" />
+  </Sample>
+
 
 </Channel>

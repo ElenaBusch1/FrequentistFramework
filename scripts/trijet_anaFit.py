@@ -8,7 +8,9 @@ cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
 #channelNames = ["test3"]
 
-channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
+#channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
+channelNames=["test_cut15"]
+#channelNames=["testSherpa"]
 #channelNames=["Btagged70_23_ystar", "Btagged70_jj_ystar", "Btagged70_23", "Btagged70_jj", "ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
 #channelNames=["ZeroBtagged70_23_ystar", "ZeroBtagged70_jj_ystar", "ZeroBtagged70_23", "ZeroBtagged70_jj"]
 #channelNames=["ZeroBtagged70_23_ystar"]
@@ -17,7 +19,7 @@ channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
 #rangeshigh=[700, 800, 900, 1000, 1200, 1400]
 #rangeslow=[150, 200, 300]
 rangeslow=[200]
-rangeshigh = [1200]
+rangeshigh = [1000]
 
 
 #channelNames=["ambulance_2javg"]

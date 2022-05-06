@@ -8,6 +8,7 @@
 
   <!-- Save POI  -->
   <Asimov Name="POISnap"  Setup=""  Action="savesnapshot" SnapshotPOI="nominalPOI"/>
+
   <!-- Do bkg only fit:  NP fixed to 0, asimov generated, NuisanceParameters and GlobalParameters saved  -->
   <Asimov Name="NPSnap"   Setup="nsig_meanMEAN=0" Action="fixsyst:fit:genasimov:float:savesnapshot:nominalPOI" SnapshotNuis="nominalNuis" SnapshotGlob="nominalGlobs"/>
 

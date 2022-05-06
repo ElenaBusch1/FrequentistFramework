@@ -35,19 +35,18 @@ if args.isBatch:
 
 
 else:
-  #pdFitNames = ["fivePar"]
-  #fitName = "fourPar"
   pdFitNames = ["sixPar"]
   fitName = "fivePar"
   channelNames=["test3"]
-  sigmeans = [450]
+  sigmeans = [550]
   sigamps = [0]
   sigwidths = [7]
   rangelow=200
   rangehigh=1200
   #rangelow=config.cRangeLow
   #rangehigh=config.cRangeHigh
-  signalfile =  "test3_NoCut_some"
+  #signalfile =  "test3_15"
+  signalfile =  "test3_inverted"
   #signalfile =  "Gaussian"
   #signalfile =  config.cSignal
 

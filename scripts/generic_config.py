@@ -2,11 +2,14 @@ cdir="/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest"
 nToys = 500
 atlasLabel="Simulation Internal"
 
+# The background distribution you are testing
 cSample = "test3"
-cRangeLow = 200
-cRangeHigh = 1200
+# The fit function used to generate the pseudodata
+# Eventually, I will add more functionality for if you are using different methods for producing PD
 cPDFitName = "sixPar"
+# The fit function you are testing
 cFitName = "fivePar"
+# The signal type
 cSignal = "Gaussian"
 
 
@@ -35,12 +38,13 @@ samples["Example"] = {
 signals = {}
 
 # Signal template (can include systematics)
-signals["test3"] = {
+signals["Example"] = {
                  "signalfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/signalGauss_meanM_template.xml",
                  "workspacefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/scripts/signalTemplates/Signal_sigpick2_10_BkgAlpha_20_dimVarsDphi_Mean_MEAN.root",
-                 "histfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/scripts/massSpectraWithSysts_sigpick2_10_BkgAlpha_20_dimVarsDphi_MEAN_mR_histFactoryWS.root",
                  "templatefile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/scripts/signalTemplates/Signal_sigpick2_10_BkgAlpha_20_dimVarsDphi_Mean_MEAN.root",
-                 "histname": "SigLowAllNorm_12_SR1_tagged",
+                 # The file that the 
+                 "histfile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/scripts/massSpectraWithSysts_sigpick2_10_BkgAlpha_20_dimVarsDphi_MEAN_mR_histFactoryWS.root",
+                 "histname": "SigLowAllNorm_12_SR1_tagged", # The name of the histogram
                }
 
 

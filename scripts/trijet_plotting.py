@@ -14,7 +14,8 @@ cdir = config.cdir
 
 
 #sigmeans=[ 250, 350, 450, 550, 650, 750, 850, 950]
-sigmeans=[ 250, 350, 450, 550, 650]
+#sigmeans=[ 250, 350, 450, 550, 650]
+sigmeans=[ 550]
 #sigmeans=[ 250, 350, 450, 550, 650, 750]
 #sigmeans=[ 250]
 #sigmeans=[ 250, 350, 450, 500, 550, 600, 650, 750]
@@ -29,14 +30,16 @@ fitName = "fivePar"
 #pdFitName = "fivePar"
 #fitName = "fourPar"
 channelName="test3"
+#channelName="test3"
 #signalfile =  config.cSignal
 #signalfile =  "Gaussian"
 #signalfile =  "test3_NoCut_some"
 #signalfile =  "test3_some"
+#signalfile =  "test3_15"
 #signalfile =  "test3"
-#signalfile =  "test3_NoCut"
+signalfile =  "test3_inverted"
 #signalfile =  "test3_inverted"
-signalfile =  "test3_inverted_some"
+#signalfile =  "test3_inverted_some"
 
 rangelow=200
 rangehigh=1200
@@ -111,7 +114,7 @@ infileExtraction="FitParameters_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, si
 infilePD='PD_%s_bkgonly'%(pdFitName)
 outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
-#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange=50000)
+spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange=30000)
 
 
 
@@ -121,7 +124,7 @@ infileExtraction="FitParameters_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signal
 infilesBkg = "PostFit_%s_PD_bkgonly"%(pdFitName)
 infilePD='PD_%s_bkgonly'%(pdFitName)
 outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
-createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
+#createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi)
 
 
 # Limits

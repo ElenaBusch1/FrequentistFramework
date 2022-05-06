@@ -44,10 +44,12 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
 
       try:
-        chi2Hist = inFile.Get("chi2"+suffix)
+        postFit = path.replace("FitParameters", "PostFit")
+        chi2Hist = lf.read_histogram(postFit, "chi2"+suffix)
         chi2 = chi2Hist.GetBinContent(2)
         pval = chi2Hist.GetBinContent(6)
       except:
+        print "Did not find the chi2 or pval", postFit, suffix, "chi2"+suffix
         chi2 = -1
         pval = -1
 

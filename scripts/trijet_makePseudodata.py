@@ -7,7 +7,8 @@ import os
 cdir = config.cdir
 #channelNames=["BkgLow_2_alpha0_SR1_tagged", "BkgLow_3_alpha0_SR1_tagged"]
 #channelNames = ["MassOrdered_2"]
-channelNames = ["test3"]
+channelNames = ["testSherpa"]
+#channelNames = ["test3"]
 
 rangelow=200
 rangehigh=1200
