@@ -300,7 +300,7 @@ def main():
 	# retrieve window pvalue
 	postfitFileName = tmp_outputfile.replace("FitResult","PostFit")
 	postfitFile = ROOT.TFile( postfitFileName, 'read')
-	this_pvalue = postfitFile.Get("chi2").GetBinContent(6)
+	this_pvalue = postfitFile.Get("J100yStar06/chi2").GetBinContent(6)
 	postfitFile.Close()
 	tomo_graph.SetPoint(k, swiftCheck.GetXaxis().GetBinCenter(i), this_pvalue)
 	tomo_graph.SetPointEXlow(k, swiftCheck.GetXaxis().GetBinCenter(i) - low)
