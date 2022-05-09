@@ -164,7 +164,7 @@ def main():
 
   # No rebinning, for stiching nicely later
 
-  command = "python python/run_anaFit.py --datafile {0} --datahist {1} --topfile {2} --categoryfile {3} --wsfile {4} --outputfile {5} --nbkg {6} --rangelow {7} --rangehigh {8} --sigmean {9} --sigwidth {10} --folder {11} --backgroundfile {12} --notrebin"
+  command = "python python/run_anaFit.py --datafile {0} --datahist {1} --topfile {2} --categoryfile {3} --wsfile {4} --outputfile {5} --nbkg {6} --rangelow {7} --rangehigh {8} --sigmean {9} --sigwidth {10} --folder {11} --backgroundfile {12}"
  
   if args.doSignal:
     command += ' --dosignal'
