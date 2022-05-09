@@ -33,9 +33,6 @@ sigwidth=-999
 
 doLimit = False
 
-# For visualization of resiudals plot.
-doRebin = False
-
 # Output folder -- where everything is stored:
 # default in python/run_anaFit.py is run/
 outFolder = "run/PartialDatasets/"+trigger+"/Global5par/"
@@ -127,9 +124,6 @@ for sigmean in sigmeans:
 
   if doLimit:
     command += " --dolimit"
-
-  if not doRebin:
-    command += " --notrebin"
 
 
 #######################################################3
