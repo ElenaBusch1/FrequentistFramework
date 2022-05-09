@@ -1,16 +1,19 @@
 #!/bin/bash
 
+generatePD=true
+
 {
     . scripts/setup_buildAndFit.sh
 
     for pars in four five six
     do
-	# for trig in J40 J50Comb J100
-	for trig in J50Comb
+	for trig in J50Comb J100
 	do
-	    categoryfile=config/dijetTLA/category_dijetTLA_J100yStar06_${pars}Par.template
+	    signalfile=config/dijetTLA/signal/signal_dijetTLA.template
+	    backgroundfile=config/dijetTLA/background_dijetTLA_${trig/Comb/}yStar06_${pars}Par.xml
+	    categoryfile=config/dijetTLA/category_dijetTLA.template
 	    topfile=config/dijetTLA/dijetTLA_J100yStar06.template
-	    wsfile=run/dijetTLA_combWS_swift.root
+	    wsfile=run/dijetTLA_combWS_anaFit_${pars}Par_${trig}yStar06_bkgonly.root
 	    sigmean=1000
 	    sigwidth=5
 	    dosignal=0
@@ -19,7 +22,7 @@
 	    outputfile=run/FitResult_anaFit_${pars}Par_${trig}yStar06_bkgonly.root
 	    rangelow=302
 	    rangehigh=1516
-	    nbkg="1E7,0,2E7"
+	    nbkg="1E7,0,2.5E7"
 	    if [[ $trig == "J100" ]]
 	    then
 		rangelow=457
@@ -40,6 +43,8 @@
 	    ./python/run_anaFit.py \
     		--datafile $datafile \
     		--datahist $datahist \
+    		--signalfile $signalfile \
+    		--backgroundfile $backgroundfile \
     		--categoryfile $categoryfile \
     		--topfile $topfile \
     		--wsfile $wsfile \
@@ -52,30 +57,35 @@
 		--maskthreshold $maskthreshold \
 		$flags
 
-	    if [[ $trig == "J40" ]]
+	    if [[ $generatePD == true ]]
 	    then
-		scalefactor=$( bc <<< '3.3/0.342' )
-	    fi
-	    if [[ $trig == "J50" ]]
-	    then
-		scalefactor=$(  bc <<< '5.77/0.114' )
-	    fi
-	    if [[ $trig == "J50Topo" ]]
-	    then
-		scalefactor=$( bc <<< '9.22/0.185' )
-	    fi
-	    if [[ $trig == "J50Comb" ]]
-	    then
-		scalefactor=$( bc <<< '14.5/0.299' )
-	    fi
-	    if [[ $trig == "J100" ]]
-	    then
-		scalefactor=$( bc <<< '133.2/3.630' )
-	    fi
-	    
-	    echo python python/generatePseudoData.py --infile ${outputfile/FitResult/PostFit} --inhist J100yStar06/postfit --outhist pseudodata --outfile run/PD_Run2_GlobalFit_${rangelow}_${rangehigh}_${pars}Par_finebinned_${trig}.root --nreplicas 1000 --scaling $scalefactor
 
-	    python python/generatePseudoData.py --infile ${outputfile/FitResult/PostFit} --inhist J100yStar06/postfit --outhist pseudodata --outfile run/PD_Run2_GlobalFit_${rangelow}_${rangehigh}_${pars}Par_finebinned_${trig}.root --nreplicas 1000 --scaling $scalefactor
+		if [[ $trig == "J40" ]]
+		then
+		    scalefactor=$( bc <<< '3.3/0.342' )
+		fi
+		if [[ $trig == "J50" ]]
+		then
+		    scalefactor=$(  bc <<< '5.77/0.114' )
+		fi
+		if [[ $trig == "J50Topo" ]]
+		then
+		    scalefactor=$( bc <<< '9.22/0.185' )
+		fi
+		if [[ $trig == "J50Comb" ]]
+		then
+		    scalefactor=$( bc <<< '14.5/0.299' )
+		fi
+		if [[ $trig == "J100" ]]
+		then
+		    scalefactor=$( bc <<< '133.2/3.630' )
+		fi
+		
+		echo python python/generatePseudoData.py --infile ${outputfile/FitResult/PostFit} --inhist J100yStar06/postfit --outhist pseudodata --outfile run/PD_Run2_GlobalFit_${rangelow}_${rangehigh}_${pars}Par_finebinned_${trig}.root --nreplicas 1000 --scaling $scalefactor
+
+		python python/generatePseudoData.py --infile ${outputfile/FitResult/PostFit} --inhist J100yStar06/postfit --outhist pseudodata --outfile run/PD_Run2_GlobalFit_${rangelow}_${rangehigh}_${pars}Par_finebinned_${trig}.root --nreplicas 1000 --scaling $scalefactor
+
+	    fi
 	done
     done
 }
