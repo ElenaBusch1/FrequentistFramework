@@ -55,10 +55,10 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   for f in collectFiles:
       print "Opening file", f
       postfitFile = ROOT.TFile(f, 'read')
-      h_fit  = postfitFile.Get("postfit")
-      h_res  = postfitFile.Get("residuals")
+      h_fit  = postfitFile.Get("J100yStar06/postfit")
+      h_res  = postfitFile.Get("J100yStar06/residuals")
       if isFirst:
-	  h_data = postfitFile.Get("data")
+	  h_data = postfitFile.Get("J100yStar06/data")
 	  h_data.SetDirectory(0)
 	  # Store results in 1GeV Bins here:
 	  h_swiftFit = h_data.Clone("swiftFit")
