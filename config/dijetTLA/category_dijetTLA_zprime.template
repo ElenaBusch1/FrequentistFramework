@@ -6,8 +6,8 @@
     <NormFactor Name="nbkg[NBKG]"/>
   </Sample>
 
-  <Sample Name="signal_mRMASS_gq0p1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_zprime_gq0p1_mRMASS.xml" MultiplyLumi="0" >
-    <NormFactor Name="nsig_mRMASS_gq0p1[0,-1E6,1E6]"/>
+  <Sample Name="signal_SIGNAME_gq0p1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_zprime_gq0p1_SIGNAME.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_SIGNAME_gq0p1[NSIG]"/>
   </Sample>
 
 </Channel>

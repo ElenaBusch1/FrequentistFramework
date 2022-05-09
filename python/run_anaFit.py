@@ -120,7 +120,7 @@ def run_anaFit(datafile,
     replaceinfile(tmptopfile, 
                   [("CATEGORYFILE", tmpcategoryfile),
                    ("OUTPUTFILE", wsfile),
-		   ("MASS", str(sigmean)), ])
+		            ("SIGNAME", signame), ])
     replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
         ("DATAHIST", datahist),
@@ -128,7 +128,6 @@ def run_anaFit(datafile,
         ("RANGEHIGH", str(rangehigh)),
         ("BINS", str(nbins)),
         ("NBKG", nbkg),
-	("MASS", str(sigmean)),
     ])    
 
     if backgroundfile:
