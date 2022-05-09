@@ -97,20 +97,25 @@ def run_anaFit(datafile,
                dolimit=False,
                sigmean=1000,
                sigwidth=7,
-               maskthreshold=0.01):
+               maskthreshold=0.01,
+               folder="run/"):
 
     nbins=rangehigh - rangelow
 
     print("Fitting", nbins, "bins in range", rangelow, "-", rangehigh)
 
     # generate the config files on the fly in run dir
-    if not os.path.isfile("run/AnaWSBuilder.dtd"):
-        execute("ln -s ../config/dijetTLA/AnaWSBuilder.dtd run/AnaWSBuilder.dtd")
-
-    tmpsignalfile="run/signal_dijetTLA_fromTemplate.xml"
-    tmpcategoryfile="run/category_dijetTLA_fromTemplate.xml"
-    tmptopfile="run/dijetTLA_fromTemplate.xml"
-
+    if not os.path.isfile("{}/AnaWSBuilder.dtd".format(folder)):
+      execute("ln -sf $PWD/config/dijetTLA/AnaWSBuilder.dtd $PWD/{}/AnaWSBuilder.dtd".format(folder))
+    if sigwidth == -999: # running on zprime samples:
+      print("Running in Zprime samples")
+      tmpcategoryfile="{0}/category_dijetTLA_fromTemplate_mR{1}.xml".format(folder, sigmean)
+      tmptopfile="{0}/dijetTLA_fromTemplate_mR{1}.xml".format(folder, sigmean)
+    else:
+      tmpcategoryfile="{}/category_dijetTLA_fromTemplate.xml".format(folder)
+      tmptopfile="{}/dijetTLA_fromTemplate.xml".format(folder)  
+    tmpsignalfile="{}/signal_dijetTLA_fromTemplate.xml".format(folder)
+    
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(categoryfile, tmpcategoryfile) 
     if signalfile:
@@ -147,6 +152,8 @@ def run_anaFit(datafile,
 
     if dosignal:
         poi="nsig_%s" % signame
+        if sigwidth == -999:
+    	    poi="nsig_mR{}_gq0p1".format(sigmean)
     else:
         poi=None
 
@@ -156,7 +163,8 @@ def run_anaFit(datafile,
                                                                 rangelow=rangelow, 
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
-                                                                poi=poi)
+                                                                poi=poi,
+							                                )
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -169,10 +177,10 @@ def run_anaFit(datafile,
         tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
 
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --bkghist %s --datahist %s --outputjson %s; deactivate" % (postfitfile, "J100yStar06_rebinned/postfit", "J100yStar06_rebinned/data", "run/BHresults.json"))
+        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --bkghist %s --datahist %s --outputjson %s; deactivate" % (postfitfile, "J100yStar06_rebinned/postfit", "J100yStar06_rebinned/data", "{}/BHresults.json".format(folder)))
 
         # pass results of pyBH via this json file
-        with open("run/BHresults.json") as f:
+        with open("{}/BHresults.json".format(folder)) as f:
             BHresults=json.load(f)
 
         tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
@@ -211,7 +219,8 @@ def run_anaFit(datafile,
     # blindrange not yet implemented with quickLimit
     if dolimit and dosignal and pval_global > maskthreshold:
         print("Now running quickLimit")
-        rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 2 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+        #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+        rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 2 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -236,12 +245,16 @@ def main(args):
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
     parser.add_argument('--signame', dest='signame', type=str, help='Name of the signal parameter')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
-    parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
+    parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %). If -999 dealing with Zprime samples.')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
+    parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
 
     args = parser.parse_args(args)
     if not args.signame:
-        args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
+        if args.sigwidth == -999:
+            args.signame="mR_%s" % (args.sigmean)
+        else:
+            args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
@@ -259,8 +272,10 @@ def main(args):
                dolimit=args.dolimit,
                sigmean=args.sigmean,
                sigwidth=args.sigwidth,
+	           folder=args.folder,	       
                signame=args.signame,
                maskthreshold=args.maskthreshold)
+
 
 
 if __name__ == "__main__":  
