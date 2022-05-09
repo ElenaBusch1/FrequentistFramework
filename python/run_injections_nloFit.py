@@ -14,11 +14,14 @@ def main(args):
     parser.add_argument('--topfile', dest='topfile', type=str, required=True, help='Input top-level xml card')
     parser.add_argument('--categoryfile', dest='categoryfile', type=str, required=True, help='Input category xml card')
     parser.add_argument('--bkgfile', dest='bkgfile', type=str, required=True, help='Input background xml card')
+    parser.add_argument('--sigfile', dest='sigfile', type=str, required=True, help='Input signal xml card')
     parser.add_argument('--modelfile', dest='modelfile', type=str, required=True, help='Input RooStats model file with background templates')
+    parser.add_argument('--signalmodelfile', dest='signalmodelfile', type=str, required=True, help='Input RooStats model file with signal template')
     parser.add_argument('--wsfile', dest='wsfile', type=str, required=True, help='Output workspace file')
     parser.add_argument('--combinefile', dest='combinefile', type=str, required=True, help='Input xml card for the workspaceCombiner')
     parser.add_argument('--outputfile', dest='outputfile', type=str, required=True, help='Output fitresult file')
     parser.add_argument('--nbkg', dest='nbkg', type=str, required=True, help='Initial value and range of nbkg par (e.g. "2E8,0,3E8")')
+    parser.add_argument('--nsig', dest='nsig', type=str, default='0,-1E6,1E6', help='Initial value and range of nsig par (e.g. "0,-1E6,1E6")')
     parser.add_argument('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
     parser.add_argument('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
     parser.add_argument('--constr', dest='constr', type=int, default=1, help='Constraint term of NPs (in sigma)')
@@ -36,6 +39,7 @@ def main(args):
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
 
     args = parser.parse_args(args)
+    signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
     injecteddatafile=args.datafile
     if (args.sigamp > 0):
@@ -69,11 +73,14 @@ def main(args):
                        topfile=args.topfile,
                        categoryfile=args.categoryfile,
                        bkgfile=args.bkgfile,
+                       sigfile=args.sigfile,
                        modelfile=args.modelfile,
+                       signalmodelfile=args.signalmodelfile,
                        wsfile=args.wsfile,
                        combinefile=args.combinefile,
                        outputfile=outputfile,
                        nbkg=args.nbkg,
+                       nsig=args.nsig,
                        rangelow=args.rangelow,
                        rangehigh=args.rangehigh,
                        constr=args.constr,
@@ -83,8 +90,7 @@ def main(args):
                        doinitialpars=args.doinitialpars,
                        dosignal=args.dosignal,
                        dolimit=args.dolimit,
-                       sigmean=args.sigmean,
-                       sigwidth=args.sigwidth,
+                       signame=signame,
                        maskthreshold=args.maskthreshold)
     else:
         print("Running run_nloFit with datahist %s" % args.datahist)
@@ -93,11 +99,14 @@ def main(args):
                    topfile=args.topfile,
                    categoryfile=args.categoryfile,
                    bkgfile=args.bkgfile,
+                   sigfile=args.sigfile,
                    modelfile=args.modelfile,
+                   signalmodelfile=args.signalmodelfile,
                    wsfile=args.wsfile,
                    combinefile=args.combinefile,
                    outputfile=args.outputfile,
                    nbkg=args.nbkg,
+                   nsig=args.nsig,
                    rangelow=args.rangelow,
                    rangehigh=args.rangehigh,
                    constr=args.constr,
@@ -107,8 +116,7 @@ def main(args):
                    doinitialpars=args.doinitialpars,
                    dosignal=args.dosignal,
                    dolimit=args.dolimit,
-                   sigmean=args.sigmean,
-                   sigwidth=args.sigwidth,
+                   signame=signame,
                    maskthreshold=args.maskthreshold)
 
 

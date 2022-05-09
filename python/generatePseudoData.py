@@ -7,21 +7,21 @@ gRand = ROOT.TRandom3()
 def fluctuatePoisson(hist):
     global gRand
 
-    result = hist.Clone("fluctuated hist");
+    result = hist.Clone("fluctuated hist")
     result.Reset("M")
 
-    nBinsX = hist.GetNbinsX();
-    nBinsY = hist.GetNbinsY();
+    nBinsX = hist.GetNbinsX()
+    nBinsY = hist.GetNbinsY()
 
     for i in range(0, nBinsX+2):
         for j in range(0, nBinsY+2):
-            ibin = hist.GetBin(i, j);
-            fluc = gRand.Poisson(hist.GetBinContent(ibin));
+            ibin = hist.GetBin(i, j)
+            fluc = gRand.Poisson(hist.GetBinContent(ibin))
             if fluc >= 0:
-                result.SetBinContent(ibin, fluc);
-                result.SetBinError(ibin, math.sqrt(fluc));
+                result.SetBinContent(ibin, fluc)
+                result.SetBinError(ibin, math.sqrt(fluc))
 
-    return result;
+    return result
 
 
 def main(args):
@@ -47,6 +47,16 @@ def main(args):
     f_out = ROOT.TFile(args.outfile, "RECREATE")
     f_out.cd()
 
+    # Set sqrt(N) errors in upscaled hist and write to file
+    nBinsX = h_in.GetNbinsX()
+    nBinsY = h_in.GetNbinsY()
+    for i in range(0, nBinsX+2):
+        for j in range(0, nBinsY+2):
+            ibin = h_in.GetBin(i, j)
+            h_in.SetBinError(ibin, math.sqrt(h_in.GetBinContent(ibin)))
+
+    h_in.Write("unfluctuated")
+
     for i in range(0, args.nreplicas):
         if (i%(args.nreplicas/20) == 0):
             print i,"/",args.nreplicas
@@ -54,8 +64,9 @@ def main(args):
         gRand.SetSeed(i)
         h_out = fluctuatePoisson(h_in)
         h_out.Write("%s_%d" % (args.outhist, i))
-
+   
     f_out.Close()
+
 
 if __name__ == "__main__":  
    sys.exit(main(sys.argv[1:]))   

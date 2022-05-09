@@ -12,7 +12,9 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-lumi = 29300
+# lumi = 29300
+# lumi = 30000
+lumi = 133000
 
 def createFillBetweenGraphs(g1, g2):
   g_fill = TGraph()
@@ -22,7 +24,9 @@ def createFillBetweenGraphs(g1, g2):
       y=ROOT.Double()
     
       g1.GetPoint(i, x, y)
-    
+      if math.isnan(y) or math.isinf(y):
+        continue
+
       g_fill.SetPoint(g_fill.GetN(), x, y)
 
   for i in range(g2.GetN()-1, -1, -1):
@@ -30,6 +34,8 @@ def createFillBetweenGraphs(g1, g2):
       y=ROOT.Double()
     
       g2.GetPoint(i, x, y)
+      if math.isnan(y) or math.isinf(y):
+        continue
     
       g_fill.SetPoint(g_fill.GetN(), x, y)
 
@@ -110,13 +116,17 @@ def main(args):
                 exp1d = h.GetBinContent(h.GetXaxis().FindBin("-1sigma")) / lumi
                 exp2d = h.GetBinContent(h.GetXaxis().FindBin("-2sigma")) / lumi
 
+                if math.isnan(obs) or math.isinf(obs):
+                  raise ValueError('observed limit not finite for point (%s, %w)' % (sigmean, sigwidth))
+                
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
                 g_exp[i].SetPoint(g_exp[i].GetN(), sigmean, exp)
                 g_exp1u[i].SetPoint(g_exp1u[i].GetN(), sigmean, exp1u)
                 g_exp2u[i].SetPoint(g_exp2u[i].GetN(), sigmean, exp2u)
                 g_exp1d[i].SetPoint(g_exp1d[i].GetN(), sigmean, exp1d)
                 g_exp2d[i].SetPoint(g_exp2d[i].GetN(), sigmean, exp2d)
-            except:
+            except Exception as e:
+                print e
                 print "WARNING: Missing point (%d,%d)" % (sigmean, sigwidth)
 
 
@@ -180,7 +190,7 @@ def main(args):
     leg_exp.Draw()
     leg_obs.Draw()
 
-    c1.Print("../run/limitPlot.png")
+    c1.Print("../run/limitPlot.svg")
     c1.Print("../run/limitPlot.pdf")
 
     fout=TFile("../run/limits.root", "RECREATE")
