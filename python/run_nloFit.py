@@ -136,8 +136,8 @@ def run_nloFit(datafile,
                doinitialpars=False,
                dosignal=False,
                dolimit=False,
-               signame=None,
-               nsig=None,
+               signame='',
+               nsig='',
                maskthreshold=0.01):
 
     rangelow=binning.index(rangelow)
@@ -343,6 +343,7 @@ def main(args):
                outputfile=args.outputfile,
                nbkg=args.nbkg,
                nsig=args.nsig,
+
                rangelow=args.rangelow,
                rangehigh=args.rangehigh,
                constr=args.constr,
