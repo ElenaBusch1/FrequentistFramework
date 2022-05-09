@@ -117,6 +117,8 @@ def main():
     tag+='fivePar'
   elif "sixPar" in backgroundfile:
     tag+='sixPar'
+  else:
+    tag+='fourPar'
 
   outputfile = "FitResult_{0}_J100yStar_bOnly_ibin{1}_{2}_{3}.root"
 

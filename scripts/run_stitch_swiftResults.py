@@ -31,6 +31,7 @@ outputFileNames = [
 for pattern, outName in zip(patternMatches, outputFileNames):
   
   fullPath = path + pattern
+  outName = path + outName
   print "Doing:", fullPath
   StitchSwiftResults( fullPath, outName )
 
