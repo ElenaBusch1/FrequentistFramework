@@ -25,6 +25,85 @@ def getNPars(pdf, obs, exclSyst):
         
     return counter
 
+def getChi2(extractor, channelname, npars):
+    chi2 = 0.
+    chi2bins = 0
+    maskedchi2bins = 0
+
+    h_data = extractor.channel_hdata[channelname]
+    h_postfit = extractor.channel_hpostfit[channelname]
+    h_residuals = h_postfit.Clone(channelname+"/residuals")
+    h_residuals.SetDirectory(0)
+    h_residuals.Reset("M")
+
+    for ibin in range(1, h_residuals.GetNbinsX()+1):
+        # valueErrorData = h_data.GetBinError(ibin+extractor.datafirstbin)
+        # valueData = h_data.GetBinContent(ibin+extractor.datafirstbin)
+        # postFitValue = h_postfit.GetBinContent(ibin)
+        # binCenter = h_data.GetBinCenter(extractor.datafirstbin+ibin)
+
+        valueErrorData = h_data.GetBinError(ibin)
+        valueData = h_data.GetBinContent(ibin)
+        postFitValue = h_postfit.GetBinContent(ibin)
+        binCenter = h_data.GetBinCenter(ibin)
+
+        binSig = 0.
+        if valueErrorData > 0. and postFitValue > 0.:
+            # binSig = (valueData - postFitValue)/valueErrorData
+            binSig = (valueData - postFitValue)/math.sqrt(postFitValue)
+
+            h_residuals.SetBinContent(ibin, binSig)
+            h_residuals.SetBinError(ibin, 0)
+
+            if binCenter < extractor.maskmin or binCenter > extractor.maskmax:
+                chi2bins += 1
+                chi2 += binSig*binSig
+            else:
+                maskedchi2bins += 1
+
+    if extractor.externalchi2file and extractor.externalchi2fct and extractor.externalchi2bins:
+        f_chi2 = TFile(extractor.externalchi2file)
+        tf1_chi2 = f_chi2.Get(extractor.externalchi2fct)
+        ndof = chi2bins - extractor.externalchi2bins + tf1_chi2.GetParameter(0)
+        ndoferr = tf1_chi2.GetParError(0)
+        f_chi2.Close()
+    else:
+        ndof = chi2bins - npars
+        ndoferr = 0.
+
+    pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
+
+    h_chi2 = TH1D("chi2", "chi2", 6, 0, 6)
+    h_chi2.SetDirectory(0)
+    h_chi2.SetBinContent(1, chi2)
+    h_chi2.SetBinError(1, 0)
+    h_chi2.SetBinContent(2, chi2/ndof)
+    h_chi2.SetBinError(2, ndoferr*chi2/(ndof*ndof))
+    h_chi2.SetBinContent(3, chi2bins)
+    h_chi2.SetBinError(3, 0)
+    h_chi2.SetBinContent(4, npars)
+    h_chi2.SetBinError(4, 0)
+    h_chi2.SetBinContent(5, ndof)
+    h_chi2.SetBinError(5, ndoferr)
+    h_chi2.SetBinContent(6, pval)
+    h_chi2.SetBinError(6, 0)
+
+    h_chi2.GetXaxis().SetBinLabel(1, "chi2")
+    h_chi2.GetXaxis().SetBinLabel(2, "chi2/ndof")
+    h_chi2.GetXaxis().SetBinLabel(3, "nbins")
+    h_chi2.GetXaxis().SetBinLabel(4, "npars")
+    h_chi2.GetXaxis().SetBinLabel(5, "ndof")
+    h_chi2.GetXaxis().SetBinLabel(6, "pval")
+
+    extractor.channel_chi2[channelname] = chi2
+    extractor.channel_nbins[channelname] = chi2bins
+    extractor.channel_npars[channelname] = npars
+    extractor.channel_ndof[channelname] = ndof
+    extractor.channel_pval[channelname] = pval
+
+    extractor.channel_hresiduals[channelname] = h_residuals
+    extractor.channel_hchi2[channelname] = h_chi2
+
 class PostfitExtractor:
     def __init__(self, 
                  wsfile, 
@@ -60,6 +139,7 @@ class PostfitExtractor:
         self.channel_npars = {}
         self.channel_ndof = {}
         self.channel_pval = {}
+        self.channel_hdata = {}
         self.channel_hpostfit = {}
         self.channel_hchi2 = {}
         self.channel_hresiduals = {}
@@ -92,6 +172,7 @@ class PostfitExtractor:
             channelname = cat.getLabel()
             pdfi = pdf.getPdf(channelname)
             x = pdfi.getObservables(datai).first()
+            npars = getNPars(pdfi, x, exclSyst=True)
             
             print "Channel %s:" % channelname
             print "Expected:"
@@ -101,7 +182,6 @@ class PostfitExtractor:
 
             hpdf = pdfi.createHistogram("hpdf", x)
             hpdf.Scale(expectedEvents/hpdf.Integral())
-
 
             binEdges = []
             nBins = hpdf.GetNbinsX()
@@ -114,58 +194,12 @@ class PostfitExtractor:
             for ibin in range(1, nBins+1):
                 h_postfit.SetBinContent(ibin, hpdf.GetBinContent(ibin))
                 h_postfit.SetBinError(ibin, 0)
+                
+            self.channel_hdata[channelname] = self.h_data.Rebin(nBins, "h_data_crop", array.array('d', binEdges))
+            self.channel_hdata[channelname].SetDirectory(0)
+            self.channel_hpostfit[channelname] = h_postfit
 
-            chi2 = 0.
-            chi2bins = 0
-            maskedchi2bins = 0
-
-            for ibin in range(1, nBins+1):
-                binCenter = self.h_data.GetBinCenter(self.datafirstbin+ibin)
-
-                valueErrorData = self.h_data.GetBinError(self.datafirstbin+ibin)
-                valueData = self.h_data.GetBinContent(self.datafirstbin+ibin)
-                postFitValue = h_postfit.GetBinContent(ibin)
-
-                binSig = 0.
-                if valueErrorData > 0. and postFitValue > 0.:
-                    binSig = (valueData - postFitValue)/valueErrorData
-
-                    if binCenter < self.maskmin or binCenter > self.maskmax:
-                        chi2bins += 1
-                        chi2 += binSig*binSig
-                    else:
-                        maskedchi2bins += 1
-
-            npars = getNPars(pdfi, x, exclSyst=True)
-
-            if self.externalchi2file and self.externalchi2fct:
-                f_chi2 = TFile(self.externalchi2file)
-                tf1_chi2 = f_chi2.Get(self.externalchi2fct)
-                ndof = chi2bins - self.externalchi2bins + tf1_chi2.GetParameter(0)
-                ndoferr = tf1_chi2.GetParError(0)
-                f_chi2.Close()
-            else:
-                ndof = chi2bins - npars
-                ndoferr = 0.
-
-            pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
-
-            h_chi2 = TH1D("chi2", "chi2", 6, 0, 6)
-            h_chi2.SetDirectory(0)
-            h_chi2.SetBinContent(1, chi2)
-            h_chi2.SetBinContent(2, chi2/ndof)
-            h_chi2.SetBinContent(3, chi2bins)
-            h_chi2.SetBinContent(4, npars)
-            h_chi2.SetBinContent(5, ndof)
-            h_chi2.SetBinError(5, ndoferr)
-            h_chi2.SetBinContent(6, pval)
-
-            h_chi2.GetXaxis().SetBinLabel(1, "chi2")
-            h_chi2.GetXaxis().SetBinLabel(2, "chi2/ndof")
-            h_chi2.GetXaxis().SetBinLabel(3, "nbins")
-            h_chi2.GetXaxis().SetBinLabel(4, "npars")
-            h_chi2.GetXaxis().SetBinLabel(5, "ndof")
-            h_chi2.GetXaxis().SetBinLabel(6, "pval")
+            getChi2(extractor=self, channelname=channelname, npars=npars)
 
             binEdges = None
             if self.rebinfile and self.rebinhist:
@@ -179,39 +213,15 @@ class PostfitExtractor:
                     if edge < h_postfit.GetBinLowEdge(1) or edge > h_postfit.GetBinLowEdge(h_postfit.GetNbinsX()+2):
                         continue
                     binEdges.append(edge)
-                    
+
                 f_rebin.Close()
-            
-            if binEdges:
-                h_postfit = h_postfit.Rebin(len(binEdges)-1, "postfit", array.array('d', binEdges))
-                self.h_data = self.h_data.Rebin(len(binEdges)-1, self.datahist, array.array('d', binEdges))
-                self.datafirstbin = self.h_data.FindBin(self.datafirstbin) - 1
 
-            h_residuals = h_postfit.Clone("residuals")
-            h_residuals.SetDirectory(0)
-            h_residuals.Reset("M")
+                rebinnedchannelname=channelname+"_rebinned"
+                self.channel_hpostfit[rebinnedchannelname] = self.channel_hpostfit[channelname].Rebin(len(binEdges)-1, "postfit", array.array('d', binEdges))
+                self.channel_hdata[rebinnedchannelname] = self.channel_hdata[channelname].Rebin(len(binEdges)-1, self.datahist, array.array('d', binEdges))
+                self.datafirstbin = self.channel_hdata[rebinnedchannelname].FindBin(self.datafirstbin) - 1
 
-            for ibin in range(1, h_residuals.GetNbinsX()+1):
-                valueErrorData = self.h_data.GetBinError(ibin+self.datafirstbin)
-                valueData = self.h_data.GetBinContent(ibin+self.datafirstbin)
-                postFitValue = h_postfit.GetBinContent(ibin)
-
-                binSig = 0.
-                if valueErrorData > 0. and postFitValue > 0.:
-                    binSig = (valueData - postFitValue)/valueErrorData
-
-                    h_residuals.SetBinContent(ibin, binSig)
-                    h_residuals.SetBinError(ibin, 0)
-
-            self.channel_chi2[channelname] = chi2
-            self.channel_nbins[channelname] = chi2bins
-            self.channel_npars[channelname] = npars
-            self.channel_ndof[channelname] = ndof
-            self.channel_pval[channelname] = pval
-
-            self.channel_hpostfit[channelname] = h_postfit
-            self.channel_hresiduals[channelname] = h_residuals
-            self.channel_hchi2[channelname] = h_chi2
+                getChi2(extractor=self, channelname=rebinnedchannelname, npars=npars)
 
         fd.Close()
         f.Close()
@@ -227,18 +237,17 @@ class PostfitExtractor:
                 d = fout.mkdir(channelname)
                 d.cd()
 
-                self.h_data.Write("data")
+                self.channel_hdata[channelname].Write("data")
                 self.channel_hpostfit[channelname].Write("postfit")
                 self.channel_hresiduals[channelname].Write("residuals")
-                # self.channel_hresiduals[channelname].Write("postFitSigma")
                 self.channel_hchi2[channelname].Write("chi2")
         else:
             # just take first (and hopefully only) channel
             self.h_data.Write("data")
-            next(iter(self.channel_hpostfit.values())).Write("postfit")
-            next(iter(self.channel_hresiduals.values())).Write("residuals")
-            # next(iter(self.channel_hresiduals.values())).Write("postFitSigma")
-            next(iter(self.channel_hchi2.values())).Write("chi2")
+            self.channel_hpostfit.values()[-1].Write("postfit")
+            self.channel_hresiduals.values()[-1].Write("residuals")
+            # self.channel_hresiduals.values()[-1].Write("postFitSigma")
+            self.channel_hchi2.values()[-1].Write("chi2")
 
         fout.Close()
 
@@ -329,6 +338,7 @@ def main(args):
     parser.add_argument('--externalchi2bins', dest='externalchi2bins', type=int, default=40, help='Number of bins for external chi2 TF1')
     parser.add_argument('--maskmin', dest='maskmin', type=int, default=-1, help='Masked range to exclude from chi2 calculation')
     parser.add_argument('--maskmax', dest='maskmax', type=int, default=-1, help='Masked range to exclude from chi2 calculation')
+    parser.add_argument('--dirpercategory', dest='dirpercategory', action='store_true', help='Create one output directory per channel (also for rebinning)')
 
     args = parser.parse_args(args)
 
@@ -348,7 +358,7 @@ def main(args):
         maskmax=args.maskmax
     )
     pfe.Extract()
-    pfe.WriteRoot(args.outfile)
+    pfe.WriteRoot(args.outfile, args.dirpercategory)
     
     print "Finished ExtractPostfitFromWS"
 

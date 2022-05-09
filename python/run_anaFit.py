@@ -5,6 +5,7 @@ import os,sys,re,argparse,subprocess,shutil
 import json
 from ExtractPostfitFromWS import PostfitExtractor
 from ExtractFitParameters import FitParameterExtractor
+import ROOT
 
 def execute(cmd):  
     print("EXECUTE:", cmd)
@@ -27,7 +28,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None):
+def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfile, poi=None, maskrange=None):
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -48,12 +49,17 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmin=-1
         maskmax=-1
 
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --minTolerance 1E-8 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
     postfitfile=fitresultfile.replace("FitResult","PostFit")
     parameterfile=fitresultfile.replace("FitResult","FitParameters")
+
+    f=ROOT.TFile(datafile)
+    d=f.Get(datahist)
+    datafirstbin=d.FindBin(rangelow)-1
+    f.Close()
 
     pfe = PostfitExtractor(
         datafile=datafile,
@@ -66,8 +72,8 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmax=maskmax
     )
     pval = pfe.GetPval()
-    # pfe.WriteRoot(postfitfile, dirPerCategory=True)
-    pfe.WriteRoot(postfitfile)
+    pfe.WriteRoot(postfitfile, dirPerCategory=True)
+    # pfe.WriteRoot(postfitfile)
 
     fpe = FitParameterExtractor(wsfile=fitresultfile)
     fpe.WriteRoot(parameterfile)
@@ -81,9 +87,12 @@ def run_anaFit(datafile,
                wsfile,
                outputfile,
                nbkg,
+               nsig,
                rangelow,
                rangehigh,
+               signame,
                backgroundfile=None,
+               signalfile=None,
                dosignal=False,
                dolimit=False,
                sigmean=1000,
@@ -98,15 +107,20 @@ def run_anaFit(datafile,
     if not os.path.isfile("run/AnaWSBuilder.dtd"):
         execute("ln -s ../config/dijetTLA/AnaWSBuilder.dtd run/AnaWSBuilder.dtd")
 
+    tmpsignalfile="run/signal_dijetTLA_fromTemplate.xml"
     tmpcategoryfile="run/category_dijetTLA_fromTemplate.xml"
     tmptopfile="run/dijetTLA_fromTemplate.xml"
 
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(categoryfile, tmpcategoryfile) 
+    if signalfile:
+        shutil.copy2(signalfile, tmpsignalfile) 
     
     replaceinfile(tmptopfile, 
                   [("CATEGORYFILE", tmpcategoryfile),
-                   ("OUTPUTFILE", wsfile),])
+                   ("OUTPUTFILE", wsfile),
+                   ("SIGNAME", signame),
+               ])
     replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
         ("DATAHIST", datahist),
@@ -119,17 +133,27 @@ def run_anaFit(datafile,
     if backgroundfile:
         replaceinfile(tmpcategoryfile, 
                       [("BACKGROUNDFILE", backgroundfile)])
+    if signalfile:
+        replaceinfile(tmpcategoryfile, 
+                      [("SIGNALFILE", tmpsignalfile),
+                       ("SIGNAME", signame),
+                       ("NSIG", nsig),
+                   ])
+        replaceinfile(tmpsignalfile, 
+                      [("SIGMEAN", str(sigmean)),
+                       ("SIGWIDTH", str(sigwidth)),
+                   ])
             
 
     if dosignal:
-        poi="nsig_mean%s_width%s" % (sigmean, sigwidth)
+        poi="nsig_%s" % signame
     else:
         poi=None
 
     pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile, 
                                                                 datahist=datahist, 
-                                                                datafirstbin=rangelow, 
+                                                                rangelow=rangelow, 
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
                                                                 poi=poi)
@@ -145,7 +169,7 @@ def run_anaFit(datafile,
         tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
 
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --outputjson %s; deactivate" % (postfitfile, "run/BHresults.json"))
+        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --bkghist %s --datahist %s --outputjson %s; deactivate" % (postfitfile, "J100yStar06_rebinned/postfit", "J100yStar06_rebinned/data", "run/BHresults.json"))
 
         # pass results of pyBH via this json file
         with open("run/BHresults.json") as f:
@@ -168,7 +192,7 @@ def run_anaFit(datafile,
         pval_masked,_,_ = build_fit_extract(tmptopfilemasked,
                                             datafile=datafile, 
                                             datahist=datahist, 
-                                            datafirstbin=rangelow, 
+                                            rangelow=rangelow, 
                                             wsfile=wsfilemasked, 
                                             fitresultfile=outfilemasked, 
                                             poi=poi, 
@@ -187,7 +211,7 @@ def run_anaFit(datafile,
     # blindrange not yet implemented with quickLimit
     if dolimit and dosignal and pval_global > maskthreshold:
         print("Now running quickLimit")
-        rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+        rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 2 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -201,33 +225,41 @@ def main(args):
     parser.add_argument('--topfile', dest='topfile', type=str, required=True, help='Input top-level xml card')
     parser.add_argument('--categoryfile', dest='categoryfile', type=str, required=True, help='Input category xml card')
     parser.add_argument('--backgroundfile', dest='backgroundfile', type=str, help='Input background xml card')
+    parser.add_argument('--signalfile', dest='signalfile', type=str, help='Input signal xml card')
     parser.add_argument('--wsfile', dest='wsfile', type=str, required=True, help='Output workspace file')
     parser.add_argument('--outputfile', dest='outputfile', type=str, required=True, help='Output fitresult file')
     parser.add_argument('--nbkg', dest='nbkg', type=str, required=True, help='Initial value and range of nbkg par (e.g. "2E8,0,3E8")')
+    parser.add_argument('--nsig', dest='nsig', type=str, default='0,-1E6,1E6', help='Initial value and range of nsig par (e.g. "0,-1E6,1E6")')
     parser.add_argument('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
     parser.add_argument('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
     parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
+    parser.add_argument('--signame', dest='signame', type=str, help='Name of the signal parameter')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
 
     args = parser.parse_args(args)
+    if not args.signame:
+        args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
                topfile=args.topfile,
                categoryfile=args.categoryfile,
                backgroundfile=args.backgroundfile,
+               signalfile=args.signalfile,
                wsfile=args.wsfile,
                outputfile=args.outputfile,
                nbkg=args.nbkg,
+               nsig=args.nsig,
                rangelow=args.rangelow,
                rangehigh=args.rangehigh,
                dosignal=args.dosignal,
                dolimit=args.dolimit,
                sigmean=args.sigmean,
                sigwidth=args.sigwidth,
+               signame=args.signame,
                maskthreshold=args.maskthreshold)
 
 
