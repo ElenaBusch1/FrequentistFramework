@@ -34,7 +34,7 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   resHisto = resfile.Get(resolutionBinsHistoName)
   
   res_binEdges = [ resHisto.GetBinLowEdge(i) for i in range(1, resHisto.GetNbinsX()+2) ]
-  i#res_binEdges = [ binEdge for binEdge in res_binEdges if binEdge > analysisRangeLow and binEdge< analysisRangeHigh] 
+  #res_binEdges = [ binEdge for binEdge in res_binEdges if binEdge > analysisRangeLow and binEdge< analysisRangeHigh] 
  
   # halving resolution bins:
   # used these ones for swifting
