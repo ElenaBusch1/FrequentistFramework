@@ -98,7 +98,7 @@ def run_anaFit(datafile,
                sigmean=1000,
                sigwidth=7,
                maskthreshold=0.01,
-	           folder="run/"):
+               folder="run/"):
 
     nbins=rangehigh - rangelow
 
@@ -152,7 +152,7 @@ def run_anaFit(datafile,
 
     if dosignal:
         poi="nsig_%s" % signame
-	    if sigwidth == -999:
+        if sigwidth == -999:
     	    poi="nsig_mR{}_gq0p1".format(sigmean)
     else:
         poi=None
