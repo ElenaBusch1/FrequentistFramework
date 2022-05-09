@@ -72,7 +72,7 @@ def main(args):
                        dolimit=args.dolimit,
                        sigmean=args.sigmean,
                        sigwidth=args.sigwidth,
-        		       folder=args.folder,
+                       folder=args.folder,
                        signame=args.signame,
                        maskthreshold=args.maskthreshold)
     else:
@@ -93,7 +93,7 @@ def main(args):
                    dolimit=args.dolimit,
                    sigmean=args.sigmean,
                    sigwidth=args.sigwidth,
-        		   folder=args.folder,
+                   folder=args.folder,
                    signame=args.signame,
                    maskthreshold=args.maskthreshold)
 
