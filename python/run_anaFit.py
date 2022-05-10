@@ -126,6 +126,7 @@ def run_anaFit(datafile,
                    ("OUTPUTFILE", wsfile),
                    ("SIGNAME", signame),
                ])
+
     replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
         ("DATAHIST", datahist),
@@ -133,17 +134,15 @@ def run_anaFit(datafile,
         ("RANGEHIGH", str(rangehigh)),
         ("BINS", str(nbins)),
         ("NBKG", nbkg),
+	("NSIG", nsig),
+	("SIGNAME", signame),
+	("SIGNALFILE", tmpsignalfile)
     ])    
 
     if backgroundfile:
         replaceinfile(tmpcategoryfile, 
                       [("BACKGROUNDFILE", backgroundfile)])
     if signalfile:
-        replaceinfile(tmpcategoryfile, 
-                      [("SIGNALFILE", tmpsignalfile),
-                       ("SIGNAME", signame),
-                       ("NSIG", nsig),
-                   ])
         replaceinfile(tmpsignalfile, 
                       [("SIGMEAN", str(sigmean)),
                        ("SIGWIDTH", str(sigwidth)),
