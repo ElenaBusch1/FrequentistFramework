@@ -252,7 +252,7 @@ def main(args):
     args = parser.parse_args(args)
     if not args.signame:
         if args.sigwidth == -999:
-            args.signame="mR_%s" % (args.sigmean)
+            args.signame="mR%s" % (args.sigmean)
         else:
             args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
