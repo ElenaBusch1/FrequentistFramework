@@ -43,8 +43,11 @@ def main(args):
 	try:
 	  f.GetObject("residuals",h)
 	except:
-	  h = TH1F()
-	  f.GetObject("swiftResiduals_rebinned_resolution",h)
+	  try: 
+	    f.GetObject("J100yStar06/residuals",h)
+	  except:
+	    h = TH1F()
+	    f.GetObject("swiftResiduals_rebinned_resolution",h)
 
         h.SetDirectory(0)
         f.Close()
