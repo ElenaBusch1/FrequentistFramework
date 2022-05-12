@@ -224,6 +224,7 @@ def main():
   # -- FIXME not really though, repeating fits :/ for fixLow :
 
   for i in range(firstBinToFit, lastBinToFit+1):
+
     j = i - firstBinToFit + 1
     
     # i is the bin to fit -- let's paint it with a 2
@@ -321,13 +322,13 @@ def main():
   outputFile.Close()
 
   canvas = ROOT.TCanvas()
-  gStyle.SetPalette(ROOT.kRainBow)
+  ROOT.gStyle.SetPalette(ROOT.kRainBow)
   swiftPoly.GetXaxis().SetTitle("m_{jj} [GeV]")
   swiftPoly.GetYaxis().SetTitle("SWiFt Iteration")
   swiftPoly.Draw("COL0 L")
-  myText(0.2, 0.90, 1, "fixLow = {}".format(fixLow), 12)
-  myText(0.2, 0.85, 1, "truncateRight = {}".format(truncateRight), 12)
-  myText(0.2, 0.80, 1, "fixHigh = {}".format(fixHigh), 12)
+  ROOT.myText(0.2, 0.90, 1, "fixLow = {}".format(fixLow), 12)
+  ROOT.myText(0.2, 0.85, 1, "truncateRight = {}".format(truncateRight), 12)
+  ROOT.myText(0.2, 0.80, 1, "fixHigh = {}".format(fixHigh), 12)
 
   canvas.Print( outFolder + "/swiftCrossCheck.png")
 
