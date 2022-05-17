@@ -34,7 +34,7 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   resHisto = resfile.Get(resolutionBinsHistoName)
   
   res_binEdges = [ resHisto.GetBinLowEdge(i) for i in range(1, resHisto.GetNbinsX()+2) ]
-  #res_binEdges = [ binEdge for binEdge in res_binEdges if binEdge > analysisRangeLow and binEdge< analysisRangeHigh] 
+  res_binEdges = [ binEdge for binEdge in res_binEdges if binEdge > analysisRangeLow and binEdge< analysisRangeHigh] 
  
   # halving resolution bins:
   # used these ones for swifting
@@ -50,31 +50,31 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   #print "Found files:"
   #print collectFiles
 
-  isFirst = True
+  # Build histograms for full spectrum:
+  h_data = ROOT.TH1D("data","data", analysisRangeHigh - analysisRangeLow, analysisRangeLow, analysisRangeHigh)
+  h_swiftFit = h_data.Clone("swiftFit")
+  h_swiftResiduals = h_data.Clone("swiftResiduals")
 
   for f in collectFiles:
       print "Opening file", f
       postfitFile = ROOT.TFile(f, 'read')
+      h_thisData = postfitFile.Get("J100yStar06/data")
       h_fit  = postfitFile.Get("J100yStar06/postfit")
       h_res  = postfitFile.Get("J100yStar06/residuals")
-      if isFirst:
-	  h_data = postfitFile.Get("J100yStar06/data")
-	  h_data.SetDirectory(0)
-	  # Store results in 1GeV Bins here:
-	  h_swiftFit = h_data.Clone("swiftFit")
-	  h_swiftFit.SetDirectory(0)
-	  h_swiftFit.Reset()
-	  h_swiftResiduals = h_data.Clone("swiftResiduals")
-	  h_swiftResiduals.SetDirectory(0)
-	  h_swiftResiduals.Reset()
-	  isFirst = False
 
-      # va a estar en el otro codigo
+      if h_thisData.GetNbinsX() != h_fit.GetNbinsX():
+	print "ERROR: number of bins in data histogram and postfit histogram does not match, stitching won't work"
+	sys.exit()
+      
+      # from this file we extract info only for the i-eth half-res bin:
       i = int(f.split("ibin")[1].split("_")[0])
       low = resolutionFrame.GetXaxis().GetBinLowEdge(i)
       high = resolutionFrame.GetXaxis().GetBinUpEdge(i)
       for j in range(1,h_fit.GetNbinsX()+1):
 	if h_fit.GetXaxis().GetBinLowEdge(j)>= low and h_fit.GetXaxis().GetBinUpEdge(j)<= high:
+	  print h_fit.GetBinCenter(j)
+	  h_data.SetBinContent( h_data.FindBin( h_thisData.GetBinCenter(j)), h_thisData.GetBinContent(j) )
+	  h_data.SetBinError( h_data.FindBin( h_thisData.GetBinCenter(j)),  h_thisData.GetBinError(j) ) 
 	  h_swiftFit.SetBinContent( h_swiftFit.FindBin( h_fit.GetBinCenter(j)) , h_fit.GetBinContent(j))
 	  h_swiftFit.SetBinError(   h_swiftFit.FindBin( h_fit.GetBinCenter(j)) , math.sqrt(h_fit.GetBinContent(j)))
 	  h_swiftResiduals.SetBinContent( h_swiftResiduals.FindBin( h_res.GetBinCenter(j) ), h_res.GetBinContent(j))
@@ -87,6 +87,7 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   firstBin = h_swiftFit.FindFirstBinAbove(0)
   # print "First non-zero bin is", firstBin
 
+  binEdges = [ binEdge for binEdge in binEdges if binEdge > analysisRangeLow and binEdge< analysisRangeHigh]
   rebinBins = [ binEdge for binEdge in binEdges if binEdge >= h_swiftFit.GetBinLowEdge(firstBin) ]
   h_rebinFit = h_swiftFit.Clone()
   h_rebinFit = h_rebinFit.Rebin( len(rebinBins)-1, "swiftFit_rebinned", array.array('d', rebinBins))
@@ -107,8 +108,6 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   # Recompute residuals in new binning:
   h_rebinResiduals_res = computeResiduals( h_rebinData_res, h_rebinFit_res, "swiftResiduals_rebinned_resolution")
 
-
-  
   outputfile = ROOT.TFile(outputFileName,'recreate')
   outputfile.cd()
   h_swiftFit.Write()
@@ -121,7 +120,6 @@ def StitchSwiftResults( patternMatch, outputFileName, analysisRangeLow = 457, an
   h_rebinFit_res.Write()
   h_rebinData_res.Write()
   h_rebinResiduals_res.Write()
-
 
   outputfile.Close()
 
