@@ -50,7 +50,7 @@ initialParameters = {
 
 	'J100' : {  	
 	  
-	  'nbkg' 	: "9E8,0,15E8",
+	  'nbkg' 	: "9E8,0,2E9",
 	  'datafile'	: "",
 	  'datahist'	: "",
 	  'low'  :457 ,
