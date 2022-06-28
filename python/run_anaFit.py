@@ -315,6 +315,13 @@ def main(args):
         else:
             args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
+    # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
+    try: 
+        os.makedirs(args.folder)
+    except OSError:
+        if not os.path.isdir(args.folder):
+            raise
+
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
                topfile=args.topfile,
@@ -331,7 +338,7 @@ def main(args):
                dolimit=args.dolimit,
                sigmean=args.sigmean,
                sigwidth=args.sigwidth,
-	           folder=args.folder,	       
+               folder=args.folder,	       
                signame=args.signame,
                maskthreshold=args.maskthreshold,
                doprefit=args.doprefit)

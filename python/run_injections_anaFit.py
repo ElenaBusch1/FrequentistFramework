@@ -36,11 +36,18 @@ def main(args):
     if not args.signame:
         args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
+    # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
+    try: 
+        os.makedirs(args.folder)
+    except OSError:
+        if not os.path.isdir(args.folder):
+            raise
+
     injecteddatafile=args.datafile
     if (args.sigamp > 0):
         print("Injecting signal of amplitude %.1f sigma (FWHM)" % args.sigamp)
 
-        injecteddatafile="run/"+os.path.basename(args.datafile)
+        injecteddatafile=os.path.join(args.folder, os.path.basename(args.datafile))
         injecteddatafile=injecteddatafile.replace(".root","_injected_mean%d_width%d_amp%.0f.root" % (args.sigmean, args.sigwidth, args.sigamp))
 
         InjectGaussian(infile=args.datafile, 
@@ -57,7 +64,7 @@ def main(args):
             datahist="%s_%d" % (args.datahist, toy)
             outputfile=args.outputfile.replace(".root", "_%d.root" % toy)
             print("Running run_anaFit with datahist %s" % datahist)
-            run_anaFit(datafile=args.datafile,
+            run_anaFit(datafile=injecteddatafile,
                        datahist=datahist,
                        topfile=args.topfile,
                        backgroundfile=args.backgroundfile,
@@ -79,7 +86,7 @@ def main(args):
                        doprefit=args.doprefit)
     else:
         print("Running run_anaFit with datahist %s" % args.datahist)
-        run_anaFit(datafile=args.datafile,
+        run_anaFit(datafile=injecteddatafile,
                    datahist=args.datahist,
                    topfile=args.topfile,
                    backgroundfile=args.backgroundfile,
