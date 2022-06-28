@@ -43,6 +43,10 @@ class PreFitter:
     def Fit(self):
         f = ROOT.TFile(self.datafile, "READ")
         h = f.Get(self.datahist)
+
+        bin_low = h.GetXaxis().FindBin(self.xMin)
+        bin_high = h.GetXaxis().FindBin(self.xMax)
+        nbkg = h.Integral(bin_low, bin_high)
         
         if self.fitLog:
             # make h logarithmic:
@@ -146,8 +150,8 @@ class PreFitter:
             print("p%d = %.8f" % (k+1, bestPars[k]))
             
         print("==================")
-
-        return bestPars
+        
+        return bestPars,nbkg
         
 def main(args):
     parser = argparse.ArgumentParser(description='%prog [options]')

@@ -130,18 +130,6 @@ def run_anaFit(datafile,
                    ("SIGNAME", signame),
                ])
 
-    replaceinfile(tmpcategoryfile, [
-        ("DATAFILE", datafile),
-        ("DATAHIST", datahist),
-        ("RANGELOW", str(rangelow)),
-        ("RANGEHIGH", str(rangehigh)),
-        ("BINS", str(nbins)),
-        ("NBKG", nbkg),
-	("NSIG", nsig),
-	("SIGNAME", signame),
-	("SIGNALFILE", tmpsignalfile)
-    ])    
-
     if backgroundfile:
         shutil.copy2(backgroundfile, tmpbackgroundfile) 
         replaceinfile(tmpcategoryfile, 
@@ -192,14 +180,27 @@ def run_anaFit(datafile,
                 parRangeHigh = parRangeHigh,
             )
             
-            initPars = pf.Fit()
-
+            initPars,_nbkg = pf.Fit()
+            nbkg="%.1E, 0, %.1E" % (_nbkg, 2*_nbkg)
+            
             print("Starting fit with initial pars", initPars)
 
             for i in range(nPars):
                 replaceinfile(tmpbackgroundfile, 
                               [("PAR%d" % (i+1), str(initPars[i]))
                            ])
+
+    replaceinfile(tmpcategoryfile, [
+        ("DATAFILE", datafile),
+        ("DATAHIST", datahist),
+        ("RANGELOW", str(rangelow)),
+        ("RANGEHIGH", str(rangehigh)),
+        ("BINS", str(nbins)),
+        ("NBKG", nbkg),
+	("NSIG", nsig),
+	("SIGNAME", signame),
+	("SIGNALFILE", tmpsignalfile)
+    ])    
 
     if signalfile:
         replaceinfile(tmpsignalfile, 
