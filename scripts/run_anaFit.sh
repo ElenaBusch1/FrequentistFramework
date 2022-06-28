@@ -30,6 +30,7 @@
     # datahist=unfluctuated
     # nbkg="1E9,0,2E9"
     maskthreshold=-1
+    folder=run
 
     flags=""
     if (( $dosignal )); then flags="$flags --dosignal"; fi
@@ -50,5 +51,7 @@
     	--rangehigh $rangehigh \
     	--outputfile $outputfile \
 	--maskthreshold $maskthreshold \
+	--doprefit \
+	--folder $folder \
         $flags
 }
