@@ -57,8 +57,10 @@ def main(args):
 
     h_in.Write("unfluctuated")
 
+    steps = max(1, args.nreplicas/20)
+    
     for i in range(0, args.nreplicas):
-        if (i%(args.nreplicas/20) == 0):
+        if (i%steps == 0):
             print i,"/",args.nreplicas
 
         gRand.SetSeed(i)
