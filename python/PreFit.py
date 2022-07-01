@@ -150,6 +150,8 @@ class PreFitter:
             print("p%d = %.8f" % (k+1, bestPars[k]))
             
         print("==================")
+
+        f.Close()
         
         return bestPars,nbkg
         
