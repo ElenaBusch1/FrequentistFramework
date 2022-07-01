@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SIGMEANS=( 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200 1300 1400 1500 1600 1700 1800 ) 
-SIGWIDTHS=( 5 7 10 12 15 )
+SIGMEANS=( 350 375 400 425 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200 1300 1400 1500 1600 1700 1800 ) 
+SIGWIDTHS=( 1 5 7 10 12 15 )
 
 FILES_BKG="Input/model/dijetTLAnlo/HistFactoryInput/templates2021/bkg/dijet_HTystar_00_06_R04_P2_ScaleMjj_standTheoryUncert_rebin4_LO_ABMP16_5_nnlo_reducedNPs_DataIsJ100_reweightedData_reweightedNLO_range171_3217_fixedBins_normalized_upDown.root
 Input/model/dijetTLAnlo/HistFactoryInput/templates2021/bkg/dijet_HTystar_00_06_R04_P2_ScaleMjj_standTheoryUncert_rebin4_LO_ABMP16_5_nnlo_reducedNPs_DataIsJ100_scaledOnly_reweightedNLO_range171_3217_fixedBins_normalized_upDown.root
