@@ -7,6 +7,7 @@ def main(args):
 
     parser = argparse.ArgumentParser(description='%prog [options]')
     parser.add_argument('--infile', dest='infile', type=str, default='', help='Input file name')
+    parser.add_argument('--inhist', dest='inhist', type=str, help='Input history name')
     parser.add_argument('--templatefile', dest='templatefile', type=str, default='', help='File with template hist')
     parser.add_argument('--templatehist', dest='templatehist', type=str, default='', help='Name of template hist')
     parser.add_argument('--outfile', dest='outfile', type=str, default='rebinned.root', help='Output file name')
@@ -33,6 +34,9 @@ def main(args):
         histName = histKey.GetName()
         hist = f_in.Get(histName).Clone()
         
+        if args.inhist and args.inhist != histName:
+            continue
+
         if not isinstance(hist, ROOT.TH1):
             continue
             

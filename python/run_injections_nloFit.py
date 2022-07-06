@@ -94,7 +94,7 @@ def main(args):
                        maskthreshold=args.maskthreshold)
     else:
         print("Running run_nloFit with datahist %s" % args.datahist)
-        run_nloFit(datafile=args.datafile,
+        run_nloFit(datafile=injecteddatafile,
                    datahist=args.datahist,
                    topfile=args.topfile,
                    categoryfile=args.categoryfile,

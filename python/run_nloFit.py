@@ -6,6 +6,7 @@ import json
 from ExtractPostfitFromWS import PostfitExtractor
 from ExtractFitParameters import FitParameterExtractor
 from PrepareTemplates import unifyBinning
+from PreFitWS import PreFitter
 
 dict_initialpars = {
     "alpha_var_alpha1_edit":-1.0007e+00,
@@ -64,7 +65,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, combinefile=None, externalchi2file=None, externalchi2fct=None, externalchi2bins=40):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, combinefile=None, externalchi2file=None, externalchi2fct=None, externalchi2bins=40, doprefit=False):
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -72,6 +73,17 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     rtv=execute("manager -w edit -x %s" % combinefile)
     if rtv != 0:
         print("WARNING: Non-zero return code from workspaceCombiner. Check if tolerable")
+
+    if doprefit:
+        print(wsfile)
+        pf = PreFitter(
+            wsfile = wsfile,
+            nRetries1 = 50000,
+            nRetries2 = 50,
+            updatews = 1,
+        )
+
+        pf.Fit()
 
     if poi:
         print("Now running s+b quickFit")
@@ -89,7 +101,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmin=-1
         maskmax=-1
 
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 1 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -138,7 +150,9 @@ def run_nloFit(datafile,
                dolimit=False,
                signame='',
                nsig='',
-               maskthreshold=0.01):
+               maskthreshold=0.01,
+               folder="run/",
+               doprefit=False,):
 
     rangelow=binning.index(rangelow)
     rangehigh=binning.index(rangehigh)
@@ -148,16 +162,16 @@ def run_nloFit(datafile,
     print("Fitting", nbins, "bins in range", rangelow, "-", rangehigh)
 
     # generate the config files on the fly in run dir
-    if not os.path.isfile("run/AnaWSBuilder.dtd"):
-        execute("ln -s ../config/dijetTLA/AnaWSBuilder.dtd run/AnaWSBuilder.dtd")
-    if not os.path.isfile("run/Organization.dtd"):
-        execute("ln -s ../workspaceCombiner/dtd/Organization.dtd run/Organization.dtd")
+    if not os.path.isfile("{}/AnaWSBuilder.dtd".format(folder)):
+        execute("ln -sf $PWD/config/dijetTLA/AnaWSBuilder.dtd $PWD/{}/AnaWSBuilder.dtd".format(folder))
+    if not os.path.isfile("{}/Organization.dtd".format(folder)):
+        execute("ln -sf $PWD/workspaceCombiner/dtd/Organization.dtd $PWD/{}/Organization.dtd".format(folder))
 
-    tmpsigfile="run/signal_dijetTLA_fromTemplate.xml"
-    tmpbkgfile="run/background_dijetTLA_fromTemplate.xml"
-    tmpcategoryfile="run/category_dijetTLA_fromTemplate.xml"
-    tmptopfile="run/dijetTLA_fromTemplate.xml"
-    tmpcombinefile="run/combineWS_dijetTLA_fromTemplate.xml"
+    tmpsigfile="{}/signal_dijetTLA_fromTemplate.xml".format(folder)
+    tmpbkgfile="{}/background_dijetTLA_fromTemplate.xml".format(folder)
+    tmpcategoryfile="{}/category_dijetTLA_fromTemplate.xml".format(folder)
+    tmptopfile="{}/dijetTLA_fromTemplate.xml".format(folder)
+    tmpcombinefile="{}/combineWS_dijetTLA_fromTemplate.xml".format(folder)
     combwsfile=wsfile.replace(".root", "_edit.root")
 
     shutil.copy2(topfile, tmptopfile) 
@@ -219,7 +233,8 @@ def run_nloFit(datafile,
                                                                 combinefile=tmpcombinefile,
                                                                 externalchi2file=externalchi2file,
                                                                 externalchi2fct=externalchi2fct,
-                                                                externalchi2bins=externalchi2bins,)
+                                                                externalchi2bins=externalchi2bins,
+                                                                doprefit=doprefit)
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -231,10 +246,10 @@ def run_nloFit(datafile,
         print("Now running BH for masking.")
 
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --outputjson %s --usebinnumbers; deactivate" % (postfitfile, "run/BHresults.json"))
+        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile {0} --outputjson {1}/BHresults.json --usebinnumbers; deactivate".format(postfitfile, folder))
 
         # pass results of pyBH via this json file
-        with open("run/BHresults.json") as f:
+        with open("{}/BHresults.json".format(folder)) as f:
             BHresults=json.load(f)
 
         tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
@@ -269,7 +284,8 @@ def run_nloFit(datafile,
                                             combinefile=tmpcombinefilemasked,
                                             externalchi2file=externalchi2file,
                                             externalchi2fct=externalchi2fct,
-                                            externalchi2bins=externalchi2bins,)
+                                            externalchi2bins=externalchi2bins,
+                                            doprefit=doprefit)
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
 
@@ -286,7 +302,7 @@ def run_nloFit(datafile,
     # if dolimit and dosignal and pval_global > maskthreshold:
     if dolimit and dosignal:
         print("Now running quickLimit")
-        rtv=execute("timeout --foreground 28800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 2 --nllOffset 1 %s -o %s" % (combwsfile, poi, _range, outputfile.replace("FitResult","Limits")))
+        rtv=execute("timeout --foreground 28800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-10 --muScanPoints 20 --minStrat 2 --nllOffset 1 --optConst 2 --GKIntegrator 1 %s -o %s" % (combwsfile, poi, _range, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -320,6 +336,8 @@ def main(args):
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
+    parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform RooFit prefit before quickFit')
+    parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
 
     args = parser.parse_args(args)
     signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
@@ -329,6 +347,13 @@ def main(args):
 
         unifyBinning.main([args.datafile])
         args.datafile=args.datafile.replace(".root","_fixedBins.root")
+
+    # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
+    try: 
+        os.makedirs(args.folder)
+    except OSError:
+        if not os.path.isdir(args.folder):
+            raise
 
     run_nloFit(datafile=args.datafile,
                datahist=args.datahist,
@@ -343,7 +368,6 @@ def main(args):
                outputfile=args.outputfile,
                nbkg=args.nbkg,
                nsig=args.nsig,
-
                rangelow=args.rangelow,
                rangehigh=args.rangehigh,
                constr=args.constr,
@@ -354,7 +378,9 @@ def main(args):
                dosignal=args.dosignal,
                dolimit=args.dolimit,
                signame=signame,
-               maskthreshold=args.maskthreshold,)
+               maskthreshold=args.maskthreshold,
+               folder=args.folder,
+               doprefit=args.doprefit,)
 
 
 if __name__ == "__main__":  

@@ -28,16 +28,22 @@ def main(args):
 
     for p in paths[:-1]:
         f = TFile(p)
-        h_chi2 = f.Get("chi2")
 
         try:
+            h_chi2 = f.Get("chi2")
             chi2.append(h_chi2.GetBinContent(1))
             ndof.append(h_chi2.GetBinContent(5))
             pval.append(h_chi2.GetBinContent(6))
         except:
-            chi2.append(float("NaN"))
-            ndof.append(float("NaN"))
-            pval.append(float("NaN"))
+            try:
+                h_chi2 = f.Get("J100yStar06_rebinned/chi2")
+                chi2.append(h_chi2.GetBinContent(1))
+                ndof.append(h_chi2.GetBinContent(5))
+                pval.append(h_chi2.GetBinContent(6))
+            except:
+                chi2.append(float("NaN"))
+                ndof.append(float("NaN"))
+                pval.append(float("NaN"))
 
 	h = TH1D()
 	try:

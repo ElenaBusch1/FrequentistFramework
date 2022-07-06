@@ -5,6 +5,7 @@ import os,sys,re,argparse,subprocess,shutil
 import json
 from ExtractPostfitFromWS import PostfitExtractor
 from ExtractFitParameters import FitParameterExtractor
+from PreFit import PreFitter
 import ROOT
 
 def execute(cmd):  
@@ -29,7 +30,7 @@ def replaceinfile(f, old_new_list):
         file.write(filedata)
 
 def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfile, poi=None, maskrange=None):
-    rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
+    rtv=execute('XMLReader -x %s -o "logy integral" --minimizerStrategy 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
 
@@ -49,7 +50,7 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         maskmin=-1
         maskmax=-1
 
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --minTolerance 1E-8 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -98,6 +99,7 @@ def run_anaFit(datafile,
                sigmean=1000,
                sigwidth=7,
                maskthreshold=0.01,
+               doprefit=False,
                folder="run/"):
 
     nbins=rangehigh - rangelow
@@ -115,6 +117,7 @@ def run_anaFit(datafile,
       tmpcategoryfile="{}/category_dijetTLA_fromTemplate.xml".format(folder)
       tmptopfile="{}/dijetTLA_fromTemplate.xml".format(folder)  
     tmpsignalfile="{}/signal_dijetTLA_fromTemplate.xml".format(folder)
+    tmpbackgroundfile="{}/background_dijetTLA_fromTemplate.xml".format(folder)
     
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(categoryfile, tmpcategoryfile) 
@@ -126,6 +129,66 @@ def run_anaFit(datafile,
                    ("OUTPUTFILE", wsfile),
                    ("SIGNAME", signame),
                ])
+
+    if backgroundfile:
+        shutil.copy2(backgroundfile, tmpbackgroundfile) 
+        replaceinfile(tmpcategoryfile, 
+                      [("BACKGROUNDFILE", tmpbackgroundfile)])
+        
+        if doprefit:
+            nPars = 5
+
+            if "four" in  backgroundfile:
+                nPars = 4
+            elif "five" in  backgroundfile:
+                nPars = 5
+            elif "six" in  backgroundfile:
+                nPars = 6
+            elif "seven" in  backgroundfile:
+                nPars = 7
+            # [1, -30, -30, -30, ...]
+            parRangeLow = [1]+[-30]*(nPars-1)
+            parRangeHigh = [1]+[30]*(nPars-1)
+            
+            # get prefit ranges from background file
+            with open(tmpbackgroundfile) as f:
+                lines = f.readlines()
+                for line in lines:
+                    if not "<!--" in line and "<ModelItem" in line:
+                        matches = re.findall('\[PAR(\d+),[ ]*([+-]?[0-9]+(?:[.][0-9]*)?),[ ]*([+-]?[0-9]+(?:[.][0-9]*)?)[ ]*\]', line)
+                        for m in matches:
+                            #m[0] is parN
+                            #m[1] is rangeLow
+                            #m[2] is rangeHigh
+                            parRangeLow[int(m[0])-1] = float(m[1])
+                            parRangeHigh[int(m[0])-1] = float(m[2])
+
+            print("Starting PreFit in parameter ranges:")
+            print(parRangeLow)
+            print(parRangeHigh)
+                            
+            pf = PreFitter(
+                datafile = datafile,
+                datahist = datahist,
+                xMin = rangelow,
+                xMax = rangehigh,
+                nPars = nPars,
+                nRetries1 = 2000*nPars,
+                nRetries2 = 2*nPars,
+                fitLog = True,
+                parRangeLow = parRangeLow,
+                parRangeHigh = parRangeHigh,
+            )
+            
+            initPars,_nbkg = pf.Fit()
+            nbkg="%.1E, 0, %.1E" % (_nbkg, 2*_nbkg)
+            
+            print("Starting fit with initial pars", initPars)
+
+            for i in range(nPars):
+                replaceinfile(tmpbackgroundfile, 
+                              [("PAR%d" % (i+1), str(initPars[i]))
+                           ])
 
     replaceinfile(tmpcategoryfile, [
         ("DATAFILE", datafile),
@@ -139,9 +202,6 @@ def run_anaFit(datafile,
 	("SIGNALFILE", tmpsignalfile)
     ])    
 
-    if backgroundfile:
-        replaceinfile(tmpcategoryfile, 
-                      [("BACKGROUNDFILE", backgroundfile)])
     if signalfile:
         replaceinfile(tmpsignalfile, 
                       [("SIGMEAN", str(sigmean)),
@@ -219,7 +279,7 @@ def run_anaFit(datafile,
     if dolimit and dosignal and pval_global > maskthreshold:
         print("Now running quickLimit")
         #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
-        rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 2 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+        rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-10 --muScanPoints 20 --minStrat 2 --nllOffset 0 --GKIntegrator 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -246,6 +306,7 @@ def main(args):
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %). If -999 dealing with Zprime samples.')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
+    parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform ROOT prefit before quickFit')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
 
     args = parser.parse_args(args)
@@ -254,6 +315,13 @@ def main(args):
             args.signame="mR%s" % (args.sigmean)
         else:
             args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
+
+    # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
+    try: 
+        os.makedirs(args.folder)
+    except OSError:
+        if not os.path.isdir(args.folder):
+            raise
 
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
@@ -271,9 +339,10 @@ def main(args):
                dolimit=args.dolimit,
                sigmean=args.sigmean,
                sigwidth=args.sigwidth,
-	           folder=args.folder,	       
+               folder=args.folder,	       
                signame=args.signame,
-               maskthreshold=args.maskthreshold)
+               maskthreshold=args.maskthreshold,
+               doprefit=args.doprefit)
 
 
 

@@ -26,6 +26,7 @@ def main(args):
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--signame', dest='signame', type=str, help='Name of the signal parameter')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
+    parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform ROOT prefit before quickFit')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
     parser.add_argument('--sigamp', dest='sigamp', type=float, default=0, help='Amplitude of Gaussian to inject (in sigma)')
     parser.add_argument('--loopstart', dest='loopstart', type=int, help='First toy to fit')
@@ -38,11 +39,18 @@ def main(args):
       else:
         args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
+    # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
+    try: 
+        os.makedirs(args.folder)
+    except OSError:
+        if not os.path.isdir(args.folder):
+            raise
+
     injecteddatafile=args.datafile
     if (args.sigamp > 0):
         print("Injecting signal of amplitude %.1f sigma (FWHM)" % args.sigamp)
 
-        injecteddatafile="run/"+os.path.basename(args.datafile)
+        injecteddatafile=os.path.join(args.folder, os.path.basename(args.datafile))
         injecteddatafile=injecteddatafile.replace(".root","_injected_mean%d_width%d_amp%.0f.root" % (args.sigmean, args.sigwidth, args.sigamp))
 
         InjectGaussian(infile=args.datafile, 
@@ -59,7 +67,7 @@ def main(args):
             datahist="%s_%d" % (args.datahist, toy)
             outputfile=args.outputfile.replace(".root", "_%d.root" % toy)
             print("Running run_anaFit with datahist %s" % datahist)
-            run_anaFit(datafile=args.datafile,
+            run_anaFit(datafile=injecteddatafile,
                        datahist=datahist,
                        topfile=args.topfile,
                        backgroundfile=args.backgroundfile,
@@ -77,10 +85,11 @@ def main(args):
                        sigwidth=args.sigwidth,
                        folder=args.folder,
                        signame=args.signame,
-                       maskthreshold=args.maskthreshold)
+                       maskthreshold=args.maskthreshold,
+                       doprefit=args.doprefit)
     else:
         print("Running run_anaFit with datahist %s" % args.datahist)
-        run_anaFit(datafile=args.datafile,
+        run_anaFit(datafile=injecteddatafile,
                    datahist=args.datahist,
                    topfile=args.topfile,
                    backgroundfile=args.backgroundfile,
@@ -98,7 +107,8 @@ def main(args):
                    sigwidth=args.sigwidth,
                    folder=args.folder,
                    signame=args.signame,
-                   maskthreshold=args.maskthreshold)
+                   maskthreshold=args.maskthreshold,
+                   doprefit=args.doprefit)
 
 if __name__ == "__main__":  
     sys.exit(main(sys.argv[1:]))
