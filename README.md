@@ -5,7 +5,12 @@ This code is very preliminary and under construction, and its documentation is a
 This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
-# Install - This follows the README of the XmlAnaWSBuilder and quickFit. pyBumpHunter is run in a virtualenv to run python 3.6 alongside python 2.7 setup with ROOT
+You can also see the slides in the _docs/_ directory. 
+
+# Install
+
+This follows the README of the XmlAnaWSBuilder and quickFit. pyBumpHunter is run in a virtualenv to run python 3.6 alongside python 2.7 setup with ROOT
+
 ```
 setupATLAS
 lsetup git
