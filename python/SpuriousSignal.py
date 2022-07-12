@@ -11,6 +11,19 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
+# J50:
+# text="#sqrt{s}=13 TeV, J50 15 fb^{-1} PD"
+# ymin=-1.99e5
+# ymax=1.99e5
+# spacing=8
+
+# J100:
+text="#sqrt{s}=13 TeV, J100 130 fb^{-1} PD"
+ymin=-0.49e5
+ymax=0.49e5
+spacing=20
+
+
 def main(args):
     SetAtlasStyle()
  
@@ -102,13 +115,13 @@ def main(args):
                         h.Draw("same hist")
 
 
-                    leg = TLegend(0.66,0.70,0.89,0.90)
-                    leg.AddEntry(list_h[0], "#splitline{NLOFit:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[0]/rms[0]), "f")
-                    leg.AddEntry(list_h[1], "#splitline{5-par:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[1]/rms[1]), "f")
-                    leg.Draw()
+                    # leg = TLegend(0.66,0.70,0.89,0.90)
+                    # leg.AddEntry(list_h[0], "#splitline{NLOFit:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[0]/rms[0]), "f")
+                    # leg.AddEntry(list_h[1], "#splitline{5-par:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[1]/rms[1]), "f")
+                    # leg.Draw()
 
                     ATLASLabel(0.20, 0.90, "Work in progress", 13)
-                    myText(0.20, 0.85, 1, "#sqrt{s}=13 TeV, 130 fb^{-1} PD", 13)
+                    myText(0.20, 0.85, 1, text, 13)
 
                     c.Print("spuriousSignal_%s.svg" % name)
 
@@ -124,10 +137,10 @@ def main(args):
                                 print "WARNING: mean/rms=%.2f for %s in file %s" % (mean[i]/rms[i], name, paths[i])
 
                         j = graphs[i][(w,a)].GetN()
-                        graphs[i][(w,a)].SetPoint(j, m+(w/5-2)*15, mean[i])
+                        graphs[i][(w,a)].SetPoint(j, m+(w/5-2)*spacing, mean[i])
                         graphs[i][(w,a)].SetPointError(j, 0, rms[i])
 
-                        ratios[i][(w,a)].SetPoint(j, m+(w/5-2)*15, mean[i] / rms[i])
+                        ratios[i][(w,a)].SetPoint(j, m+(w/5-2)*spacing, mean[i] / rms[i])
 
     for i,p in enumerate(paths):
 
@@ -154,7 +167,7 @@ def main(args):
             if first:
                 g.Draw("ap")
 
-                l = TLine(600,0,1900,0)
+                l = TLine(g.GetXaxis().GetXmin(),0,g.GetXaxis().GetXmax(),0)
                 l.SetLineColor(kGray+2)
                 l.SetLineStyle(7)
                 l.Draw()
@@ -166,7 +179,7 @@ def main(args):
             g.SetTitle("#sigma_{G}/m_{G} = %.2f" % (w/100.))
             g.GetXaxis().SetTitle("")
             g.GetYaxis().SetTitle("N_{sig}")
-            g.GetYaxis().SetRangeUser(-0.49E5, 0.49E5)
+            g.GetYaxis().SetRangeUser(ymin, ymax)
             g.SetLineColor(colors[j])
             g.SetMarkerColor(colors[j])
 
@@ -175,7 +188,7 @@ def main(args):
             g.Write("nsig_width%d_amp%d" % (w,a))
 
         ATLASLabel(0.20, 0.90, "Work in progress", 13)
-        myText(0.20, 0.85, 1, "#sqrt{s}=13 TeV, 130 fb^{-1} PD", 13)
+        myText(0.20, 0.85, 1, text, 13)
         leg.Draw()
 
         c.cd()
@@ -194,15 +207,15 @@ def main(args):
             if first:
                 g.Draw("ap")
 
-                l1 = TLine(600,0.5,1900,0.5)
+                l1 = TLine(g.GetXaxis().GetXmin(),0.5,g.GetXaxis().GetXmax(),0.5)
                 l1.SetLineColor(kGray+2)
                 l1.SetLineStyle(7)
                 l1.Draw()
-                l2 = TLine(600,-0.5,1900,-0.5)
+                l2 = TLine(g.GetXaxis().GetXmin(),-0.5,g.GetXaxis().GetXmax(),-0.5)
                 l2.SetLineColor(kGray+2)
                 l2.SetLineStyle(7)
                 l2.Draw()
-                l3 = TLine(600,0,1900,0)
+                l3 = TLine(g.GetXaxis().GetXmin(),0,g.GetXaxis().GetXmax(),0)
                 l3.SetLineColor(kGray+2)
                 l3.Draw()
 
@@ -219,6 +232,7 @@ def main(args):
             g.SetMarkerColor(colors[j])
 
         c.Update()
+        c.Print(outname + ".pdf")
         c.Print(outname + ".svg")
 
         f_out.Close()

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import ROOT
 import sys, re, os, math, argparse
+import numpy as np
 
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 ROOT.gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
@@ -13,7 +14,7 @@ def main(args):
     ROOT.SetAtlasStyle()
 
     parser = argparse.ArgumentParser(description='%prog [options]')
-    parser.add_argument('--infiles', dest='infiles', nargs='+', type=str, default='', help='Input file name')
+    parser.add_argument('--infiles', dest='infiles', nargs='+', type=str, required=True, help='Input file names')
     parser.add_argument('--inhist', dest='inhist', type=str, default='chi2', help='Input hist name')
     parser.add_argument('--chi2bin', dest='chi2bin', type=int, default=1, help='Hist bin with chi2')
     parser.add_argument('--pvalbin', dest='pvalbin', type=int, help='Hist bin with pval')
@@ -40,7 +41,11 @@ def main(args):
 
         f_in.Close()
         
-    mean = sum(chi2) / len(chi2)
+    # mean = sum(chi2) / len(chi2)
+    mean = np.percentile(chi2,50)
+    # boundary = np.percentile(chi2,95)
+    boundary = 2*mean
+    print mean, boundary
 
     f_out = ROOT.TFile(args.outfile, "RECREATE")
     f_out.cd()
@@ -68,7 +73,7 @@ def main(args):
     
     if not args.nofit:
         print "Fitting with chi2 distribution"
-        f1 = ROOT.TF1("chi-square distribution",ChiSquareDistr,0.,3*mean,1);
+        f1 = ROOT.TF1("chi-square distribution",ChiSquareDistr,0.,boundary,1);
         f1.SetNpx(2000)
         f1.SetParameter(0,h_out.GetMean())
         
@@ -95,11 +100,11 @@ def main(args):
         if "constrSigma" in args.infiles[0]:
             s=re.findall(r'constrSigma\d+', args.infiles[0])[0]
             s=int(s[11:])
-            text="NLOFit, %d#sigma constraints" % s
+            text="NLOFit, #sigma=%d constraint" % s
         elif "constr" in args.infiles[0]:
             s=re.findall(r'constr\d+', args.infiles[0])[0]
             s=int(s[6:])
-            text="NLOFit, %d#sigma constraints" % s
+            text="NLOFit, #sigma=%d constraint" % s
 
     ROOT.myText(0.92, 0.84, 1, text, 33)
 
@@ -116,11 +121,12 @@ def main(args):
 
     c.Update()
 
-    # c.Print(args.outfile.replace(".root", ".png"))
-    # c.Print(args.outfile.replace(".root", ".pdf"))
+    c.Print(args.outfile.replace(".root", ".png"))
+    c.Print(args.outfile.replace(".root", ".pdf"))
 
     f_out.Close()
 
 
 if __name__ == "__main__":  
-   sys.exit(main(sys.argv[1:]))   
+   args=[x for x in sys.argv[1:] if not x == "-b"]
+   sys.exit(main(args))   

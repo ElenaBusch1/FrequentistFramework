@@ -33,7 +33,7 @@ def main(args):
             x=re.findall(r'constr\d+', path)[0]
             x=int(x[6:])
         else:
-            print "ERROR: Cannot extract constraint from file name"
+            print "ERROR: Cannot extract constraint from file name %s" % path
             return 1
         
         h_in = f_in.Get(args.inhist)

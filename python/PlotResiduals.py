@@ -26,27 +26,42 @@ def main(args):
     pval = []
     ndof = []
 
-    for p in paths:
+    for p in paths[:-1]:
         f = TFile(p)
 
-        h_chi2 = f.Get("chi2")
         try:
+            h_chi2 = f.Get("chi2")
             chi2.append(h_chi2.GetBinContent(1))
             ndof.append(h_chi2.GetBinContent(5))
             pval.append(h_chi2.GetBinContent(6))
         except:
-            chi2.append(float("NaN"))
-            ndof.append(float("NaN"))
-            pval.append(float("NaN"))
+            try:
+                h_chi2 = f.Get("J100yStar06_rebinned/chi2")
+                chi2.append(h_chi2.GetBinContent(1))
+                ndof.append(h_chi2.GetBinContent(5))
+                pval.append(h_chi2.GetBinContent(6))
+            except:
+                chi2.append(float("NaN"))
+                ndof.append(float("NaN"))
+                pval.append(float("NaN"))
 
-        h = f.Get("residuals")
+	h = TH1D()
+	try:
+	  f.GetObject("residuals",h)
+	except:
+	  try: 
+	    f.GetObject("J100yStar06/residuals",h)
+	  except:
+	    h = TH1F()
+	    f.GetObject("swiftResiduals_rebinned_resolution",h)
 
         h.SetDirectory(0)
         f.Close()
         hists.append(h)
 
     c = TCanvas("c1", "c1", 800, 600)
-        
+    c.SetGridy()
+
     for i, h in enumerate(hists):
         h.SetFillStyle(fillstyles[i])
         h.SetLineColor(colors[i])
@@ -54,18 +69,20 @@ def main(args):
         h.SetMarkerColor(colors[i])
         h.SetMinimum(min(-4.2, h.GetMinimum()))
         h.SetMaximum(max( 5.2, h.GetMaximum()))
-        h.GetXaxis().SetTitle("m_{jj} [GeV]")
+	h.GetXaxis().SetTitle("m_{jj} [GeV]")
         h.GetYaxis().SetTitle("Residuals [#sigma]")
         h.SetNdivisions(505)
-
+	h.GetXaxis().SetRangeUser(457,2997)
         h.Draw("same hist")
 
     leg = TLegend(0.18,0.80,0.90,0.90)
     leg.SetNColumns(2)
     leg.SetTextSize(21)
+    leg.SetFillStyle(0)
 
-    for i, p in enumerate(paths):
-        entry = "#splitline{"
+    for i, p in enumerate(paths[:-1]):
+        entry = ""
+        #entry = "#splitline{"
         if "CT14" in p:
             entry += "CT14"
         if "MMHT" in p:
@@ -74,7 +91,14 @@ def main(args):
             entry += "ABMP16"
         if "fivePar" in p:
             entry += "analytic 5-par"
-            
+	elif "threePar" in p:
+	    entry += "analytic 3-par"
+	else:
+	    entry += "analytic 4-par"
+	if "UA2" in p:
+	    entry = entry.replace("analytic","UA2")
+	if "WHW" in p:
+	    entry += ", WHW:{}".format(p.split("WHW")[1].split("_")[0])
         if "reweightedData" in p or "rewData" in p:
             entry += ", rew."
         if "inflated" in p:
@@ -91,7 +115,9 @@ def main(args):
         if "noConstr" in p:
             entry += ", free"
 
-        entry += "}{#chi^{2}/n.d.f. = %.1f/%.1f}" % (chi2[i], ndof[i])
+	if not "WHW" in p:  # n.d.f in SWiFt?
+	  entry = "#splitline{" + entry + "}{#chi^{2}/n.d.f. = %.1f/%.1f}" % (chi2[i], ndof[i])
+
         leg.AddEntry(hists[i], entry)
 
     # leg.AddEntry(hists[0], "#splitline{NLOFit (20#sigma)}{#splitline{#chi^{2}/n.d.f. = %.1f/%.1f}{#it{p}(#chi^{2}) = %.3f}}" % (chi2[0], ndof[0], pval[0]), "f")
@@ -100,11 +126,11 @@ def main(args):
     leg.Draw()
 
     ATLASLabel(0.60, 0.30, "Work in progress", 13)
-    myText(0.60, 0.25, 1, "#sqrt{s}=13 TeV, 29 fb^{-1}", 13)
+    myText(0.60, 0.25, 1, "J100, #sqrt{s}=13 TeV, 3.6 fb^{-1}", 13)
 
     c1.Print("residuals_J100.svg")
     c1.Print("residuals_J100.png")
-
+    c1.Print(paths[-1])
     raw_input("Press enter to continue...")
 
 

@@ -3,10 +3,50 @@
   <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_channel[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
 
   <Sample Name="background" InputFile="config/dijetTLA/background_dijetTLA_J100yStar06_fourPar.xml" MultiplyLumi="0" ImportSyst=":self:">
-  <!-- <Sample Name="background" InputFile="config/dijetTLA/background_dijetTLA_J100yStar06_fivePar.xml" MultiplyLumi="0" ImportSyst=":self:"> -->
     <NormFactor Name="nbkg[NBKG]"/>
   </Sample>
 
+  <Sample Name="signal_mean350_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean350_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean350_width1[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean350_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean350_width5.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean350_width5[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean350_width7" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean350_width7.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean350_width7[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean350_width10" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean350_width10.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean350_width10[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean350_width12" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean350_width12.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean350_width12[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean350_width15" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean350_width15.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean350_width15[0,-1E6,1E6]" />
+  </Sample>
+
+  <Sample Name="signal_mean400_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean400_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean400_width1[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean400_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean400_width5.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean400_width5[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean400_width7" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean400_width7.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean400_width7[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean400_width10" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean400_width10.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean400_width10[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean400_width12" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean400_width12.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean400_width12[0,-1E6,1E6]" />
+  </Sample>
+  <Sample Name="signal_mean400_width15" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean400_width15.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean400_width15[0,-1E6,1E6]" />
+  </Sample>
+
+  <Sample Name="signal_mean450_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean450_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean450_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean450_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean450_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean450_width5[0,-1E6,1E6]" />
   </Sample>
@@ -23,6 +63,9 @@
     <NormFactor Name="nsig_mean450_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean500_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean500_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean500_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean500_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean500_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean500_width5[0,-1E6,1E6]" />
   </Sample>
@@ -39,6 +82,9 @@
     <NormFactor Name="nsig_mean500_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean550_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean550_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean550_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean550_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean550_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean550_width5[0,-1E6,1E6]" />
   </Sample>
@@ -55,6 +101,9 @@
     <NormFactor Name="nsig_mean550_width15[0,-1E6,1E6]" />
   </Sample>
   
+  <Sample Name="signal_mean600_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean600_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean600_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean600_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean600_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean600_width5[0,-1E6,1E6]" />
   </Sample>
@@ -71,6 +120,9 @@
     <NormFactor Name="nsig_mean600_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean650_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean650_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean650_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean650_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean650_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean650_width5[0,-1E6,1E6]" />
   </Sample>
@@ -87,6 +139,9 @@
     <NormFactor Name="nsig_mean650_width15[0,-1E6,1E6]" />
   </Sample>
   
+  <Sample Name="signal_mean700_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean700_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean700_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean700_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean700_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean700_width5[0,-1E6,1E6]" />
   </Sample>
@@ -103,6 +158,9 @@
     <NormFactor Name="nsig_mean700_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean750_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean750_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean750_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean750_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean750_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean750_width5[0,-1E6,1E6]" />
   </Sample>
@@ -119,6 +177,9 @@
     <NormFactor Name="nsig_mean750_width15[0,-1E6,1E6]" />
   </Sample>
   
+  <Sample Name="signal_mean800_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean800_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean800_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean800_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean800_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean800_width5[0,-1E6,1E6]" />
   </Sample>
@@ -135,6 +196,9 @@
     <NormFactor Name="nsig_mean800_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean850_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean850_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean850_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean850_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean850_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean850_width5[0,-1E6,1E6]" />
   </Sample>
@@ -151,6 +215,9 @@
     <NormFactor Name="nsig_mean850_width15[0,-1E6,1E6]" />
   </Sample>
   
+  <Sample Name="signal_mean900_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean900_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean900_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean900_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean900_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean900_width5[0,-1E6,1E6]" />
   </Sample>
@@ -167,6 +234,9 @@
     <NormFactor Name="nsig_mean900_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean950_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean950_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean950_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean950_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean950_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean950_width5[0,-1E6,1E6]" />
   </Sample>
@@ -183,6 +253,9 @@
     <NormFactor Name="nsig_mean950_width15[0,-1E6,1E6]" />
   </Sample>
   
+  <Sample Name="signal_mean1000_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1000_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1000_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1000_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1000_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1000_width5[0,-1E6,1E6]" />
   </Sample>
@@ -199,6 +272,9 @@
     <NormFactor Name="nsig_mean1000_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1050_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1050_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1050_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1050_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1050_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1050_width5[0,-1E6,1E6]" />
   </Sample>
@@ -215,6 +291,9 @@
     <NormFactor Name="nsig_mean1050_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1100_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1100_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1100_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1100_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1100_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1100_width5[0,-1E6,1E6]" />
   </Sample>
@@ -231,6 +310,9 @@
     <NormFactor Name="nsig_mean1100_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1150_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1150_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1150_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1150_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1150_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1150_width5[0,-1E6,1E6]" />
   </Sample>
@@ -247,6 +329,9 @@
     <NormFactor Name="nsig_mean1150_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1200_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1200_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1200_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1200_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1200_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1200_width5[0,-1E6,1E6]" />
   </Sample>
@@ -263,6 +348,9 @@
     <NormFactor Name="nsig_mean1200_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1300_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1300_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1300_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1300_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1300_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1300_width5[0,-1E6,1E6]" />
   </Sample>
@@ -279,6 +367,9 @@
     <NormFactor Name="nsig_mean1300_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1400_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1400_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1400_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1400_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1400_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1400_width5[0,-1E6,1E6]" />
   </Sample>
@@ -295,6 +386,9 @@
     <NormFactor Name="nsig_mean1400_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1500_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1500_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1500_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1500_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1500_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1500_width5[0,-1E6,1E6]" />
   </Sample>
@@ -311,6 +405,9 @@
     <NormFactor Name="nsig_mean1500_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1600_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1600_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1600_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1600_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1600_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1600_width5[0,-1E6,1E6]" />
   </Sample>
@@ -327,6 +424,9 @@
     <NormFactor Name="nsig_mean1600_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1700_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1700_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1700_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1700_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1700_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1700_width5[0,-1E6,1E6]" />
   </Sample>
@@ -343,6 +443,9 @@
     <NormFactor Name="nsig_mean1700_width15[0,-1E6,1E6]" />
   </Sample>
 
+  <Sample Name="signal_mean1800_width1" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1800_width1.xml" MultiplyLumi="0" >
+    <NormFactor Name="nsig_mean1800_width1[0,-1E6,1E6]" />
+  </Sample>
   <Sample Name="signal_mean1800_width5" InputFile="config/dijetTLA/signal/signal_dijetTLA_J100yStar06_mean1800_width5.xml" MultiplyLumi="0" >
     <NormFactor Name="nsig_mean1800_width5[0,-1E6,1E6]" />
   </Sample>

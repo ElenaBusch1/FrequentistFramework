@@ -2,6 +2,9 @@ import sys, ROOT, math, glob, os, re
 from array import array
 from color import getColorSteps
 
+ROOT.TCandle.SetBoxRange(0.68)
+ROOT.TCandle.SetWhiskerRange(0.95)
+
 def natural_sort(l):
     convert = lambda text: int(text) if text.isdigit() else text.lower() 
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
@@ -197,9 +200,9 @@ for i,mass in enumerate(masses):
     h2_all_points[mass].SetLineColor(colors[i])
     h2_all_points[mass].SetMarkerColor(colors[i])
 
-    hs.Add(h2_all_points[mass], "CANDLEX(00112011)") #(zhpawMmb)
+    hs.Add(h2_all_points[mass], "CANDLEX(00111011)") #(zhpawMmb)
 
-hs.Draw("CANDLEX(00112011)")
+hs.Draw("CANDLEX(00111011)")
 hs.GetYaxis().SetLimits(0.,10.)
 hs.GetXaxis().SetTitle("N_{inj} / #sqrt{N_{bkg}}")
 hs.GetYaxis().SetTitle("95% limit / #sqrt{N_{bkg}}")
