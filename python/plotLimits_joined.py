@@ -6,22 +6,24 @@ from ROOT import *
 from math import sqrt
 from math import isnan
 from glob import glob
+from color import getColorSteps
 
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
-# path = "/data/barn01/bartels/TLA/quickFit/run/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root"
-paths = [ "../run/Limits/swift_fivepar/Limits_J75yStar03_mean${MEAN}_width${WIDTH}.root",
-          "../run/Limits/swift_fivepar/Limits_J100yStar06_mean${MEAN}_width${WIDTH}.root", ]
+paths = ["../run/Limits_nloFit_J50CombyStar06_templates2021_CT14nnlo_scaledOnly_constr5_mean${MEAN}_width${WIDTH}.root", 
+         "../run/Limits_nloFit_J100yStar06_templates2021_CT14nnlo_scaledOnly_constr5_mean${MEAN}_width${WIDTH}.root",
+]
 
 
-sigmeans  = [ [ 450, 500, 550, 600, 650, 700, ], 
-              [ 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1300, 1400, 1500, 1600, 1700, 1800, ] ]
-sigwidths = [ [ 5, 7, 10, ], 
-              [ 5, 7, 10, ] ]
+sigmeans  = [ [ 300, 350, 375, 400, 450, 500, ], 
+              [ 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1300, 1400, 1500, 1600, 1700, 1800, ] ]
+sigwidths = [ [ 5, 10, 15], 
+              [ 5, 10, 15] ]
 
-lumis = [ 3600, 29300 ]
+# lumis = [ 3600, 29300 ]
+lumis = [ 15000, 133000 ]
 
 def xToNDC(x):
     gPad.Update()
@@ -62,8 +64,8 @@ def createFillBetweenGraphs(g1, g2):
 def main(args):
     SetAtlasStyle()
  
-    # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
-    colors = [kBlue, kRed+1, kOrange-3]
+    colors = [kBlue, kOrange-3, kRed+1]
+    # colors = getColorSteps(len(sigwidths[0]))
 
     g_obs_datasets = []
     g_exp_datasets = []
@@ -149,11 +151,15 @@ def main(args):
     c = TCanvas("c1", "c1", 800, 600)
     c.SetLogy()
 
+    # leg_obs = TLegend(0.65,0.70,0.85,0.85)
+    # leg_exp = TLegend(0.65,0.47,0.85,0.62)
     leg_obs = TLegend(0.65,0.70,0.85,0.85)
-    leg_exp = TLegend(0.65,0.47,0.85,0.62)
+    leg_exp = TLegend(0.65,0.70,0.85,0.85)
 
-    minY = 0.02
-    maxY = 500
+    # minY = 0.02
+    # maxY = 500
+    minY = 0.01
+    maxY = 1000
 
     g_exp_datasets[0][0].Draw("af")
     g_exp_datasets[0][0].GetXaxis().SetTitle("M_{G} [GeV]")
@@ -180,25 +186,30 @@ def main(args):
             if (dataset==0):
                 leg_exp.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[dataset][i]/100.), "l")
         for i,g in enumerate(g_obs_datasets[dataset]):
-            g.Draw("pl")
+            # g.Draw("pl")
             if (dataset==0):
                 leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[dataset][i]/100.), "lp")
 
         
     ATLASLabel(0.20, 0.90, "Work in progress", 13)
-    myText(0.20, 0.84, 1, "95% CL_{s} upper limts", 13)
+    myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
     # myText(0.20, 0.80, 1, "#sqrt{s}=13 TeV, 3.6 fb^{-1}", 13)
-    myText(xToNDC(700), 0.78, 1, "#sqrt{s}=13 TeV", 23)
+    myText(xToNDC(500), 0.78, 1, "#sqrt{s}=13 TeV", 23)
 
-    myText(xToNDC(575), 0.72, 1, "%.1f fb^{-1}" % (lumis[0]*0.001), 23)
-    myText(xToNDC(825), 0.72, 1, "%.1f fb^{-1}" % (lumis[1]*0.001), 23)
+    # myText(xToNDC(575), 0.72, 1, "%.1f fb^{-1}" % (lumis[0]*0.001), 23)
+    # myText(xToNDC(825), 0.72, 1, "%.1f fb^{-1}" % (lumis[1]*0.001), 23)
 
-    myText(0.65, 0.90, 1, "Observed:", 13)
-    myText(0.65, 0.67, 1, "Expected:", 13)
+    myText(xToNDC(390), 0.72, 1, "%.0f fb^{-1}" % (lumis[0]*0.001), 23)
+    myText(xToNDC(610), 0.72, 1, "%.0f fb^{-1}" % (lumis[1]*0.001), 23)
+
+    # myText(0.65, 0.90, 1, "Observed:", 13)
+    # myText(0.65, 0.67, 1, "Expected:", 13)
+    myText(0.65, 0.90, 1, "Expected:", 13)
     leg_exp.Draw()
-    leg_obs.Draw()
+    # leg_obs.Draw()
 
-    c1.Print("../run/limitPlot_swift_fivepar.png")
+    c1.Print("../run/limitPlot_joined.svg")
+    c1.Print("../run/limitPlot_joined.pdf")
 
     # raw_input("Press enter to continue...")
 

@@ -7,33 +7,30 @@ https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
 You can also see the slides in the _docs/_ directory. 
 
-# Install - This follows the README of the XmlAnaWSBuilder and quickFit
+# Install
+
+This follows the README of the XmlAnaWSBuilder and quickFit. pyBumpHunter is run in a virtualenv to run python 3.6 alongside python 2.7 setup with ROOT
+
 ```
 setupATLAS
 lsetup git
 git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
 cd FrequentistFramework/
-git submodule init
-git submodule update --remote
-source scripts/setup_buildAndFit.sh
-cd xmlAnaWSBuilder/
-sh scripts/install_roofitext.sh
-mkdir build && cd build
-cmake ..
-make -j4
-make install
-cd ../../quickFit/
-export RooFitExtensions_DIR=../xmlAnaWSBuilder/RooFitExtensions/
-mkdir build && cd build
-cmake ..
-make -j4
-cd ../..
+git checkout commonDevelopment
+source scripts/install_FrequentistFramework.sh
 ```
+
+If you plan to run the NLOFit, you need to prepare input workspaces from the template histograms in this repository. For that, run
+```
+source scripts/HistFactory/prepareInput.sh
+source scripts/HistFactory/generate.sh
+```
+
 # Setup
 
 In the future you can setup your environment via
 ```
-source scripts/setup_buildAndFit.sh
+source scripts/setup_buildCombineFit.sh
 ```
 
 # Run
@@ -43,6 +40,14 @@ Example run command:
 XMLReader -x config/dijetTLA/dijetTLA_J75yStar03.xml -s 0 --plotOption logy
 ```
 This command will make a RooWorkspace starting J75-triggered data from https://arxiv.org/abs/1804.03496, fitted with the five parameter background function. It will also generate a summary PDF with the fit result.
+
+To run pyBumpHunter, the virtualenv needs to be activated and deactivated afterwards. The ROOT setup can mess up $PYTHONPATH for numpy and other packages, so it needs to be overwritten when running scripts.
+```
+source pyBumpHunter/pyBH_env/bin/activate
+# execute pyBumpHunter scripts like this:
+env PYTHONPATH="" python3 python/FindBHWindow.py --inputfile XYZ.root
+deactivate
+```
 
 # Scripts
 
@@ -76,6 +81,10 @@ With _initialGuess_ you need to specify the order of magnitude that you expect y
 
 # Automation
 
-All of this is performed in the bash scripts _scripts/run_buildAndFit_swift.sh_ and _scripts/run_buildAndFit_nlofit.sh_. In there you can specify your _datafile_, _datahist_, _sigmean_ and _sigwidth_ (or set them as env variables before executing). It then uses generic copies of the xmlAnaWsBuilder .xml config files labeled as .template files which you can specify with the _topfile_ and _categoryfile_ variables. They are virtually identically but contain strings like DATAHIST instead of definite entries. These are then replaced in the run script with whatever you provided before executing the xmlAnaWSBuilder. For the analytic window fit also the range and bin count of the fit will be passed on by the run script, as specified by your windowhalfwidth _whw_ and the binning in which to apply it _binedges_.
+All of this is performed in the python scripts _python/run_anaFit.py_ and _python/run_nloFit.py_. They need to be provided with _datafile_, _datahist_, _sigmean_ and _sigwidth_. They use generic copies of the xmlAnaWsBuilder .xml config files labeled as .template files which you can specify with the _topfile_ and _categoryfile_ variables. They are virtually identically but contain strings like DATAHIST instead of definite entries. These are then replaced in the run script with whatever you provided before executing the xmlAnaWSBuilder. The NLOFit will need additional inputs. Examples how to execute these scripts are given in _scripts/run_anaFit.sh_ and _scripts/run_nloFit.sh_.
 
 If you produced many limits for different signal points, they can be summarized in a limit plot with _python/plotLimits.py_ that you will have to adapt to your paths, lumi, mass ranges etc.
+
+# Importing Templates
+
+To use histogram templates either for signal models or for the NLOFit background estimate in xmlAnaWSBuilder, they can best be turned into RooWorkspaces using HistFactory. Some python scripts for that are in _python/PrepareTemplates_, some bash scripts to execute them in order are in _scripts/HistFactory_. For the NLOFit templates, the histograms need to be cropped to match the fit range, have their bin width set to 1, normalized to an integral of 1 and depending on the PDF also add symmetric up/down variations. This is all performed in _scripts/HistFactory/prepareInput.sh_. For signal templates for the analytic fit, only the normalization needs to be done. The workspaces for NLOFit bkg and signal templates are generated via _scripts/HistFactory/generate.sh_. To add systematics to signal templates, _python/PrepareTemplates/dijetTLAnlo_genBkg.py_ should give a good first hint, since the MC variations are added as bkg systematics there.

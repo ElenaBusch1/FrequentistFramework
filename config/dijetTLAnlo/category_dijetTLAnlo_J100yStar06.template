@@ -2,7 +2,7 @@
 <Channel Name="J100yStar06" Type="shape" Lumi="1">
   <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_J100yStar06[0,33]" Binning="33" InjectGhost="1"/>
 
-  <Sample Name="background" InputFile="config/dijetTLAnlo/background_dijetTLAnlo_J100yStar06.xml" MultiplyLumi="0">
+  <Sample Name="background" InputFile="BACKGROUNDFILE" MultiplyLumi="0">
   <!-- <Sample Name="background" InputFile="config/dijetTLAnlo/background_dijetTLAnlo_J100yStar06.xml" MultiplyLumi="0" ImportSyst=":self:"> -->
     <!-- 29 fb-1: -->
     <!-- <NormFactor Name="nbkg[2.3E8,0,3E8]" /> -->

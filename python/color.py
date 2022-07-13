@@ -75,13 +75,13 @@ def getColorSteps(n):
         n_extra = n-len(base_colors)
         
         n_spacers = len(base_colors) - 1
-        print n_extra, n_spacers, n_extra/n_spacers
+        print n_extra, n_spacers, n_extra/n_spacers, n_extra%n_spacers
         #if n_spacers%n_padding == 0: 
         #spacers01 = getInterpolatedColorSteps(C0,C1, n_extra/n_spacers + 1 if n_extra%n_spacers > 0 else 0)
         spacers12 = getInterpolatedColorSteps(C1,C2, n_extra/n_spacers )
-        spacers23 = getInterpolatedColorSteps(C2,C3, n_extra/n_spacers  + 1 if n_extra%n_spacers > 0 else 0)
-        spacers34 = getInterpolatedColorSteps(C3,C4, n_extra/n_spacers  + 1 if n_extra%n_spacers > 1 else 0)
-        spacers45 = getInterpolatedColorSteps(C4,C5, n_extra/n_spacers  + 1 if n_extra%n_spacers > 2 else 0)
+        spacers23 = getInterpolatedColorSteps(C2,C3, n_extra/n_spacers  + (1 if n_extra%n_spacers > 0 else 0))
+        spacers34 = getInterpolatedColorSteps(C3,C4, n_extra/n_spacers  + (1 if n_extra%n_spacers > 1 else 0))
+        spacers45 = getInterpolatedColorSteps(C4,C5, n_extra/n_spacers  + (1 if n_extra%n_spacers > 2 else 0))
         '''elif n_spacers%4 == 1: 
             spacers01 = getInterpolatedColorSteps(C0,C1, n_spacers/4 )
             spacers12 = getInterpolatedColorSteps(C1,C2, n_spacers/4 )

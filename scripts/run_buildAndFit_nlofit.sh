@@ -30,6 +30,12 @@ fi
 if [[ -z $datahist ]]; then
     datahist=data
 fi
+if [[ -z $inputmodel ]]; then
+    inputmodel=Input/model/dijetTLAnlo/LO_CT14nnlo_reducedNPs_scaledOnly_reweightedNLO_inflated10000/HistFactory_dijetTLAnlo_J100yStar06_bkg_ws.root
+fi
+if [[ -z $bkgfile ]]; then
+    bkgfile=config/dijetTLAnlo/background_dijetTLAnlo_J100yStar06_CT14nnlo.template
+fi
 if [[ -z $categoryfile ]]; then
     # categoryfile=config/dijetTLAnlo/category_dijetTLAnlo_J75yStar03.template
     categoryfile=config/dijetTLAnlo/category_dijetTLAnlo_J100yStar06.template
@@ -58,6 +64,7 @@ if [[ -z $outputfile ]]; then
     outputfile=run/FitResult_nloFit_J100yStar06_mean${sigmean}_width${sigwidth}.root
 fi
 
+tmpbkgfile=run/background_dijetTLAnlo_fromTemplate.xml
 tmpcategoryfile=run/category_dijetTLAnlo_fromTemplate.xml
 tmptopfile=run/dijetTLAnlo_fromTemplate.xml
 
@@ -66,9 +73,13 @@ if [ ! -f run/AnaWSBuilder.dtd ]; then
     ln -s ../config/dijetTLAnlo/AnaWSBuilder.dtd run/AnaWSBuilder.dtd
 fi
 
+cp ${bkgfile} ${tmpbkgfile}
+sed -i "s@INPUTMODEL@${inputmodel}@g" ${tmpbkgfile}
+
 cp ${categoryfile} ${tmpcategoryfile}
 sed -i "s@DATAFILE@${datafile}@g" ${tmpcategoryfile} #@ because datafile contains /
 sed -i "s@DATAHIST@${datahist}@g" ${tmpcategoryfile}
+sed -i "s@BACKGROUNDFILE@${tmpbkgfile}@g" ${tmpcategoryfile}
 sed -i "s@NBKG@${nbkg}@g" ${tmpcategoryfile}
  
 cp ${topfile} ${tmptopfile}
@@ -88,7 +99,7 @@ if ! $sigfit; then
     fi
 
     #sometimes randomly fails at exit:
-    python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    python python/ExtractPostfitFromWS.py --datafile ${datafile/_fixedBins/} --datahist $datahist --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
     python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 else
     # Don't need to set all POIs to 0, that is default behavior. Only specify the floating POI
@@ -100,7 +111,7 @@ else
 	echo "Non-zero return code from quickFit. Check if tolerable"
     fi
 
-    python python/ExtractPostfitFromWS.py --datafile $datafile --datahist $datahist --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
+    python python/ExtractPostfitFromWS.py --datafile ${datafile/_fixedBins/} --datahist $datahist --wsfile ${outputfile} --outfile ${outputfile/FitResult/PostFit} || true
     python python/ExtractFitParameters.py --wsfile ${outputfile} --outfile ${outputfile/FitResult/FitParameters}
 
     echo "Now running quickLimit"
