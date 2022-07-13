@@ -16,7 +16,6 @@ setupATLAS
 lsetup git
 git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
 cd FrequentistFramework/
-git checkout commonDevelopment
 source scripts/install_FrequentistFramework.sh
 ```
 
