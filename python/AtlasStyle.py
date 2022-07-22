@@ -6,13 +6,16 @@
 from ROOT import TStyle, TLatex, gStyle, TLine, TMarker, TCanvas, gROOT, TPave
 
 def AtlasStyle():
-    atlasStyle = TStyle("ATLAS","Atlas style")
+    #atlasStyle = TStyle("ATLAS","Atlas style")
+    atlasStyle = TStyle("ATLAS","ATLAS")
 
     # use plain black on white colors
     icol=0
     atlasStyle.SetFrameBorderMode(icol)
     atlasStyle.SetFrameFillColor(icol)
     atlasStyle.SetLegendFillColor(icol)
+    atlasStyle.SetLegendBorderSize(0)
+    atlasStyle.SetLegendFont(42)
     atlasStyle.SetCanvasBorderMode(icol)
     atlasStyle.SetCanvasColor(icol)
     atlasStyle.SetPadBorderMode(icol)
@@ -85,6 +88,7 @@ def SetAtlasStyle():
     atlasStyle = AtlasStyle()
     gROOT.SetStyle("ATLAS")
     gROOT.ForceStyle()
+    return atlasStyle
 
 
 def ATLASLabel(x, y, color, dR, tsize, text):
@@ -217,7 +221,7 @@ def myMarkerTextSmall(x, y, lcolor, lstyle, mcolor, mstyle, size, text):
     xb1 = x-0.40*size-0.4*size
     xb2 = x+0.25*size-0.4*size
 
-    print "box  = ",xb1,yb1,xb2,yb2
+    #print "box  = ",xb1,yb1,xb2,yb2
     
     #print "line = ",xl1,yl1,xl2,yl2
     mline1 = TLine(xb1,yb1,xb2,yb2)
@@ -256,7 +260,7 @@ def myMarkerTextSmall2(x, y, lcolor, lstyle, mcolor, mstyle, msize, size, text):
     xb1 = x-0.28*size-0.45*size
     xb2 = x+0.28*size-0.45*size
 
-    print "box  = ",xb1,yb1,xb2,yb2
+    #print "box  = ",xb1,yb1,xb2,yb2
     
     #print "line = ",xl1,yl1,xl2,yl2
     mline1 = TLine(xb1,yb1,xb2,yb2)

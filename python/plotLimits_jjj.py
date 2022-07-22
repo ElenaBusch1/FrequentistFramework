@@ -43,7 +43,7 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, rangelow, rangehigh, atlasLabel="Simulation Internal"):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal"):
     SetAtlasStyle()
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
@@ -83,7 +83,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, ran
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
                 # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[dataset]
-                tmp_path = config.getFileName(paths[dataset], cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, 0) + "_0.root"
+                tmp_path = config.getFileName(paths[dataset], cdir, None, outdir, sigmean, sigwidth, 0) + "_0.root"
                 f = TFile(tmp_path, "READ")
 
                 if f.IsZombie():

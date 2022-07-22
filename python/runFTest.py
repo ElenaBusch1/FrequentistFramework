@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import ROOT
 import sys, re, os, math, optparse
-from color import getColorSteps
-import DrawingFunctions as df
-import LocalFunctions as lf
+#from color import getColorSteps
+import python.DrawingFunctions as df
+import python.LocalFunctions as lf
 import python.AtlasStyle as AS
 import config as config
 import array
@@ -18,7 +18,7 @@ def calcFpF(chi2_nom, chi2_alt, npars_nom, npars_alt, nbins):
     return (F, pF)
 
 
-def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atlasLabel="Simulation Internal", chi2bin=1, nbinsbin=3, nparsbin=4, ndofbin=5, usendof=0, rebinEdges=None):
+def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atlasLabel="Simulation Internal", chi2bin=1, nbinsbin=3, nparsbin=4, ndofbin=5, usendof=0, rebinEdges=None, outputdir="", fitNames = []):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     l_pf = []
     l_res = []
@@ -30,15 +30,15 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
     l_par=[]
     legNames = []
 
-    for infile in infiles:
-        tmp_path = config.getFileName(infile, cdir, channelName, rangelow, rangehigh) + ".root"
+    for infile, fitName in zip(infiles, fitNames):
+        tmp_path = config.getFileName(infile, cdir, channelName, outputdir) + ".root"
 
-        h_chi2 = lf.read_histogram(tmp_path,"chi2")
-        h_pf   = lf.read_histogram(tmp_path,"postfit")
-        h_data   = lf.read_histogram(tmp_path,"data")
-        h_res  = lf.read_histogram(tmp_path, "residuals")
-        h_data.GetXaxis().SetTitle("m_{jj}")
-        h_res.GetXaxis().SetTitle("m_{jj}")
+        h_chi2 = lf.read_histogram(tmp_path,"chi2%s_"%(channelName))
+        h_pf   = lf.read_histogram(tmp_path,"postfit%s_"%(channelName))
+        h_data   = lf.read_histogram(tmp_path,"data%s_"%(channelName))
+        h_res  = lf.read_histogram(tmp_path, "residuals%s_"%(channelName))
+        h_data.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
+        h_res.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
         h_res.GetYaxis().SetTitle("Residual (#sigma)")
 
         if rebinEdges:
@@ -61,7 +61,7 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
         chi2  = h_chi2.GetBinContent(chi2bin)
         _nbins = h_chi2.GetBinContent(nbinsbin)
         if nbins > 0 and _nbins != nbins:
-            print "ERROR: Change of binning between files: %d, %d . Exiting" % (nbins, _nbins)
+            #print "ERROR: Change of binning between files: %d, %d . Exiting" % (nbins, _nbins)
             return -1
         else:
             nbins = _nbins
@@ -78,10 +78,16 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
         l_chi2.append(chi2)
         l_npars.append(npars)
         l_ndof.append(ndof)
-        legtext = "%s (#chi^{2}/n = %.0f/%.0f)" % (infile, chi2, ndof)
+        try:
+          tmpName = config.fitFunctions[fitName]["Name"]
+        except:
+          tmpName = fitName
+        legtext = "%s (#chi^{2}/n = %.0f/%.0f)" % (tmpName, chi2, ndof)
         legNames.append(legtext)
 
     labels = []
+    labels.append(config.samples[channelName]["varLabel"])
+    
     for i in range(len(l_chi2)-1):
 
         (F, pF) = calcFpF( chi2_nom=l_chi2[i],
@@ -90,20 +96,27 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
                            npars_alt=l_npars[i+1],
                            nbins=nbins )
 
-        print "\nF-Test between:", infiles[i], infiles[i+1]
-        print "chi2 values:", l_chi2[i], l_chi2[i+1]
-        print "npars:", l_npars[i], l_npars[i+1]
-        print "nbins:", nbins
-        print "pF:", pF
+        #print "\nF-Test between:", infiles[i], infiles[i+1]
+        #print "chi2 values:", l_chi2[i], l_chi2[i+1]
+        #print "npars:", l_npars[i], l_npars[i+1]
+        #print "nbins:", nbins
+        #print "pF:", pF
+        try:
+          tmpName1 = config.fitFunctions[fitNames[i]]["Name"]
+          tmpName2 = config.fitFunctions[fitNames[i+1]]["Name"]
+        except:
+          tmpName1 = fitNames[i]
+          tmpName2 = fitNames[i+1]
 
-        labels.append("p(F_{^{%s #rightarrow %s par}}) = %.2f" % (infiles[i], infiles[i+1], pF))
+        labels.append("p(F_{^{%s #rightarrow %s par}}) = %.2f" % (tmpName1, tmpName2, pF))
 
-    c = df.setup_canvas(outfile)
-    df.SetRange(l_res, myMin=-5, myMax=5, isLog=False)
+    c = df.setup_canvas(config.getFileName("FTest_%s"%(infile), cdir, channelName, outputdir) )
+    df.SetRange(l_res, myMin=-2, myMax=5, isLog=False)
     outname = outfile.replace(".root", "")
-    leg = df.DrawHists(c, l_res, legNames, labels, "", drawOptions = ["HIST", "HIST"], styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    leg = df.DrawHists(c, l_res, legNames, labels, "", drawOptions = ["HIST", "HIST"], styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, isLogX = True)
+    outfile = config.getFileName("FTest_%s"%(infile), cdir, channelName, outputdir) + ".pdf"
 
-    c.Print("%s/%s/FTest_%s.pdf"%(cdir, channelName, outfile))
+    c.Print(outfile)
 
 
 

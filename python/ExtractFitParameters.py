@@ -17,7 +17,7 @@ class FitParameterExtractor:
         self.nsigErr = None
         self.suffix = ""
 
-    def ExtractFromFile(self, suffix):
+    def ExtractFromFile(self, suffix, channel=""):
         f_in = ROOT.TFile(self.wsfile, "READ")
 
         self.h1_params = f_in.Get("postfit_params%s"%(suffix))
@@ -34,10 +34,13 @@ class FitParameterExtractor:
 
         for i in range(self.h1_params.GetNbinsX()):
             name = self.h1_params.GetXaxis().GetBinLabel(i)
+            #if "nsig" in name:
+            #  print name, channel
 
-            if "nsig" in name:
+            if "nsig" in name and channel in name:
                 self.nsig = self.h1_params.GetBinContent(i)
                 self.nsigErr = self.h1_params.GetBinError(i)
+                #print name, channel, self.nsig 
 
         f_in.Close()
 
@@ -45,8 +48,6 @@ class FitParameterExtractor:
     def Extract(self):
         f_in = ROOT.TFile(self.wsfile, "READ")
         r = f_in.Get("fitResult%s"%(self.suffix))
-
-        # r.Print()
 
         mat_cov = r.covarianceMatrix()
         mat_cor = r.correlationMatrix()
@@ -105,7 +106,8 @@ class FitParameterExtractor:
         return self.h2_cor
 
     def GetNsig(self):
-        if not self.nsig:
+        if self.nsig==None:
+            #print "running extraction"
             self.Extract()
         return self.nsig
 
@@ -132,7 +134,7 @@ class FitParameterExtractor:
         self.h2_cov.Write("%s%s"%(self.h2_cov.GetName(), suffix))
         self.h2_cor.Write("%s%s"%(self.h2_cor.GetName(), suffix))
         self.h1_nbkg.Write("%s%s"%(self.h1_nbkg.GetName(), suffix))
-
+       
         f_out.Close()
 
 def main(args):

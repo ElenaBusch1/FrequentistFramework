@@ -2,23 +2,20 @@
 
 from __future__ import print_function
 import os,sys,re,argparse
-from InjectGaussian import InjectGaussian
-from InjectTemplate import InjectTemplate
-from run_anaFit import run_anaFit
-import config as config
+from python.InjectGaussian import InjectGaussian
+from python.InjectTemplate import InjectTemplate
+from python.run_anaFit import run_anaFit
+import scripts.config as config
 
-def run_injections_anaFit(datafile, 
+def run_injections_anaFit(
                           datahist, 
                           topfile, 
-                          categoryfile, 
                           signalfile, 
                           wsfile, 
                           outputfile, 
                           outputstring,
                           nbkg, 
                           nsig,
-                          rangelow, 
-                          rangehigh, 
                           dosignal, 
                           dolimit, 
                           sigmean, 
@@ -33,25 +30,32 @@ def run_injections_anaFit(datafile,
                           fitFunction, 
                           cdir,
                           outdir,
+                          datafiles,
+                          histnames,
+                          doRemake,
                          ):
 
     print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
-    injecteddatafile=datafile
-    injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
+    injecteddatafiles=[]
+    nbkgWindows = []
+    for cfile, chist in zip(datafiles, histnames):
+      injecteddatafile=cfile
+      injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
+      injecteddatafiles.append(injecteddatafile)
 
 
-    if config.signals[signalfile]["histname"] == "":
-      nbkgWindow = InjectGaussian(infile=datafile,
-                       histname=datahist,
+      if config.signals[signalfile]["histname"] == "":
+        nbkgWindow = InjectGaussian(infile=cfile,
+                       histname=chist,
                        sigmean=sigmean,
                        sigwidth=sigwidth,
                        sigamp=sigamp,
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1)
-    else:
-      nbkgWindow = InjectTemplate(infile=datafile,
-                       histname=datahist,
+      else:
+        nbkgWindow = InjectTemplate(infile=cfile,
+                       histname=chist,
                        sigmean=sigmean,
                        sigwidth=sigwidth,
                        sigamp=sigamp,
@@ -61,17 +65,18 @@ def run_injections_anaFit(datafile,
                        wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean),
                        wspdf = config.signals[signalfile]["histname"],
                        )
+      print (chist, nbkgWindow)
+      nbkgWindows.append(nbkgWindow)
 
     if loopstart==None or loopend==None:
        ntoys=1
     else:
        ntoys = loopend
 
-    print("Running run_anaFit with datahist %s" % datahistName)
-    run_anaFit(datafile=injecteddatafile,
+    #print("Running run_anaFit with datahist %s" % datahistName)
+    run_anaFit(
                datahist=datahist,
                topfile=topfile,
-               categoryfile=categoryfile,
                wsfile=wsfile,
                outputfile=outputfile,
                outputstring=outputstring,
@@ -79,12 +84,10 @@ def run_injections_anaFit(datafile,
                cdir=cdir,
                nbkg=nbkg,
                outdir=outdir,
-               rangelow=rangelow,
-               rangehigh=rangehigh,
                dosignal=dosignal,
                signalfile = signalfile, 
                nsig=nsig,
-               nbkgWindow=nbkgWindow,
+               nbkgWindow=nbkgWindows,
                ntoys=ntoys,
                dolimit=dolimit,
                sigmean=sigmean,
@@ -92,7 +95,10 @@ def run_injections_anaFit(datafile,
                rebinFile=rebinfile,
                rebinHist=rebinhist,
                rebinEdges=rebinedges,
-               maskthreshold=maskthreshold
+               maskthreshold=maskthreshold,
+               datafiles=injecteddatafiles,
+               histnames=histnames,
+               doRemake=doRemake,
               )
 
 
@@ -108,8 +114,6 @@ def main(args):
     parser.add_argument('--wsfile', dest='wsfile', type=str, required=True, help='Output workspace file')
     parser.add_argument('--outputfile', dest='outputfile', type=str, required=True, help='Output fitresult file')
     parser.add_argument('--nbkg', dest='nbkg', type=str, required=True, help='Initial value and range of nbkg par (e.g. "2E8,0,3E8")')
-    parser.add_argument('--rangelow', dest='rangelow', type=int, required=True, help='Start of fit range (in GeV)')
-    parser.add_argument('--rangehigh', dest='rangehigh', type=int, required=True, help='End Start of fit range (in GeV)')
     parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')

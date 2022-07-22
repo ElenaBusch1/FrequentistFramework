@@ -9,6 +9,7 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
 
     gRand = ROOT.TRandom3()
     seed = 0
+    nbkgs = []
 
     for histKey in f_in.GetListOfKeys():
         histNameFile = histKey.GetName()
@@ -16,18 +17,10 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
         if not histname in histNameFile:
             continue
 
-        #if firsttoy != None and lasttoy != None and re.search(r'.*_(\d+)', histNameFile):
-        #    #reduce size by omitting all other toys
-        #    toy = int(re.search(r'.*_(\d+)', histNameFile).group(1))
-        #    if toy < firsttoy or toy > lasttoy:
-        #        seed += 1
-        #        continue
-
         hist = f_in.Get(histNameFile).Clone()
         hinj = hist.Clone()
         hgaus = hist.Clone("injectedSignal") 
         hgaus.Reset("M")
-        #print "found", hist
 
         # define the parameters of the gaussian and fill it
         if sigmean > 0.0:
@@ -40,6 +33,7 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
             nBkg = hist.Integral(binLow, binHigh)
             if nBkg == 0:
                nBkg = 1
+            nbkgs.append(nBkg)
 
             if nBkg > 0.0:
                 sigma = (sigwidth*0.01) * sigmean 
@@ -63,7 +57,7 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
         seed += 1
             
     f_out.Close()
-    return nBkg
+    return nbkgs
 
 
 def main(args):

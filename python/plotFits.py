@@ -4,18 +4,18 @@
 
 import ROOT
 import sys, re, os, math, argparse
-import LocalFunctions as lf
-import DrawingFunctions as df
+import python.LocalFunctions as lf
+import python.DrawingFunctions as df
 import python.AtlasStyle as AS
 import array
 import config as config
-import ExtractFitParameters as efp
+import python.ExtractFitParameters as efp
 
 
 
 def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, 
              atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", 
-             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None):
+             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None, indir=""):
 
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     AS.SetAtlasStyle()
@@ -33,23 +33,26 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       fitNames = infiles
 
     labels = []
+    labels.append(config.samples[channelName]["varLabel"])
 
     for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
-      path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj, sigmean, sigwidth, sigamp) + ".root"
-      dataHist = lf.read_histogram(path, datahistName + suffix)
-      fitHist = lf.read_histogram(path, fithistName + suffix)
-      residualHist = lf.read_histogram(path, residualhistName + suffix)
+      path = config.getFileName(infileName, cdir, channelName, indir, sigmean, sigwidth, sigamp) + ".root"
+      #print path, datahistName
+      dataHist = lf.read_histogram(path, datahistName + channelName + "_" +suffix)
+      fitHist = lf.read_histogram(path, fithistName +channelName + "_" + suffix)
+      residualHist = lf.read_histogram(path, residualhistName +channelName + "_" + suffix)
+      #print path, datahistName + channelName+suffix
       dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
       fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
       residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
 
       try:
         postFit = path.replace("FitParameters", "PostFit")
-        chi2Hist = lf.read_histogram(postFit, "chi2"+suffix)
+        chi2Hist = lf.read_histogram(postFit, "chi2"+channelName+"_"+suffix)
         chi2 = chi2Hist.GetBinContent(2)
         pval = chi2Hist.GetBinContent(6)
       except:
-        print "Did not find the chi2 or pval", postFit, suffix, "chi2"+suffix
+        #print "Did not find the chi2 or pval", postFit, suffix, "chi2"+suffix
         chi2 = -1
         pval = -1
 
@@ -59,15 +62,21 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       try:
         fpe = efp.FitParameterExtractor(fitPath)
         if toy:
-          fpe.suffix = "_%d"%(toy)
-          fpe.ExtractFromFile( "_%d"%(toy))
+          fpe.suffix = "%s__%d"%(channelName,toy)
+          #fpe.ExtractFromFile( "%s"%(channelName))
+          fpe.ExtractFromFile( "%s__%d"%(channelName,toy))
+          #print fpe.nsig
+          #print "%s__%d"%(channelName)
         else:
-          fpe.suffix = ""
-          fpe.ExtractFromFile( "")
+          fpe.suffix = channelName
+          fpe.ExtractFromFile( channelName)
         nsig = fpe.GetNsig()
+        nbkg = fpe.GetNbkg()
         labels.append("N_{sig, extracted} = %.3f"%nsig)
+        labels.append("N_{bkg} = %.3f"%nbkg)
       except:
-        print "Unable to find fit parameters,", fitPath
+        #print "Unable to find fit parameters,", fitPath
+        x1230123=1
 
       if not dataHist or not fitHist or not residualHist:
         continue
@@ -97,11 +106,11 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
             residualHist.SetBinContent(ibin, binSig)
             residualHist.SetBinError(ibin, 0)
-            residualHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
+            residualHist.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
             residualHist.GetYaxis().SetTitle("Residuals (#sigma)")
 
 
-      dataHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
+      dataHist.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
       dataHist.GetYaxis().SetTitle("N_{events}")
 
       if index == 0:
@@ -123,13 +132,14 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         tmpName = config.fitFunctions[fitName]["Name"]
       except:
         tmpName = fitName
-      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-value = %.2f %%}"%(tmpName, chi2, pval))
+      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
 
 
+    c.SetLogx()
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
 
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = True, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
     c.Print(outname + ".pdf")
 
 

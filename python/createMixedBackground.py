@@ -16,32 +16,41 @@ def fluctuatePoisson(hist):
       if fluc >= 0:
           result.SetBinContent(ibin, fluc);
           result.SetBinError(ibin, math.sqrt(fluc));
-      #else:
-      #    result.SetBinContent(ibin, 0);
-      #    result.SetBinError(ibin, 1);
 
     return result;
 
-def generatePseudoData(infile, inhist, outfile, outhist, nreplicas, scaling):
+def generatePseudoData(infile, inhist, infit, outfile, outhist, nreplicas, scaling, rangelow):
     f_in = ROOT.TFile(infile, "READ")
     h_in = f_in.Get(inhist)
+    h_fit = f_in.Get(infit)
     print (infile, inhist)
     h_in.SetDirectory(0)
+    h_fit.SetDirectory(0)
     f_in.Close()
 
     h_in.Scale(scaling)
+    h_fit.Scale(scaling)
 
     f_out = ROOT.TFile(outfile, "RECREATE")
     f_out.cd()
 
-    for i in range(0, nreplicas):
-        if nreplicas > 20 and (i%(nreplicas/20) == 0):
-            print (i,"/",nreplicas)
+    h_out = ROOT.TH1D(h_fit.Clone("fluctuated hist"));
+    h_out.Reset()
+    h_out.SetDirectory(0)
 
-        gRand.SetSeed(i*h_in.GetNbinsX())
-        h_out = fluctuatePoisson(h_in)
-        h_out.Write("%s_%d" % (outhist, i))
+    nBinsX = h_out.GetNbinsX();
+    for ibin in range(0, nBinsX+2):
+      dataErr = math.sqrt(h_in.GetBinContent(ibin+rangelow))
+      mcErr = h_in.GetBinError(ibin+rangelow)
+      if dataErr < mcErr:
+        h_out.SetBinContent(ibin, h_fit.GetBinContent(ibin))
+      else:
+        h_out.SetBinContent(ibin, h_in.GetBinContent(ibin+rangelow))
 
+    f_out = ROOT.TFile(infile, "UPDATE")
+    #f_out = ROOT.TFile("test.root", "RECREATE")
+    h_out.Write(outhist)
+    #h_out.Write()
     f_out.Close()
 
 

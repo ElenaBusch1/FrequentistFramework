@@ -6,7 +6,7 @@ import ROOT
 import sys, re, os, math, argparse
 import python.DrawingFunctions as df
 import python.LocalFunctions as lf
-import AtlasStyle as AS
+import python.AtlasStyle as AS
 import config as config
 
 
