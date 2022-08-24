@@ -70,7 +70,8 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         rebinfile="Input/data/dijetTLAnlo/binning2021/data_J100yStar06_range171_3217.root",
         rebinhist="data",
         maskmin=maskmin,
-        maskmax=maskmax
+        maskmax=maskmax,
+        bkgonly=True
     )
     pval = pfe.GetPval()
     pfe.WriteRoot(postfitfile, dirPerCategory=True)
