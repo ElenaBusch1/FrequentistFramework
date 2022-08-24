@@ -118,7 +118,8 @@ class PostfitExtractor:
                  externalchi2fct=None, 
                  externalchi2bins=40, 
                  maskmin=-1, 
-                 maskmax=-1):
+                 maskmax=-1,
+                 bkgonly=False):
 
         self.wsfile = wsfile
         self.datafile = datafile
@@ -133,6 +134,7 @@ class PostfitExtractor:
         self.externalchi2bins = externalchi2bins
         self.maskmin = maskmin
         self.maskmax = maskmax
+        self.bkgonly = bkgonly
         self.h_data = None
         self.channel_chi2 = {}
         self.channel_nbins = {}
@@ -174,6 +176,11 @@ class PostfitExtractor:
             x = pdfi.getObservables(datai).first()
             npars = getNPars(pdfi, x, exclSyst=True)
             
+            if self.bkgonly:
+                pdf_bkg_unscaled = w.obj("pdf__background_"+channelname)
+                yield_bkg = w.obj("yield__background_"+channelname)
+                pdf_bkg = w.factory("ExtendPdf::pdf__background_ext_"+channelname+"(pdf__background_"+channelname+",yield__background_"+channelname+")")
+
             print "Channel %s:" % channelname
             print "Expected:"
             expectedEvents = pdfi.expectedEvents(RooArgSet(x))
@@ -201,6 +208,26 @@ class PostfitExtractor:
 
             getChi2(extractor=self, channelname=channelname, npars=npars)
 
+            if self.bkgonly:
+                expectedEvents_bkg = pdf_bkg.expectedEvents(RooArgSet(x))
+                hpdf_bkg = pdf_bkg.createHistogram("hpdf_bkg", x)
+                hpdf_bkg.Scale(expectedEvents_bkg/hpdf_bkg.Integral())
+            
+                channelname_bkg = channelname+"_bkgonly"
+
+                h_postfit_bkg = TH1D("postfit", "postfit", nBins, array.array('d', binEdges))
+                h_postfit_bkg.SetDirectory(0)
+    
+                for ibin in range(1, nBins+1):
+                    h_postfit_bkg.SetBinContent(ibin, hpdf_bkg.GetBinContent(ibin))
+                    h_postfit_bkg.SetBinError(ibin, 0)
+                    
+                self.channel_hdata[channelname_bkg] = self.h_data.Rebin(nBins, "h_data_crop", array.array('d', binEdges))
+                self.channel_hdata[channelname_bkg].SetDirectory(0)
+                self.channel_hpostfit[channelname_bkg] = h_postfit_bkg
+    
+                getChi2(extractor=self, channelname=channelname_bkg, npars=npars)
+
             binEdges = None
             if self.rebinfile and self.rebinhist:
                 f_rebin = ROOT.TFile(self.rebinfile, "READ")
@@ -223,6 +250,14 @@ class PostfitExtractor:
 
                 getChi2(extractor=self, channelname=rebinnedchannelname, npars=npars)
 
+            if self.bkgonly and self.rebinfile and self.rebinhist:
+                rebinnedchannelname_bkg=channelname_bkg+"_rebinned"
+                self.channel_hpostfit[rebinnedchannelname_bkg] = self.channel_hpostfit[channelname_bkg].Rebin(len(binEdges)-1, "postfit", array.array('d', binEdges))
+                self.channel_hdata[rebinnedchannelname_bkg] = self.channel_hdata[channelname_bkg].Rebin(len(binEdges)-1, self.datahist, array.array('d', binEdges))
+                self.datafirstbin = self.channel_hdata[rebinnedchannelname_bkg].FindBin(self.datafirstbin) - 1
+
+                getChi2(extractor=self, channelname=rebinnedchannelname_bkg, npars=npars)
+    
         fd.Close()
         f.Close()
 
@@ -339,6 +374,7 @@ def main(args):
     parser.add_argument('--maskmin', dest='maskmin', type=int, default=-1, help='Masked range to exclude from chi2 calculation')
     parser.add_argument('--maskmax', dest='maskmax', type=int, default=-1, help='Masked range to exclude from chi2 calculation')
     parser.add_argument('--dirpercategory', dest='dirpercategory', action='store_true', help='Create one output directory per channel (also for rebinning)')
+    parser.add_argument('--bkgonly', dest='bkgonly', action='store_true', help='Add directory for bkg-only postfit. Needs --dirpercategory set.')
 
     args = parser.parse_args(args)
 
@@ -355,7 +391,8 @@ def main(args):
         externalchi2fct=args.externalchi2fct,
         externalchi2bins=args.externalchi2bins,
         maskmin=args.maskmin,
-        maskmax=args.maskmax
+        maskmax=args.maskmax,
+        bkgonly=args.bkgonly
     )
     pfe.Extract()
     pfe.WriteRoot(args.outfile, args.dirpercategory)
