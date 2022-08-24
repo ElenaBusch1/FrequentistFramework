@@ -53,7 +53,7 @@ initialParameters = {
 	'J100' : {  	
 	  
 	  'nbkg' 	: "4E7,0,1E8",
-	  'datafile'	: "/eos/user/m/mtoscani/Rel21/TLA/DS_histograms/unblinding2/unblinding2_mjj_spectra.root",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_all.root",
 	  'datahist'	: "L1J100/Mjj_1GeVbinning",
 	  # Analysis range		
 	  'low'  : 457,
@@ -64,14 +64,15 @@ initialParameters = {
 	'J50'  : {	
 	  
 	  'nbkg' : "1E7,0,2E7",
-	  'datafile'	: "/eos/user/m/mtoscani/Rel21/TLA/DS_histograms/unblinding2/unblinding2_mjj_spectra.root",
-	  'datahist'	: "L1J50Comb/Mjj_1GeVbinning",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_all.root",
+	  'datahist'	: "L1J50/Mjj_1GeVbinning",
 	  'lumi'	: 1.5,
 	  'low'  : 302,
 	  'high' : 1516, 
 	},
 
     },
+
     'full' : {  # Full lumi: total datafile
 
 	'J100' : {  	
