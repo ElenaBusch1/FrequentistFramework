@@ -293,7 +293,7 @@ def main(args):
     parser.add_argument('--topfile', dest='topfile', type=str, required=True, help='Input top-level xml card')
     parser.add_argument('--categoryfile', dest='categoryfile', type=str, required=True, help='Input category xml card')
     parser.add_argument('--backgroundfile', dest='backgroundfile', type=str, help='Input background xml card')
-    parser.add_argument('--signalfile', dest='signalfile', type=str, help='Input signal xml card')
+    parser.add_argument('--signalfile', dest='signalfile', default= None, type=str, help='Input signal xml card')
     parser.add_argument('--wsfile', dest='wsfile', type=str, required=True, help='Output workspace file')
     parser.add_argument('--outputfile', dest='outputfile', type=str, required=True, help='Output fitresult file')
     parser.add_argument('--nbkg', dest='nbkg', type=str, required=True, help='Initial value and range of nbkg par (e.g. "2E8,0,3E8")')
