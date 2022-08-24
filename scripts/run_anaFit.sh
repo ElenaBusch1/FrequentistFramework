@@ -37,7 +37,7 @@
     		--datafile $datafile \
     		--datahist $datahist \
     		--backgroundfile $backgroundfile \
-    		--sigfile $sigfile \
+    		--signalfile $signalfile \
     		--categoryfile $categoryfile \
     		--topfile $topfile \
     		--wsfile $wsfile \

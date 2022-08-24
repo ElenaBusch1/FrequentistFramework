@@ -34,6 +34,9 @@ def main(args):
 
     args = parser.parse_args(args)
     if not args.signame:
+      if args.sigwidth == -999:
+	args.signame="mR%s" % (args.sigmean)
+      else:
         args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
     # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
