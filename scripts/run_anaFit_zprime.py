@@ -15,8 +15,8 @@ runData  = True
 quietMode = False
 
 # Specs
-trigger = "J100"
-dataset = 'partialDataset'  # 'full', 'partialDataset', 'TLA2016'
+trigger = "J50"
+dataset = 'partialDataset2'  # 'full', 'partialDataset', 'TLA2016'
 
 # Range of fit:
 low= initialParameters[dataset][trigger]['low']
@@ -25,27 +25,28 @@ high=initialParameters[dataset][trigger]['high']
 pars = "five"
 
 #sigmeans = [ 550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000]
+#sigmeans = [ 350, 400, 450, 500, 550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500]
 sigmeans = ["bOnly"]
-sigwidth=-999
+sigwidth=-999 
 
-doLimit = True
+doLimit = False
 doPrefit = True
 maskthreshold=0.01
 
 # Output folder -- where everything is stored:
 # default in python/run_anaFit.py is run/
-outFolder = "run/PartialDatasets/"+trigger+"/Global_{}Par/".format(pars)
+outFolder = "run/Unblinding2/J50/"
 
+backgroundfile 	= "config/dijetTLA/background_dijetTLA_J100yStar06_{0}Par.template".format(pars)
 
-backgroundfile 	= "config/dijetTLA/background_dijetTLA_{0}yStar06_{1}Par.xml".format(trigger,pars)
-if sigwidth = -999:
+if sigwidth == -999:
   # xml template cards for zprime:
-  topfile 	= "config/dijetTLA/dijetTLA_{}yStar06_zprime.template".format(trigger)
+  topfile 	= "config/dijetTLA/dijetTLA_J100yStar06_zprime.template"
   categoryfile 	= "config/dijetTLA/category_dijetTLA_zprime.template"
   signalfile 	= ""
 else:
   # xml template cards for gaussians:
-  topfile	= "config/dijetTLA/dijetTLA_{}yStar06.template".format(trigger)
+  topfile	= "config/dijetTLA/dijetTLA_J100yStar06.template"
   categoryfile  = "config/dijetTLA/category_dijetTLA.template"
   signalfile 	= "config/dijetTLA/signal/signal_dijetTLA.template"
 
