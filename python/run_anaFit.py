@@ -73,7 +73,7 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         maskmax=maskmax,
         bkgonly=True
     )
-    pval = pfe.GetPval()
+    pval = pfe.GetPval("J100yStar06_rebinned")
     pfe.WriteRoot(postfitfile, dirPerCategory=True)
     # pfe.WriteRoot(postfitfile)
 
