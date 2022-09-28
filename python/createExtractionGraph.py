@@ -18,7 +18,8 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     profile_list = []
-    c = df.setup_canvas()
+    tmp_name = config.getFileName(infile, cdir, channelName, indir) 
+    c = df.setup_canvas(tmp_name)
 
     for j,sigmean in enumerate(sigmeans):
       for i,sigwidth in enumerate(sigwidths):
@@ -28,8 +29,8 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
         h_nsigs = []
         legs = []
         for k,sigamp in enumerate(sigamps):
-          print sigmean, sigwidth, sigamp
-          h_nsig = ROOT.TH1D("nsig_%d_%d_%d"%(sigmean, sigwidth, sigamp), ";N_{sig, extracted};# toys, normalised", 30,  0, 30)
+          #print sigmean, sigwidth, sigamp
+          h_nsig = ROOT.TH1D("nsig_%d_%d_%d"%(sigmean, sigwidth, sigamp), ";N_{sig, extracted};# toys, normalised", 96,  0, 8)
           h_nsig.SetDirectory(0)
 
 
@@ -48,6 +49,11 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                   nsig = fpe.GetNsig()
                   nBkg = fpe.GetNbkg()
                   sqrtB = sqrt(nBkg)
+                  expected = int(math.sqrt(nBkg)*sigamp / 0.762)
+                  test = expected / (math.sqrt(nBkg)*sigamp / 0.762)
+                  sqrtB = sqrtB * test
+                  #print sigamp, sqrtB, math.sqrt(nBkg)*sigamp / 0.762, expected, test
+                   
                 except:
                   if toy == 0:
                     print "Couldn't read nsig from", tmp_path_fitresult, "%s__%d"%(channelName, toy)
@@ -78,6 +84,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                  sqrtB = 1
 
               #print nsig, sqrtB, nsig/sqrtB, nsig*0.762/sqrtB, sigamp
+              #print nsig, sqrtB, nsig/sqrtB
               inj_extr.append((n_injected, nsig, sqrtB, nsig/sqrtB))
 
           if len(inj_extr)==0:
@@ -87,7 +94,9 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
               for t in inj_extr:
                   g_allPoints.SetPoint(g_allPoints.GetN(), t[0], t[1])
 
+
           arr = numpy.array([0.762*x[1]/x[2] for x in inj_extr])
+          #arr = numpy.array([x[1]/x[2] for x in inj_extr])
           nFit = numpy.mean(arr)
           nFitErr = numpy.std(arr, ddof=1) #1/N-1 corrected
 

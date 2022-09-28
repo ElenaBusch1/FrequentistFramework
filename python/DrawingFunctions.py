@@ -336,12 +336,15 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
 
   hists[0].Draw("%s"%(drawOptions[0]))
   for hist in range(len(hists)):
-    hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
-    if( drawOptions[hist%len(drawOptions)]=="HIST" or drawOptions[hist%len(drawOptions)]=="hist" or drawOptions[hist%len(drawOptions)]=="l"):
+    if hist > 0:
+      hists[hist].Draw("%s SAME"%(drawOptions[1]))
+    index = (hist > 0)
+    if( drawOptions[index]=="HIST" or drawOptions[index]=="hist" or drawOptions[index]=="l"):
       legend.AddEntry(hists[hist], legendNames[hist] , "l")
     else:
       legend.AddEntry(hists[hist], legendNames[hist] , "px0")
-  hists[0].Draw("%s SAME"%(drawOptions[0]))
+  if drawOptions[0] != "AP":
+    hists[0].Draw("%s SAME"%(drawOptions[0]))
 
   legend.Draw()
 
@@ -352,7 +355,8 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
     Ratios[0].GetXaxis().SetMoreLogLabels()
   Ratios[0].Draw("%s"%(ratioDrawOptions[0]))
   for hist in range(len(Ratios)):
-    Ratios[hist].Draw("%s SAME"%(ratioDrawOptions[hist%len(ratioDrawOptions)]))
+    if hist > 0:
+      Ratios[hist].Draw("%s SAME"%(ratioDrawOptions[1]))
 
   return legend, upperPad, lowerPad
 

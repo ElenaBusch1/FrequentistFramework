@@ -35,7 +35,7 @@ def generateSignalWS(infile, histName, doSysts):
   inFile = ROOT.TFile(args.infile, "READ")
 
   # for some mass points there are morphed and original templates: pick up original ones.
-  nominalName = histName
+  nominalName = histName 
   systs = getVars("systematics")
 
   signal = ROOT.RooStats.HistFactory.Sample("signal", nominalName, infile)
@@ -50,7 +50,8 @@ def generateSignalWS(infile, histName, doSysts):
   # background.ActivateStatError( "background1_statUncert", InputFile )
   if doSysts:
     for syst in systs:
-      signal.AddHistoSys(syst, histName+syst+"down", infile, "", histName+syst+"up", infile, "")
+      print histName, syst
+      signal.AddHistoSys(syst, histName +syst+"down", infile, "", histName + syst+"up", infile, "")
 
   chan.AddSample( signal )
   # Done with this channel

@@ -277,7 +277,6 @@ def run_anaFit(datahist,
         ])
 
       if dosignal:
-          #poi="nsig_mean%s_%s" % (sigmean, histName)
           poi=poi
       else:
           poi=None
@@ -367,7 +366,7 @@ def run_anaFit(datahist,
       if dolimit and dosignal and pvals_global[0] > maskthreshold:
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8  --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          rtv=execute("timeout --foreground 3000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8  --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

@@ -24,7 +24,6 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
 
         # define the parameters of the gaussian and fill it
         if sigmean > 0.0:
-
             # determine the gaussian amplitude (ntimes * sqrt(n) in FWHW range)
             rangeLow = sigmean  - 1.18*(sigwidth*0.01) * sigmean
             rangeHigh = sigmean + 1.18*(sigwidth*0.01) * sigmean
@@ -43,11 +42,8 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
                 fSig = 0.762 #integral from -1.18 sigma to +1.18 sigma
                 nSigNew = int(math.sqrt(nBkg)*sigamp / fSig)
 
-                #print ' (ntimes = ', sigamp, ') Width = ', sigwidth
-
                 gRand.SetSeed(seed)
                 hgaus.FillRandom('mygaus', nSigNew) 
-                #print 'Injecting Signal with mean = ', sigmean, ' Number of events = ', nSigNew, "Integral: ", hgaus.Integral(), "n_bkg: ", nBkg
                 hinj.Add(hgaus)
 
         hinj.Write(histNameFile )
