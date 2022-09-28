@@ -1,0 +1,7 @@
+<!-- Template to generate signal xml files with the appropraite script -->
+<!DOCTYPE Model  SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
+<Model Type="UserDef">
+  <Item Name="mass_MEAN[MEAN]"/>
+  <Item Name="prod::width_MEAN_WIDTH(mass_MEAN, WPERCENT)"/>
+  <ModelItem Name="RooGaussian::signal(:observable:, mass_MEAN, width_MEAN_WIDTH)"/>
+</Model>
