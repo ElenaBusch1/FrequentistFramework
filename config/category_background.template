@@ -1,15 +1,15 @@
-<!DOCTYPE Channel SYSTEM 'CDIR/config/dijetISR/AnaWSBuilder.dtd'>
-<Channel Name="jjj_SR1" Type="shape" Lumi="1">
-  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="obs_x_channel[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
+<!DOCTYPE Channel SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
+<Channel Name="CHANNEL" Type="shape" Lumi="1">
+  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="CHANNEL[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
 
   <Sample Name="background" 
 	  InputFile="FITFUNC" 
 	  MultiplyLumi="0" ImportSyst=":self:">
-    <NormFactor Name="nbkg[NBKG]"/>
+    <NormFactor Name="nbkg:category:[NBKG]"/>
   </Sample>
 
   <Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >
-    <NormFactor Name="nsig_meanMEAN[NSIG]" />
+    <NormFactor Name="nsig_meanMEAN_CHANNEL[NSIG]" />
   </Sample>
 
 
