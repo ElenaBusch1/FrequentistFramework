@@ -33,8 +33,7 @@ if args.isBatch:
 else:
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
-  channelNames = [ ["nixon_4j_alpha0"], ]
-  #channelNames = [ ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9", "nixon_4j_alpha10", "nixon_4j_alpha11", "nixon_4j_alpha12"], ]
+  channelNames = [ ["yxxjjjj_4j_inclusive"], ]
 
   sigmeans = [3000]
   sigwidths = [10]

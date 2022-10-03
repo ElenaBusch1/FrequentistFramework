@@ -4,7 +4,7 @@ import os
 
 cdir = config.cdir
 
-channelNames = [ ["nixon_4j_inclusive"], ]
+channelNames = [ ["yxxjjjj_4j_inclusive"], ]
 fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
 #fitNames = ["threePar"]
 #fitNames = ["fourPar"]

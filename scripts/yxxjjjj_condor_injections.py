@@ -24,7 +24,7 @@ for sigmean in sigmeans:
   for sigamp in sigamps:
     for sigwidth in sigwidths:
 
-      cmd = "python -b "+cdir + "/scripts/nixon_injections.py" +  \
+      cmd = "python -b "+cdir + "/scripts/yxxjjjj_injections.py" +  \
                            " --pdFitName=" + pdFitName + \
                            " --fitName=" + fitName + \
                            " --signalFile=" + signalfile + \

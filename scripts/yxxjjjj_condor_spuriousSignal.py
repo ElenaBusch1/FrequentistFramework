@@ -20,7 +20,7 @@ for channelName in channelNames:
 
 for sigmean in sigmeans:
   for sigwidth in sigwidths:
-      cmd = "python -b "+cdir + "/scripts/nixon_spuriousSignal.py" +  \
+      cmd = "python -b "+cdir + "/scripts/yxxjjjj_spuriousSignal.py" +  \
                            " --pdFitName=" + pdFitName + \
                            " --fitName=" + fitName + \
                            " --signalFile=" + signalfile + \

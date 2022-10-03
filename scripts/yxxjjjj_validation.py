@@ -8,22 +8,15 @@ import python.runFTest as runFTest
 # May want to loop over these at some point?
 cdir = config.cdir
 
-#channelNames = [ ["nixon_4j_alpha8_MCErr"], ]
-#channelNames = [ ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9"], ]
-channelNames = [ ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9", "nixon_4j_alpha10", "nixon_4j_alpha11", "nixon_4j_alpha12"], ]
-
-#channelNames = [ ["nixon_4j_alpha12"], ]
+channelNames = [ ["yxxjjjj_4j_inclusive"], ]
 
 rebinFactors = [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
 #rebinFactors = [10]
 #fitNames = ["fourPar"]
 #fitNames = ["fivePar"]
 fitNames = ["threePar","fourPar", "fivePar", "sixPar"]
-#channelNames=["ambulance_2javg"]
 #rangeslow=[500]
 #rangeshigh=[3000]
-#fitNames = ["threeParAmb", "fourParAmb", "fiveParAmb"]
-#rebinFactors = [50]
 
 signalfile =  "Gaussian"
 

@@ -7,13 +7,10 @@ import os
 cdir = config.cdir
 
 fitNames = ["fourPar", "fivePar", "sixPar"]
-
-channelNames = ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9", "nixon_4j_alpha10", "nixon_4j_alpha11", "nixon_4j_alpha12"]
-#channelNames = [ ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9", "nixon_4j_alpha10", "nixon_4j_alpha11", "nixon_4j_alpha12"], ]
+channelNames = [ ["yxxjjjj_4j_inclusive"], ]
 
 
 # First make the pseudodata
-# TODO: maybe make a flag to decide whether to run this?
 for fitName in fitNames:
   for channelName in channelNames:
     outputdir = "fitsNixon"

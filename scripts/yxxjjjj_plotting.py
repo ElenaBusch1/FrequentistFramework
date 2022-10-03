@@ -25,7 +25,7 @@ pdFitName = "fivePar"
 fitName = "fourPar"
 #pdFitName = "fourPar"
 #fitName = "threePar"
-channelNames = ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9", "nixon_4j_alpha10", "nixon_4j_alpha11", "nixon_4j_alpha12"]
+channelNames = [ ["yxxjjjj_4j_inclusive"], ]
 
 outputdir="fitsNixon"
 signalfile =  "Gaussian"
@@ -39,7 +39,7 @@ atlasLabel = "Simulation Internal"
 '''
 #sigmeans=[5000]
 #sigamps = [5]
-#channelNames =["nixon_4j_alpha9"]
+#channelNames =["yxxjjjj_4j_inclusive"]
 for sigmean in sigmeans:
   for sigwidth in sigwidths:
     for channelName in channelNames:
