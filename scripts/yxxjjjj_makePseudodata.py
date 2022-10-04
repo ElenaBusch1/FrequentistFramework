@@ -7,13 +7,13 @@ import os
 cdir = config.cdir
 
 fitNames = ["fourPar", "fivePar", "sixPar"]
-channelNames = [ ["yxxjjjj_4j_inclusive"], ]
+channelNames = [ "bba", ]
 
 
 # First make the pseudodata
 for fitName in fitNames:
   for channelName in channelNames:
-    outputdir = "fitsNixon"
+    outputdir = config.cSample
 
     if not os.path.exists(outputdir):
       os.makedirs(outputdir)

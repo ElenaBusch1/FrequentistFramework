@@ -16,6 +16,23 @@ cSignalMasses = [2000,3000,4000,5000,6000,7000,8000,9000]
 #####################################################################################
 samples = {}
 
+samples["bba"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/frequentistframework_jja/mc16e_outTree_mjj_169_to_10000_single_2b.root",
+                 "histname": "mjj",
+                 "lumi": 139000,
+                 "varName": "mjj",
+                 "varAxis": "m_{jj} [GeV]",
+                 "varLabel": "bba",
+                 "rangelow" : 200,
+                 "rangehigh" : 1000,
+                 "legend": "PYTHIA8",
+               }
+
+
+
+
 samples["yxxjjjj_4j_inclusive"] = {
                  "categoryfile"  : "../config/category_background.template",
                  "topfile": "../config/background.template",

@@ -4,9 +4,9 @@ import os
 
 cdir = config.cdir
 
-channelNames = [ ["yxxjjjj_4j_inclusive"], ]
-#fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
-fitNames = ["fourPar"]
+channelNames = [ ["bba"], ]
+fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
+#fitNames = ["fourPar"]
 
 
 for channelName in channelNames:

@@ -33,13 +33,12 @@ if args.isBatch:
 else:
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
-  channelNames = [ ["yxxjjjj_4j_inclusive"], ]
+  channelNames = [ ["bba"], ]
 
   sigmeans = [3000]
   sigwidths = [10]
-  #signalfile =  "Gaussian"
-  signalfile =  "template"
-  outputdir = "fitsNixon"
+  signalfile =  "Gaussian"
+  outputdir = config.cSample
   #args.doRemake = 0
   args.doRemake = 1
   nToys = config.nToys
