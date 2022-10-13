@@ -9,9 +9,8 @@ https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 ```
 setupATLAS
 lsetup git
-git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
+git clone -b bba https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
 cd FrequentistFramework/
-git checkout yxxjjjj
 source scripts/install_FrequentistFramework.sh
 ```
 

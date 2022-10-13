@@ -2,12 +2,12 @@ cdir="/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_forNatalie/FrequentistFramewor
 nToys = 500
 atlasLabel="Simulation Internal"
 
-cSample = "fitsYXXjjjj"
+cSample = "bba"
 cPDFitName = "fivePar"
 cFitName = "fourPar"
 cSignal = "Gaussian"
-cChannelNames = ["yxxjjjj_4j_inclusive",]
-cSignalMasses = [2000,3000,4000,5000,6000,7000,8000,9000]
+cChannelNames = ["bba",]
+cSignalMasses = [350]
 
 
 
@@ -19,7 +19,7 @@ samples = {}
 samples["bba"] = {
                  "categoryfile"  : "../config/category_background.template",
                  "topfile": "../config/background.template",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/dijetPlusISR/frequentistframework_jja/mc16e_outTree_mjj_169_to_10000_single_2b.root",
+                 "inputFile": "/afs/cern.ch/user/j/jroloff/public/forDavide/mc16e_outTree_mjj_169_to_10000_single_2b.root",
                  "histname": "mjj",
                  "lumi": 139000,
                  "varName": "mjj",
@@ -30,22 +30,6 @@ samples["bba"] = {
                  "legend": "PYTHIA8",
                }
 
-
-
-
-samples["yxxjjjj_4j_inclusive"] = {
-                 "categoryfile"  : "../config/category_background.template",
-                 "topfile": "../config/background.template",
-                 "inputFile": "testOutputAutomatic.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_inclusive",
-                 "lumi": 139000,
-                 "varName": "m_{4j}, 0.34 < #alpha",
-                 "varAxis": "m_{4j} [GeV]",
-                 "varLabel": "0.1 < #alpha",
-                 "rangelow" : 1500,
-                 "rangehigh" : 9000,
-                 "legend": "PYTHIA8",
-               }
 
 
 
