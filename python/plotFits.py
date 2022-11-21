@@ -38,11 +38,11 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
       path = config.getFileName(infileName, cdir, channelName, indir, sigmean, sigwidth, sigamp) + ".root"
       #print path, datahistName
-      dataHist = lf.read_histogram(path, datahistName + channelName + "_" +suffix)
+      dataHistTmp = lf.read_histogram(path, datahistName + channelName + "_" +suffix)
       fitHist = lf.read_histogram(path, fithistName +channelName + "_" + suffix)
       residualHist = lf.read_histogram(path, residualhistName +channelName + "_" + suffix)
       #print path, datahistName + channelName+suffix
-      dataHist.SetName("%s_%s_%s"%(dataHist.GetName(), infileName, suffix))
+      dataHistTmp.SetName("data_%s_%s_%s"%(dataHistTmp.GetName(), infileName, suffix))
       fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
       residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
 
@@ -78,9 +78,16 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         #print "Unable to find fit parameters,", fitPath
         x1230123=1
 
-      if not dataHist or not fitHist or not residualHist:
+      if not dataHistTmp or not fitHist or not residualHist:
         continue
+      dataHist = fitHist.Clone("data_%s"%(dataHistTmp.GetName()))
+      dataHist.SetDirectory(0)
+      dataHist.Reset()
+      for cbin in range(dataHist.GetNbinsX()):
+         dataHist.SetBinContent(cbin+1, dataHistTmp.GetBinContent(dataHistTmp.FindBin(dataHist.GetBinCenter(cbin+1))))
+         dataHist.SetBinError(cbin+1, dataHistTmp.GetBinError(dataHistTmp.FindBin(dataHist.GetBinCenter(cbin+1))))
 
+      
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       dataHist.SetTitle(config.samples[channelName]["legend"])
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
@@ -116,7 +123,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        dataRes.GetYaxis().SetRangeUser(-5.2,5.2)
+        dataRes.GetYaxis().SetRangeUser(-1.6, 1.6)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
         dataHist.SetTitle(config.samples[channelName]["legend"])
@@ -139,7 +146,11 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
 
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = True, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    #leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = True, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+    # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
+    # For now, leave in linear, and if we can update the root version, we can also fix this
+    #
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
     c.Print(outname + ".pdf")
 
 

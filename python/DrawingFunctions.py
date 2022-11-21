@@ -106,7 +106,8 @@ def get_fit_style_opt(count=0):
         markers = [20,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
         #colors = ['#000000','#3c3c3c','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
         #colors = ['#000000','#FF0000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
-        colors = ['#000000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        colors = ['#000000','#D74061','#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        #colors = ['#000000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
         #colors = ['#000000','#D74061']
         #colors = ['#000000','#5656d7','#D74061','#36bdbd']
         lineStyles = [1, 2, 4, 3, 5, 6, 7, 8, 9, 1, 2, 3, 4]
@@ -124,7 +125,10 @@ def get_fit_style_opt(count=0):
 
 def get_rainbow_style_opt(count):
     colors = ["#3c3c3c", "#8A293E", "#D74061", "#BD4D37", "#D69340", "#BDA637",
-              "#3A4213", "#B6D640", "#36BDBD", "#5656D7", "#2D2D70", "#49288A"]
+              "#FFFF66", "#B6D640", "#36BDBD", "#5656D7", "#000099", "#49288A", "#9900CC"]
+
+    #colors = ["#3c3c3c", "#8A293E", "#D74061", "#BD4D37", "#D69340", "#BDA637",
+    #          "#3A4213", "#B6D640", "#36BDBD", "#5656D7", "#2D2D70", "#49288A"]
     lineStyles = [1, 2, 3, 4, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
     markers = [34,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
     if count >= len(colors):
@@ -136,6 +140,7 @@ def get_rainbow_style_opt(count):
         line_style   = lineStyles[count],
         line_color = colors[count],
         marker_style = markers[count],
+        marker_size = 1,
         marker_color = colors[count],
     )
     return rainbow_style_options
@@ -251,7 +256,8 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
             minimum = hist.GetBinContent( cbin+1)
           
       maximum = math.pow(10, math.log10(maximum) + math.log10(maximum/minimum)*0.6  )
-    minimum = pow(10, math.floor(math.log10(minimum)))*0.2
+    #minimum = pow(10, math.floor(math.log10(minimum)))*0.2
+    minimum = pow(10, math.floor(math.log10(minimum)))*0.5
   else:
     #maximum = maximum + delta*1.
     maximum = maximum + delta*0.25
@@ -319,7 +325,6 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   lowerPad.SetLogx(isLogX)
   r.SetOwnership(lowerPad, False)
 
-
   if len(hists) ==0:
     return
   upperPad.cd()
@@ -331,8 +336,8 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   SetStyleOptions(hists, styleOptions,1.0-0.35)
   SetStyleOptions(Ratios, styleOptions, 0.35)
 
-  if(isLogX):
-    hists[0].SetLineWidth(1)
+  #if(isLogX):
+  #  hists[0].SetLineWidth(1)
 
   hists[0].Draw("%s"%(drawOptions[0]))
   for hist in range(len(hists)):
@@ -345,6 +350,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
       legend.AddEntry(hists[hist], legendNames[hist] , "px0")
   if drawOptions[0] != "AP":
     hists[0].Draw("%s SAME"%(drawOptions[0]))
+  #hists[0].Draw("%s SAME"%(drawOptions[0]))
 
   legend.Draw()
 

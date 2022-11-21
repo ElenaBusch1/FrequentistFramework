@@ -66,7 +66,7 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
         seed += 1
             
     f_out.Close()
-    return nBkg
+    return [nBkg]
 
 
 def main(args):

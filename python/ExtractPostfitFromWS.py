@@ -164,6 +164,7 @@ class PostfitExtractor:
 
 
             pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
+            print ("PVAL STUFF !!!! ", pval, chi2, ndof, chi2bins)
 
             h_chi2 = TH1D("chi2", "chi2", 6, 0, 6)
             h_chi2.SetDirectory(0)

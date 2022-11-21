@@ -9,17 +9,13 @@ import python.plotFits as plotFits
 import python.plotPulls as plotPulls
 import python.fitQualityTests as fitQualityTests
 import python.plotSignalInjection as plotSignalInjection
-import python.compareFitParams as compareFitParams
 
 cdir = config.cdir
 
 
-#sigmeans=[3000, 4000, 5000, 6000, 7000, 8000]
-sigmeans=[2000, 3000, 4000, 6000, 8000]
-#sigmeans=[4000]
-#spuriousRanges = [300, 100, 30, 10, 5, 5]
-#spuriousRanges = [1000, 300, 100, 30, 10, 5, 5]
-spuriousRanges = [1000, 300, 100,  10, 5, 5]
+#sigmeans=[1000, 1500, 2000, 2500, 3000]
+sigmeans=[1500, 2000, 2500, 3000]
+spuriousRanges = [20, 10, 10, 5, 5]
 sigwidths=[ 10 ]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[3,1,]
@@ -30,14 +26,13 @@ pdFitName = "fivePar"
 fitName = "fourPar"
 #pdFitName = "fourPar"
 #fitName = "threePar"
-channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1", "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
-#channelNames = [ "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
-#channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1",]
-#channelNames = [ "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11",]
+channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
+#channelNames = [ "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
+#channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1",]
+#channelNames = [ "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11",]
 
 
-coutputdir="fits_"
-#signalfile =  "template"
+coutputdir="fits2javg_"
 signalfile =  "Gaussian"
 
 lumi = 139000
@@ -45,19 +40,6 @@ lumi = 139000
 atlasLabel = "Simulation Internal"
 
 #rebinedges = config.getBinning(rangelow, rangehigh, delta=50)
-
-lumi =  config.samples[channelNames[0]]["lumi"]
-#infileExtraction="FitParameters_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile)
-infileExtraction="FitParameters_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile)
-infilePD='PD_%s_bkgonly'%(pdFitName)
-outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
-infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
-rangelow = config.samples[channelNames[0]]["rangelow"]
-rangehigh = config.samples[channelNames[0]]["rangehigh"]
-compareFitParams.compareFitParams(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", sigamps = [1,2,3])
-
-
-
 
 '''
 #sigmeans=[5000]
@@ -123,7 +105,7 @@ outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
 rangelow = config.samples[channelNames[0]]["rangelow"]
 rangehigh = config.samples[channelNames[0]]["rangehigh"]
-spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y")
+#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "X")
 
 
 
@@ -137,12 +119,12 @@ for channelName in channelNames:
   outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
   rangelow = config.samples[channelName]["rangelow"]
   rangehigh = config.samples[channelName]["rangehigh"]
-  #createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir)
+  createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir)
 
 # Limits
 for channelName in channelNames:
   outputdir = coutputdir + channelName
-  #pathsLimits = [ "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)]
+  pathsLimits = [ "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)]
   #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel)
 
 

@@ -9,6 +9,7 @@ import config as config
 import ROOT as r
 from scipy.stats.distributions import chi2
 import python.LocalFunctions as lf
+import getSystematics as gs
 
 def execute(cmd):  
     print("EXECUTE:", cmd)
@@ -59,8 +60,8 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
 
     print("running quickfit")
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s  -o %s" % (wsfile, _poi, _range, fitresultfile))
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 0.00005 -o %s" % (wsfile, _poi, _range, fitresultfile))
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 0 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 0.0005 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 1e-5 -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -99,14 +100,15 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
       ndof = pfe.GetNdof(channelname=channel)
       ndofs.append(ndof)
 
-
       postfitfile=postfitfile.replace("CHANNEL", channel)
       parameterfile=parameterfile.replace("CHANNEL", channel)
 
       pfe.WriteRoot(postfitfile, doRecreate=doRecreate, suffix=channel + "_" +toyString, dirPerCategory=True, channelNames =[channel])
 
       if len(nbkgWindow) > index:
-        print ("Number of bkg: ", nbkgWindow[index][toy], "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print( index, nbkgWindow)
+        if toy > 0:
+          print ("Number of bkg: ", nbkgWindow[index][toy], "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         fpe = FitParameterExtractor(wsfile=fitresultfile, nbkg=nbkgWindow[index][toy])
       else:
         fpe = FitParameterExtractor(wsfile=fitresultfile, nbkg=0)
@@ -116,7 +118,10 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
     for chi2val,pval, ndof in zip(chi2s, pvals, ndofs):
       print(chi2val, (1- chi2.cdf(chi2val, ndof)), pval)
 
-    return (pvals, postfitfile, parameterfile)
+    fitnsig = fpe.GetNsig()
+    fitnbkg = fpe.GetNbkgFit()
+
+    return (pvals, postfitfile, parameterfile, fitnsig, fitnbkg)
 
 def run_anaFit(datahist,
                topfile,
@@ -129,7 +134,7 @@ def run_anaFit(datahist,
                outdir,
                dosignal=False,
                dolimit=False,
-               sigmean=1000,
+               sigmean=0,
                sigwidth=7,
                ntoys=10,
                maskthreshold=0.01,
@@ -142,20 +147,34 @@ def run_anaFit(datahist,
                datafiles = None,
                histnames = None,
                doRemake = False,
+               useSysts = False,
+               alphaBin = 0,
               ):
 
 
+    alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33, 0.35]
     # generate the config files on the fly in run dir
     if not os.path.isfile("%s/run/AnaWSBuilder.dtd"%(cdir)):
         execute("ln -s ../config/dijetTLA/AnaWSBuilder.dtd %s/run/AnaWSBuilder.dtd"%(cdir))
 
     tmptopfile="%s/run/dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
     tmpsignalfile="%s/run/dijetTLACat_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
+    alpha          = config.samples[datahist[0]]["alpha"]
 
     signalWSName   = config.signals[signalfile]["workspacefile"]
     signalfileName = config.signals[signalfile]["signalfile"]
-    sighist        = config.signals[signalfile]["histname"]
     sigwsfile      = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%(sigmean))
+    sighist        = config.signals[signalfile]["histname"]
+
+    sigmeanX = round( (alphaBins[int(alpha)] * sigmean)/10)*10
+    #print( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" , str(alpha), str(alphaBins[alpha]), sigmeanX)
+    sighist = sighist.replace("ALPHA", "%d"%alpha)
+    sighist = sighist.replace("MEAN", "%d"%sigmean)
+    sighist = sighist.replace("MASSX", "%d"%sigmeanX)
+
+    signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
+    signalfileName = signalfileName.replace("MASSX", "%d"%(sigmeanX))
+    sigwsfile = sigwsfile.replace("MASSX", "%d"%(sigmeanX))
 
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(signalfileName, tmpsignalfile) 
@@ -184,6 +203,11 @@ def run_anaFit(datahist,
            newSignal = newSignal + "nsig_mean%d_%s"%(sigmean,histName)
            newSignalZero = newSignalZero + "nsig_mean%d_%s=0"%(sigmean,histName)
     newSignal = newSignal + "</POI>\n"
+    systFileName = config.signals[signalfile]["systFile"]
+    systFileName = systFileName.replace("ALPHA", "%d"%alpha)
+    systFileName = systFileName.replace("MEAN", "%.0f"%sigmean)
+    systFileName = systFileName.replace("MASSX", "%.0f"%sigmeanX)
+    systematics = gs.writeSystematics("systematics", sigmean, alpha, systFileName)
     
     replaceinfile(tmptopfile, 
                   [
@@ -192,8 +216,10 @@ def run_anaFit(datahist,
                    ("nsig_meanMEAN_DATAHIST=0", newSignalZero),
                    ("CDIR", cdir),
                    ("MEAN", str(sigmean)),
+                   ("MASSX", str(sigmeanX)),
                    ("WIDTH", str(sigwidth)),
                    ("SIGNALFILE", tmpsignalfile),
+                   ("SYSTEMATICS", systematics),
                    ("OUTPUTFILE", wsfile),
                   ])
 
@@ -202,15 +228,19 @@ def run_anaFit(datahist,
                    ("WORKSPACEFILE", signalWSName),
                    ("CDIR", cdir),
                    ("MEAN", str(sigmean)),
+                   ("MEANX", str(sigmeanX)),
                    ("WPERCENT", str(sigwidth/100.)),
                    ("WIDTH", str(sigwidth)),
                    ("SIGHIST", str(sighist)),
                    ("SIGFILE", str(sigwsfile)),
                    ("OUTPUTFILE", wsfile),
+                   ("SYSTEMATICS", systematics),
                   ])
 
 
 
+    nsigOld = -10
+    nbkgOld = 0
     for toy in range(max(ntoys, 1)):
       if not doRemake:
         postfitfile=outputfile.replace("FitResult","PostFit")
@@ -221,6 +251,7 @@ def run_anaFit(datahist,
           continue
 
 
+      print ("Running toy ", toy)
       if ntoys == 0:
         toyString = ""
       else:
@@ -249,6 +280,8 @@ def run_anaFit(datahist,
 
         topfile=config.samples[histName]["topfile"]
         categoryfile=config.samples[histName]["categoryfile"]
+        if useSysts:
+          categoryfile=config.samples[histName]["categoryfileSysts"]
         if index > 0:
           poi=poi + ",nsig_mean%s_%s" % (sigmean, histName)
         else:
@@ -269,6 +302,7 @@ def run_anaFit(datahist,
           ("SIGNALFILE", tmpsignalfile),
           ("RANGELOW", str(rangelow)),
           ("RANGEHIGH", str(rangehigh)),
+          ("SYSTEMATICS", systematics),
           ("BINS", str(nbins)),
           ("NBKG", str(nbkg)),
           ("NSIG", str(nsig)),
@@ -283,7 +317,7 @@ def run_anaFit(datahist,
 
       print("running fit extractor")
       # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
-      pvals_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
+      pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg = build_fit_extract(topfile=tmptopfile,
                                                                 datafiles=datafiles, 
                                                                 channels=datahist,
                                                                 datahist=tmpDataHists,
@@ -298,6 +332,16 @@ def run_anaFit(datahist,
                                                                 toyString=toyString,
                                                                 nbkgWindow=nbkgWindow,
                                                                 )
+
+      
+      if sigmean:
+        if abs(fitnsig - nsigOld)< 0.0001 and abs(fitnbkg - nbkgOld) < 0.0001:
+          print( "Fitting seems to be stuck?", fitnsig, nsigOld, fitnbkg, nbkgOld)
+          return -1
+        nsigOld = fitnsig
+        fitnbkg = nbkgOld
+
+
 
       print("Finished fit extractor")
       print ("Global fit p(chi2)=%.3f" % pvals_global[0])
@@ -364,9 +408,8 @@ def run_anaFit(datahist,
       
       # blindrange not yet implemented with quickLimit
       if dolimit and dosignal and pvals_global[0] > maskthreshold:
-          #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          rtv=execute("timeout --foreground 3000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8  --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -389,7 +432,7 @@ def main(args):
     parser.add_argument('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
     parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
-    parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
+    parser.add_argument('--sigmean', dest='sigmean', type=int, default=0, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--rebinfile', dest='rebinfile', type=str, required=False, help='File containing histogram with template histogram for rebinning result')
     parser.add_argument('--rebinhist', dest='rebinhist', type=str, required=False, help='Name of template histogram for rebinning result')

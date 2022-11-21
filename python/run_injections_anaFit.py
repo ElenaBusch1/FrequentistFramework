@@ -33,6 +33,7 @@ def run_injections_anaFit(
                           datafiles,
                           histnames,
                           doRemake,
+                          useSysts,
                          ):
 
     print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
@@ -99,6 +100,7 @@ def run_injections_anaFit(
                datafiles=injecteddatafiles,
                histnames=histnames,
                doRemake=doRemake,
+               useSysts=useSysts,
               )
 
 

@@ -10,12 +10,13 @@ import python.AtlasStyle as AS
 import config as config
 
 
-def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelName, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix=""):
+def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelName, residualhist="residuals", datahist="data", atlasLabel="Simulation Internal", suffix="_", outputdir=""):
   ROOT.gROOT.SetBatch(ROOT.kTRUE)
   for infileName, fitName in zip(infiles, fitNames):
-    path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj) + ".root"
+    path = config.getFileName(infileName, cdir, channelName, outputdir) + ".root"
+
         
-    residualHist = lf.read_histogram(path, residualhist+suffix)
+    residualHist = lf.read_histogram(path, residualhist+channelName+suffix)
     dataHist = lf.read_histogram(path, datahist+suffix)
     fitHist = lf.read_histogram(path, "postfit"+suffix)
 
@@ -32,7 +33,7 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
 
     c = df.setup_canvas()
     h_pulls.Draw("HIST")
-    h_pulls.Fit("gaus");
+    h_pulls.Fit("gaus", "Q");
     f1.SetLineColor(ROOT.kBlue)
     f1.Draw("SAME")
     f2 = h_pulls.GetFunction("gaus")
@@ -76,7 +77,7 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
     df.draw_atlas_details(labels=labels,x_pos= 0.18,y_pos = 0.9, dy = 0.04, text_size = 0.035, atlasLabel = atlasLabel, lumi=lumi/1000.)
 
 
-    outpath = config.getFileName(outfile + "_%s"%(fitName), cdir, channelName, minMjj, maxMjj) + ".pdf"
+    outpath = config.getFileName(outfile + "_%s"%(fitName), cdir, channelName, outputdir) + ".pdf"
     c.Print(outpath)
 
 

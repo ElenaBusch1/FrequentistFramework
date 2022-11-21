@@ -13,33 +13,36 @@ def ChiSquareDistr(x, par):
     return ROOT.Math.chisquared_pdf(x[0], par[0])
 
 
-def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, rangehigh, nToys, sigmean, sigwidth, sigamp=0, nofit=0, chi2bin=1, pvalbin=0, lumi=0, atlasLabel="Simulation Internal"):
+def getChi2Distribution(infiles, inhist, outfile, cdir, channelNames, nToys, sigmean=0, sigwidth=0, sigamp=0, nofit=0, chi2bin=1, pvalbin=0, lumi=0, atlasLabel="Simulation Internal", indir=""):
+  for channelName in channelNames:
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     chi2 = []
     pval = []
     bins = None
 
-    path = config.getFileName(infiles, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+    path = config.getFileName(infiles, cdir, channelName, indir + channelName, sigmean, sigwidth, sigamp) + ".root"
+    print path
+
+    f_in = ROOT.TFile(path, "READ")
     for toy in range(nToys):
-
-        f_in = ROOT.TFile(path, "READ")
-
-        h_in = f_in.Get(inhist+ "_%d"%(toy))
+        
+        h_in = f_in.Get(inhist+ "%s__%d"%(channelName,toy))
         if not h_in:
+          print "did not find ", inhist+"%s__%d"%(channelName,toy), "in ", path
           continue
 
         if not bins:
-            bins = h_in.GetBinContent(3)
+          bins = h_in.GetBinContent(3)
         chi2.append(h_in.GetBinContent(chi2bin))
 
         if pvalbin:
             pval.append(h_in.GetBinContent(pvalbin))
 
-        f_in.Close()
+    f_in.Close()
 
     mean = sum(chi2) / len(chi2)
 
-    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + ".root"
+    outfileName = config.getFileName(outfile, cdir, channelName, indir + channelName, sigmean, sigwidth, sigamp) + ".root"
 
     h_out = ROOT.TH1D("chi2", "chi2;#chi^{2};# toys, normalised", 250, 0, 3*mean)
     h_pval_out = ROOT.TH1D("pval", "pval;#chi^{2} #it{p}-value;# toys, normalised", 100, 0, 1)
@@ -84,7 +87,7 @@ def getChi2Distribution(infiles, inhist, outfile, cdir, channelName, rangelow, r
 
     c.Update()
 
-    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) 
+    outfileName = config.getFileName(outfile, cdir, channelName, indir, sigmean, sigwidth, sigamp) 
     c.Print(outfileName + ".pdf")
 
 

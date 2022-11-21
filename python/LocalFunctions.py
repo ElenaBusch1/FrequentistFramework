@@ -1,10 +1,13 @@
 import ROOT as r
 
 def open_file(file_name, option="READ" ):
+  try:
     f = r.TFile(file_name,option)
     if not f.IsOpen():
         return None
     return f
+  except:
+    return None
 
 def read_histogram(fileName, histName):
     myfile = open_file(fileName)

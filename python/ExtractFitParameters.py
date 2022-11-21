@@ -14,6 +14,7 @@ class FitParameterExtractor:
         self.h2_cor = None
         self.nsig = None
         self.nbkg = nbkg
+        self.nbkgFit = None
         self.nsigErr = None
         self.suffix = ""
 
@@ -41,6 +42,12 @@ class FitParameterExtractor:
                 self.nsig = self.h1_params.GetBinContent(i)
                 self.nsigErr = self.h1_params.GetBinError(i)
                 #print name, channel, self.nsig 
+
+            if "nbkg" in name and channel in name:
+                self.nbkgFit = self.h1_params.GetBinContent(i)
+                #print name, channel, self.nsig 
+
+
 
         f_in.Close()
 
@@ -76,6 +83,10 @@ class FitParameterExtractor:
             if "nsig" in name:
                 self.nsig = arg.getVal()
                 self.nsigErr = arg.getError()
+
+            if "nbkg" in name:
+                self.nbkgFit = arg.getVal()
+
     
             self.h2_cov.GetXaxis().SetBinLabel(i+1, name)
             self.h2_cov.GetYaxis().SetBinLabel(i+1, name)
@@ -115,6 +126,11 @@ class FitParameterExtractor:
         if not self.nbkg:
             self.Extract()
         return self.nbkg
+
+    def GetNbkgFit(self):
+        if not self.nbkgFit:
+            self.Extract()
+        return self.nbkgFit
 
     def GetNsigErr(self):
         if not self.nsigErr:

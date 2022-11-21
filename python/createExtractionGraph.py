@@ -108,7 +108,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           g_profile.SetPoint(g_profile.GetN(), sigamp, nFit)
           #g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
           g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr)
-          legs.append("Signal amplitude = %d, average = %.2f"%(sigamp, nFit/sqrtB))
+          legs.append("Signal amplitude = %d, average = %.2f, nToys = %d"%(sigamp, nFit/sqrtB, len(inj_extr)))
 
 
         df.SetRange(h_nsigs, myMin=0)
@@ -128,7 +128,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
         profile_list.append(g_profile)
 
 
-    labels = ["Pseudodata"]
+    labels = [config.samples[channelName]["varLabel"], "Pseudodata"]
     outfileName = config.getFileName(outfile, cdir, channelName, indir) + ".pdf"
     legendNames = []
     for i in profile_list:

@@ -79,7 +79,6 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             g_exp2d.append( TGraph() )
 
             for j,sigmean in enumerate(sigmeans):
-
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
                 # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[dataset]
@@ -130,7 +129,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
         g_exp1d_datasets.append(g_exp1d)
         g_exp2d_datasets.append(g_exp2d)
 
-    c = TCanvas("c1", "c1", 800, 600)
+    c = TCanvas("c1_%s"%(outdir), "c1", 800, 600)
     c.SetLogy()
 
     leg_obs = TLegend(0.65,0.76,0.85,0.86)
@@ -151,7 +150,6 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     c.Modified()
 
     for dataset in range(len(paths)):
-
         if dataset != len(paths)-1:
 
             l=TLine()
@@ -180,7 +178,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     leg_exp.Draw()
     leg_obs.Draw()
 
-    c1.Print("%s/limitPlot_swift_fivepar.png"%(outdir))
+    c.Print("%s/limitPlot_swift_fivepar_%s.pdf"%(outdir, channelName[0]))
 
 
 

@@ -15,7 +15,7 @@ import FittingFunctions as ff
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'"):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir=""):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     h_myPoints = []
@@ -54,8 +54,6 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
         h_parList.append(clist)
       parNum += 1
 
-    h_spurious = {}
-
 
     for j,sigmean in enumerate(sigmeans):
         for i,sigwidth in enumerate(sigwidths):
@@ -65,38 +63,35 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
           h_parList = []
           parNum = 1
           while configFile.find("p%d"%(parNum)) >= 0:
-            index1 = configFile.find("p%d_CATEGORY["%(parNum))
-            substr1 = configFile[index1:-1]
-            substr2 = substr1[3:substr1.find("]")]
-            substr3 = substr2[substr2.find(",")+1:]
-            substr4 = substr3[0:substr3.find(",")]
-            substr5 = substr3[substr3.find(",")+1:]
-            pMin = float(substr4)
-            pMax = float(substr5)
-            # When pMin == pMax, the fit parameter is fixed, and it won't show up in this plot
-            if pMin < pMax:
-              h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 500, pMin, pMax)
-              h_p.SetDirectory(0)
-              h_pars.append(h_p)
-              clist = []
-              h_parList.append(clist)
-            parNum += 1
+                index1 = configFile.find("p%d_CATEGORY["%(parNum))
+                substr1 = configFile[index1:-1]
+                substr2 = substr1[3:substr1.find("]")]
+                substr3 = substr2[substr2.find(",")+1:]
+                substr4 = substr3[0:substr3.find(",")]
+                substr5 = substr3[substr3.find(",")+1:]
+                pMin = float(substr4)
+                pMax = float(substr5)
+                # When pMin == pMax, the fit parameter is fixed, and it won't show up in this plot
+                if pMin < pMax:
+                  h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 500, pMin, pMax)
+                  h_p.SetDirectory(0)
+                  h_pars.append(h_p)
+                  clist = []
+                  h_parList.append(clist)
+                parNum += 1
 
           h_allPoints_list = []
           #h_parList = []
           for index, channelName in enumerate(channelNames):
-            #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 21, -crange[j], crange[j])
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 21, -crange[j], crange[j])
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 20, -crange[j], crange[j])
             h_allPoints.SetDirectory(0)
 
-            path = config.getFileName(infile, cdir, channelName, outputdir + channelName, sigmean, sigwidth, 0) + ".root"
+            path = config.getFileName(infile, cdir, channelName, outputdir, sigmean, sigwidth, 0) + ".root"
             tmp_path_fitresults = glob(path)
 
             if len(tmp_path_fitresults) == 0:
                 # Depending on how the code is run, we might be missing some inputs
                 print "No fit results for ", sigmean, sigwidth, path
-                #h_allPoints.Fill(0)
-                h_allPoints_list.append(h_allPoints)
                 continue
             sigmeansExists.append(sigmean)
 
@@ -113,7 +108,6 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
                   fpe.suffix = "%s__%d"%(channelName,toy)
                   fpe.ExtractFromFile( "%s__%d"%(channelName,toy), channelName)
                   nsig = fpe.GetNsig()
-                  #nBkg = fpe.GetNbkg()
                   params = fpe.GetH1Params()
                   isBroken=False
               except:
@@ -126,8 +120,6 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
               if nsig == None or  math.isnan(nsig):
                   continue
-              #if nBkg == 0:
-              #    continue
 
               h_allPoints.Fill(nsig)
               for index in range(len(h_pars)):
@@ -136,8 +128,6 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
             massIndex += 1
 
             h_allPoints_list.append(h_allPoints)
-            h_spurious["%d_%d_%s"%(sigmean,sigwidth,channelName)] = h_allPoints
-
 
 
           legendNamesMasses = []
@@ -146,13 +136,13 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
           labels = []
           labels.append("m_{X} = %d GeV, #sigma_{m} = %d %%"%(sigmean, sigwidth))
 
-          if(len(h_allPoints_list)==0):
-            h_allPoints_list.append(0)
-            continue
+          #for mean, meanSpur, sigSpur in zip(sigmeansExists, meanSpurs, sigSpurs):
+          #  legendNamesMasses.append("m_{Z'} = %d, n_{spur}=%.2f, #sigma_{fit}=%.2f"%(mean, meanSpur, sigSpur))
+ 
           # Plotting:
-          outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, "all", outputdir) + "_mean_%d"%(sigmean) + ".pdf"
+          outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, channelName, outputdir) + "_mean_%d"%(sigmean) + ".pdf"
           df.SetRange(h_allPoints_list, myMin=0)
-          leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, labels, sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
+          leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, labels, sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0)
           c.Print(outfileName)
         h_myPoints.append(h_allPoints_list)
 
@@ -165,13 +155,12 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     sigSpurs = []
     for k, channelName in enumerate(channelNames):
       g_avg = TGraphErrors()
-      #g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
-      g_avg.SetTitle(config.samples[channelName]["varLabel"])
-      g_avg.GetXaxis().SetTitle("m_{%s}"%(signalName))
+      g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
+      g_avg.GetXaxis().SetTitle("m_{Z'}")
       g_avg.GetYaxis().SetTitle("<N_{sig}>")
       g_ratio = TGraphErrors()
       g_ratio.GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
-      g_ratio.GetXaxis().SetTitle("m_{%s}"%(signalName))
+      g_ratio.GetXaxis().SetTitle("m_{Z'}")
       for j,sigmean in enumerate(sigmeans):
         n = g_avg.GetN()
         g_avg.SetPoint(n, sigmean, h_myPoints[j][k].GetMean())
@@ -185,18 +174,13 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
       graphs.append(g_avg)
       ratios.append(g_ratio)
-      #legendNames.append("#sigma / m = %d%%"%sigwidth)
-      #legendNames.append("#sigma / m = %d%%")
-      legendNames.append(config.samples[channelName]["varLabel"])
+      legendNames.append("#sigma / m = %d%%"%sigwidth)
 
-
-    #graphs[0].GetYaxis().SetTitle("N_{extracted signal}")
-    graphs[0].GetYaxis().SetTitle("S_{spur}")
+    graphs[0].GetYaxis().SetTitle("N_{extracted signal}")
     ratios[0].GetYaxis().SetRangeUser(-1.2,1.2)
     ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
-    graphs[0].GetYaxis().SetRangeUser(-max(crange), max(crange))
-    outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, "all", outputdir) + ".pdf"
-    leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_rainbow_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
+    outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, channelName, outputdir) + ".pdf"
+    leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_extraction_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
     upperPad.cd()
     line = ROOT.TLine(minMean-50, 0.0, maxMean+50, 0.0)
     line.Draw()
@@ -214,7 +198,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
     # Plot the fit parameters for the different toys
     for h_par, i in zip(h_parList, range(len(h_parList))):
-      leg = df.DrawHists(c, h_par, legendNamesMasses, [], drawOptions = ["hist"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
+      leg = df.DrawHists(c, h_par, legendNamesMasses, [], drawOptions = ["hist"], styleOptions=df.get_extraction_style_opt, isLogX=0)
       path = config.getFileName("Spurious_" + h_pars[i].GetTitle(), cdir, channelName, outputdir) + ".pdf"
       c.Print(path)
 
