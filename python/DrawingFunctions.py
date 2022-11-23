@@ -236,6 +236,10 @@ def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size
 
 
 def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog=False):
+  if myMin != myMax: 
+    for hist in hists:
+      hist.GetYaxis().SetRangeUser(myMin, myMax)
+    return
   maximum = minMin
   minimum = maxMax
   for hist in hists:

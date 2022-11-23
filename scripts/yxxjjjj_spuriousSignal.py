@@ -33,13 +33,17 @@ if args.isBatch:
 else:
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
-  channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+  channelNames = [ [ "yxxjjjj_4j_alpha8"], ]
 
-  sigmeans = [8000]
+  sigmeans = [3000]
+  #sigmeans = [8000]
   sigwidths = [10]
   #signalfile =  "Gaussian"
   #signalfile =  "template"
-  signalfile =  "gausHist"
+  signalfile =  "crystalBallHistNoSyst"
+  #signalfile =  "crystalBallHist"
+  #signalfile =  "gausHist"
   #signalfile =  "test"
   coutputdir = "fits_"
   #args.doRemake = 0
@@ -91,7 +95,7 @@ for sigmean in sigmeans:
                nbkgWindow=[],
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="SS_%s_%s_%d_%d_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile),
+               outputstring="SS_%s_%s_%d_%d_%s_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile, channelName[0]),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,
@@ -101,7 +105,7 @@ for sigmean in sigmeans:
                datafiles=pdFiles, 
                histnames=pdHists, 
                doRemake=args.doRemake,
-               useSysts = False,
+               useSysts = True,
               )
 
 

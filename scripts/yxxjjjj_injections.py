@@ -27,19 +27,23 @@ if args.isBatch:
   sigamps = [args.sigamp]
   sigwidths = [args.sigwidth]
   signalfile = args.signalFile
-  outputdir = args.outputdir
+  coutputdir = args.outputdir
 
 else:
   pdFitName = "fivePar"
   fitName = "fourPar"
-  #channelNames = [ ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9"], ]
-  channelNames =[ ["nixon_4j_alpha0", "nixon_4j_alpha1", "nixon_4j_alpha2", "nixon_4j_alpha3", "nixon_4j_alpha4", "nixon_4j_alpha5", "nixon_4j_alpha6", "nixon_4j_alpha7", "nixon_4j_alpha8", "nixon_4j_alpha9", "nixon_4j_alpha10", "nixon_4j_alpha11", "nixon_4j_alpha12"],]
+  #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ [ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ [ "yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ [ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ [ "yxxjjjj_4j_alpha5"]]
+  channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
-  sigmeans = [6000]
-  sigamps = [1]
+  sigmeans = [1000]
+  sigamps = [4]
   sigwidths = [10]
-  signalfile =  "template"
-  outputdir = "fitsNixon"
+  signalfile =  "Gaussian"
+  coutputdir = "fits2javg_"
   args.doRemake=0
 
 
@@ -49,14 +53,13 @@ dolimit=0
 
 cdir = config.cdir
 
-
-if not os.path.exists(outputdir):
-      os.makedirs(outputdir)
-
-pdFiles = []
-pdHists = []
 for channelName in channelNames:
+  pdFiles = []
+  pdHists = []
   for channel in channelName:
+    outputdir = coutputdir+channelName[0]
+    if not os.path.exists(outputdir):
+      os.makedirs(outputdir)
     pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
     pdFiles.append(pdFile)
 
@@ -71,8 +74,8 @@ for channelName in channelNames:
         nsig="0,0,5e3"
         if sigmean > 5000:
           nsig="0,0,15"
-          
-    
+
+
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
         outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
@@ -108,6 +111,7 @@ for channelName in channelNames:
              datafiles=pdFiles,
              histnames=pdHists,
              doRemake = args.doRemake,
+             useSysts = False,
             )
 
 

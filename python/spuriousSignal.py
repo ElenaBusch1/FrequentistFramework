@@ -151,7 +151,8 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
             continue
           # Plotting:
           outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, "all", outputdir) + "_mean_%d"%(sigmean) + ".pdf"
-          df.SetRange(h_allPoints_list, myMin=0)
+          #df.SetRange(h_allPoints_list, myMin=0)
+          df.SetRange(h_allPoints_list)
           leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, labels, sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
           c.Print(outfileName)
         h_myPoints.append(h_allPoints_list)

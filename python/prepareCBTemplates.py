@@ -91,24 +91,34 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
 
 
 def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/systs/", histName = "h2_resonance_jet_m4j_alpha", doSysts = True, mY = 6000, alpha = 5, outfile = "systematicsTest"):
-  f_out = r.TFile("%s_%d_%.2f.root"%(outfile, mY, alpha), "RECREATE")
+  outfileName = "%s_%d_%.2f.root"%(outfile, mY, alpha)
+  f_out = r.TFile(outfileName, "RECREATE")
   f_out.cd()
   systs, _ = getVars("uncertaintySets/systematics")
   suffixes = ["_1up", "_1down"]
+  inFile = "Syst__%s.txt"%(histName)
+  histCB = getCrystalBallFunction(mY, alpha, indir+inFile, histName=histName+"_", syst="")
+  if not histCB:
+    print indir+inFile, histName+"_"
+    return None
+  f_out.cd()
+  histCB.Write("%s_"%(histName))
+
   if doSysts:
     for i, syst in enumerate(systs):
      for suffix in suffixes:
-      inFile = "Syst_%s%s_h2_resonance_jet_m4j_alpha.txt"%(syst, suffix)
+      inFile = "Syst_%s%s_%s.txt"%(syst, suffix, histName)
       histCB = getCrystalBallFunction(mY, alpha, indir+inFile, histName=histName, syst=syst + suffix)
       if not histCB:
         print indir+inFile, histName, syst
         continue
       f_out.cd()
       histCB.Write("%s_%s%s"%(histName, syst, suffix))
-      
+
 
   print "Saving in fileName:", outfile
   f_out.Close()
-  #inFile.Close()
+
+  return outfileName
 
 

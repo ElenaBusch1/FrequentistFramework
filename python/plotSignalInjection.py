@@ -135,11 +135,6 @@ def plotFits(infileName, infilePDName, outfile, rangelow, rangehigh, sigmean, si
     par5ErrBkgOnly = paramsBkgOnly.GetBinError(5)
 
 
-
-
-
-
-
     legNames.append("pseudo-data")
     legNames.append("fit")
     legNames.append("pseudo-data, no signal injection")

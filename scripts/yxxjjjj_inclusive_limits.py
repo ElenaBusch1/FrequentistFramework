@@ -1,4 +1,6 @@
 import config as config
+#import run_injections_anaFit as run_injections_anaFit
+#import generatePseudoData as generatePseudoData
 import python.run_injections_anaFit as run_injections_anaFit
 import python.generatePseudoData as generatePseudoData
 import os
@@ -7,6 +9,19 @@ import os,sys,re,argparse,subprocess,shutil
 
 from optparse import OptionParser
 
+#parser = OptionParser()
+#parser.add_option('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
+#parser.add_option('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
+#parser.add_option('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
+#parser.add_option('--signalFile', dest='signalFile', type=str, default=None, help='Name of the signal file')
+#parser.add_option('--channelName', dest='channelName', type=str, help='Output workspace file')
+#parser.add_option('--rangelow', dest='rangelow', type=int, help='Start of fit range (in GeV)')
+#parser.add_option('--rangehigh', dest='rangehigh', type=int, help='End Start of fit range (in GeV)')
+#parser.add_option('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
+#parser.add_option('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
+#parser.add_option('--sigamp', dest='sigamp', type=int, default=3, help='Amplitude of signal Gaussian for s+b fit (in %)')
+#parser.add_argument('--doRemake', dest='doRemake', type=int, default=0, help='Amplitude of signal Gaussian for s+b fit (in %)')
+#(args, test) = parser.parse_args()
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -20,7 +35,7 @@ parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='M
 parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
 parser.add_argument('--sigamp', dest='sigamp', type=int, default=3, help='Amplitude of signal Gaussian for s+b fit (in %)')
 parser.add_argument('--doRemake', dest='doRemake', type=int, default=0, help='Amplitude of signal Gaussian for s+b fit (in %)')
-parser.add_argument('--outputdir', dest='outputdir', type=str, default="fitsNixon", help='Amplitude of signal Gaussian for s+b fit (in %)')
+parser.add_argument('--outputdir', dest='outputdir', type=str, default="fitsyxxjjjj", help='Amplitude of signal Gaussian for s+b fit (in %)')
 args = parser.parse_args()
 
 
@@ -42,18 +57,14 @@ else:
 
   pdFitName = "fivePar"
   fitName = "fourPar"
-  #channelNames = [ ["yxxjjjj_4j_alpha0"], ["yxxjjjj_4j_alpha1"], ["yxxjjjj_4j_alpha2"], ["yxxjjjj_4j_alpha3"], ["yxxjjjj_4j_alpha4"], ["yxxjjjj_4j_alpha5"], ["yxxjjjj_4j_alpha6"], ["yxxjjjj_4j_alpha7"], ["yxxjjjj_4j_alpha8"], ["yxxjjjj_4j_alpha9"], ["yxxjjjj_4j_alpha10"], ["yxxjjjj_4j_alpha11"], ]
-  channelNames = [ ["yxxjjjj_4j_alpha0"], ]
+  channelNames = [ ["yxxjjjj_4j_inclusive"], ]
 
-  #channelNames = [ ["yxxjjjj_4j_alpha1"], ]
-  sigmeans = [2000,3000, 4000, 6000, 8000]
-  #sigmeans = [2000]
+  #sigmeans = [3000, 4000, 5000, 6000, 7000, 8000]
+  sigmeans = [3000,4000,5000]
   sigamps = [0]
   sigwidths = [10]
   signalfile =  "Gaussian"
-  #signalfile =  "template"
-  #outputdir = "fitsNixon"
-  coutputdir = "fits"
+  outputdir = "fitsyxxjjjjInclusive"
   args.doRemake = 1
 
 
@@ -70,11 +81,10 @@ nToys = 1
 #nToys = config.nToys
 
 
+pdFiles = []
+pdHists = []
 for channelName in channelNames:
-  pdFiles = []
-  pdHists = []
   for channel in channelName:
-    outputdir = coutputdir + "_" + channel
     pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
     pdFiles.append(pdFile)
 
@@ -121,7 +131,6 @@ for channelName in channelNames:
              datafiles=pdFiles,
              histnames=pdHists,
              doRemake = args.doRemake,
-             useSysts = True,
             )
 
 

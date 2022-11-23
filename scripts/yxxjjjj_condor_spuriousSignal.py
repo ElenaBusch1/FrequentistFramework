@@ -5,22 +5,30 @@ cdir = config.cdir
 
 pdFitName = config.cPDFitName
 fitName = config.cFitName
-channelNames=config.cChannelNames
-signalfile =  config.cSignal
+#allChannelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+allChannelNames = [ [ "yxxjjjj_4j_alpha11"], ]
+#allChannelNames = [ ["yxxjjjj_4j_alpha0"],]
+#allChannelNames = [ [ "yxxjjjj_4j_alpha11"], ]
+#signalfile =  config.cSignal
 overallName = config.cSample 
+signalfile =  "crystalBallHistNoSyst"
+
 
 pdHistName = "pseudodata"
-sigmeans = [2000, 3000, 4000, 5000, 6000, 7000, 8000]
+#sigmeans = [2000, 3000, 4000, 5000, 6000, 7000, 8000]
+sigmeans = [3000, 4000, 6000, 8000, 10000]
+#sigmeans = [6000]
 sigwidths = [10]
 
-channelString = ""
-for channelName in channelNames:
-  channelString = channelString + " " + channelName
 
 
-for sigmean in sigmeans:
-  for sigwidth in sigwidths:
-      cmd = "python -b "+cdir + "/scripts/nixon_spuriousSignal.py" +  \
+for channelNames in allChannelNames:
+  channelString = ""
+  for channelName in channelNames:
+    channelString = channelString + " " + channelName
+  for sigmean in sigmeans:
+    for sigwidth in sigwidths:
+      cmd = "python -b "+cdir + "/scripts/yxxjjjj_spuriousSignal.py" +  \
                            " --pdFitName=" + pdFitName + \
                            " --fitName=" + fitName + \
                            " --signalFile=" + signalfile + \
@@ -28,11 +36,11 @@ for sigmean in sigmeans:
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
                            " --outputdir=" + overallName +  \
-                           " --doRemake=0 " \
+                           " --doRemake=1 " \
                            " --isBatch=1"
 
 
-      runfile = "batch/runSpurious_" + str(sigmean) + "_" + str(sigwidth) +  "_" + pdFitName + "_" + fitName + "_" + overallName + "_" + signalfile + ".sh"
+      runfile = "batch/runSpurious_" + str(sigmean) + "_" + str(sigwidth) +  "_" + pdFitName + "_" + fitName + "_" + overallName + "_" + signalfile + "_" + channelNames[0] + ".sh"
       fr=open(runfile,'w')
       fr.write('#!/bin/sh\n')
       fr.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')

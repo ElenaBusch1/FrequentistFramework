@@ -1,5 +1,5 @@
 cdir="/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework"
-nToys = 500
+nToys = 100
 atlasLabel="Simulation Internal"
 
 cSample = "fits_"
@@ -1093,7 +1093,7 @@ samples["tile_4j_alpha12"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_12",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_12",
                  "alpha": 12,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.34 < #alpha",
@@ -1109,7 +1109,7 @@ samples["tile_4j_alpha11"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_11",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_11",
                  "alpha": 11,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
@@ -1125,7 +1125,7 @@ samples["tile_4j_alpha10"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_10",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_10",
                  "alpha": 10,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
@@ -1141,7 +1141,7 @@ samples["tile_4j_alpha9"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_9",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_9",
                  "alpha": 9,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
@@ -1157,7 +1157,7 @@ samples["tile_4j_alpha8"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_8",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_8",
                  "alpha": 8,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
@@ -1173,7 +1173,7 @@ samples["tile_4j_alpha7"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_7",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_7",
                  "alpha": 7,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
@@ -1190,7 +1190,7 @@ samples["tile_4j_alpha6"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_6",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_6",
                  "alpha": 6,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
@@ -1208,7 +1208,7 @@ samples["tile_4j_alpha5"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_5",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_5",
                  "alpha": 5,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
@@ -1224,7 +1224,7 @@ samples["tile_4j_alpha4"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_4",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_4",
                  "alpha": 4,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
@@ -1241,7 +1241,7 @@ samples["tile_4j_alpha3"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_3",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_3",
                  "alpha": 3,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
@@ -1257,7 +1257,7 @@ samples["tile_4j_alpha2"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_2",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_2",
                  "alpha": 2,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
@@ -1273,7 +1273,7 @@ samples["tile_4j_alpha1"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_1",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_1",
                  "alpha": 1,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
@@ -1290,7 +1290,7 @@ samples["tile_4j_alpha0"] = {
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_0",
+                 "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_0",
                  "alpha": 0,
                  "lumi": 139000,
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
@@ -1330,13 +1330,39 @@ signals["template"] = {
 
 # Signal template (can include systematics)
 signals["gausHist"] = {
-                 "signalfile": "../config/signalGauss_meanM_template.xml",
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
                  "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalGaus_mX_MEAN_mY_MASSX.root",
                  "templatefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalGaus_mX_MEAN_mY_MASSX.root",
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausSignal__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
                  "histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
                  "systFile": "empty.txt",
                }
+
+signals["crystalBallHist"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCB_mX_MEAN_mY_MASSX.root",
+                 "templatefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCB_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
+                 #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
+                 "histname": "h2_resonance_jet_m4j_alpha_",
+                 #"histname": "",
+                 "systFile": "empty.txt",
+               }
+
+signals["crystalBallHistNoSyst"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCBNoSyst_mX_MEAN_mY_MASSX.root",
+                 "templatefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCBNoSyst_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
+                 #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
+                 "histname": "h2_resonance_jet_m4j_alpha_",
+                 #"histname": "",
+                 "systFile": "empty.txt",
+               }
+
+
+
+
 
 
 # Signal template (can include systematics)

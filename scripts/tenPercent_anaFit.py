@@ -4,8 +4,12 @@ import os
 
 cdir = config.cdir
 
-channelNames = [ ["yxxjjjj_4j_inclusive"], ]
-fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
+
+channelNames = [ [ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
+#channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],[ "tenPercent_yxxjjjj_4j_alpha1"],[ "tenPercent_yxxjjjj_4j_alpha2"],[ "tenPercent_yxxjjjj_4j_alpha3"],[ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
+
+
+fitNames = ["threePar", "fourPar", "fivePar"]
 #fitNames = ["threePar"]
 #fitNames = ["fourPar"]
 #fitNames = ["fivePar"]
@@ -14,18 +18,15 @@ fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
 
 for channelName in channelNames:
   for fitName in fitNames:
-        #nbkg="1E7,0,5E8"
-        nbkg="5E4,0,5E6"
+        nbkg="5E6,0,5E8"
         # These should all use the same top file
         topfile=config.samples[channelName[0]]["topfile"]
   
-        outputdir = "fitsNixonInclusive"
+        outputdir = "fits_%s"%channelName[0]
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_%s_1GeVBin_GlobalFit"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"
         outputfile = config.getFileName("FitResult_%s_bkgonly"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"
 
-
-    
         if not os.path.exists(outputdir):
             os.makedirs(outputdir)
 
@@ -44,6 +45,7 @@ for channelName in channelNames:
                maskthreshold=-0.01,
                dosignal=0,
                dolimit=0,
+               useSysts = False,
                )
   
 

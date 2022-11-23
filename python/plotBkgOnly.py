@@ -60,20 +60,23 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       nsig=0
       try:
         fpe = efp.FitParameterExtractor(fitPath)
-        if toy:
+        if toy!=None:
           fpe.suffix = "%s__%d"%(channelName,toy)
           #fpe.ExtractFromFile( "%s"%(channelName))
           fpe.ExtractFromFile( "%s__%d"%(channelName,toy))
+          params = fpe.GetH1Params()
         else:
           fpe.suffix = channelName
           fpe.ExtractFromFile( channelName)
         nsig = fpe.GetNsig()
         nbkg = fpe.GetNbkg()
-        labels.append("N_{sig, extracted} = %.3f"%nsig)
-        labels.append("N_{bkg} = %.3f"%nbkg)
+        #labels.append("N_{sig, extracted} = %.3f"%nsig)
+        #labels.append("N_{bkg} = %.3f"%nbkg)
       except:
-        #print "Unable to find fit parameters,", fitPath
+        print "Unable to find fit parameters,", fitPath
         x1230123=1
+
+
 
       if not dataHistTmp or not fitHist or not residualHist:
         continue
@@ -89,12 +92,51 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       dataHist.SetTitle(config.samples[channelName]["legend"])
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       residualHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
+
+
+
+      #fitNoSignal = ROOT.TF1("testFit", "[0]*TMath::Power(1-x/[1],[2])/TMath::Power(x/[1], [3] + [4]*TMath::Log(x/[1]) )", 0, 2000)
+      #fitNoSignal = ROOT.TF1("testFit", "[0]*TMath::Power(1-x/[1],[2])/TMath::Power(x/[1], [3] + [4]*TMath::Log(x/[1]) + [5]*TMath::Power(TMath::Log(x/[1]), 2) )", 0, 2000)
+      fitNoSignal = ROOT.TF1("testFit", "[0]*TMath::Power(1-x/[1],[2])/TMath::Power(x/[1], [3] + [4]*TMath::Log(x/[1]) )", minMjj, maxMjj)
+      fitNoSignal.SetNpx(maxMjj-minMjj)
+      fitNoSignal.GetXaxis().SetRangeUser(minMjj, maxMjj)
+
+      par5 = 0
+      par1 = 13000
+      # The first 2 parameters are the number of background and number of signal, and the indexing starts at 1 --> 3+index
+      for cbin in range(params.GetNbinsX()):
+          if params.GetXaxis().GetBinLabel(cbin+1).find("p2") >= 0:
+            par2 = params.GetBinContent(cbin+1)
+          if params.GetXaxis().GetBinLabel(cbin+1).find("p3") >= 0:
+            par3 = params.GetBinContent(cbin+1)
+          if params.GetXaxis().GetBinLabel(cbin+1).find("p4") >= 0:
+            par4 = params.GetBinContent(cbin+1)
+          if params.GetXaxis().GetBinLabel(cbin+1).find("p5") >= 0:
+            par5 = params.GetBinContent(cbin+1)
+
+
+      #par0 = params.GetBinContent(1) / fitNoSignal.Integral(minMjj, maxMjj)
+      par0 = dataHist.Integral(minMjj, maxMjj) / (maxMjj - minMjj)
+      fitNoSignal.SetParameter(0, par0)
+      fitNoSignal.SetParameter(1, par1)
+      fitNoSignal.SetParameter(2, par2)
+      fitNoSignal.SetParameter(3, par3)
+      fitNoSignal.SetParameter(4, par4)
+      #fitNoSignal.SetParameter(5, par5)
+      #labels.append("p2 = %.2f, p3=%.2f, p4=%.2f, p5=%.2f"%(par2, par3, par4, par5))
+      #labels.append("BkgOnly: p2 = %.2f#pm%.2f, p3=%.2f#pm%.2f, p4=%.2f#pm%.2f, p5=%.2f#pm%.2f"%(par2BkgOnly, par2ErrBkgOnly, par3BkgOnly, par3ErrBkgOnly, par4BkgOnly, par4ErrBkgOnly, par5BkgOnly, par5ErrBkgOnly))
+
+
+      histNoSignal = fitNoSignal.GetHistogram()
+      histNoSignal.SetDirectory(0)
+      print histNoSignal, fitNoSignal
+
     
       # This allows us to rebin the histograms using resolution binning, if we want
       if rebinedges:
-        dataHist = dataHist.Rebin(len(rebinedges)-1, "dataHist_%s"%(infileName), array.array('d', rebinedges))
-        fitHist = fitHist.Rebin(len(rebinedges)-1, "fitHist_%s"%(infileName), array.array('d', rebinedges))
-        residualHist = residualHist.Rebin(len(rebinedges)-1, "residual_%s"%(infileName), array.array('d', rebinedges))
+        #dataHist = dataHist.Rebin(len(rebinedges)-1, "dataHist_%s"%(infileName), array.array('d', rebinedges))
+        #fitHist = fitHist.Rebin(len(rebinedges)-1, "fitHist_%s"%(infileName), array.array('d', rebinedges))
+        #residualHist = residualHist.Rebin(len(rebinedges)-1, "residual_%s"%(infileName), array.array('d', rebinedges))
         dataHist.SetDirectory(0)
         fitHist.SetDirectory(0)
         residualHist.SetDirectory(0)
@@ -127,26 +169,39 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         plotHists.append(dataHist)
         legNames.append(config.samples[channelName]["legend"])
 
-      dataHists.append(dataHist)
-      fitHists.append(fitHist)
-      residualHists.append(residualHist)
-
       plotHists.append(fitHist)
       try:
         tmpName = config.fitFunctions[fitName]["Name"]
       except:
         tmpName = fitName
-      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
+      legNames.append("#splitline{%s, S+B }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
+
+
+      print histNoSignal
+      plotHists.append(histNoSignal)
+      dataRes = histNoSignal.Clone("Residuals_zero2")
+      #dataRes.Reset()
+      dataRes.Add(dataHist,-1)
+      dataRes.GetYaxis().SetRangeUser(-1.6, 1.6)
+      dataRes.SetDirectory(0)
+      residualHists.append(dataRes)
+      legNames.append("#splitline{%s, S only }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
+
+      dataHists.append(dataHist)
+      fitHists.append(fitHist)
+      residualHists.append(residualHist)
 
 
     c.SetLogx()
-    df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
+    #df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
+    df.SetRange(plotHists, myMin=1e-5, myMax=1e5, isLog=True)
     outname = outfile.replace(".root", "")
 
     # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
     # For now, leave in linear, and if we can update the root version, we can also fix this
     #
     leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+    fitNoSignal.Draw("SAME")
     c.Print(outname + ".pdf")
 
 

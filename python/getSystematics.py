@@ -53,7 +53,7 @@ def getVars(varFileName):
   try:
     fp = open(varFileName + ".txt")
   except:
-    return varNames, newName
+    return varNames, newNames
   varNames = fp.readlines()
   for varName in range(len(varNames)):
     varNames[varName] = varNames[varName]. rstrip('\n')
@@ -76,11 +76,10 @@ def writeSystematics(systNames, mY, alpha, inputFile):
   systList,_ = getVars(systNames) 
   for systName in systList:
     #print "running syst ", systName
-    systUp, systDown = getSystematic(systName, mY, alpha, inputFile)
-    #systDown = getSystematic(systName + "DOWN", mY, alpha, inputFile)
+    #systUp, systDown = getSystematic(systName, mY, alpha, inputFile)
+    #systString = systString + "<Systematic Name='%s' Constr='asym' CentralValue='1' Mag='%.4f,%.4f' WhereTo='shape'/>\n"%(systName, systDown, systUp)
+    systString = systString + "<ExtSyst ConstrName='%s__1Constraint' NPName='%s__1' GOName='nom_%s__1' />\n"%(systName, systName, systName)
 
-    systString = systString + "<Systematic Name='%s' Constr='asym' CentralValue='1' Mag='%.4f,%.4f' WhereTo='shape'/>\n"%(systName, systDown, systUp)
-  
   return systString
 
 
