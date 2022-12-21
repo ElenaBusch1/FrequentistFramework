@@ -46,6 +46,7 @@ class CondorHandler(object) :
       fr.write('cp -rf ${localdir}/config . \n')
       fr.write('cp -rf ${localdir}/Input . \n')
       fr.write('cp -rf ${localdir}/python . \n')
+      fr.write('cp -rf ${localdir}/pyBumpHunter . \n')
       fr.write('cp -rf ${localdir}/quickFit . \n')
       fr.write('cp -rf ${localdir}/workspaceCombiner . \n')
       fr.write('cp -rf ${localdir}/xmlAnaWSBuilder . \n')
