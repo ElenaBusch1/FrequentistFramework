@@ -15,11 +15,9 @@ import FittingFunctions as ff
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'"):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-    h_myPoints = []
-    sigmeansExists = []
 
     minMean = min(sigmeans)
     maxMean = max(sigmeans)
@@ -57,8 +55,10 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
     h_spurious = {}
 
 
-    for j,sigmean in enumerate(sigmeans):
-        for i,sigwidth in enumerate(sigwidths):
+    for i,sigwidth in enumerate(sigwidths):
+        h_myPoints = []
+        sigmeansExists = []
+        for j,sigmean in enumerate(sigmeans):
 
           massIndex = 0
           h_pars = []
@@ -83,7 +83,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
             parNum += 1
 
           h_allPoints_list = []
-          #h_parList = []
+
           for index, channelName in enumerate(channelNames):
             #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 21, -crange[j], crange[j])
             h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 21, -crange[j], crange[j])
@@ -143,81 +143,92 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
           legendNamesMasses = []
           for k, channelName in enumerate(channelNames):
             legendNamesMasses.append(config.samples[channelName]["varLabel"])
-          labels = []
-          labels.append("m_{X} = %d GeV, #sigma_{m} = %d %%"%(sigmean, sigwidth))
+          #labels = []
+          labels.append("m_{Y} = %d GeV, #sigma_{m} = %d %%"%(sigmean, sigwidth))
 
           if(len(h_allPoints_list)==0):
             h_allPoints_list.append(0)
             continue
           # Plotting:
-          outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, "all", outputdir) + "_mean_%d"%(sigmean) + ".pdf"
+          #outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, "all", outputdir) + "_mean_%d"%(sigmean) + ".pdf"
+          outfileName = config.getFileName("SpuriousSignal"+outfile, cdir, "all", outputdir, sigmean, sigwidth,0) + ".pdf"
           #df.SetRange(h_allPoints_list, myMin=0)
           df.SetRange(h_allPoints_list)
           leg = df.DrawHists(c, h_allPoints_list, legendNamesMasses, labels, sampleName = "", drawOptions = ["HIST", "HIST"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
           c.Print(outfileName)
-        h_myPoints.append(h_allPoints_list)
+          labels.pop()
+
+          h_myPoints.append(h_allPoints_list)
 
 
 
-    graphs = []
-    ratios = []
-    legendNames = []
-    meanSpurs = []
-    sigSpurs = []
-    for k, channelName in enumerate(channelNames):
-      g_avg = TGraphErrors()
-      #g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
-      g_avg.SetTitle(config.samples[channelName]["varLabel"])
-      g_avg.GetXaxis().SetTitle("m_{%s}"%(signalName))
-      g_avg.GetYaxis().SetTitle("<N_{sig}>")
-      g_ratio = TGraphErrors()
-      g_ratio.GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
-      g_ratio.GetXaxis().SetTitle("m_{%s}"%(signalName))
-      for j,sigmean in enumerate(sigmeans):
-        n = g_avg.GetN()
-        g_avg.SetPoint(n, sigmean, h_myPoints[j][k].GetMean())
-        g_avg.SetPointError(n, 0.001, h_myPoints[j][k].GetStdDev())
-        if h_myPoints[j][k].GetStdDev() > 0:
-          g_ratio.SetPoint(n, sigmean, h_myPoints[j][k].GetMean() / h_myPoints[j][k].GetStdDev())
-      meanSpurs.append(h_myPoints[j][k].GetMean())
-      sigSpurs.append(h_myPoints[j][k].GetStdDev())
-      g_avg.GetXaxis().SetLimits(minMean-50, maxMean+50)
-      g_ratio.GetXaxis().SetLimits(minMean-50, maxMean+50)
+        graphs = []
+        ratios = []
+        legendNames = []
+        meanSpurs = []
+        sigSpurs = []
+        for k, channelName in enumerate(channelNames):
+          g_avg = TGraphErrors()
+          #g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
+          g_avg.SetTitle(config.samples[channelName]["varLabel"])
+          g_avg.GetXaxis().SetTitle("m_{%s}"%(signalName))
+          g_avg.GetYaxis().SetTitle("<N_{sig}>")
+          g_ratio = TGraphErrors()
+          g_ratio.GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
+          g_ratio.GetXaxis().SetTitle("m_{%s}"%(signalName))
+          for j,sigmean in enumerate(sigmeans):
+            n = g_avg.GetN()
+            if h_myPoints[j][k].GetEntries()>0:
+              g_avg.SetPoint(n, sigmean+delta*k, h_myPoints[j][k].GetMean())
+              g_avg.SetPointError(n, 0.001, h_myPoints[j][k].GetStdDev())
+            if h_myPoints[j][k].GetStdDev() > 0:
+              g_ratio.SetPoint(n, sigmean+delta*k, h_myPoints[j][k].GetMean() / h_myPoints[j][k].GetStdDev())
+              #print len(h_myPoints[j][k])
+            if h_myPoints[j][k].GetStdDev() ==0 and h_myPoints[j][k].GetEntries()>0:
+              #print len(h_myPoints[j][k])
+              g_ratio.SetPoint(n, sigmean+delta*k, h_myPoints[j][k].GetMean() )
+          meanSpurs.append(h_myPoints[j][k].GetMean())
+          sigSpurs.append(h_myPoints[j][k].GetStdDev())
+          g_avg.GetXaxis().SetLimits(minMean-50, maxMean+delta*(len(channelNames)+2))
+          g_ratio.GetXaxis().SetLimits(minMean-50, maxMean+delta*(len(channelNames)+2))
 
-      graphs.append(g_avg)
-      ratios.append(g_ratio)
-      #legendNames.append("#sigma / m = %d%%"%sigwidth)
-      #legendNames.append("#sigma / m = %d%%")
-      legendNames.append(config.samples[channelName]["varLabel"])
-
-
-    #graphs[0].GetYaxis().SetTitle("N_{extracted signal}")
-    graphs[0].GetYaxis().SetTitle("S_{spur}")
-    ratios[0].GetYaxis().SetRangeUser(-1.2,1.2)
-    ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
-    graphs[0].GetYaxis().SetRangeUser(-max(crange), max(crange))
-    outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, "all", outputdir) + ".pdf"
-    leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, [], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_rainbow_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"])
-    upperPad.cd()
-    line = ROOT.TLine(minMean-50, 0.0, maxMean+50, 0.0)
-    line.Draw()
-    lowerPad.cd()
-    line0 = ROOT.TLine(minMean-50, 0.0, maxMean+50, 0.0)
-    line1 = ROOT.TLine(minMean-50, 0.5, maxMean+50, 0.5)
-    line2 = ROOT.TLine(minMean-50, -0.5, maxMean+50, -0.5)
-    line1.SetLineStyle(2)
-    line2.SetLineStyle(2)
-    line0.Draw()
-    line1.Draw()
-    line2.Draw()
-    c2.Print(outfileName)
+          graphs.append(g_avg)
+          ratios.append(g_ratio)
+          legendNames.append(config.samples[channelName]["varLabel"])
 
 
-    # Plot the fit parameters for the different toys
-    for h_par, i in zip(h_parList, range(len(h_parList))):
-      leg = df.DrawHists(c, h_par, legendNamesMasses, [], drawOptions = ["hist"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
-      path = config.getFileName("Spurious_" + h_pars[i].GetTitle(), cdir, channelName, outputdir) + ".pdf"
-      c.Print(path)
+        graphs[0].GetYaxis().SetTitle("S_{spur}")
+        ratios[0].GetYaxis().SetRangeUser(-0.8,0.8)
+        ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
+        graphs[0].GetYaxis().SetRangeUser(-max(crange), max(crange))
+        outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, "all", outputdir) + "Width_%d"%sigwidth + ".pdf"
+        leg, upperPad, lowerPad = df.DrawRatioHists(c2, graphs, ratios, legendNames, ["#sigma / m = %.2f"%(sigwidth/100.)], sampleName = "", drawOptions = ["AP", "P"], styleOptions=df.get_rainbow_style_opt, isLogX=0, isLogY=0, ratioDrawOptions = ["AP", "P"], ratioHeight = 0.45)
+        upperPad.cd()
+        line = ROOT.TLine(minMean-50, 0.0, maxMean+delta*(len(channelNames)+2), 0.0)
+        line.Draw()
+        lowerPad.cd()
+        line0 = ROOT.TLine(minMean-50, 0.0, maxMean+delta*(len(channelNames)+2), 0.0)
+        line1 = ROOT.TLine(minMean-50, 0.5, maxMean+delta*(len(channelNames)+2), 0.5)
+        line2 = ROOT.TLine(minMean-50, -0.5, maxMean+delta*(len(channelNames)+2), -0.5)
+        line3 = ROOT.TLine(minMean-50, 0.3, maxMean+delta*(len(channelNames)+2), 0.3)
+        line4 = ROOT.TLine(minMean-50, -0.3, maxMean+delta*(len(channelNames)+2), -0.3)
+        line1.SetLineStyle(2)
+        line2.SetLineStyle(2)
+        line3.SetLineStyle(3)
+        line4.SetLineStyle(3)
+        line0.Draw()
+        line1.Draw()
+        line2.Draw()
+        line3.Draw()
+        line4.Draw()
+        c2.Print(outfileName)
+
+
+        # Plot the fit parameters for the different toys
+        for h_par, i in zip(h_parList, range(len(h_parList))):
+          leg = df.DrawHists(c, h_par, legendNamesMasses, ["#sigma / m = %.2f"%(sigwidth/100.)], drawOptions = ["hist"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
+          path = config.getFileName("Spurious_" + h_pars[i].GetTitle(), cdir, channelName, outputdir) + "Width_%d"%sigwidth + ".pdf"
+          c.Print(path)
 
 
 

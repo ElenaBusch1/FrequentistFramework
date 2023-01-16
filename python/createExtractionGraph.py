@@ -22,6 +22,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
     c = df.setup_canvas(tmp_name)
 
     for j,sigmean in enumerate(sigmeans):
+      
       for i,sigwidth in enumerate(sigwidths):
         g_allPoints = TGraph()
         g_profile   = TGraphErrors()
@@ -69,7 +70,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
               tmp_path_injection = config.getFileName(infilePD, cdir, channelName, indir, sigmean, sigwidth, sigamp) + "_Sig_Gaussian.root"
               checkPath = glob(tmp_path_injection)
               if len(checkPath) == 0:
-                  print "Did not find ", tmp_path_injection
+                  #print "Did not find ", tmp_path_injection
                   continue
 
               f = TFile(tmp_path_injection)
@@ -111,7 +112,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           legs.append("Signal amplitude = %d, average = %.2f, nToys = %d"%(sigamp, nFit/sqrtB, len(inj_extr)))
 
 
-        df.SetRange(h_nsigs, myMin=0)
+        df.SetRange(h_nsigs, myMin=0, myMax=50)
         leg = df.DrawHists(c, h_nsigs, legs, [], sampleName = "", drawOptions = ["HIST"], styleOptions=df.get_extraction_style_opt, isLogX=0, lumi=lumi, atlasLabel=atlasLabel)
         outfileNameTmp = config.getFileName("NsigDistributions_" + outfile, cdir, channelName, indir, sigmean, sigwidth, sigamp) 
         c.Print("%s.pdf"%(outfileNameTmp))

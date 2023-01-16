@@ -40,7 +40,6 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       dataHistTmp = lf.read_histogram(path, datahistName + channelName + "_" +suffix)
       fitHist = lf.read_histogram(path, fithistName +channelName + "_" + suffix)
       residualHist = lf.read_histogram(path, residualhistName +channelName + "_" + suffix)
-      #print path, datahistName + channelName+suffix
       dataHistTmp.SetName("data_%s_%s_%s"%(dataHistTmp.GetName(), infileName, suffix))
       fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
       residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
@@ -116,7 +115,9 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
 
       #par0 = params.GetBinContent(1) / fitNoSignal.Integral(minMjj, maxMjj)
-      par0 = dataHist.Integral(minMjj, maxMjj) / (maxMjj - minMjj)
+      par0 = dataHistTmp.Integral(minMjj, maxMjj) / (maxMjj - minMjj) / 1000000
+      print par0
+      #par0 = dataHist.Integral(minMjj, maxMjj) 
       fitNoSignal.SetParameter(0, par0)
       fitNoSignal.SetParameter(1, par1)
       fitNoSignal.SetParameter(2, par2)
@@ -131,12 +132,14 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       histNoSignal.SetDirectory(0)
       print histNoSignal, fitNoSignal
 
+      histNoSignal.Scale(fitHist.Integral() / histNoSignal.Integral())
     
       # This allows us to rebin the histograms using resolution binning, if we want
       if rebinedges:
-        #dataHist = dataHist.Rebin(len(rebinedges)-1, "dataHist_%s"%(infileName), array.array('d', rebinedges))
-        #fitHist = fitHist.Rebin(len(rebinedges)-1, "fitHist_%s"%(infileName), array.array('d', rebinedges))
-        #residualHist = residualHist.Rebin(len(rebinedges)-1, "residual_%s"%(infileName), array.array('d', rebinedges))
+        dataHist = dataHist.Rebin(len(rebinedges)-1, "dataHist_%s"%(infileName), array.array('d', rebinedges))
+        fitHist = fitHist.Rebin(len(rebinedges)-1, "fitHist_%s"%(infileName), array.array('d', rebinedges))
+        residualHist = residualHist.Rebin(len(rebinedges)-1, "residual_%s"%(infileName), array.array('d', rebinedges))
+        histNoSignal = histNoSignal.Rebin(len(rebinedges)-1, "residual_%s"%(infileName), array.array('d', rebinedges))
         dataHist.SetDirectory(0)
         fitHist.SetDirectory(0)
         residualHist.SetDirectory(0)
@@ -201,7 +204,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     # For now, leave in linear, and if we can update the root version, we can also fix this
     #
     leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
-    fitNoSignal.Draw("SAME")
+    #fitNoSignal.Draw("SAME")
     c.Print(outname + ".pdf")
 
 

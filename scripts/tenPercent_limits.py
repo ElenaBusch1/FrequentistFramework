@@ -42,20 +42,17 @@ else:
 
   pdFitName = "fivePar"
   fitName = "fourPar"
-  #channelNames = [ ["yxxjjjj_4j_alpha0"], ["yxxjjjj_4j_alpha1"], ["yxxjjjj_4j_alpha2"], ["yxxjjjj_4j_alpha3"], ["yxxjjjj_4j_alpha4"], ["yxxjjjj_4j_alpha5"], ["yxxjjjj_4j_alpha6"], ["yxxjjjj_4j_alpha7"], ["yxxjjjj_4j_alpha8"], ["yxxjjjj_4j_alpha9"], ["yxxjjjj_4j_alpha10"], ["yxxjjjj_4j_alpha11"], ]
-  channelNames = [ ["yxxjjjj_4j_alpha0"], ]
+  channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],  ]
+  #channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"], ["tenPercent_yxxjjjj_4j_alpha1"], ["tenPercent_yxxjjjj_4j_alpha2"], ["tenPercent_yxxjjjj_4j_alpha3"], ["tenPercent_yxxjjjj_4j_alpha4"], ["tenPercent_yxxjjjj_4j_alpha5"], ["tenPercent_yxxjjjj_4j_alpha6"], ["tenPercent_yxxjjjj_4j_alpha7"], ["tenPercent_yxxjjjj_4j_alpha8"], ["tenPercent_yxxjjjj_4j_alpha9"], ["tenPercent_yxxjjjj_4j_alpha10"], ["tenPercent_yxxjjjj_4j_alpha11"], ]
 
-  #channelNames = [ ["yxxjjjj_4j_alpha1"], ]
-  #sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
-  sigmeans = [8000]
+  sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
   #sigmeans = [2500, 3500, 5000, 7000, 9000]
   #sigmeans = [10000]
   sigamps = [0]
   sigwidths = [10]
-  #signalfile =  "Gaussian"
-  signalfile =  "crystalBallHist"
+  signalfile =  "Gaussian"
   #signalfile =  "template"
-  coutputdir = "fits"
+  coutputdir = "fitsTenPercent"
   args.doRemake = 0
 
 

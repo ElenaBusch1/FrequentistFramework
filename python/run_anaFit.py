@@ -35,8 +35,8 @@ def replaceinfile(f, old_new_list):
 def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None, nbkgWindow=[]):
     
     print("starting fit extractor")
-    #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
-    rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
+    rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
+    #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
 
     print("done with xml")
     if rtv != 0:
@@ -63,7 +63,9 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 1e-5 -o %s" % (wsfile, _poi, _range, fitresultfile))
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 0 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-5 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -162,17 +164,19 @@ def run_anaFit(datahist,
     tmptopfile="%s/run/dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
     tmpsignalfile="%s/run/dijetTLACat_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
     alpha          = config.samples[datahist[0]]["alpha"]
+    sigmeanX = round( (alphaBins[int(alpha)] * sigmean)/10)*10
 
     signalWSName   = config.signals[signalfile]["workspacefile"]
     signalfileName = config.signals[signalfile]["signalfile"]
-    sigwsfile      = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%(sigmean))
+    sigwsfile      = config.signals[signalfile]["workspacefile"]
     sighist        = config.signals[signalfile]["histname"]
 
-    sigmeanX = round( (alphaBins[int(alpha)] * sigmean)/10)*10
     #print( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" , str(alpha), str(alphaBins[alpha]), sigmeanX)
     sighist = sighist.replace("ALPHA", "%d"%alpha)
     sighist = sighist.replace("MEAN", "%d"%sigmean)
     sighist = sighist.replace("MASSX", "%d"%sigmeanX)
+
+    sigwsfile = sigwsfile.replace("MEAN", "%d"%(sigmean))
 
     signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
     signalfileName = signalfileName.replace("MASSX", "%d"%(sigmeanX))
@@ -181,6 +185,7 @@ def run_anaFit(datahist,
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(signalfileName, tmpsignalfile) 
     tmpsignalfile.replace("MEAN", str(sigmean))
+    tmpsignalfile.replace("MASSX", str(sigmeanX))
     
     # Make a list of all of the distributions that should be fit
     newName = ""
@@ -309,6 +314,7 @@ def run_anaFit(datahist,
           ("NBKG", str(nbkg)),
           ("NSIG", str(nsig)),
           ("MEAN", str(sigmean)),
+          ("MASSX", str(sigmeanX)),
           ("WIDTH", str(sigwidth)),
         ])
 
@@ -336,7 +342,7 @@ def run_anaFit(datahist,
                                                                 )
 
       
-      if sigmean:
+      if sigmean and dosignal:
         if abs(fitnsig - nsigOld)< 0.0001 and abs(fitnbkg - nbkgOld) < 0.0001:
           print( "Fitting seems to be stuck?", fitnsig, nsigOld, fitnbkg, nbkgOld)
           return -1

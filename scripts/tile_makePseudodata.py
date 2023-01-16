@@ -6,10 +6,9 @@ import os
 
 cdir = config.cdir
 
-fitNames = ["fourPar", "fivePar"]
+fitNames = ["threePar", "fourPar", "fivePar"]
 
-channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
-#channelNames = [ "sherpa_yxxjjjj_2javg_alpha0", "sherpa_yxxjjjj_2javg_alpha1", "sherpa_yxxjjjj_2javg_alpha2", "sherpa_yxxjjjj_2javg_alpha3", "sherpa_yxxjjjj_2javg_alpha4", "sherpa_yxxjjjj_2javg_alpha5", "sherpa_yxxjjjj_2javg_alpha6", "sherpa_yxxjjjj_2javg_alpha7", "sherpa_yxxjjjj_2javg_alpha8", "sherpa_yxxjjjj_2javg_alpha9", "sherpa_yxxjjjj_2javg_alpha10", "sherpa_yxxjjjj_2javg_alpha11" ]
+channelNames = [ "tile_4j_alpha0", "tile_4j_alpha1", "tile_4j_alpha2", "tile_4j_alpha3", "tile_4j_alpha4", "tile_4j_alpha5", "tile_4j_alpha6", "tile_4j_alpha7", "tile_4j_alpha8", "tile_4j_alpha9", "tile_4j_alpha10", "tile_4j_alpha11", ]
 
 scaling = 1.0
 
@@ -19,7 +18,8 @@ scaling = 1.0
 # TODO: maybe make a flag to decide whether to run this?
 for fitName in fitNames:
   for channelName in channelNames:
-    outputdir = "fits2javg_" + channelName
+    #outputdir = "fits2javg_" + channelName
+    outputdir = "fitsTile_" + channelName
 
     if not os.path.exists(outputdir):
       os.makedirs(outputdir)

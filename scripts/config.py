@@ -33,6 +33,7 @@ samples["yxxjjjj_4j_inclusive"] = {
                  "rangelow" : 1600,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_0.txt",
                }
 
 samples["yxxjjjj_4j_alpha12"] = {
@@ -49,6 +50,7 @@ samples["yxxjjjj_4j_alpha12"] = {
                  "rangelow" : 2000,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_12.txt",
                }
 
 samples["yxxjjjj_4j_alpha11"] = {
@@ -62,9 +64,10 @@ samples["yxxjjjj_4j_alpha11"] = {
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
-                 "rangelow" : 1800,
+                 "rangelow" : 2175,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_11.txt",
                }
 
 samples["yxxjjjj_4j_alpha10"] = {
@@ -78,9 +81,10 @@ samples["yxxjjjj_4j_alpha10"] = {
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_10.txt",
                }
 
 
@@ -95,9 +99,10 @@ samples["yxxjjjj_4j_alpha9"] = {
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_9.txt",
                }
 
 samples["yxxjjjj_4j_alpha8"] = {
@@ -111,9 +116,10 @@ samples["yxxjjjj_4j_alpha8"] = {
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
-                 "rangelow" : 1800,
+                 "rangelow" : 1925,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_8.txt",
                }
 
 samples["yxxjjjj_4j_alpha7"] = {
@@ -127,9 +133,10 @@ samples["yxxjjjj_4j_alpha7"] = {
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
-                 "rangelow" : 1800,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_7.txt",
                }
 
 samples["yxxjjjj_4j_alpha6"] = {
@@ -143,10 +150,11 @@ samples["yxxjjjj_4j_alpha6"] = {
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  #"rangehigh" : 9000,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_6.txt",
                }
 
 
@@ -162,9 +170,10 @@ samples["yxxjjjj_4j_alpha5"] = {
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_5.txt",
                }
 
 samples["yxxjjjj_4j_alpha4"] = {
@@ -178,9 +187,10 @@ samples["yxxjjjj_4j_alpha4"] = {
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_4.txt",
                }
 
 samples["yxxjjjj_4j_alpha3"] = {
@@ -194,9 +204,10 @@ samples["yxxjjjj_4j_alpha3"] = {
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
-                 "rangelow" : 1600,
+                 "rangelow" : 1825,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_3.txt",
                }
 
 samples["yxxjjjj_4j_alpha2"] = {
@@ -210,9 +221,10 @@ samples["yxxjjjj_4j_alpha2"] = {
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
-                 "rangelow" : 1600,
+                 "rangelow" : 1725,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_2.txt",
                }
 
 samples["yxxjjjj_4j_alpha1"] = {
@@ -226,9 +238,10 @@ samples["yxxjjjj_4j_alpha1"] = {
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_1.txt",
                }
 
 
@@ -243,9 +256,10 @@ samples["yxxjjjj_4j_alpha0"] = {
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_0.txt",
                }
 
 
@@ -261,7 +275,7 @@ samples["sherpa_yxxjjjji_4j_alpha11"] = {
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
-                 "rangelow" : 1800,
+                 "rangelow" : 2175,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -276,7 +290,7 @@ samples["sherpa_yxxjjjj_4j_alpha10"] = {
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -292,7 +306,7 @@ samples["sherpa_yxxjjjj_4j_alpha9"] = {
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -307,7 +321,7 @@ samples["sherpa_yxxjjjj_4j_alpha8"] = {
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
-                 "rangelow" : 1800,
+                 "rangelow" : 1925,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -322,7 +336,7 @@ samples["sherpa_yxxjjjj_4j_alpha7"] = {
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
-                 "rangelow" : 1800,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -337,7 +351,7 @@ samples["sherpa_yxxjjjj_4j_alpha6"] = {
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -352,7 +366,7 @@ samples["sherpa_yxxjjjj_4j_alpha5"] = {
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -367,7 +381,7 @@ samples["sherpa_yxxjjjj_4j_alpha4"] = {
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -382,7 +396,7 @@ samples["sherpa_yxxjjjj_4j_alpha3"] = {
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
-                 "rangelow" : 1600,
+                 "rangelow" : 1825,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -398,7 +412,7 @@ samples["sherpa_yxxjjjj_4j_alpha2"] = {
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
-                 "rangelow" : 1600,
+                 "rangelow" : 1725,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -413,7 +427,7 @@ samples["sherpa_yxxjjjj_4j_alpha1"] = {
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -429,7 +443,7 @@ samples["sherpa_yxxjjjj_4j_alpha0"] = {
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
@@ -447,23 +461,6 @@ samples["sherpa_yxxjjjj_4j_alpha0"] = {
 
 
 
-
-samples["tenPercent_yxxjjjj_4j_alpha12"] = {
-                 "categoryfile"  : "../config/category_background.template",
-                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
-                 "topfile": "../config/background.template",
-                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia_10percent.root",
-                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_12",
-                 "alpha": 12,
-                 "lumi": 13900,
-                 "varName": "m_{4j}, 0.34 < #alpha",
-                 "varAxis": "m_{4j} [GeV]",
-                 "varLabel": "0.34 < #alpha",
-                 "rangelow" : 2000,
-                 "rangehigh" : 11000,
-                 "legend": "PYTHIA8",
-               }
-
 samples["tenPercent_yxxjjjj_4j_alpha11"] = {
                  "categoryfile"  : "../config/category_background.template",
                  "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
@@ -475,9 +472,10 @@ samples["tenPercent_yxxjjjj_4j_alpha11"] = {
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
-                 "rangelow" : 1800,
+                 "rangelow" : 2175,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_11.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha10"] = {
@@ -491,9 +489,10 @@ samples["tenPercent_yxxjjjj_4j_alpha10"] = {
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_10.txt",
                }
 
 
@@ -508,9 +507,10 @@ samples["tenPercent_yxxjjjj_4j_alpha9"] = {
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_9.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha8"] = {
@@ -524,9 +524,10 @@ samples["tenPercent_yxxjjjj_4j_alpha8"] = {
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
-                 "rangelow" : 1800,
+                 "rangelow" : 1925,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_8.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha7"] = {
@@ -540,9 +541,10 @@ samples["tenPercent_yxxjjjj_4j_alpha7"] = {
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
-                 "rangelow" : 1800,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_7.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha6"] = {
@@ -556,9 +558,10 @@ samples["tenPercent_yxxjjjj_4j_alpha6"] = {
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_6.txt",
                }
 
 
@@ -574,9 +577,10 @@ samples["tenPercent_yxxjjjj_4j_alpha5"] = {
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_5.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha4"] = {
@@ -590,9 +594,10 @@ samples["tenPercent_yxxjjjj_4j_alpha4"] = {
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_4.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha3"] = {
@@ -606,9 +611,10 @@ samples["tenPercent_yxxjjjj_4j_alpha3"] = {
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
-                 "rangelow" : 1600,
+                 "rangelow" : 1825,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_3.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha2"] = {
@@ -622,9 +628,10 @@ samples["tenPercent_yxxjjjj_4j_alpha2"] = {
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
-                 "rangelow" : 1600,
+                 "rangelow" : 1725,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_2.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha1"] = {
@@ -638,9 +645,10 @@ samples["tenPercent_yxxjjjj_4j_alpha1"] = {
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_1.txt",
                }
 
 
@@ -655,9 +663,10 @@ samples["tenPercent_yxxjjjj_4j_alpha0"] = {
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_0.txt",
                }
 
 
@@ -723,9 +732,10 @@ samples["yxxjjjj_2javg_alpha11"] = {
                  "varName": "m_{#LT 2j #GT}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
-                 "rangelow" : 700,
+                 "rangelow" : 730,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_11.txt",
                }
 
 samples["yxxjjjj_2javg_alpha10"] = {
@@ -738,9 +748,10 @@ samples["yxxjjjj_2javg_alpha10"] = {
                  "varName": "m_{#LT 2j #GT}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
-                 "rangelow" : 700,
+                 "rangelow" : 630,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_10.txt",
                }
 
 
@@ -754,9 +765,10 @@ samples["yxxjjjj_2javg_alpha9"] = {
                  "varName": "m_{#LT 2j #GT}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
-                 "rangelow" : 700,
+                 "rangelow" : 570,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_9.txt",
                }
 
 samples["yxxjjjj_2javg_alpha8"] = {
@@ -769,9 +781,10 @@ samples["yxxjjjj_2javg_alpha8"] = {
                  "varName": "m_{#LT 2j #GT}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
-                 "rangelow" : 500,
+                 "rangelow" : 510,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_8.txt",
                }
 
 samples["yxxjjjj_2javg_alpha7"] = {
@@ -784,9 +797,10 @@ samples["yxxjjjj_2javg_alpha7"] = {
                  "varName": "m_{#LT 2j #GT}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
-                 "rangelow" : 500,
+                 "rangelow" : 490,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_7.txt",
                }
 
 samples["yxxjjjj_2javg_alpha6"] = {
@@ -799,9 +813,10 @@ samples["yxxjjjj_2javg_alpha6"] = {
                  "varName": "m_{#LT 2j #GT}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
-                 "rangelow" : 500,
+                 "rangelow" : 430,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_6.txt",
                }
 
 
@@ -816,9 +831,10 @@ samples["yxxjjjj_2javg_alpha5"] = {
                  "varName": "m_{#LT 2j #GT}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
-                 "rangelow" : 400,
+                 "rangelow" : 430,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_5.txt",
                }
 
 samples["yxxjjjj_2javg_alpha4"] = {
@@ -831,9 +847,10 @@ samples["yxxjjjj_2javg_alpha4"] = {
                  "varName": "m_{#LT 2j #GT}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
-                 "rangelow" : 400,
+                 "rangelow" : 370,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_4.txt",
                }
 
 samples["yxxjjjj_2javg_alpha3"] = {
@@ -846,9 +863,10 @@ samples["yxxjjjj_2javg_alpha3"] = {
                  "varName": "m_{#LT 2j #GT}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
-                 "rangelow" : 400,
+                 "rangelow" : 330,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_3.txt",
                }
 
 samples["yxxjjjj_2javg_alpha2"] = {
@@ -861,9 +879,10 @@ samples["yxxjjjj_2javg_alpha2"] = {
                  "varName": "m_{#LT 2j #GT}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
-                 "rangelow" : 400,
+                 "rangelow" : 270,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_2.txt",
                }
 
 
@@ -878,9 +897,10 @@ samples["yxxjjjj_2javg_alpha1"] = {
                  "varName": "m_{#LT 2j #GT}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
-                 "rangelow" : 400,
+                 "rangelow" : 250,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_1.txt",
                }
 
 
@@ -894,9 +914,10 @@ samples["yxxjjjj_2javg_alpha0"] = {
                  "varName": "m_{#LT 2j #GT}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
-                 "rangelow" : 300,
+                 "rangelow" : 230,
                  "rangehigh" : 3500,
                  "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_0.txt",
                }
 
 
@@ -912,7 +933,7 @@ samples["sherpa_yxxjjjji_2javg_alpha11"] = {
                  "varName": "m_{#LT 2j #GT}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
-                 "rangelow" : 700,
+                 "rangelow" : 730,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -927,7 +948,7 @@ samples["sherpa_yxxjjjj_2javg_alpha10"] = {
                  "varName": "m_{#LT 2j #GT}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
-                 "rangelow" : 700,
+                 "rangelow" : 630,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -943,7 +964,7 @@ samples["sherpa_yxxjjjj_2javg_alpha9"] = {
                  "varName": "m_{#LT 2j #GT}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
-                 "rangelow" : 600,
+                 "rangelow" : 570,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -958,7 +979,7 @@ samples["sherpa_yxxjjjj_2javg_alpha8"] = {
                  "varName": "m_{#LT 2j #GT}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
-                 "rangelow" : 500,
+                 "rangelow" : 510,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -973,7 +994,7 @@ samples["sherpa_yxxjjjj_2javg_alpha7"] = {
                  "varName": "m_{#LT 2j #GT}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
-                 "rangelow" : 500,
+                 "rangelow" : 490,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -988,7 +1009,7 @@ samples["sherpa_yxxjjjj_2javg_alpha6"] = {
                  "varName": "m_{#LT 2j #GT}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
-                 "rangelow" : 400,
+                 "rangelow" : 430,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1003,7 +1024,7 @@ samples["sherpa_yxxjjjj_2javg_alpha5"] = {
                  "varName": "m_{#LT 2j #GT}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
-                 "rangelow" : 400,
+                 "rangelow" : 430,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1018,7 +1039,7 @@ samples["sherpa_yxxjjjj_2javg_alpha4"] = {
                  "varName": "m_{#LT 2j #GT}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
-                 "rangelow" : 400,
+                 "rangelow" : 370,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1033,7 +1054,7 @@ samples["sherpa_yxxjjjj_2javg_alpha3"] = {
                  "varName": "m_{#LT 2j #GT}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
-                 "rangelow" : 300,
+                 "rangelow" : 330,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1049,7 +1070,7 @@ samples["sherpa_yxxjjjj_2javg_alpha2"] = {
                  "varName": "m_{#LT 2j #GT}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
-                 "rangelow" : 300,
+                 "rangelow" : 270,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1066,7 +1087,7 @@ samples["sherpa_yxxjjjj_2javg_alpha1"] = {
                  "varName": "m_{#LT 2j #GT}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
-                 "rangelow" : 300,
+                 "rangelow" : 250,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1082,7 +1103,6 @@ samples["sherpa_yxxjjjj_2javg_alpha0"] = {
                  "varName": "m_{#LT 2j #GT}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
-                 "rangelow" : 300,
                  "rangehigh" : 3500,
                  "legend": "Sherpa AHADIC",
                }
@@ -1115,7 +1135,7 @@ samples["tile_4j_alpha11"] = {
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
-                 "rangelow" : 1800,
+                 "rangelow" : 2175,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1131,7 +1151,7 @@ samples["tile_4j_alpha10"] = {
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1147,7 +1167,7 @@ samples["tile_4j_alpha9"] = {
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
-                 "rangelow" : 1800,
+                 "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1163,7 +1183,7 @@ samples["tile_4j_alpha8"] = {
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
-                 "rangelow" : 1800,
+                 "rangelow" : 1925,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1179,7 +1199,7 @@ samples["tile_4j_alpha7"] = {
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
-                 "rangelow" : 1800,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1196,7 +1216,7 @@ samples["tile_4j_alpha6"] = {
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1214,7 +1234,7 @@ samples["tile_4j_alpha5"] = {
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1230,7 +1250,7 @@ samples["tile_4j_alpha4"] = {
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
-                 "rangelow" : 1700,
+                 "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1247,7 +1267,7 @@ samples["tile_4j_alpha3"] = {
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
-                 "rangelow" : 1600,
+                 "rangelow" : 1675,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1263,7 +1283,7 @@ samples["tile_4j_alpha2"] = {
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
-                 "rangelow" : 1600,
+                 "rangelow" : 1725,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1279,7 +1299,7 @@ samples["tile_4j_alpha1"] = {
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1296,7 +1316,7 @@ samples["tile_4j_alpha0"] = {
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
-                 "rangelow" : 1600,
+                 "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
                }
@@ -1346,7 +1366,8 @@ signals["crystalBallHist"] = {
                  #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
                  "histname": "h2_resonance_jet_m4j_alpha_",
                  #"histname": "",
-                 "systFile": "empty.txt",
+                 #"systFile": "empty.txt",
+                 "systFile": "uncertaintySets/systematics",
                }
 
 signals["crystalBallHistNoSyst"] = {
@@ -1444,6 +1465,24 @@ def getFileName(prefix, directory, channelName, groupedName, sigmean=0, sigwidth
       return "%s/%s/%s_%s"%(directory, groupedName, prefix, channelName)
     else:
       return "%s/%s/%s_CHANNEL"%(directory, groupedName, prefix)
+
+def getBinningFromFile(channelName):
+   binFile = samples[channelName]["binFile"]
+   bins = []
+   
+   try:
+     fp = open(binFile )
+   except:
+     print "Could not find the binning file"
+     return None
+
+   inputFileLines = fp.readlines()
+
+   for line in inputFileLines:
+     bins.append(int(line))
+ 
+   print bins
+   return bins
 
 
 def getBinning(rangelow, rangehigh, delta=25):

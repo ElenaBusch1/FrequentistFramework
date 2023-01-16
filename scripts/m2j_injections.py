@@ -1,11 +1,6 @@
-import config as config
+import scripts.config as config
 import python.run_injections_anaFit as run_injections_anaFit
-import python.generatePseudoData as generatePseudoData
 import os
-import os,sys,re,argparse,subprocess,shutil
-
-
-from optparse import OptionParser
 
 
 from argparse import ArgumentParser
@@ -24,77 +19,71 @@ parser.add_argument('--outputdir', dest='outputdir', type=str, default="fitsNixo
 args = parser.parse_args()
 
 
-
-
 if args.isBatch:
   pdFitName = args.pdFitName
   fitName = args.fitName
-  channelName = args.channelName
+  channelNames = [args.channelNames]
   sigmeans = [args.sigmean]
   sigamps = [args.sigamp]
   sigwidths = [args.sigwidth]
-  rangelow = args.rangelow
-  rangehigh = args.rangehigh
   signalfile = args.signalFile
-
+  coutputdir = args.outputdir
 
 else:
-
   pdFitName = "fivePar"
   fitName = "fourPar"
-  #channelNames = [ ["yxxjjjj_4j_alpha0"], ["yxxjjjj_4j_alpha1"], ["yxxjjjj_4j_alpha2"], ["yxxjjjj_4j_alpha3"], ["yxxjjjj_4j_alpha4"], ["yxxjjjj_4j_alpha5"], ["yxxjjjj_4j_alpha6"], ["yxxjjjj_4j_alpha7"], ["yxxjjjj_4j_alpha8"], ["yxxjjjj_4j_alpha9"], ["yxxjjjj_4j_alpha10"], ["yxxjjjj_4j_alpha11"], ]
-  channelNames = [ ["yxxjjjj_4j_alpha0"], ]
+  #channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
+  #channelNames = [ [ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
+  channelNames = [ [ "yxxjjjj_2javg_alpha3"], ]
 
-  #channelNames = [ ["yxxjjjj_4j_alpha1"], ]
-  #sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
-  sigmeans = [8000]
-  #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  #sigmeans = [10000]
-  sigamps = [0]
+
+  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000]
+  sigmeans = [500]
+  #sigamps = [0,1,2,3,4,5]
+  sigamps = [3]
   sigwidths = [10]
-  #signalfile =  "Gaussian"
-  signalfile =  "crystalBallHist"
-  #signalfile =  "template"
-  coutputdir = "fits"
-  args.doRemake = 0
+  signalfile =  "Gaussian"
+  coutputdir = "fits2javg_"
+  args.doRemake=1
 
+
+#. scripts/setup_buildAndFit.sh
+dosignal=1
+dolimit=0
 
 cdir = config.cdir
-#if not os.path.exists(cdir + "/scripts/" + channelName):
-#      os.makedirs(cdir + "/scripts/" + channelName)
-#
-# First make the pseudodata
-# TODO: maybe make a flag to decide whether to run this?
-dosignal=1
-dolimit=1
-
-nToys = 1
-#nToys = config.nToys
-
 
 for channelName in channelNames:
   pdFiles = []
   pdHists = []
   for channel in channelName:
-    outputdir = coutputdir + "_" + channel
+    outputdir = coutputdir+channelName[0]
+    if not os.path.exists(outputdir):
+      os.makedirs(outputdir)
     pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
     pdFiles.append(pdFile)
 
     pdHistName = "pseudodata"
     pdHists.append(pdHistName)
 
+
   for sigmean in sigmeans:
     for sigamp in sigamps:
       for sigwidth in sigwidths:
-        nbkg="1E7,0,5E8"
-        nsig="0,0,1e6"
+        nbkg="1E5,0,1e6"
+        nsig="0,0,1000"
+        if sigmean > 500:
+          nsig="0,0,500"
+        if sigmean > 1000:
+          nsig="0,0,50"
+
 
         # Output file names, which will be written to outputdir
-        wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputfile = config.getFileName("FitResult_limits_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputstring = "FitResult_limits_%d_%d_%d_%s_%s"%(sigamp, sigmean, sigwidth, signalfile, channelName[0])
-        #binedges = None
-        binedges = config.getBinningFromFile(channelName[0])
+        wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
+        outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
+        outputstring = "FitResult_injections_%d_%d_%d_%s_%s"%(sigamp, sigmean, sigwidth, signalfile, channelName[0])
+        #binedges = config.getBinning(rangelow, rangehigh, delta=25)
+        binedges = None
         topfile=config.samples[channelName[0]]["topfile"]
 
         # Then run the injection
@@ -114,7 +103,7 @@ for channelName in channelNames:
              dosignal = dosignal,
              dolimit = dolimit,
              loopstart=0,
-             loopend=nToys,
+             loopend=config.nToys,
              rebinedges=binedges,
              signalfile = signalfile,
              rebinfile=None,
@@ -124,9 +113,8 @@ for channelName in channelNames:
              datafiles=pdFiles,
              histnames=pdHists,
              doRemake = args.doRemake,
-             useSysts = True,
+             useSysts = False,
             )
-
 
 
 

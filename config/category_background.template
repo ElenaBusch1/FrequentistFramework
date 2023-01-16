@@ -1,6 +1,7 @@
 <!DOCTYPE Channel SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
 <Channel Name="CHANNEL" Type="shape" Lumi="1">
-  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="CHANNEL[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
+  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="CHANNEL[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="0"/>
+
 
   <Sample Name="background" 
 	  InputFile="FITFUNC" 

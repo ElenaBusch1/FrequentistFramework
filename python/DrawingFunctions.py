@@ -235,7 +235,7 @@ def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size
     return
 
 
-def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog=False):
+def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog=False, isZeroed=True):
   if myMin != myMax: 
     for hist in hists:
       hist.GetYaxis().SetRangeUser(myMin, myMax)
@@ -274,6 +274,10 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
       minimum = myMin
     if myMax != -123456:
       maximum = myMax
+    if isZeroed:
+      minimum = 0
+
+  
 
   for hist in hists:
     hist.GetYaxis().SetRangeUser(minimum, maximum)
@@ -304,11 +308,11 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
   return legend
 
 
-def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal", ratioDrawOptions = ["B"]):
+def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal", ratioDrawOptions = ["B"], ratioHeight = 0.35):
   canvas.cd()
   style = AS.SetAtlasStyle()
 
-  upperPad = r.TPad("pad1%s"%outName, "pad1",0.0,0.35,1.0,1.0)
+  upperPad = r.TPad("pad1%s"%outName, "pad1",0.0,ratioHeight,1.0,1.0)
   upperPad.SetTopMargin(0.05)
   upperPad.SetBottomMargin(0.0)
   upperPad.SetLeftMargin(0.15)
@@ -320,7 +324,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   r.SetOwnership(upperPad, False)
 
   canvas.cd();
-  lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.0,0.0,1.0,0.35)
+  lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.0,0.0,1.0,ratioHeight)
   lowerPad.SetBottomMargin(0.4)
   lowerPad.SetTopMargin(0.00)
   lowerPad.SetLeftMargin(0.15)
@@ -337,8 +341,8 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
     deltaHists = 0.06
   legend = r.TLegend(0.56,0.95-(len(hists))*deltaHists,.91,0.95)
   legend.SetFillStyle(0)
-  SetStyleOptions(hists, styleOptions,1.0-0.35)
-  SetStyleOptions(Ratios, styleOptions, 0.35)
+  SetStyleOptions(hists, styleOptions,1.0-ratioHeight)
+  SetStyleOptions(Ratios, styleOptions, ratioHeight)
 
   #if(isLogX):
   #  hists[0].SetLineWidth(1)

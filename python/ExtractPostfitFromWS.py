@@ -200,7 +200,9 @@ class PostfitExtractor:
             if self.binEdges:
                 print("Rebinning histogram based on list of bins")
                 h_postfit = h_postfit.Rebin(len(self.binEdges)-1, "postfit", array.array('d', self.binEdges))
-                self.h_data[channel] = self.h_data[channel].Rebin(len(self.binEdges)-1, self.datahist, array.array('d', self.binEdges))
+                print len(self.binEdges),self.binEdges, array.array('d', self.binEdges)
+                #self.h_data[channel] = self.h_data[channel].Rebin(len(self.binEdges)-1, self.datahist, array.array('d', self.binEdges))
+                self.h_data[channel] = self.h_data[channel].Rebin(len(self.binEdges)-1, self.h_data[channel].GetName() + "_new", array.array('d', self.binEdges))
                 firstbin = 0
                 self.h_data[channel].SetDirectory(0)
                 h_postfit.SetDirectory(0)

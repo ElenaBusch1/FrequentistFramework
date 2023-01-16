@@ -33,21 +33,19 @@ if args.isBatch:
 else:
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
-  channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"] ]
+  channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
-  sigmeans = [8000]
-  sigwidths = [10]
-  #signalfile =  "Gaussian"
+  #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
+  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
+  sigmeans = [1500,]
+  sigwidths = [15]
+  signalfile =  "Gaussian"
   #signalfile =  "template"
-  signalfile =  "gausHist"
+  #signalfile =  "gausHist"
   #signalfile =  "test"
-  #coutputdir = "fits2javg_"
-  coutputdir = "fits_"
+  coutputdir = "fits2javg_"
   #args.doRemake = 0
-  args.doRemake = 1
+  args.doRemake = 0
   nToys = config.nToys
 
 
@@ -65,12 +63,15 @@ for sigmean in sigmeans:
           pdFiles = []
           pdHists = []
           for channel in channelName:
+            if sigmean < config.samples[channel]["rangelow"]:
+              continue
             pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
             pdFiles.append(pdFile)
 
             pdHistName = "pseudodata"
             pdHists.append(pdHistName)
-
+          if len(pdFiles)==0:
+            continue
           if not os.path.exists(outputdir):
               os.makedirs(outputdir)
           nbkg="1E3,0,1E6"
@@ -95,7 +96,7 @@ for sigmean in sigmeans:
                nbkgWindow=[],
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="SS_%s_%s_%d_%d_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile),
+               outputstring="m2j_SS_%s_%s_%d_%d_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,

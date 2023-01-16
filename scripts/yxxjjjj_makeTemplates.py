@@ -2,7 +2,7 @@ import python.PrepareTemplates.dijetTLA_genJJJSignals as pt
 import config
 
 
-sigmeans = [2000, 3000, 4000, 6000, 8000]
+sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
 alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
 signal = "gausHist"
 

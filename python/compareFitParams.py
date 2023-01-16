@@ -43,7 +43,7 @@ def compareFitParams(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, r
     pMax = float(substr5)
     # When pMin == pMax, the fit parameter is fixed, and it won't show up in this plot
     if pMin < pMax:
-      h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 500, pMin, pMax)
+      h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 50, pMin, pMax)
       h_p.SetDirectory(0)
       h_pars.append(h_p)
       clist = []
@@ -73,7 +73,7 @@ def compareFitParams(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, r
           pMax = float(substr5)
           # When pMin == pMax, the fit parameter is fixed, and it won't show up in this plot
           if pMin < pMax:
-            h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 500, pMin, pMax)
+            h_p = TH1F("p%d"%(parNum), "p%d;p%d;No. of toys"%(parNum,parNum), 50, pMin, pMax)
             h_p.SetDirectory(0)
             h_pars.append(h_p)
             clist = []
@@ -117,6 +117,7 @@ def compareFitParams(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, r
               # The first 2 parameters are the number of background and number of signal, and the indexing starts at 1 --> 3+index
               for cbin in range(params.GetNbinsX()):
                 if params.GetXaxis().GetBinLabel(cbin+1).find(h_pars[parindex].GetTitle()) >= 0:
+                  #print h_pars[parindex].GetTitle(), params.GetXaxis().GetBinLabel(cbin+1), params.GetBinContent(cbin+1)
                   h_parList[parindex][massIndex].Fill(params.GetBinContent(cbin+1))
 
           massIndex += 1
@@ -128,8 +129,9 @@ def compareFitParams(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, r
 
         # Plot the fit parameters for the different toys
         for m, h_par in enumerate(h_parList):
-          print sigmean, sigwidth, channelName
-          print(len(h_par), len(h_pars), len(h_parList), len(legendNames), legendNames)
+          #print sigmean, sigwidth, channelName
+          #print(len(h_par), len(h_pars), len(h_parList), len(legendNames), legendNames)
+          df.SetRange(h_par)
           leg = df.DrawHists(c, h_par, legendNames, [], drawOptions = ["hist"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
           path = config.getFileName("FitParams_sigmean_%d_sigwidth_%d_"%(sigmean, sigwidth) + h_pars[m].GetTitle(), cdir, channelName, outputdir) + ".pdf"
           c.Print(path)

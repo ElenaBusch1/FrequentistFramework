@@ -37,17 +37,21 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
     for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
       path = config.getFileName(infileName, cdir, channelName, indir, sigmean, sigwidth, sigamp) + ".root"
-      dataHistTmp = lf.read_histogram(path, datahistName + channelName + "_" +suffix)
-      fitHist = lf.read_histogram(path, fithistName +channelName + "_" + suffix)
-      residualHist = lf.read_histogram(path, residualhistName +channelName + "_" + suffix)
+      csuffix = suffix
+      if toy != None:
+        csuffix = "%s_%d"%(suffix, toy)
+      dataHistTmp = lf.read_histogram(path, datahistName + channelName + "_" +csuffix)
+      print path, datahistName + channelName + "_" +csuffix
+      fitHist = lf.read_histogram(path, fithistName +channelName + "_" + csuffix)
+      residualHist = lf.read_histogram(path, residualhistName +channelName + "_" + csuffix)
       #print path, datahistName + channelName+suffix
-      dataHistTmp.SetName("data_%s_%s_%s"%(dataHistTmp.GetName(), infileName, suffix))
-      fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, suffix))
-      residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, suffix))
+      dataHistTmp.SetName("data_%s_%s_%s"%(dataHistTmp.GetName(), infileName, csuffix))
+      fitHist.SetName("%s_%s_%s"%(fitHist.GetName(), infileName, csuffix))
+      residualHist.SetName("%s_%s_%s"%(residualHist.GetName(), infileName, csuffix))
 
       try:
         postFit = path.replace("FitParameters", "PostFit")
-        chi2Hist = lf.read_histogram(postFit, "chi2"+channelName+"_"+suffix)
+        chi2Hist = lf.read_histogram(postFit, "chi2"+channelName+"_"+csuffix)
         chi2 = chi2Hist.GetBinContent(2)
         pval = chi2Hist.GetBinContent(6)
       except:
@@ -120,7 +124,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        dataRes.GetYaxis().SetRangeUser(-1.6, 1.6)
+        dataRes.GetYaxis().SetRangeUser(-3, 3)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
         dataHist.SetTitle(config.samples[channelName]["legend"])

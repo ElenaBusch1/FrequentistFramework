@@ -1,0 +1,12 @@
+<!-- Template to generate signal xml files with the appropraite script -->
+<!DOCTYPE Model  SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
+<Model Type="UserDef">
+  <Item Name="mass_MEAN[CBMU]"/>
+  <Item Name="sigma_MEAN(CBSIGMA)"/>
+  <Item Name="alpha_MEAN(CBALPHA)"/>
+  <Item Name="n_MEAN(CBN)"/>
+
+  <ModelItem Name="RooCBShape::signal(:observable:, mass_MEAN, sigma_MEAN, alpha_MEAN, n_MEAN)"/>
+
+
+</Model>

@@ -39,6 +39,12 @@ def run_injections_anaFit(
     print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
     injecteddatafiles=[]
     nbkgWindows = []
+
+    alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33, 0.35]
+    alpha          = config.samples[datahist[0]]["alpha"]
+    sigmeanX = round( (alphaBins[int(alpha)] * sigmean)/10)*10
+
+
     for cfile, chist in zip(datafiles, histnames):
       injecteddatafile=cfile
       injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
@@ -63,7 +69,7 @@ def run_injections_anaFit(
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1,
-                       wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean),
+                       wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX),
                        wspdf = config.signals[signalfile]["histname"],
                        )
       print (chist, nbkgWindow)

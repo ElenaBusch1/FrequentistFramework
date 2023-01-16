@@ -1,0 +1,29 @@
+<!DOCTYPE Channel SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
+<Channel Name="CHANNEL" Type="shape" Lumi="1">
+  <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="CHANNEL[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
+
+
+  <Systematic Name="ATLAS_lumi_run2" Constr="logn" CentralValue="1" Mag="0.017" WhereTo="yield"/>
+
+  <Sample Name="background" 
+	  InputFile="FITFUNC" 
+	  MultiplyLumi="0" ImportSyst=":self:">
+    <NormFactor Name="nbkg:category:[NBKG]"/>
+  </Sample>
+
+  <Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >
+    <NormFactor Name="nsig_meanMEAN_CHANNEL[NSIG]" />
+  </Sample>
+
+
+
+
+
+  <Sample Name="spurious" InputFile="SIGNALFILE" ImportSyst=":self:" MultiplyLumi="false" SharePdf="commonSig">
+    <Systematic Name="ATLAS_BIAS" Constr="gaus" CentralValue="0" Mag="0.5" WhereTo="yield"/>
+  </Sample>
+
+
+
+
+</Channel>

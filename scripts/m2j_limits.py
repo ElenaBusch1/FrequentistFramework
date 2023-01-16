@@ -42,21 +42,17 @@ else:
 
   pdFitName = "fivePar"
   fitName = "fourPar"
-  #channelNames = [ ["yxxjjjj_4j_alpha0"], ["yxxjjjj_4j_alpha1"], ["yxxjjjj_4j_alpha2"], ["yxxjjjj_4j_alpha3"], ["yxxjjjj_4j_alpha4"], ["yxxjjjj_4j_alpha5"], ["yxxjjjj_4j_alpha6"], ["yxxjjjj_4j_alpha7"], ["yxxjjjj_4j_alpha8"], ["yxxjjjj_4j_alpha9"], ["yxxjjjj_4j_alpha10"], ["yxxjjjj_4j_alpha11"], ]
-  channelNames = [ ["yxxjjjj_4j_alpha0"], ]
+  channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
-  #channelNames = [ ["yxxjjjj_4j_alpha1"], ]
-  #sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
-  sigmeans = [8000]
-  #sigmeans = [2500, 3500, 5000, 7000, 9000]
+  sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
+
   #sigmeans = [10000]
   sigamps = [0]
   sigwidths = [10]
-  #signalfile =  "Gaussian"
-  signalfile =  "crystalBallHist"
+  signalfile =  "Gaussian"
   #signalfile =  "template"
-  coutputdir = "fits"
-  args.doRemake = 0
+  coutputdir = "fits2javg"
+  args.doRemake = 1
 
 
 cdir = config.cdir
@@ -92,9 +88,11 @@ for channelName in channelNames:
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
         outputfile = config.getFileName("FitResult_limits_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputstring = "FitResult_limits_%d_%d_%d_%s_%s"%(sigamp, sigmean, sigwidth, signalfile, channelName[0])
+        outputstring = "FitResult_limits_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
         #binedges = None
         binedges = config.getBinningFromFile(channelName[0])
+        if sigmean+50 < binedges[0]:
+          continue
         topfile=config.samples[channelName[0]]["topfile"]
 
         # Then run the injection
@@ -124,7 +122,7 @@ for channelName in channelNames:
              datafiles=pdFiles,
              histnames=pdHists,
              doRemake = args.doRemake,
-             useSysts = True,
+             useSysts = False,
             )
 
 

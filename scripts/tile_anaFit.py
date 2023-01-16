@@ -5,10 +5,9 @@ import os
 cdir = config.cdir
 
 
-#channelNames = [ ["tile_4j_alpha0"],[ "tile_4j_alpha1"],[ "tile_4j_alpha2"],[ "tile_4j_alpha3"],[ "tile_4j_alpha4"],[ "tile_4j_alpha5"],[ "tile_4j_alpha6"],[ "tile_4j_alpha7"],[ "tile_4j_alpha8"],[ "tile_4j_alpha9"],[ "tile_4j_alpha10"],[ "tile_4j_alpha11"], ]
-channelNames = [ [ "tile_4j_alpha8"],]
+channelNames = [ ["tile_4j_alpha0"],[ "tile_4j_alpha1"],[ "tile_4j_alpha2"],[ "tile_4j_alpha3"],[ "tile_4j_alpha4"],[ "tile_4j_alpha5"],[ "tile_4j_alpha6"],[ "tile_4j_alpha7"],[ "tile_4j_alpha8"],[ "tile_4j_alpha9"],[ "tile_4j_alpha10"],[ "tile_4j_alpha11"], ]
+#channelNames = [ [ "tile_4j_alpha8"],]
 
-#channelNames = [ ["sherpa_yxxjjjj_4j_alpha0"],[ "sherpa_yxxjjjj_4j_alpha1"],[ "sherpa_yxxjjjj_4j_alpha2"],[ "sherpa_yxxjjjj_4j_alpha3"],[ "sherpa_yxxjjjj_4j_alpha4"],[ "sherpa_yxxjjjj_4j_alpha5"],[ "sherpa_yxxjjjj_4j_alpha6"],[ "sherpa_yxxjjjj_4j_alpha7"],[ "sherpa_yxxjjjj_4j_alpha8"],[ "sherpa_yxxjjjj_4j_alpha9"],[ "sherpa_yxxjjjj_4j_alpha10"],[ "sherpa_yxxjjjj_4j_alpha11"], ]
 
 #fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
 fitNames = ["threePar", "fourPar", "fivePar"]
@@ -24,7 +23,7 @@ for channelName in channelNames:
         # These should all use the same top file
         topfile=config.samples[channelName[0]]["topfile"]
   
-        outputdir = "fits_%s"%channelName[0]
+        outputdir = "fitsTile_%s"%channelName[0]
         #outputdir = "fitsSherpa_%s"%channelName[0]
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_%s_1GeVBin_GlobalFit"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"

@@ -5,20 +5,22 @@ cdir = config.cdir
 
 pdFitName = config.cPDFitName
 fitName = config.cFitName
-#allChannelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-allChannelNames = [ [ "yxxjjjj_4j_alpha11"], ]
+allChannelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+#allChannelNames = [ [ "yxxjjjj_4j_alpha11"], ]
 #allChannelNames = [ ["yxxjjjj_4j_alpha0"],]
 #allChannelNames = [ [ "yxxjjjj_4j_alpha11"], ]
 #signalfile =  config.cSignal
-overallName = config.cSample 
-signalfile =  "crystalBallHistNoSyst"
+#overallName = config.cSample 
+overallName = "fits_" 
+#signalfile =  "crystalBallHistNoSyst"
+signalfile =  "Gaussian"
 
 
 pdHistName = "pseudodata"
 #sigmeans = [2000, 3000, 4000, 5000, 6000, 7000, 8000]
-sigmeans = [3000, 4000, 6000, 8000, 10000]
+sigmeans = [2000, 2250, 2500, 2750, 3000, 3250, 3500,3750, 4000,4500,5000,5500, 6000,6500,7000,7500, 8000, 8500, 9000, 9500, 10000]
 #sigmeans = [6000]
-sigwidths = [10]
+sigwidths = [5, 10, 15]
 
 
 
@@ -36,7 +38,7 @@ for channelNames in allChannelNames:
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
                            " --outputdir=" + overallName +  \
-                           " --doRemake=1 " \
+                           " --doRemake=0 " \
                            " --isBatch=1"
 
 

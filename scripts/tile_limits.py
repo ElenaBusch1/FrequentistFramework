@@ -42,21 +42,17 @@ else:
 
   pdFitName = "fivePar"
   fitName = "fourPar"
-  #channelNames = [ ["yxxjjjj_4j_alpha0"], ["yxxjjjj_4j_alpha1"], ["yxxjjjj_4j_alpha2"], ["yxxjjjj_4j_alpha3"], ["yxxjjjj_4j_alpha4"], ["yxxjjjj_4j_alpha5"], ["yxxjjjj_4j_alpha6"], ["yxxjjjj_4j_alpha7"], ["yxxjjjj_4j_alpha8"], ["yxxjjjj_4j_alpha9"], ["yxxjjjj_4j_alpha10"], ["yxxjjjj_4j_alpha11"], ]
-  channelNames = [ ["yxxjjjj_4j_alpha0"], ]
+  channelNames = [ ["tile_4j_alpha0"],[ "tile_4j_alpha1"],[ "tile_4j_alpha2"],[ "tile_4j_alpha3"],[ "tile_4j_alpha4"],[ "tile_4j_alpha5"],[ "tile_4j_alpha6"],[ "tile_4j_alpha7"],[ "tile_4j_alpha8"],[ "tile_4j_alpha9"],[ "tile_4j_alpha10"],[ "tile_4j_alpha11"], ]
 
   #channelNames = [ ["yxxjjjj_4j_alpha1"], ]
-  #sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
-  sigmeans = [8000]
-  #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  #sigmeans = [10000]
+  sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
+  #sigmeans = [2000]
   sigamps = [0]
   sigwidths = [10]
-  #signalfile =  "Gaussian"
-  signalfile =  "crystalBallHist"
+  signalfile =  "Gaussian"
   #signalfile =  "template"
-  coutputdir = "fits"
-  args.doRemake = 0
+  coutputdir = "fitsTile"
+  args.doRemake = 1
 
 
 cdir = config.cdir
@@ -92,9 +88,8 @@ for channelName in channelNames:
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
         outputfile = config.getFileName("FitResult_limits_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputstring = "FitResult_limits_%d_%d_%d_%s_%s"%(sigamp, sigmean, sigwidth, signalfile, channelName[0])
-        #binedges = None
-        binedges = config.getBinningFromFile(channelName[0])
+        outputstring = "FitResult_limits_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
+        binedges = None
         topfile=config.samples[channelName[0]]["topfile"]
 
         # Then run the injection

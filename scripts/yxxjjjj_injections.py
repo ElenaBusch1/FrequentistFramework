@@ -33,18 +33,18 @@ else:
   pdFitName = "fivePar"
   fitName = "fourPar"
   #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha5"]]
-  channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
+  channelNames = [ [ "yxxjjjj_4j_alpha9"]]
 
-  sigmeans = [1000]
+  #sigmeans = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+  #sigmeans = [2000, 3000,]
+  sigmeans = [2000]
+  #sigamps = [1,2,3,4,5]
   sigamps = [4]
   sigwidths = [10]
   signalfile =  "Gaussian"
-  coutputdir = "fits2javg_"
-  args.doRemake=0
+  #coutputdir = "fits2javg_"
+  coutputdir = "fits_"
+  args.doRemake=1
 
 
 #. scripts/setup_buildAndFit.sh
@@ -70,16 +70,22 @@ for channelName in channelNames:
   for sigmean in sigmeans:
     for sigamp in sigamps:
       for sigwidth in sigwidths:
-        nbkg="1E5,0,1e6"
-        nsig="0,0,5e3"
+        #nbkg="1E5,0,1e6"
+        nbkg="1E4,0,1e6"
+        #nsig="0,0,5e4"
+        nsig="0,0,1e3"
+        if sigmean > 3000:
+          nsig="0,0,300"
         if sigmean > 5000:
-          nsig="0,0,15"
+          nsig="0,0,30"
+        if sigmean > 9000:
+          nsig="0,0,10"
 
 
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
         outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputstring = "FitResult_injections_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
+        outputstring = "FitResult_m4j_injections_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
         #binedges = config.getBinning(rangelow, rangehigh, delta=25)
         binedges = None
         topfile=config.samples[channelName[0]]["topfile"]

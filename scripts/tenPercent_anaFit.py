@@ -5,8 +5,7 @@ import os
 cdir = config.cdir
 
 
-channelNames = [ [ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
-#channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],[ "tenPercent_yxxjjjj_4j_alpha1"],[ "tenPercent_yxxjjjj_4j_alpha2"],[ "tenPercent_yxxjjjj_4j_alpha3"],[ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
+channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],[ "tenPercent_yxxjjjj_4j_alpha1"],[ "tenPercent_yxxjjjj_4j_alpha2"],[ "tenPercent_yxxjjjj_4j_alpha3"],[ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
 
 
 fitNames = ["threePar", "fourPar", "fivePar"]
@@ -22,7 +21,7 @@ for channelName in channelNames:
         # These should all use the same top file
         topfile=config.samples[channelName[0]]["topfile"]
   
-        outputdir = "fits_%s"%channelName[0]
+        outputdir = "fitsTenPercent_%s"%channelName[0]
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_%s_1GeVBin_GlobalFit"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"
         outputfile = config.getFileName("FitResult_%s_bkgonly"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"

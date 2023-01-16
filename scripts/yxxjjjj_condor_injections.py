@@ -12,10 +12,11 @@ overallName = config.cSample
 
 
 
-sigmeans = [3000, 4000, 6000, 8000]
+#sigmeans = [3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+sigmeans = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 #sigmeans = [4000]
-#sigamps = [0,1,2,3,4,5]
-sigamps = [3]
+sigamps = [0,1,2,3,4,5]
+#sigamps = [3]
 #sigamps = [1]
 sigwidths = [10]
 

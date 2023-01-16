@@ -35,22 +35,19 @@ else:
   #fitName = "threePar"
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
-  channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha0"], ]
+  channelNames = [ ["tile_4j_alpha0"],[ "tile_4j_alpha1"],[ "tile_4j_alpha2"],[ "tile_4j_alpha3"],[ "tile_4j_alpha4"],[ "tile_4j_alpha5"],[ "tile_4j_alpha6"],[ "tile_4j_alpha7"],[ "tile_4j_alpha8"],[ "tile_4j_alpha9"],[ "tile_4j_alpha10"],[ "tile_4j_alpha11"], ]
+  #channelNames = [ ["tile_4j_alpha5"],]
 
-  #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
-  sigmeans = [3000]
+  #sigmeans = [2000, 3000, 4000, 6000, 8000]
+  sigmeans = [10000]
+  #sigmeans = [6000, 8000]
   sigwidths = [10]
   signalfile =  "Gaussian"
-  #signalfile =  "template"
-  #signalfile =  "crystalBallHistNoSyst"
-  #signalfile =  "crystalBallHist"
-  #signalfile =  "gausHist"
-  #signalfile =  "test"
-  coutputdir = "fits_"
+  coutputdir = "fitsTile_"
   args.doRemake = 0
-  #args.doRemake = 1
-  nToys = config.nToys
+  ##args.doRemake = 1
+  #nToys = config.nToys
+  nToys = 100
 
 
 dosignal=1
