@@ -123,6 +123,7 @@ def main(args):
 
     c.Print(args.outfile.replace(".root", ".png"))
     c.Print(args.outfile.replace(".root", ".pdf"))
+    c.Print(args.outfile.replace(".root", ".svg"))
 
     f_out.Close()
 
