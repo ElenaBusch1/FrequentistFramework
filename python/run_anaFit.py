@@ -60,7 +60,6 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         chi2flag += " --chi2constraints 0"
 
     rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s %s -o %s" % (wsfile, _poi, _range, chi2flag, fitresultfile))
-    # rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
