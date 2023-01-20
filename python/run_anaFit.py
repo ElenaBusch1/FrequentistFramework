@@ -29,7 +29,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfile, poi=None, maskrange=None):
+def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfile, poi=None, maskrange=None, dochi2fit=False, dochi2constraints=False):
     rtv=execute('XMLReader -x %s -o "logy integral" --minimizerStrategy 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -50,7 +50,17 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         maskmin=-1
         maskmax=-1
 
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    if dochi2fit:
+        chi2flag = "--chi2fit 1"
+    else:
+        chi2flag = "--chi2fit 0"
+    if dochi2constraints:
+        chi2flag += " --chi2constraints 1"
+    else:
+        chi2flag += " --chi2constraints 0"
+
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s %s -o %s" % (wsfile, _poi, _range, chi2flag, fitresultfile))
+    # rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -71,7 +81,8 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         rebinhist="data",
         maskmin=maskmin,
         maskmax=maskmax,
-        bkgonly=True
+        bkgonly=True,
+        undolog=False
     )
     pval = pfe.GetPval("J100yStar06_rebinned")
     pfe.WriteRoot(postfitfile, dirPerCategory=True)
@@ -101,7 +112,10 @@ def run_anaFit(datafile,
                sigwidth=7,
                maskthreshold=0.01,
                doprefit=False,
-               folder="run/"):
+               dochi2fit=False, 
+               dochi2constraints=False,
+               folder="run/",
+               spursig=0):
 
     nbins=rangehigh - rangelow
 
@@ -147,6 +161,10 @@ def run_anaFit(datafile,
                 nPars = 6
             elif "seven" in  backgroundfile:
                 nPars = 7
+            elif "eight" in  backgroundfile:
+                nPars = 8
+            elif "nine" in  backgroundfile:
+                nPars = 9
             # [1, -30, -30, -30, ...]
             parRangeLow = [1]+[-30]*(nPars-1)
             parRangeHigh = [1]+[30]*(nPars-1)
@@ -182,7 +200,7 @@ def run_anaFit(datafile,
             )
             
             initPars,_nbkg = pf.Fit()
-            nbkg="%.1E, 0, %.1E" % (_nbkg, 2*_nbkg)
+            nbkg="%.1E, %1.E, %.1E" % (_nbkg, 0.8*_nbkg, 1.2*_nbkg)
             
             print("Starting fit with initial pars", initPars)
 
@@ -200,7 +218,8 @@ def run_anaFit(datafile,
         ("NBKG", nbkg),
 	("NSIG", nsig),
 	("SIGNAME", signame),
-	("SIGNALFILE", tmpsignalfile)
+	("SIGNALFILE", tmpsignalfile),
+	("SPURSIG", str(spursig)),
     ])    
 
     if signalfile:
@@ -215,7 +234,10 @@ def run_anaFit(datafile,
         if sigwidth == -999:
     	    poi="nsig_mR{}_gq0p1".format(sigmean)
     else:
-        poi=None
+        poi="ATLAS_spurious_%s=0_0_0" % signame
+        if sigwidth == -999:
+    	    poi="ATLAS_spurious_mR{}_gq0p1=0_0_0".format(sigmean)
+        # poi=None
 
     pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile, 
@@ -224,7 +246,8 @@ def run_anaFit(datafile,
                                                                 wsfile=wsfile, 
                                                                 fitresultfile=outputfile, 
                                                                 poi=poi,
-							                                )
+                                                                dochi2fit=dochi2fit, 
+                                                                dochi2constraints=dochi2constraints,)
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -264,7 +287,9 @@ def run_anaFit(datafile,
                                             wsfile=wsfilemasked, 
                                             fitresultfile=outfilemasked, 
                                             poi=poi, 
-                                            maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
+                                            maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])),
+                                            dochi2fit=dochi2fit, 
+                                            dochi2constraints=dochi2constraints,)
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
 
@@ -276,11 +301,20 @@ def run_anaFit(datafile,
             print("Exiting with failed fit status.")
             return -1
             
+    if dochi2fit:
+        chi2flag = "--chi2fit 1"
+    else:
+        chi2flag = "--chi2fit 0"
+    if dochi2constraints:
+        chi2flag += " --chi2constraints 1"
+    else:
+        chi2flag += " --chi2constraints 0"
+
     # blindrange not yet implemented with quickLimit
     if dolimit and dosignal and pval_global > maskthreshold:
         print("Now running quickLimit")
         #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
-        rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-10 --muScanPoints 20 --minStrat 2 --nllOffset 0 --GKIntegrator 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+        rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-10 --muScanPoints 20 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 %s -o %s" % (wsfile, poi, chi2flag, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -308,7 +342,10 @@ def main(args):
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %). If -999 dealing with Zprime samples.')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
     parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform ROOT prefit before quickFit')
+    parser.add_argument('--dochi2fit', dest='dochi2fit', action="store_true", help='Minimize chi2 instead of NLL')
+    parser.add_argument('--dochi2constraints', dest='dochi2constraints', action="store_true", help='Include the constraint terms into chi2. Becomes virtually identical to NLL this way.')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
+    parser.add_argument('--spursigfile', dest='spursigfile', type=str, help='Path to json file containing spurious signal dict')
 
     args = parser.parse_args(args)
     if not args.signame:
@@ -323,6 +360,12 @@ def main(args):
     except OSError:
         if not os.path.isdir(args.folder):
             raise
+
+    spursig=0
+    if args.spursigfile:
+        with open(args.spursigfile) as f:
+            dict_spursig = json.load(f)
+        spursig = dict_spursig[str(args.sigmean)][str(args.sigwidth)]['0']['uncertainty']
 
     run_anaFit(datafile=args.datafile,
                datahist=args.datahist,
@@ -343,8 +386,10 @@ def main(args):
                folder=args.folder,	       
                signame=args.signame,
                maskthreshold=args.maskthreshold,
-               doprefit=args.doprefit)
-
+               doprefit=args.doprefit,
+               dochi2fit=args.dochi2fit, 
+               dochi2constraints=args.dochi2constraints,
+               spursig=spursig)
 
 
 if __name__ == "__main__":  
