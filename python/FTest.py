@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import ROOT
 import sys, re, os, math, optparse
 from color import getColorSteps
@@ -30,6 +31,7 @@ def main(args):
     parser.add_option('--ndofbin', dest='ndofbin', type=int, default=5, help='bin of the npars value in the chi2 histogram')
     parser.add_option('--usendof', dest='usendof', action='store_true', help='use npar=nbins-ndof instead of number in chi2 histogram')
     parser.add_option('--zerochi2', dest='zerochi2', action='store_true', help='use when fitting unfluctuated data')
+    parser.add_option('--noftest', dest='noftest', action='store_true', help='only plot residuals and dont perform F-Test')
     parser.add_option('--output', dest='output', type=str, default='FTest',help='name of output plot, extension will be added.')
 
     options, args = parser.parse_args(args)
@@ -46,27 +48,35 @@ def main(args):
     for p in paths:
         f = ROOT.TFile(p)
 
-        h_chi2 = f.Get(options.chi2hist)
+        try:
+            h_chi2 = f.Get(options.chi2hist)
+        except:
+            pass
         # h_pf   = f.Get(options.postfithist)
         h_res  = f.Get(options.residualshist)
         
         # h_pf.SetDirectory(0)
         h_res.SetDirectory(0)
 
-        chi2  = h_chi2.GetBinContent(options.chi2bin)
-        _nbins = h_chi2.GetBinContent(options.nbinsbin)
-        if nbins > 0 and _nbins != nbins:
-            print "ERROR: Change of binning between files: %d, %d . Exiting" % (nbins, _nbins)
-            return -1
-        else:
-            nbins = _nbins
+        try:
+            chi2  = h_chi2.GetBinContent(options.chi2bin)
+            _nbins = h_chi2.GetBinContent(options.nbinsbin)
+            if nbins > 0 and _nbins != nbins:
+                print("ERROR: Change of binning between files: %d, %d . Exiting" % (nbins, _nbins))
+                return -1
+            else:
+                nbins = _nbins
+            
+            if not options.usendof:
+                npars = h_chi2.GetBinContent(options.nparsbin)
+            else:
+                npars = h_chi2.GetBinContent(options.nbinsbin) - h_chi2.GetBinContent(options.ndofbin)
 
-        if not options.usendof:
-            npars = h_chi2.GetBinContent(options.nparsbin)
-        else:
-            npars = h_chi2.GetBinContent(options.nbinsbin) - h_chi2.GetBinContent(options.ndofbin)
-
-        ndof = h_chi2.GetBinContent(options.ndofbin)
+            ndof = h_chi2.GetBinContent(options.ndofbin)
+        except:
+            chi2=0
+            npars=0
+            ndof=0
 
         # l_pf.append(h_pf)
         l_res.append(h_res)
@@ -77,15 +87,12 @@ def main(args):
 
     colors = getColorSteps(len(paths))
     c = ROOT.TCanvas("c","c",800,600)
+    c.SetGridy()
 
     leg = ROOT.TLegend(0.18,0.70,0.90,0.90)
     leg.SetNColumns(2)
     leg.SetTextSize(21)
     
-    leg2 = ROOT.TLegend(0.18,0.18,0.90,0.30)
-    leg2.SetNColumns(2)
-    leg2.SetTextSize(21)
-
     l_constr=[]
     l_par=[]
 
@@ -101,8 +108,13 @@ def main(args):
         # h.GetXaxis().SetNdivisions(505)
         h.GetYaxis().SetTitle("Residuals [#sigma]")
 
-        h.SetMinimum(-4.2)
-        h.SetMaximum(5.2)
+        if options.zerochi2:
+            h.SetMinimum(-1.1)
+            h.SetMaximum(1.1)
+            
+        else:
+            h.SetMinimum(-4.2)
+            h.SetMaximum(5.6)
 
         h.Draw("same")
 
@@ -113,7 +125,7 @@ def main(args):
 
             legtext = "#splitline{%d#sigma}{#chi^{2}/n = %.1f/%.1f}" % (constr, l_chi2[i], l_ndof[i]) 
   
-        elif "anafit" in paths[i].lower() or "globalfit" in paths[i].lower() or "swift" in paths[i].lower():
+        elif "anafit" in paths[i].lower() or "globalfit" in paths[i].lower() or "swift" in paths[i].lower() or "par" in paths[i].lower():
             if "four" in paths[i].lower():
                 p=4
             elif "five" in paths[i].lower():
@@ -122,36 +134,54 @@ def main(args):
                 p=6
             elif "seven" in paths[i].lower():
                 p=7
-                
-            legtext = "#splitline{%d-par fit}{#chi^{2}/n = %.1f/%.0f}" % (p, l_chi2[i], l_ndof[i]) 
-
+            elif "eight" in paths[i].lower():
+                p=8
+            elif "nine" in paths[i].lower():
+                p=9
+            
+            if l_ndof[i] != 0:
+                legtext = "#splitline{%d-par fit}{#chi^{2}/n = %.1f/%.0f}" % (p, l_chi2[i], l_ndof[i]) 
+            else:
+                legtext = "%d-par fit" % p
             l_par.append(p)
 
         leg.AddEntry(h, legtext, "f")
 
-    for i in range(len(l_chi2)-1):
-        
-        (F, pF) = calcFpF( chi2_nom=l_chi2[i], 
-                           chi2_alt=l_chi2[i+1], 
-                           npars_nom=l_npars[i], 
-                           npars_alt=l_npars[i+1], 
-                           nbins=nbins, 
-                           zerochi2=options.zerochi2 )
-        
-        print "\nF-Test between:", paths[i], paths[i+1]
-        print "chi2 values:", l_chi2[i], l_chi2[i+1]
-        print "npars:", l_npars[i], l_npars[i+1]
-        print "nbins:", nbins
-        print "F:", F
-        print "pF:", pF
+    if not options.noftest:
+    
+        leg2 = ROOT.TLegend(0.18,0.18,0.90,0.30)
+        leg2.SetNColumns(2)
+        leg2.SetTextSize(21)
 
-        if "nlofit" in paths[i].lower():
-            leg2.AddEntry(0, "p(F_{^{%d#sigma #rightarrow %d#sigma}}) = %.2f" % (l_constr[i], l_constr[i+1], pF), "")
-        elif "anafit" in paths[i].lower() or "globalfit" in paths[i].lower() or "swift" in paths[i].lower():
-            leg2.AddEntry(0, "p(F_{^{%d #rightarrow %d par}}) = %.2f" % (l_par[i], l_par[i+1], pF), "")
+        for i in range(len(l_chi2)-1):
+            
+            print("\nF-Test between:", paths[i], paths[i+1])
+            print("chi2 values:", l_chi2[i], l_chi2[i+1])
+            print("npars:", l_npars[i], l_npars[i+1])
+            print("nbins:", nbins)
+    
+            try:
+                (F, pF) = calcFpF( chi2_nom=l_chi2[i], 
+                                   chi2_alt=l_chi2[i+1], 
+                                   npars_nom=l_npars[i], 
+                                   npars_alt=l_npars[i+1], 
+                                   nbins=nbins, 
+                                   zerochi2=options.zerochi2 )
+            except:
+                F=float("nan")
+                pF=float("nan")
+                
+            print("F:", F)
+            print("pF:", pF)
+    
+            if "nlofit" in paths[i].lower():
+                leg2.AddEntry(0, "p(F_{^{%d#sigma #rightarrow %d#sigma}}) = %.2f" % (l_constr[i], l_constr[i+1], pF), "")
+            elif "anafit" in paths[i].lower() or "globalfit" in paths[i].lower() or "swift" in paths[i].lower():
+                leg2.AddEntry(0, "p(F_{^{%d #rightarrow %d par}}) = %.2f" % (l_par[i], l_par[i+1], pF), "")
+    
+        leg2.Draw()
 
     leg.Draw()
-    leg2.Draw()
     c.Update()
 
     c.Print(options.output + ".svg")
