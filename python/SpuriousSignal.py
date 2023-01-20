@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import ROOT
 import sys, re, os, math, argparse
 from array import array
@@ -6,28 +7,31 @@ from ROOT import *
 from math import sqrt
 from glob import glob
 from color import getColorSteps
+import json
 
-gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C")
-gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
-gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
+gROOT.LoadMacro("$_DIRXMLWSBUILDER/../atlasstyle-00-04-02/AtlasLabels.C")
+gROOT.LoadMacro("$_DIRXMLWSBUILDER/../atlasstyle-00-04-02/AtlasStyle.C")
+gROOT.LoadMacro("$_DIRXMLWSBUILDER/../atlasstyle-00-04-02/AtlasUtils.C")
 
-# J50:
-# text="#sqrt{s}=13 TeV, J50 15 fb^{-1} PD"
-# ymin=-1.99e5
-# ymax=1.99e5
-# spacing=8
-
-# J100:
-text="#sqrt{s}=13 TeV, J100 130 fb^{-1} PD"
-ymin=-0.49e5
-ymax=0.49e5
-spacing=20
-
+usePercentiles = False
 
 def main(args):
     SetAtlasStyle()
  
     paths = args
+    
+    # J100:
+    text="#sqrt{s}=13 TeV, J100 133 fb^{-1} PD"
+    ymin=-0.49e5
+    ymax=0.49e5
+    spacing=20
+
+    if "J50" in paths[0]:
+        # J50:
+        text="#sqrt{s}=13 TeV, J50 14.5 fb^{-1} PD"
+        ymin=-1.99e5
+        ymax=1.99e5
+        spacing=8
 
     colors = getColorSteps(len(paths))
     fillstyles = [3245, 3254, 3245, 3254, 3245, 3254]
@@ -43,10 +47,18 @@ def main(args):
             
             if not isinstance(d, ROOT.TDirectory):
                 continue
+                
+            if usePercentiles and not "_1to99_percentile" in name:
+                continue
 
-            res=re.search(r'mean(\d+)_width(\d+)(:?_amp\d+)?', name)
+            if not usePercentiles and "_1to99_percentile" in name:
+                continue
+
+            searchstring =r'mean(\d+)_width(\d+)(:?_amp\d+)?'
+            res=re.search(searchstring, name)
             m=int(res.group(1))
             w=int(res.group(2))
+
             try:
                 a=int(res.group(3)[4:])
             except:
@@ -57,7 +69,7 @@ def main(args):
 
                 if not ("nsig" in name or "nbkg" in name):
                     continue
-                
+
                 h = d.Get(name)
                 h.SetDirectory(0)
 
@@ -75,9 +87,11 @@ def main(args):
             d.Close()
         f.Close()
 
+    dicts_out = []
     graphs = []
     ratios = []
     for p in paths:
+        dicts_out.append({})
         graphs.append({})
         ratios.append({})
 
@@ -89,6 +103,7 @@ def main(args):
                     list_h = hists[m][w][a][name]
 
                     c = TCanvas("c1", "c1", 800, 600)
+                    c.SetRightMargin(0.075)
                     # c.SetLogy()
 
                     mean = []
@@ -115,10 +130,11 @@ def main(args):
                         h.Draw("same hist")
 
 
+                    leg = TLegend(0.66,0.80,0.89,0.90)
                     # leg = TLegend(0.66,0.70,0.89,0.90)
                     # leg.AddEntry(list_h[0], "#splitline{NLOFit:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[0]/rms[0]), "f")
-                    # leg.AddEntry(list_h[1], "#splitline{5-par:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[1]/rms[1]), "f")
-                    # leg.Draw()
+                    leg.AddEntry(list_h[0], "#splitline{5-par:}{#it{S}_{spur}/#sigma_{fit}=%.2f}" % (mean[0]/rms[0]), "f")
+                    leg.Draw()
 
                     ATLASLabel(0.20, 0.90, "Work in progress", 13)
                     myText(0.20, 0.85, 1, text, 13)
@@ -134,7 +150,7 @@ def main(args):
                             ratios[i][(w,a)] = ROOT.TGraphErrors()
 
                             if abs(mean[i] / rms[i]) > 0.3:
-                                print "WARNING: mean/rms=%.2f for %s in file %s" % (mean[i]/rms[i], name, paths[i])
+                                print("WARNING: mean/rms=%.2f for %s in file %s" % (mean[i]/rms[i], name, paths[i]))
 
                         j = graphs[i][(w,a)].GetN()
                         graphs[i][(w,a)].SetPoint(j, m+(w/5-2)*spacing, mean[i])
@@ -142,6 +158,18 @@ def main(args):
 
                         ratios[i][(w,a)].SetPoint(j, m+(w/5-2)*spacing, mean[i] / rms[i])
 
+                        if not m in dicts_out[i]:
+                            dicts_out[i][m] = {}
+                        if not w in dicts_out[i][m]:
+                            dicts_out[i][m][w] = {}
+                        if not a in dicts_out[i][m][w]:
+                            dicts_out[i][m][w][a] = {}
+                        
+                        dicts_out[i][m][w][a]["rms"] = rms[i]
+                        dicts_out[i][m][w][a]["bias"] = mean[i]
+                        dicts_out[i][m][w][a]["ratio"] = mean[i] / rms[i]
+                        dicts_out[i][m][w][a]["uncertainty"] = 0.1*rms[i]
+                        
     for i,p in enumerate(paths):
 
         outname = "SpuriousSignal_%d" % i
@@ -236,6 +264,9 @@ def main(args):
         c.Print(outname + ".svg")
 
         f_out.Close()
+
+        with open(outname + ".json", 'w') as f_json:
+            json.dump(dicts_out[i], f_json)
 
     # raw_input("Press enter to continue...")
 
