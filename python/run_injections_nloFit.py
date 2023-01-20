@@ -29,6 +29,7 @@ def main(args):
     parser.add_argument('--externalchi2fct', dest='externalchi2fct', type=str, help='Name of TF1 to use for p(chi2) calculation')
     parser.add_argument('--externalchi2bins', dest='externalchi2bins', type=int, default=40, help='Number of bins in chi2 function')
     parser.add_argument('--doinitialpars', dest='doinitialpars', action="store_true", help='Initialise with empiric fit parameters != 0')
+    parser.add_argument('--externalinitialpars', dest='externalinitialpars', type=str, help='Path to json file with dict for initial conditions')
     parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
@@ -37,6 +38,10 @@ def main(args):
     parser.add_argument('--sigamp', dest='sigamp', type=float, default=0, help='Amplitude of Gaussian to inject (in sigma)')
     parser.add_argument('--loopstart', dest='loopstart', type=int, help='First toy to fit')
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
+    parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform RooFit prefit before quickFit')
+    parser.add_argument('--dochi2fit', dest='dochi2fit', action="store_true", help='Minimize chi2 instead of NLL')
+    parser.add_argument('--dochi2constraints', dest='dochi2constraints', action="store_true", help='Include the constraint terms into chi2. Becomes virtually identical to NLL this way.')
+    parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
 
     args = parser.parse_args(args)
     signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
@@ -88,10 +93,15 @@ def main(args):
                        externalchi2fct=args.externalchi2fct,
                        externalchi2bins=args.externalchi2bins,
                        doinitialpars=args.doinitialpars,
+                       externalinitialpars=args.externalinitialpars,
                        dosignal=args.dosignal,
                        dolimit=args.dolimit,
                        signame=signame,
-                       maskthreshold=args.maskthreshold)
+                       maskthreshold=args.maskthreshold,
+                       folder=args.folder,
+                       doprefit=args.doprefit,
+                       dochi2fit=args.dochi2fit,
+                       dochi2constraints=args.dochi2constraints,)
     else:
         print("Running run_nloFit with datahist %s" % args.datahist)
         run_nloFit(datafile=injecteddatafile,
@@ -114,10 +124,15 @@ def main(args):
                    externalchi2fct=args.externalchi2fct,
                    externalchi2bins=args.externalchi2bins,
                    doinitialpars=args.doinitialpars,
+                   externalinitialpars=args.externalinitialpars,
                    dosignal=args.dosignal,
                    dolimit=args.dolimit,
                    signame=signame,
-                   maskthreshold=args.maskthreshold)
+                   maskthreshold=args.maskthreshold,
+                   folder=args.folder,
+                   doprefit=args.doprefit,
+                   dochi2fit=args.dochi2fit,
+                   dochi2constraints=args.dochi2constraints,)
 
 
 if __name__ == "__main__":  

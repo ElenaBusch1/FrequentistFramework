@@ -65,7 +65,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, combinefile=None, externalchi2file=None, externalchi2fct=None, externalchi2bins=40, doprefit=False):
+def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, poi=None, maskrange=None, combinefile=None, externalchi2file=None, externalchi2fct=None, externalchi2bins=40, doprefit=False, dochi2fit=False, dochi2constraints=False):
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0' % topfile) # minimizer strategy fast
     if rtv != 0:
         print("WARNING: Non-zero return code from XMLReader. Check if tolerable")
@@ -79,8 +79,11 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         pf = PreFitter(
             wsfile = wsfile,
             nRetries1 = 50000,
-            nRetries2 = 50,
+            nRetries2 = 20,
             updatews = 1,
+            chi2fit = dochi2fit,
+            chi2constraints = dochi2constraints,
+            poi=poi,
         )
 
         pf.Fit()
@@ -101,7 +104,16 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmin=-1
         maskmax=-1
 
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 1 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    if dochi2fit:
+        chi2flag = "--chi2fit 1"
+    else:
+        chi2flag = "--chi2fit 0"
+    if dochi2constraints:
+        chi2flag += " --chi2constraints 1"
+    else:
+        chi2flag += " --chi2constraints 0"
+
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 1 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s %s -o %s" % (wsfile, _poi, _range, chi2flag, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -146,13 +158,16 @@ def run_nloFit(datafile,
                externalchi2fct=None,
                externalchi2bins=40,
                doinitialpars=False,
+               externalinitialpars=None,
                dosignal=False,
                dolimit=False,
                signame='',
                nsig='',
                maskthreshold=0.01,
                folder="run/",
-               doprefit=False,):
+               doprefit=False,
+               dochi2fit=False, 
+               dochi2constraints=False,):
 
     rangelow=binning.index(rangelow)
     rangehigh=binning.index(rangehigh)
@@ -210,9 +225,16 @@ def run_nloFit(datafile,
                ])
 
     if doinitialpars:
-        print("Inserting initial params")
+        if externalinitialpars:
+            print("Inserting initial params from file", externalinitialpars)
+            with open(externalinitialpars, 'r') as f:
+                _dict_initialpars = json.load(f)
+        else:
+            print("Inserting default initial params")
+            _dict_initialpars = dict_initialpars
+
         replacelist=[]
-        for var,val in dict_initialpars.items():
+        for var,val in _dict_initialpars.items():
             replacelist.append(('%s\[0,' % var, '%s[%.4e,' % (var, val)))
         replaceinfile(tmpcombinefile, replacelist) 
     else:
@@ -221,7 +243,8 @@ def run_nloFit(datafile,
     if dosignal:
         poi="nsig_%s" % signame
     else:
-        poi=None
+        poi="nsig_%s=0_0_0" % signame
+        # poi=None
 
     pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile.replace("_fixedBins",""), #undo the binning hack
@@ -234,7 +257,9 @@ def run_nloFit(datafile,
                                                                 externalchi2file=externalchi2file,
                                                                 externalchi2fct=externalchi2fct,
                                                                 externalchi2bins=externalchi2bins,
-                                                                doprefit=doprefit)
+                                                                doprefit=doprefit,
+                                                                dochi2fit=dochi2fit, 
+                                                                dochi2constraints=dochi2constraints,)
 
     print ("Global fit p(chi2)=%.3f" % pval_global)
 
@@ -285,7 +310,9 @@ def run_nloFit(datafile,
                                             externalchi2file=externalchi2file,
                                             externalchi2fct=externalchi2fct,
                                             externalchi2bins=externalchi2bins,
-                                            doprefit=doprefit)
+                                            doprefit=doprefit,
+                                            dochi2fit=dochi2fit, 
+                                            dochi2constraints=dochi2constraints,)
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
 
@@ -297,12 +324,19 @@ def run_nloFit(datafile,
             print("p(chi2) threshold still not passed.")
             print("Exiting with failed fit status.")
             return -1
+
+    if dochi2fit:
+        chi2flag = "--chi2fit 1"
+    else:
+        chi2flag = "--chi2fit 0"
+    if dochi2constraints:
+        chi2flag += " --chi2constraints 1"
+    else:
+        chi2flag += " --chi2constraints 0"
             
-    # blindrange not yet implemented with quickLimit
-    # if dolimit and dosignal and pval_global > maskthreshold:
     if dolimit and dosignal:
         print("Now running quickLimit")
-        rtv=execute("timeout --foreground 28800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-10 --muScanPoints 20 --minStrat 2 --nllOffset 1 --optConst 2 --GKIntegrator 1 %s -o %s" % (combwsfile, poi, _range, outputfile.replace("FitResult","Limits")))
+        rtv=execute("timeout --foreground 28800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-10 --muScanPoints 20 --minStrat 2 --nllOffset 1 --optConst 2 --GKIntegrator 1 %s %s -o %s" % (combwsfile, poi, _range, chi2flag, outputfile.replace("FitResult","Limits")))
         if rtv != 0:
             print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
@@ -331,12 +365,15 @@ def main(args):
     parser.add_argument('--externalchi2fct', dest='externalchi2fct', type=str, help='Name of TF1 to use for p(chi2) calculation')
     parser.add_argument('--externalchi2bins', dest='externalchi2bins', type=int, default=40, help='Number of bins in external chi2 function')
     parser.add_argument('--doinitialpars', dest='doinitialpars', action="store_true", help='Initialise with empiric fit parameters != 0')
+    parser.add_argument('--externalinitialpars', dest='externalinitialpars', type=str, help='Path to json file with dict for initial conditions')
     parser.add_argument('--dosignal', dest='dosignal', action="store_true", help='Perform s+b fit (default: bkg-only)')
     parser.add_argument('--dolimit', dest='dolimit', action="store_true", help='Perform limit setting')
     parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
     parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
     parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform RooFit prefit before quickFit')
+    parser.add_argument('--dochi2fit', dest='dochi2fit', action="store_true", help='Minimize chi2 instead of NLL')
+    parser.add_argument('--dochi2constraints', dest='dochi2constraints', action="store_true", help='Include the constraint terms into chi2. Becomes virtually identical to NLL this way.')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
 
     args = parser.parse_args(args)
@@ -375,12 +412,15 @@ def main(args):
                externalchi2fct=args.externalchi2fct,
                externalchi2bins=args.externalchi2bins,
                doinitialpars=args.doinitialpars,
+               externalinitialpars=args.externalinitialpars,
                dosignal=args.dosignal,
                dolimit=args.dolimit,
                signame=signame,
                maskthreshold=args.maskthreshold,
                folder=args.folder,
-               doprefit=args.doprefit,)
+               doprefit=args.doprefit,
+               dochi2fit=args.dochi2fit,
+               dochi2constraints=args.dochi2constraints,)
 
 
 if __name__ == "__main__":  
