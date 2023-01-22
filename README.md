@@ -1,85 +1,156 @@
 # FrequentistFramework
 
-This code is very preliminary and under construction, and its documentation is a work in progress. 
+This code is under construction, and its documentation is a work in progress. 
 
 This is a frequentist statistical analysis framework based on:
 https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/XmlAnaWSBuilder
 
 # Install - This follows the README of the XmlAnaWSBuilder and quickFit. pyBumpHunter is run in a virtualenv to run python 3.6 alongside python 2.7 setup with ROOT
+
 ```
 setupATLAS
 lsetup git
 git clone https://:@gitlab.cern.ch:8443/atlas-phys-exotics-dijet-tla/FrequentistFramework.git
 cd FrequentistFramework/
-git checkout nlofit
 source scripts/install_FrequentistFramework.sh
-```
-
-If you plan to run the NLOFit, you need to prepare input workspaces from the template histograms in this repository. For that, run
-```
-source scripts/HistFactory/prepareInput.sh
-source scripts/HistFactory/generate.sh
+source scripts/setup_buildAndFit.sh
 ```
 
 # Setup
 
 In the future you can setup your environment via
 ```
-source scripts/setup_buildCombineFit.sh
+source scripts/setup_buildAndFit.sh
 ```
 
-# Run
+# Configuration
 
-Example run command:
+Most of the configuration is handled in scripts/config.py. 
+
+To run the code, you will need to change config.py to have cdir be the directory that you set this up in.
+
+There are two main parts to config.py -- the backgrounds (samples) and the signals.
+If you want to add a new background file to fit, or a new signal, you will have to change these.
+
+You will need to change the paths to the histograms to match your own path.
+
+
+Below is an example of the background, with the key components explained.
+
 ```
-XMLReader -x config/dijetTLA/dijetTLA_J75yStar03.xml -s 0 --plotOption logy
+samples["sherpa_yxxjjjj_2javg_alpha1"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root", # The root file with the background spectrum
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_1", # The histogram name with the root file
+                 "alpha": 1, #  The alpha bin
+                 "lumi": 139000, # Luminosity (in pb) (for plotting only)
+                 "varName": "m_{#LT 2j #GT}, 0.12 < #alpha < 0.14", # A string that identifies what this signal is (for plotting)
+                 "varAxis": "m_{#LT 2j #GT} [GeV]", # The x-axis name (for plotting)
+                 "varLabel": "0.12 < #alpha < 0.14", # A string describing this (for plotting)
+                 "rangelow" : 250, # The low end of the mass range used for fitting
+                 "rangehigh" : 3500, # The high end of the mass range used for fitting
+                 "legend": "Sherpa AHADIC", # A string describing what samples were used to produce the background (for plotting)
+               }
+
+
 ```
-This command will make a RooWorkspace starting J75-triggered data from https://arxiv.org/abs/1804.03496, fitted with the five parameter background function. It will also generate a summary PDF with the fit result.
 
-To run pyBumpHunter, the virtualenv needs to be activated and deactivated afterwards. The ROOT setup can mess up $PYTHONPATH for numpy and other packages, so it needs to be overwritten when running scripts.
+Below is an example of the signal, with the components explained.
+
+
 ```
-source pyBumpHunter/pyBH_env/bin/activate
-# execute pyBumpHunter scripts like this:
-env PYTHONPATH="" python3 python/FindBHWindow.py --inputfile XYZ.root
-deactivate
+signals["crystalBallHist"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCB_mX_MEAN_mY_MASSX.root",
+                 "templatefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCB_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root", # The name of the file where the template lives. Some components of this are changed when processing (MEAN, MASSX, ALPHA)
+                 "histname": "h2_resonance_jet_m4j_alpha_", # The name of the histogram
+                 "systFile": "uncertaintySets/systematics", #The name of the file with the list of systematics. If none, use "empty.txt"
+               }
 ```
 
-# Scripts
 
-The directory _python/_ contains a number of standalone Python scripts to plot and extracts the information from the workspace. Test files and .pdf files of how the output should look like are provided in each of the directories. 
 
-   * _PlotWorkspace/PlotWorkspaceFit.py_ plots the fit and the data in the workspace (obtained from the command above) together with its residuals and pulls, and overlays it with the fit result from the previous statistical analysis framework. 
+# Sets of scripts
 
-# quickFit and quickLimit
+Currently, there are different scripts for the m4j and m2javg plots, since there are slight differences in the configuration.
+The m4j scripts are the ones that start with yxxjjjj, and the m2javg are the ones that begin with m2j.
 
-The output of the xmlAnaWSBuilder can be used as input for both quickFit and quickLimit to test signal hypotheses. The example from above produced the workspace _workspace/dijetTLA/dijetTLA_J75yStar03.root_ that contains a number of potential Gauss signals whose yields can be fit with quickFit. First, you can run a background-only fit with:
+
+# Initial MC fits
+
 ```
-quickFit -f workspace/dijetTLA/dijetTLA_J75yStar03.root -d combData --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o run/FitResult.root
+python yxxjjjj_anaFit.py
 ```
-It can happen that quickFit claims "STATUS FAILED" for the fit, the lines above the final fit parameters will tell you the reason. Often it says:
+
+
+# Generating pseudodata
+
+For the spurious signal, signal injection, and limits, you will need to generate pseudodata from the initial fits.
+
+
 ```
-Full matrix, but forced positive-definite
+python yxxjjjj_makePseudodata.py
 ```
-This usually means that a maximum in the likelihood could be found but that is not unique. E.g. two parameters can be varied leading to more or less the same post fit distribution. We choose to ignore this for now. 
 
-To perform a signal+background fit (e.g. for a Gauss signal at 700 GeV with 7% width) run:
+# Creating crystal ball templates
+
+Note: You only need to run this if you are using signal templates, but for many initial studies, this is not necessary, and a Gaussian template can be used instead.
+
+
+# Spurious signal tests
+
+
+This script uses the generated pseudodata to run S+B fits, with no injected signal.
+
+These tests can be done with the signal templates or Gaussian templates, and the default is currently using Gaussians.
+
 ```
-quickFit -f workspace/dijetTLA/dijetTLA_J75yStar03.root -d combData -p nsig_mean700_width7 --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 -o run/FitResult.root
+python yxxjjjj_spuriousSignal.py
 ```
-quickFit will now treat the parameter _nsig_mean700_width7_ as floating POI in the fit while still keeping all others fixed to 0. The parameter specified here needs to exist in the RooStats workspace, meaning it needs to be defined by a custom signal .xml card in the xmlAnaWSBuilder.
 
-If quickFit succeeds (or only fails because of forced positive-definite matrix) you can run quickLimit to set 95% CLs limits on your chosen parameter:
+# Signal injection tests
+
+This script uses the generated pseudodata, but also injects and N-sigma signal into this. 
+N is determined based on S/sqrt(B) in a window around the signal peak, where the window is determined by the signal width (one of the parameters).
+Then, S+B fits are run, and the fit results are saved.
+
+These tests can be done with the signal templates or Gaussian templates, and the default is currently using Gaussians.
+
+
 ```
-quickLimit -f workspace/dijetTLA/dijetTLA_J75yStar03.root -d combData -p nsig_mean700_width7 --checkWS 1 --hesse 1 --initialGuess 10000 -o run/Limits.root
+python yxxjjjj_injections.py
 ```
-With _initialGuess_ you need to specify the order of magnitude that you expect your limit to have. The default of 1 might be too small to achieve a difference between likelihoods larger than machine precision.
 
-# Automation
 
-All of this is performed in the python scripts _python/run_anaFit.py_ and _python/run_nloFit.py_. They need to be provided with _datafile_, _datahist_, _sigmean_ and _sigwidth_. They use generic copies of the xmlAnaWsBuilder .xml config files labeled as .template files which you can specify with the _topfile_ and _categoryfile_ variables. They are virtually identically but contain strings like DATAHIST instead of definite entries. These are then replaced in the run script with whatever you provided before executing the xmlAnaWSBuilder. The NLOFit will need additional inputs. Examples how to execute these scripts are given in _scripts/run_anaFit.sh_ and _scripts/run_nloFit.sh_.
+# Limits
 
-If you produced many limits for different signal points, they can be summarized in a limit plot with _python/plotLimits.py_ that you will have to adapt to your paths, lumi, mass ranges etc.
 
-# Importing Templates
+```
+python yxxjjjj_limits.py
+```
 
-To use histogram templates either for signal models or for the NLOFit background estimate in xmlAnaWSBuilder, they can best be turned into RooWorkspaces using HistFactory. Some python scripts for that are in _python/PrepareTemplates_, some bash scripts to execute them in order are in _scripts/HistFactory_. For the NLOFit templates, the histograms need to be cropped to match the fit range, have their bin width set to 1, normalized to an integral of 1 and depending on the PDF also add symmetric up/down variations. This is all performed in _scripts/HistFactory/prepareInput.sh_. For signal templates for the analytic fit, only the normalization needs to be done. The workspaces for NLOFit bkg and signal templates are generated via _scripts/HistFactory/generate.sh_. To add systematics to signal templates, _python/PrepareTemplates/dijetTLAnlo_genBkg.py_ should give a good first hint, since the MC variations are added as bkg systematics there.
+
+# Visualizing results
+
+Most of the plotting is handled in a single script, but it can be easier to sometimes comment out parts of it to only run the relevant aspects.
+
+
+```
+python yxxjjjj_plotting.py
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
