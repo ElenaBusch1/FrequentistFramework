@@ -4,6 +4,7 @@ import config
 import python.prepareCBTemplates as pCBt
 
 sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
+#sigmeans = [8000]
 #sigmeans = [8000, 10000]
 #sigmeans = [8000]
 alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
@@ -20,10 +21,10 @@ for  sigmean in sigmeans:
 
     print sigmean, alphaBin, mY, alpha
 
-    histName =  "h2_resonance_jet_m4j_alpha"
-    outfileName = pCBt.prepareCBTemplate(histName = "h2_resonance_jet_m4j_alpha", doSysts = True, mY = sigmean, alpha = alpha, outfile = "templates/systematics")
+    histName = "h2_resonance_jet_m4j_alpha" 
+    outfileName = pCBt.prepareCBTemplate(histName = histName, doSysts = True, mY = sigmean, alpha = alpha, outfile = "templates/systematics")
 
-    print sigmean, alphaBin, mY, alpha
+    #print sigmean, alphaBin, mY, alpha
 
 
     outfileTemplate = "signalTemplates/SignalCB_mX_%d_mY_%d.root"%(sigmean, mY)

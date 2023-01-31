@@ -38,8 +38,8 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
   mYs = []
 
   #center of Gaussian will move along the parameter points
-  w = r.RooWorkspace('w_%d_%.2f_%s'%(mY, alpha, inputFile))
-  mu = w.factory('mu_%d_%.2f_%s[0,13000]'%(mY, alpha, inputFile)) #this is our continuous interpolation parameter
+  w = r.RooWorkspace('w_%d_%.2f_%s_%s'%(mY, alpha, inputFile, syst))
+  mu = w.factory('mu_%d_%.2f_%s_%s[0,13000]'%(mY, alpha, inputFile, syst)) #this is our continuous interpolation parameter
   pdfs = r.RooArgList()
   frame = None
 
@@ -59,13 +59,13 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
     alphaVals.append(alphaVal)
     nVals.append(nVal)
 
-    w.factory("RooCBShape::CBall{i}(x[0,11000], mu{i}[{cmu}, 0,13000], sigma{i}[{csig}, 100, 3000], alphaCB{i}[{calpha}, 0.1, 4.0], n{i}[{cn}, 100,1e11])".format(i=cmY, cmu = muVal, csig=sigmaVal, calpha=alphaVal, cn = nVal));
+    w.factory("RooCBShape::CBall{i}(x_{syst}[0,11000], mu{i}[{cmu}, 0,13000], sigma{i}[{csig}, 100, 3000], alphaCB{i}[{calpha}, 0.1, 4.0], n{i}[{cn}, 100,1e11])".format(syst=syst,i=cmY, cmu = muVal, csig=sigmaVal, calpha=alphaVal, cn = nVal));
     pdf = w.pdf('CBall{i}'.format(i=cmY))
     pdfs.add(pdf)
     mYs.append(cmY)
 
     if not frame:
-      x = w.var('x')
+      x = w.var('x_%s'%(syst))
       frame = x.frame()
 
 
@@ -78,12 +78,18 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
   #ok, now construct the MomentMorph, can choose from these settings
   #  { Linear, NonLinear, NonLinearPosFractions, NonLinearLinFractions, SineLinear } ;
   setting = r.RooMomentMorph.Linear
+
+  ##make plots of interpolated pdf
   morph = r.RooMomentMorph('morph','morph',mu,r.RooArgList(x),pdfs, paramVec, setting)
   getattr(w,'import')(morph) # work around for morph = w.import(morph)
 
-  ##make plots of interpolated pdf
-  mu.setVal(mY) #offset from the original point a bit to see morphing
-  histCB = morph.createHistogram("x", 11000, 0, 11000)
+  mu.setVal(mY)
+  #sigma.setVal(mY)
+  #alphaVal.setVal(mY)
+  #n.setVal(mY)
+
+
+  histCB = morph.createHistogram("x_%s"%(syst), 11000, 0, 11000)
   histCB.SetName("%s_%d_%.2f_%s"%(histName, mY, alpha, syst))
 
   return histCB
