@@ -22,10 +22,7 @@ for  sigmean in sigmeans:
     print sigmean, alphaBin, mY, alpha
 
     histName = "h2_resonance_jet_m4j_alpha" 
-    outfileName = pCBt.prepareCBTemplate(histName = histName, doSysts = True, mY = sigmean, alpha = alpha, outfile = "templates/systematics")
-
-    #print sigmean, alphaBin, mY, alpha
-
+    outfileName = pCBt.prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/systs/", histName = histName, doSysts = True, mY = sigmean, alpha = alpha, outfile = "templates/systematics")
 
     outfileTemplate = "signalTemplates/SignalCB_mX_%d_mY_%d.root"%(sigmean, mY)
     outfileTemplate = outfileTemplate.replace("MEAN", "%d"%(sigmean))
