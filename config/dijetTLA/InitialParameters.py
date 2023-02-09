@@ -48,7 +48,7 @@ initialParameters = {
 
     },
     
-    'partialDataset2' : { # Partial datafile (2nd unblinding)
+    'partialDataset2' : { # Partial datafile (2nd unblinding) --- 1D genCorr -- deprecated (?)
 	
 	'J100' : {  	
 	  
@@ -67,28 +67,116 @@ initialParameters = {
 	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_all.root",
 	  'datahist'	: "L1J50/Mjj_1GeVbinning",
 	  'lumi'	: 1.5,
-	  'low'  : 282,  # 282 --trying one more bin, close to the mjj 99.9 threshold, but below, DIDN'T WORK
+	  'low'  : 302,  # 282 --trying one more bin, close to the mjj 99.9 threshold, but below, DIDN'T WORK
 	  'high' : 1516, 
 	},
     },
 
+
+    'unb2_smooth' : { # Partial datafile (2nd unblinding) -- smooth genCorr
+	
+	'J100' : {  	
+	  
+	  'nbkg' 	: "4E7,0,1E8",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_smooth.root",
+	  'datahist'	: "L1J100/Mjj_1GeVbinning",
+	  # Analysis range		
+	  'low'  : 457,  # 481 -- trying one less bin, because of the mjj turnon threshold is now a bit higher.
+	  'high' : 2997,
+	  'lumi' : 29.5,  #29.5 - 9.869 (2017)
+	},
+	
+	'J50'  : {	
+	  
+	  'nbkg' : "1E7,0,2E7",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_smooth.root",
+	  'datahist'	: "L1J50/Mjj_1GeVbinning",
+	  'lumi'	: 1.5,
+	  'low'  : 302,  # 282 --trying one more bin, close to the mjj 99.9 threshold, but below, DIDN'T WORK
+	  'high' : 1516, 
+	},
+    },
+
+    'unb2_over-fitted' : { # Partial datafile (2nd unblinding) -- over-fitted genCorr
+	
+	'J100' : {  	
+	  
+	  'nbkg' 	: "4E7,0,1E8",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_over-fitted.root",
+	  'datahist'	: "L1J100/Mjj_1GeVbinning",
+	  # Analysis range		
+	  'low'  : 457,  # 481 -- trying one less bin, because of the mjj turnon threshold is now a bit higher.
+	  'high' : 2997,
+	  'lumi' : 29.5,  #29.5 - 9.869 (2017)
+	},
+	
+	'J50'  : {	
+	  
+	  'nbkg' : "1E7,0,2E7",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_over-fitted.root",
+	  'datahist'	: "L1J50/Mjj_1GeVbinning",
+	  'lumi'	: 1.5,
+	  'low'  : 302,  # 282 --trying one more bin, close to the mjj 99.9 threshold, but below, DIDN'T WORK
+	  'high' : 1516, 
+	},
+    },
+
+    'unb2_insituScale' : { # Partial datafile (2nd unblinding) -- insituScale
+	
+	'J100' : {  	
+	  
+	  'nbkg' 	: "4E7,0,1E8",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_smooth.root",
+	  'datahist'	: "L1J100/Mjj_1GeVbinning_insituScale",
+	  # Analysis range		
+	  'low'  : 457,  # 481 -- trying one less bin, because of the mjj turnon threshold is now a bit higher.
+	  'high' : 2997,
+	  'lumi' : 29.5,  #29.5 - 9.869 (2017)
+	},
+	
+	'J50'  : {	
+	  
+	  'nbkg' : "1E7,0,2E7",
+	  'datafile'	: "Input/data/dijetTLA/unblinding2_mjj_spectra_smooth.root",
+	  'datahist'	: "L1J50/Mjj_1GeVbinning_insituScale",
+	  'lumi'	: 1.5,
+	  'low'  : 302,  # 282 --trying one more bin, close to the mjj 99.9 threshold, but below, DIDN'T WORK
+	  'high' : 1516, 
+	},
+    },
+
+
+
     'partialDataset2_PD' : { # PD based on partialDataset2
 
-	'J100' : {
-	  'four' 	: "Input/data/dijetTLA/PD_Run2_GlobalFit_457_2997_fivePar_finebinned_J100_scale6.78.root", 
-	  'five'	: "Input/data/dijetTLA/PD_Run2_GlobalFit_457_2997_sixPar_finebinned_J100_scale6.78.root", 
-	  'six' 	: "Input/data/dijetTLA/PD_Run2_GlobalFit_457_2997_sevenPar_finebinned_J100_scale6.78.root",
-	  
-	  #'four'	: "Input/data/dijetTLA/PD_Run2_GlobalFit_481_2997_fivePar_finebinned_J100_scale6.78.root", 
-	  #'five'	: "Input/data/dijetTLA/PD_Run2_GlobalFit_481_2997_sixPar_finebinned_J100_scale6.78.root", 
-	  #'six'  	: "Input/data/dijetTLA/PD_Run2_GlobalFit_481_2997_sevenPar_finebinned_J100_scale6.78.root",
-	  },
-
+	'J100' : {},
 	'J50'  : {
-	  'four' 	: "Input/data/dijetTLA/PD_Run2_GlobalFit_302_1516_fivePar_finebinned_J50Comb_scale9.77.root",
-	  'five'	: "Input/data/dijetTLA/PD_Run2_GlobalFit_302_1516_sixPar_finebinned_J50Comb_scale9.77.root",	
-	  'six' 	: "Input/data/dijetTLA/PD_Run2_GlobalFit_302_1516_sevenPar_finebinned_J50Comb_scale9.77.root",
+	  'low'	: 302,
+	  'high' : 1516,
+	  'nbkg' : "1E7,0,2E7",
+	  'smooth'  : {
+	    'five'	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_fivePar_finebinned_J50_scale1_smooth.root",     
+	    'six' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_sixPar_finebinned_J50_scale1_smooth.root",
+	    'seven' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_sevenPar_finebinned_J50_scale1_smooth.root",
+	    'eight' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_eightPar_finebinned_J50_scale1_smooth.root",
+	    'nine' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_ninePar_finebinned_J50_scale1_smooth.root",
 	  },
+	  'over-fitted' : {
+	    'five'	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_fivePar_finebinned_J50_scale1_over-fitted.root",     
+	    'six' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_sixPar_finebinned_J50_scale1_over-fitted.root",
+	    'seven' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_sevenPar_finebinned_J50_scale1_over-fitted.root",
+	    'eight' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_eightPar_finebinned_J50_scale1_over-fitted.root",
+	    'nine' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_ninePar_finebinned_J50_scale1_over-fitted.root",
+	  },
+	  'insitu'	: {
+	    'five'	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_fivePar_finebinned_J50_scale1_insitu.root",     
+	    'six' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_sixPar_finebinned_J50_scale1_insitu.root",
+	    'seven' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_sevenPar_finebinned_J50_scale1_insitu.root",
+	    'eight' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_eightPar_finebinned_J50_scale1_insitu.root",
+	    'nine' 	: "Input/data/dijetTLA/PD_unblinding2_GlobalFit_302_1516_ninePar_finebinned_J50_scale1_insitu.root",
+
+	  },
+	},
     },
 
     'full' : {  # Full lumi: total datafile
