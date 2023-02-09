@@ -42,7 +42,8 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
         _poi=""
 
     if maskrange:
-        _range="--range SBLo,SBHi"
+        # _range="--range SBLo,SBHi"
+        _range="--range SBLo_J100yStar06,SBHi_J100yStar06"
         maskmin=maskrange[0]
         maskmax=maskrange[1]
     else:
