@@ -15,7 +15,7 @@ import python.ExtractFitParameters as efp
 
 def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, 
              atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", 
-             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None, indir=""):
+             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None, indir="", cutoffSpectrum = False):
 
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     AS.SetAtlasStyle()
@@ -84,11 +84,14 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       dataHist = fitHist.Clone("data_%s"%(dataHistTmp.GetName()))
       dataHist.SetDirectory(0)
       dataHist.Reset()
+      maxData = 0
       for cbin in range(dataHist.GetNbinsX()):
          dataHist.SetBinContent(cbin+1, dataHistTmp.GetBinContent(dataHistTmp.FindBin(dataHist.GetBinCenter(cbin+1))))
          dataHist.SetBinError(cbin+1, dataHistTmp.GetBinError(dataHistTmp.FindBin(dataHist.GetBinCenter(cbin+1))))
 
       
+      if(cutoffSpectrum):
+        maxMjj = maxData
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       dataHist.SetTitle(config.samples[channelName]["legend"])
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
@@ -121,10 +124,21 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       dataHist.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
       dataHist.GetYaxis().SetTitle("N_{events}")
 
+      if cutoffSpectrum:
+         for cbin in range(dataHist.GetNbinsX()):
+           if dataHist.GetBinContent(cbin+1) > 0:
+             maxData = dataHist.GetBinLowEdge(cbin+4)
+      if(cutoffSpectrum):
+        maxMjj = maxData
+      dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
+      fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
+      residualHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
+
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
         dataRes.GetYaxis().SetRangeUser(-3, 3)
+        dataRes.GetXaxis().SetRangeUser(minMjj, maxMjj)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
         dataHist.SetTitle(config.samples[channelName]["legend"])
@@ -143,14 +157,16 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
 
 
-    c.SetLogx()
-    df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
+    #c.SetLogx()
+    df.SetRange(plotHists, minMin=1e-5, maxMax=1e8, isLog=True, minMjj=minMjj, maxMjj = maxMjj)
     outname = outfile.replace(".root", "")
 
     # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
     # For now, leave in linear, and if we can update the root version, we can also fix this
-    #
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+    plotHists[0].SetFillStyle(1001)
+    plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e2", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+
     c.Print(outname + ".pdf")
 
 

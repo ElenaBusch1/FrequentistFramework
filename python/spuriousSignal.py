@@ -15,7 +15,7 @@ import FittingFunctions as ff
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50, deltaMassAboveFit = 0):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 
@@ -41,6 +41,7 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
       substr3 = substr2[substr2.find(",")+1:]
       substr4 = substr3[0:substr3.find(",")]
       substr5 = substr3[substr3.find(",")+1:]
+      #print (configFile[index1:-1])
       pMin = float(substr4)
       pMax = float(substr5)
       # When pMin == pMax, the fit parameter is fixed, and it won't show up in this plot
@@ -59,7 +60,6 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
         h_myPoints = []
         sigmeansExists = []
         for j,sigmean in enumerate(sigmeans):
-
           massIndex = 0
           h_pars = []
           h_parList = []
@@ -85,9 +85,16 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
           h_allPoints_list = []
 
           for index, channelName in enumerate(channelNames):
+
             #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 21, -crange[j], crange[j])
             h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 21, -crange[j], crange[j])
             h_allPoints.SetDirectory(0)
+
+            rangelow = config.samples[channelName]["rangelow"]
+            if sigmean < (rangelow + deltaMassAboveFit) :
+              h_allPoints_list.append(h_allPoints)
+              #print "fails mass"
+              continue
 
             path = config.getFileName(infile, cdir, channelName, outputdir + channelName, sigmean, sigwidth, 0) + ".root"
             tmp_path_fitresults = glob(path)

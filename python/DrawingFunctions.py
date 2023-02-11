@@ -83,6 +83,36 @@ def get_extraction_style_opt(count=0):
                              )
         return finalist_style_options
 
+def get_fit_style_opt(count=0):
+        markers = [24,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
+        #colors = ['#000000','#3c3c3c','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        colors = ['#000000','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        #colors = ['#000000','#D74061']
+        #colors = ['#000000','#5656d7','#D74061','#36bdbd']
+        lineStyles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4]
+        count = int(math.fmod(count, len(colors)))
+
+        if count ==0:
+          finalist_style_options= StyleOptions(
+                             line_color   = colors[count],
+                             line_style   = lineStyles[count],
+                             marker_color = colors[count],
+                             marker_style = markers[count],
+                             marker_size = 1,
+                             line_width = 0,
+                             )
+        if count >0:
+          finalist_style_options= StyleOptions(
+                             line_color   = colors[count],
+                             line_style   = lineStyles[count],
+                             marker_color = colors[count],
+                             marker_style = markers[count],
+                             marker_size = 1,
+                             line_width = 4,
+                             )
+        return finalist_style_options
+
+
 def get_finalist_style_opt(count=0):
         markers = [24,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
         #colors = ['#000000','#3c3c3c','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
@@ -96,6 +126,7 @@ def get_finalist_style_opt(count=0):
                              line_color   = colors[count],
                              line_style   = lineStyles[count],
                              marker_color = colors[count],
+                             fill_color = colors[count],
                              marker_style = markers[count],
                              marker_size = 1,
                              line_width = 4,
@@ -117,6 +148,7 @@ def get_fit_style_opt(count=0):
                              line_color   = colors[count],
                              line_style   = lineStyles[count],
                              marker_color = colors[count],
+                             fill_color = colors[count],
                              marker_size = 1,
                              marker_style = markers[count],
                              )
@@ -178,8 +210,8 @@ def set_style_options(hist,style_options, height):
 
     hist.SetMarkerStyle(style_options.marker_style )
     hist.SetLineStyle(style_options.line_style  )
-    hist.SetFillStyle(0)
-    #hist.SetFillColorAlpha(r.TColor.GetColor(style_options.fill_color), 0.  )
+    #hist.SetFillStyle(1001)
+    #hist.SetFillColorAlpha(r.TColor.GetColor(style_options.fill_color), 0.3)
     hist.SetMarkerColor(r.TColor.GetColor(style_options.marker_color))
     hist.SetLineColor(r.TColor.GetColor(style_options.line_color))
     hist.SetLineWidth(style_options.line_width)
@@ -235,7 +267,7 @@ def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size
     return
 
 
-def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog=False, isZeroed=True):
+def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog=False, isZeroed=True, minMjj=0, maxMjj=10000000):
   if myMin != myMax: 
     for hist in hists:
       hist.GetYaxis().SetRangeUser(myMin, myMax)
@@ -256,6 +288,10 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
       if minimum == 0:
         minimum = maxMax
         for cbin in range(hist.GetNbinsX()):
+          if hist.GetBinCenter(cbin+1) < minMjj: 
+             continue
+          if hist.GetBinCenter(cbin+1) > maxMjj: 
+             continue
           if hist.GetBinContent(cbin+1) > 0 and hist.GetBinContent(cbin+1) < minimum:
             minimum = hist.GetBinContent( cbin+1)
           
@@ -277,6 +313,10 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
     if isZeroed:
       minimum = 0
 
+  if minimum < minMin:
+    minimum = minMin
+  if maximum > maxMax:
+    maximum = maxMax
   
 
   for hist in hists:
@@ -308,7 +348,7 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
   return legend
 
 
-def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal", ratioDrawOptions = ["B"], ratioHeight = 0.35):
+def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawOptions = ["HIST"], styleOptions=get_finalist_style_opt, outName="Test", isLogX = False, isLogY=True, lumi=0, atlasLabel="Simulation Internal", ratioDrawOptions = ["B", "HIST"], ratioHeight = 0.35):
   canvas.cd()
   style = AS.SetAtlasStyle()
 
@@ -343,6 +383,8 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions,1.0-ratioHeight)
   SetStyleOptions(Ratios, styleOptions, ratioHeight)
+  #hists[0].SetFillColor(r.kBlack)
+  #hists[0].SetFillStyle(1001)
 
   #if(isLogX):
   #  hists[0].SetLineWidth(1)

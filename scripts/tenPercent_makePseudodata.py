@@ -16,7 +16,7 @@ channelNames = [ "tenPercent_yxxjjjj_4j_alpha0", "tenPercent_yxxjjjj_4j_alpha1",
 #channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
 #channelNames = [ "sherpa_yxxjjjj_2javg_alpha0", "sherpa_yxxjjjj_2javg_alpha1", "sherpa_yxxjjjj_2javg_alpha2", "sherpa_yxxjjjj_2javg_alpha3", "sherpa_yxxjjjj_2javg_alpha4", "sherpa_yxxjjjj_2javg_alpha5", "sherpa_yxxjjjj_2javg_alpha6", "sherpa_yxxjjjj_2javg_alpha7", "sherpa_yxxjjjj_2javg_alpha8", "sherpa_yxxjjjj_2javg_alpha9", "sherpa_yxxjjjj_2javg_alpha10", "sherpa_yxxjjjj_2javg_alpha11" ]
 
-scaling = 10.0
+scaling = 1.0
 
 
 

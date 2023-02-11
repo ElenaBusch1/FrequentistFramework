@@ -25,16 +25,16 @@ sigwidths=[10]
 #sigamps=[5,4,3,2,1,0]
 sigamps=[5,4,3,2,1]
 
-pdFitName = "fivePar"
-fitName = "fourPar"
-#pdFitName = "fourPar"
-#fitName = "threePar"
+#pdFitName = "fivePar"
+#fitName = "fourPar"
+pdFitName = "fourParM2j"
+fitName = "threeParM2j"
 #channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
 channelNames = [ "yxxjjjj_2javg_alpha3", ]
 #channelNames = [ "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
 #channelNames = [ "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
-#channelNames = [ "yxxjjjj_2javg_alpha9", ]
-#channelNames = [ "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11",]
+#channelNames = [ "yxxjjjj_2javg_alpha3", ]
+#channelNames = [ "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10",]
 
 
 coutputdir="fits2javg_"
@@ -161,13 +161,13 @@ for channelName in channelNames:
   outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
   rangelow = config.samples[channelName]["rangelow"]
   rangehigh = config.samples[channelName]["rangehigh"]
-  createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir)
+  createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir, deltaMassAboveFit = 50)
 
 # Limits
 for channelName in channelNames:
   outputdir = coutputdir + channelName
   pathsLimits = [ "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)]
-  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel)
+  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50)
 
 
 sigamps=[5, 4, 3, 2, 1, 0]

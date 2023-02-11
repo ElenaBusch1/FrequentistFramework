@@ -5,13 +5,15 @@ import os
 cdir = config.cdir
 
 
-#channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-channelNames = [ [ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-#channelNames = [ ["yxxjjjj_2javg_alpha3"],]
+#tenPercentData_2javg_alpha11
+#channelNames = [ ["tenPercentData_2javg_alpha0"],[ "tenPercentData_2javg_alpha1"],[ "tenPercentData_2javg_alpha2"],[ "tenPercentData_2javg_alpha3"],[ "tenPercentData_2javg_alpha4"],[ "tenPercentData_2javg_alpha5"],[ "tenPercentData_2javg_alpha6"],[ "tenPercentData_2javg_alpha7"],[ "tenPercentData_2javg_alpha8"],[ "tenPercentData_2javg_alpha9"],[ "tenPercentData_2javg_alpha10"],[ "tenPercentData_2javg_alpha11"], ]
+channelNames = [ ["tenPercentData_2javg_alpha8"],]
 
 #channelNames = [ ["sherpa_yxxjjjj_2javg_alpha0"],[ "sherpa_yxxjjjj_2javg_alpha1"],[ "sherpa_yxxjjjj_2javg_alpha2"],[ "sherpa_yxxjjjj_2javg_alpha3"],[ "sherpa_yxxjjjj_2javg_alpha4"],[ "sherpa_yxxjjjj_2javg_alpha5"],[ "sherpa_yxxjjjj_2javg_alpha6"],[ "sherpa_yxxjjjj_2javg_alpha7"],[ "sherpa_yxxjjjj_2javg_alpha8"],[ "sherpa_yxxjjjj_2javg_alpha9"],[ "sherpa_yxxjjjj_2javg_alpha10"],[ "sherpa_yxxjjjj_2javg_alpha11"], ]
 #fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
-fitNames = ["threeParM2j", "fourParM2j", "fiveParM2j"]
+#fitNames = ["threeParM2j", "fourParM2j", "fiveParM2j"]
+#fitNames = ["fourParM2j",]
+fitNames = ["fiveParM2j",]
 #fitNames = ["threePar"]
 #fitNames = ["fourPar"]
 #fitNames = ["fivePar"]
@@ -20,11 +22,11 @@ fitNames = ["threeParM2j", "fourParM2j", "fiveParM2j"]
 
 for channelName in channelNames:
   for fitName in fitNames:
-        nbkg="5E6,0,5E8"
+        nbkg="1E3,0,1E4"
         # These should all use the same top file
         topfile=config.samples[channelName[0]]["topfile"]
   
-        outputdir = "fits2javg_%s"%channelName[0]
+        outputdir = "fits2javg_10data_%s"%channelName[0]
         #outputdir = "fits_%s"%channelName[0]
         #outputdir = "fitsSherpa_%s"%channelName[0]
         # Output file names, which will be written to outputdir

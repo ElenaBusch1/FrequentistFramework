@@ -36,6 +36,7 @@ else:
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
   channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],[ "tenPercent_yxxjjjj_4j_alpha1"],[ "tenPercent_yxxjjjj_4j_alpha2"],[ "tenPercent_yxxjjjj_4j_alpha3"],[ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
+  #channelNames = [[ "tenPercent_yxxjjjj_4j_alpha11"], ]
   #channelNames = [ ["tenPercent_yxxjjjj_4j_alpha5"],]
 
   #sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
@@ -49,7 +50,7 @@ else:
   #signalfile =  "gausHist"
   #signalfile =  "test"
   coutputdir = "fitsTenPercent_"
-  args.doRemake = 0
+  args.doRemake = 1
   #args.doRemake = 1
   nToys = config.nToys
 

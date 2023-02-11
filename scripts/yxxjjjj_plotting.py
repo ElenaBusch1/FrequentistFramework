@@ -17,10 +17,11 @@ cdir = config.cdir
 
 #sigmeans=[3000, 4000, 5000, 6000, 7000, 8000]
 sigmeans=[2000, 3000, 4000, 6000, 8000, 10000]
+#sigmeans=[4000, 8000]
 #sigmeans=[2000, 2500, 3000, 3500, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 #sigmeans=[8000]
 #spuriousRanges = [300, 100, 30, 10, 5, 5]
-spuriousRanges = [1000, 300, 100, 30, 10, 5, 5]
+spuriousRanges = [2000, 400, 150, 20, 5, 5, 5]
 #spuriousRanges = [100, 50, 50, 30, 10, 5, 5]
 #spuriousRanges = [100,  10, 5, 5]
 #spuriousRanges = [1000, 300, 100,  10, 5, 5]
@@ -36,8 +37,9 @@ pdFitName = "fivePar"
 fitName = "fourPar"
 #pdFitName = "fourPar"
 #fitName = "threePar"
-#channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1", "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
-channelNames = [ "yxxjjjj_4j_alpha9", ]
+channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1", "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
+#channelNames = [ "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
+#channelNames = [ "yxxjjjj_4j_alpha2", ]
 #channelNames = [ "yxxjjjj_4j_alpha0", ]
 #channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1",]
 #channelNames = [ "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9"]
@@ -123,6 +125,7 @@ for sigmean in [8000]:
           rangelow=config.samples[channelName]["rangelow"]
           rangehigh=config.samples[channelName]["rangehigh"]
           rebinFactor = 5
+          #rebinFactor = 100
           rebinedges = config.getBinning(rangelow, rangehigh, delta=rebinFactor)
 
           #plotFits.plotFits(infiles=infiles, outfile=outfileFits,  minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, fitNames = fitNames, indir = outputdir, suffix="_%d"%(toy), sigamp=sigamp, sigwidth=sigwidth, sigmean=sigmean, toy=toy)
@@ -167,13 +170,13 @@ for channelName in channelNames:
   outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
   rangelow = config.samples[channelName]["rangelow"]
   rangehigh = config.samples[channelName]["rangehigh"]
-  createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir)
+  #createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir, deltaMassAboveFit = 100)
 
 # Limits
 for channelName in channelNames:
   outputdir = coutputdir + channelName
   pathsLimits = [ "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)]
-  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel)
+  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=100)
 
 
 sigamps=[5, 4, 3, 2, 1, 0]

@@ -35,11 +35,12 @@ else:
   #fitName = "threePar"
   pdFitNames = ["fivePar"]
   fitName = "fourPar"
-  #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  channelNames = [ [ "yxxjjjj_4j_alpha0"], ]
+  channelNames = [ ["sherpa_yxxjjjj_4j_alpha0"],[ "sherpa_yxxjjjj_4j_alpha1"],[ "sherpa_yxxjjjj_4j_alpha2"],[ "sherpa_yxxjjjj_4j_alpha3"],[ "sherpa_yxxjjjj_4j_alpha4"],[ "sherpa_yxxjjjj_4j_alpha5"],[ "sherpa_yxxjjjj_4j_alpha6"],[ "sherpa_yxxjjjj_4j_alpha7"],[ "sherpa_yxxjjjj_4j_alpha8"],[ "sherpa_yxxjjjj_4j_alpha9"],[ "sherpa_yxxjjjj_4j_alpha10"],[ "sherpa_yxxjjjj_4j_alpha11"], ]
+
+  #channelNames = [ [ "yxxjjjj_4j_alpha0"], ]
 
   #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
-  sigmeans = [3000]
+  sigmeans = [8000]
   sigwidths = [10]
   signalfile =  "Gaussian"
   #signalfile =  "template"
@@ -47,8 +48,8 @@ else:
   #signalfile =  "crystalBallHist"
   #signalfile =  "gausHist"
   #signalfile =  "test"
-  coutputdir = "fits_"
-  args.doRemake = 1
+  coutputdir = "fitsSherpa_"
+  args.doRemake = 0
   #args.doRemake = 1
   nToys = config.nToys
 
@@ -56,17 +57,12 @@ else:
 dosignal=1
 dolimit=0
 cdir = config.cdir
-alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
-
 
 
 for sigmean in sigmeans:
     for sigwidth in sigwidths:
       for pdFitName in pdFitNames:
-        for channelName, alpha in zip(channelNames, alphaBins):
-          mY = round( (alpha * sigmean)/10)*10
-          if mY < 500 and signalfile=="crystalBallHistNoSyst":
-            continue
+        for channelName in channelNames:
           outputdir = coutputdir+channelName[0]
 
           pdFiles = []
@@ -112,7 +108,7 @@ for sigmean in sigmeans:
                datafiles=pdFiles, 
                histnames=pdHists, 
                doRemake=args.doRemake,
-               useSysts = True,
+               useSysts = False,
               )
 
 

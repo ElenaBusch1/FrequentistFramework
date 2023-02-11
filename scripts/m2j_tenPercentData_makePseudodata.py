@@ -8,9 +8,10 @@ cdir = config.cdir
 
 fitNames = ["fourParM2j", "fiveParM2j"]
 
-channelNames = [ "yxxjjjj_2javg_alpha3", ]
-#channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
-#channelNames = [ "sherpa_yxxjjjj_2javg_alpha0", "sherpa_yxxjjjj_2javg_alpha1", "sherpa_yxxjjjj_2javg_alpha2", "sherpa_yxxjjjj_2javg_alpha3", "sherpa_yxxjjjj_2javg_alpha4", "sherpa_yxxjjjj_2javg_alpha5", "sherpa_yxxjjjj_2javg_alpha6", "sherpa_yxxjjjj_2javg_alpha7", "sherpa_yxxjjjj_2javg_alpha8", "sherpa_yxxjjjj_2javg_alpha9", "sherpa_yxxjjjj_2javg_alpha10", "sherpa_yxxjjjj_2javg_alpha11" ]
+
+channelNames = [ "tenPercentData_2javg_alpha0", "tenPercentData_2javg_alpha1", "tenPercentData_2javg_alpha2", "tenPercentData_2javg_alpha3", "tenPercentData_2javg_alpha4", "tenPercentData_2javg_alpha5", "tenPercentData_2javg_alpha6", "tenPercentData_2javg_alpha7", "tenPercentData_2javg_alpha8", "tenPercentData_2javg_alpha9", "tenPercentData_2javg_alpha10", "tenPercentData_2javg_alpha11", ]
+#channelNames = [ "tenPercentData_2javg_alpha8",]
+
 
 scaling = 1.0
 
@@ -20,7 +21,7 @@ scaling = 1.0
 # TODO: maybe make a flag to decide whether to run this?
 for fitName in fitNames:
   for channelName in channelNames:
-    outputdir = "fits2javg_" + channelName
+    outputdir = "fits2javg_10data_" + channelName
 
     if not os.path.exists(outputdir):
       os.makedirs(outputdir)

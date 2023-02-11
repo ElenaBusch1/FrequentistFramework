@@ -130,6 +130,9 @@ class PostfitExtractor:
             for ibin in range(1, nBins+1):
                 h_postfit.SetBinContent(ibin, hpdf.GetBinContent(ibin))
                 h_postfit.SetBinError(ibin, 0)
+                if hpdf.GetBinContent(ibin) < 0:
+                  print "Negative!"
+                  return 1
 
             chi2 = 0.
             chi2bins = 0
@@ -141,6 +144,9 @@ class PostfitExtractor:
                 valueErrorData = self.h_data[channel].GetBinError(firstbin+ibin)
                 valueData = self.h_data[channel].GetBinContent(firstbin+ibin)
                 postFitValue = h_postfit.GetBinContent(ibin)
+                if h_postfit.GetBinContent(ibin) < 0:
+                  print "Negative!"
+                  return 1
 
                 binSig = 0.
                 if valueErrorData > 0. and postFitValue > 0.:
@@ -235,6 +241,7 @@ class PostfitExtractor:
             self.channel_hchi2[channel] = h_chi2
 
         f.Close()
+        return 0
  
 
     def WriteRoot(self, outfile, dirPerCategory=False, suffix = "", doRecreate=True, channelNames = []):

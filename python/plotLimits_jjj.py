@@ -43,7 +43,7 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal"):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal", deltaMassAboveFit=0):
     SetAtlasStyle()
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
@@ -79,6 +79,15 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             g_exp2d.append( TGraph() )
 
             for j,sigmean in enumerate(sigmeans):
+
+                rangelow = config.samples[channelName[0]]["rangelow"]
+
+                if sigmean < (rangelow + deltaMassAboveFit) :
+                   continue
+
+
+
+
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
                 # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[dataset]

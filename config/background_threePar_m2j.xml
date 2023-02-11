@@ -1,0 +1,4 @@
+<!DOCTYPE Model  SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
+<Model Type="UserDef">
+  <ModelItem Name="EXPR::background('@1*TMath::Power(1-@0/4000,@2)/TMath::Power(@0/4000, @3)', :observable:, p1_CATEGORY[1,1,1], p2_CATEGORY[30., 1., 50.], p3_CATEGORY[2., -1., 10])"/>
+</Model>

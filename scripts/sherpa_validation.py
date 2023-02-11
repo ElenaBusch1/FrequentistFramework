@@ -8,13 +8,10 @@ import python.runFTest as runFTest
 # May want to loop over these at some point?
 cdir = config.cdir
 
-#channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],[ "tenPercent_yxxjjjj_4j_alpha1"],[ "tenPercent_yxxjjjj_4j_alpha2"],[ "tenPercent_yxxjjjj_4j_alpha3"],[ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
 
-channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-#channelNames = [ [ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
 
-#channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-#channelNames = [ ["sherpa_yxxjjjj_2javg_alpha0"],[ "sherpa_yxxjjjj_2javg_alpha1"],[ "sherpa_yxxjjjj_2javg_alpha2"],[ "sherpa_yxxjjjj_2javg_alpha3"],[ "sherpa_yxxjjjj_2javg_alpha4"],[ "sherpa_yxxjjjj_2javg_alpha5"],[ "sherpa_yxxjjjj_2javg_alpha6"],[ "sherpa_yxxjjjj_2javg_alpha7"],[ "sherpa_yxxjjjj_2javg_alpha8"],[ "sherpa_yxxjjjj_2javg_alpha9"],[ "sherpa_yxxjjjj_2javg_alpha10"],[ "sherpa_yxxjjjj_2javg_alpha11"], ]
+
+channelNames = [ ["sherpa_yxxjjjj_4j_alpha0"],[ "sherpa_yxxjjjj_4j_alpha1"],[ "sherpa_yxxjjjj_4j_alpha2"],[ "sherpa_yxxjjjj_4j_alpha3"],[ "sherpa_yxxjjjj_4j_alpha4"],[ "sherpa_yxxjjjj_4j_alpha5"],[ "sherpa_yxxjjjj_4j_alpha6"],[ "sherpa_yxxjjjj_4j_alpha7"],[ "sherpa_yxxjjjj_4j_alpha8"],[ "sherpa_yxxjjjj_4j_alpha9"],[ "sherpa_yxxjjjj_4j_alpha10"],[ "sherpa_yxxjjjj_4j_alpha11"], ]
 
 
 
@@ -36,8 +33,7 @@ fitNames = ["threePar","fourPar", "fivePar"]
 signalfile =  "Gaussian"
 
 
-base_outputdir = "fits_"
-
+base_outputdir = "fitsSherpa_"
 for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
   outputdir = base_outputdir + channelNameSet[0]
   for channelName in channelNameSet:
@@ -63,7 +59,6 @@ fitNames = ["threePar", "fourPar", "fivePar"]
 for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
   outputdir = base_outputdir + channelNameSet[0]
   for channelName in channelNameSet:
-      lumi =  config.samples[channelName]["lumi"]
       rangelow=config.samples[channelName]["rangelow"]
       rangehigh=config.samples[channelName]["rangehigh"]
       rebinedges = config.getBinning(rangelow, rangehigh, delta=10)

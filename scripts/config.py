@@ -25,7 +25,7 @@ samples["yxxjjjj_4j_inclusive"] = {
                  "topfile": "../config/background.template",
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_inclusive",
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "alpha": 5,
                  "varName": "m_{4j}, 0.34 < #alpha",
                  "varAxis": "m_{4j} [GeV]",
@@ -43,7 +43,7 @@ samples["yxxjjjj_4j_alpha12"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_12",
                  "alpha": 12,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.34 < #alpha",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.34 < #alpha",
@@ -60,7 +60,7 @@ samples["yxxjjjj_4j_alpha11"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_11",
                  "alpha": 11,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
@@ -77,7 +77,7 @@ samples["yxxjjjj_4j_alpha10"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_10",
                  "alpha": 10,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
@@ -95,7 +95,7 @@ samples["yxxjjjj_4j_alpha9"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_9",
                  "alpha": 9,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
@@ -112,7 +112,7 @@ samples["yxxjjjj_4j_alpha8"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_8",
                  "alpha": 8,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
@@ -129,7 +129,7 @@ samples["yxxjjjj_4j_alpha7"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_7",
                  "alpha": 7,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
@@ -146,7 +146,7 @@ samples["yxxjjjj_4j_alpha6"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_6",
                  "alpha": 6,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
@@ -166,7 +166,7 @@ samples["yxxjjjj_4j_alpha5"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_5",
                  "alpha": 5,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
@@ -183,7 +183,7 @@ samples["yxxjjjj_4j_alpha4"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_4",
                  "alpha": 4,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
@@ -200,7 +200,7 @@ samples["yxxjjjj_4j_alpha3"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_3",
                  "alpha": 3,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
@@ -217,7 +217,7 @@ samples["yxxjjjj_4j_alpha2"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_2",
                  "alpha": 2,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
@@ -234,7 +234,7 @@ samples["yxxjjjj_4j_alpha1"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_1",
                  "alpha": 1,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
@@ -252,7 +252,7 @@ samples["yxxjjjj_4j_alpha0"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_0",
                  "alpha": 0,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
@@ -271,7 +271,7 @@ samples["sherpa_yxxjjjji_4j_alpha11"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_11",
                  "alpha": 11,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
@@ -286,7 +286,7 @@ samples["sherpa_yxxjjjj_4j_alpha10"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_10",
                  "alpha": 10,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
@@ -302,7 +302,7 @@ samples["sherpa_yxxjjjj_4j_alpha9"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_9",
                  "alpha": 9,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
@@ -317,7 +317,7 @@ samples["sherpa_yxxjjjj_4j_alpha8"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_8",
                  "alpha": 8,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
@@ -332,7 +332,7 @@ samples["sherpa_yxxjjjj_4j_alpha7"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_7",
                  "alpha": 7,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
@@ -347,7 +347,7 @@ samples["sherpa_yxxjjjj_4j_alpha6"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_6",
                  "alpha": 6,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
@@ -362,7 +362,7 @@ samples["sherpa_yxxjjjj_4j_alpha5"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_5",
                  "alpha": 5,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
@@ -377,7 +377,7 @@ samples["sherpa_yxxjjjj_4j_alpha4"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_4",
                  "alpha": 4,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
@@ -392,7 +392,7 @@ samples["sherpa_yxxjjjj_4j_alpha3"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_3",
                  "alpha": 3,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
@@ -408,7 +408,7 @@ samples["sherpa_yxxjjjj_4j_alpha2"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_2",
                  "alpha": 2,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
@@ -423,7 +423,7 @@ samples["sherpa_yxxjjjj_4j_alpha1"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_1",
                  "alpha": 1,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
@@ -439,7 +439,7 @@ samples["sherpa_yxxjjjj_4j_alpha0"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_0",
                  "alpha": 0,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
@@ -447,6 +447,285 @@ samples["sherpa_yxxjjjj_4j_alpha0"] = {
                  "rangehigh" : 11000,
                  "legend": "Sherpa AHADIC",
                }
+
+
+
+
+
+
+samples["tenPercentData_2javg_alpha11"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_11",
+                 "alpha": 11,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.32 < #alpha < 0.34",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.32 < #alpha < 0.34",
+                 "rangelow" : 730,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_11.txt",
+               }
+
+samples["tenPercentData_2javg_alpha10"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_10",
+                 "alpha": 10,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.30 < #alpha < 0.32",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.30 < #alpha < 0.32",
+                 "rangelow" : 630,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_10.txt",
+               }
+
+
+samples["tenPercentData_2javg_alpha9"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_9",
+                 "alpha": 9,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.28 < #alpha < 0.30",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.28 < #alpha < 0.30",
+                 "rangelow" : 570,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_9.txt",
+               }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+samples["tenPercentData_yxxjjjj_4j_alpha11"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_11",
+                 "alpha": 11,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.32 < #alpha < 0.34",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.32 < #alpha < 0.34",
+                 "rangelow" : 2175,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_11.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha10"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_10",
+                 "alpha": 10,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.30 < #alpha < 0.32",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.30 < #alpha < 0.32",
+                 "rangelow" : 1975,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_10.txt",
+               }
+
+
+samples["tenPercentData_yxxjjjj_4j_alpha9"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_9",
+                 "alpha": 9,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.28 < #alpha < 0.30",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.28 < #alpha < 0.30",
+                 "rangelow" : 1975,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_9.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha8"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_8",
+                 "alpha": 8,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.26 < #alpha < 0.28",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.26 < #alpha < 0.28",
+                 "rangelow" : 1925,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_8.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha7"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_7",
+                 "alpha": 7,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.24 < #alpha < 0.26",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.24 < #alpha < 0.26",
+                 "rangelow" : 1875,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_7.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha6"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_6",
+                 "alpha": 6,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.22 < #alpha < 0.24",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.22 < #alpha < 0.24",
+                 "rangelow" : 1875,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_6.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha5"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_5",
+                 "alpha": 5,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.20 < #alpha < 0.22",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.20 < #alpha < 0.22",
+                 "rangelow" : 1875,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_5.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha4"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_4",
+                 "alpha": 4,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.18 < #alpha < 0.20",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.18 < #alpha < 0.20",
+                 "rangelow" : 1875,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_4.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha3"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_3",
+                 "alpha": 3,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.16 < #alpha < 0.18",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.16 < #alpha < 0.18",
+                 "rangelow" : 1825,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_3.txt",
+               }
+samples["tenPercentData_yxxjjjj_4j_alpha2"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_2",
+                 "alpha": 2,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.14 < #alpha < 0.16",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.14 < #alpha < 0.16",
+                 "rangelow" : 1725,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_2.txt",
+               }
+
+samples["tenPercentData_yxxjjjj_4j_alpha1"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_1",
+                 "alpha": 1,
+                 "lumi": 13900,
+                 "varName": "m_{4j}, 0.12 < #alpha < 0.14",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.12 < #alpha < 0.14",
+                 "rangelow" : 1775,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_1.txt",
+               }
+
+
+samples["tenPercentData_yxxjjjj_4j_alpha0"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_nominal_alphaBin_0",
+                 "alpha": 1,
+                 "lumi": 140000,
+                 "varName": "m_{4j}, 0.10 < #alpha < 0.12",
+                 "varAxis": "m_{4j} [GeV]",
+                 "varLabel": "0.10 < #alpha < 0.12",
+                 "rangelow" : 1775,
+                 "rangehigh" : 11000,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_0.txt",
+               }
+
+
+
+
 
 
 
@@ -475,7 +754,7 @@ samples["tenPercent_yxxjjjj_4j_alpha11"] = {
                  "rangelow" : 2175,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_11.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_11.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha10"] = {
@@ -492,7 +771,7 @@ samples["tenPercent_yxxjjjj_4j_alpha10"] = {
                  "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_10.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_10.txt",
                }
 
 
@@ -510,7 +789,7 @@ samples["tenPercent_yxxjjjj_4j_alpha9"] = {
                  "rangelow" : 1975,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_9.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_9.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha8"] = {
@@ -527,7 +806,7 @@ samples["tenPercent_yxxjjjj_4j_alpha8"] = {
                  "rangelow" : 1925,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_8.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_8.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha7"] = {
@@ -544,7 +823,7 @@ samples["tenPercent_yxxjjjj_4j_alpha7"] = {
                  "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_7.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_7.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha6"] = {
@@ -561,7 +840,7 @@ samples["tenPercent_yxxjjjj_4j_alpha6"] = {
                  "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_6.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_6.txt",
                }
 
 
@@ -580,7 +859,7 @@ samples["tenPercent_yxxjjjj_4j_alpha5"] = {
                  "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_5.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_5.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha4"] = {
@@ -597,7 +876,7 @@ samples["tenPercent_yxxjjjj_4j_alpha4"] = {
                  "rangelow" : 1875,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_4.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_4.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha3"] = {
@@ -614,7 +893,7 @@ samples["tenPercent_yxxjjjj_4j_alpha3"] = {
                  "rangelow" : 1825,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_3.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_3.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha2"] = {
@@ -631,7 +910,7 @@ samples["tenPercent_yxxjjjj_4j_alpha2"] = {
                  "rangelow" : 1725,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_2.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_2.txt",
                }
 
 samples["tenPercent_yxxjjjj_4j_alpha1"] = {
@@ -648,7 +927,7 @@ samples["tenPercent_yxxjjjj_4j_alpha1"] = {
                  "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_1.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_1.txt",
                }
 
 
@@ -666,9 +945,155 @@ samples["tenPercent_yxxjjjj_4j_alpha0"] = {
                  "rangelow" : 1775,
                  "rangehigh" : 11000,
                  "legend": "PYTHIA8",
-                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_0.txt",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m4j_m4jresp_0.txt",
                }
 
+samples["tenPercentData_2javg_alpha8"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_8",
+                 "alpha": 8,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.26 < #alpha < 0.28",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.26 < #alpha < 0.28",
+                 "rangelow" : 510,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_8.txt",
+               }
+
+samples["tenPercentData_2javg_alpha7"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_7",
+                 "alpha": 7,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.24 < #alpha < 0.26",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.24 < #alpha < 0.26",
+                 "rangelow" : 490,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_7.txt",
+               }
+
+samples["tenPercentData_2javg_alpha6"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_6",
+                 "alpha": 6,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.22 < #alpha < 0.24",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.22 < #alpha < 0.24",
+                 "rangelow" : 430,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_6.txt",
+               }
+
+samples["tenPercentData_2javg_alpha5"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_5",
+                 "alpha": 5,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.20 < #alpha < 0.22",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.20 < #alpha < 0.22",
+                 "rangelow" : 430,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_5.txt",
+               }
+
+samples["tenPercentData_2javg_alpha4"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_4",
+                 "alpha": 4,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.18 < #alpha < 0.20",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.18 < #alpha < 0.20",
+                 "rangelow" : 370,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_4.txt",
+               }
+
+samples["tenPercentData_2javg_alpha3"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_3",
+                 "alpha": 3,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.16 < #alpha < 0.18",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.16 < #alpha < 0.18",
+                 "rangelow" : 330,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_3.txt",
+               }
+
+samples["tenPercentData_2javg_alpha2"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_2",
+                 "alpha": 2,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.14 < #alpha < 0.16",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.14 < #alpha < 0.16",
+                 "rangelow" : 270,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_2.txt",
+               }
+
+
+
+samples["tenPercentData_2javg_alpha1"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_1",
+                 "alpha": 1,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.12 < #alpha < 0.14",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.12 < #alpha < 0.14",
+                 "rangelow" : 250,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_1.txt",
+               }
+
+
+samples["tenPercentData_2javg_alpha0"] = {
+                 "categoryfile"  : "../config/category_background.template",
+                 "topfile": "../config/background.template",
+                 "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_DataRun2_10percent.root",
+                 "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_0",
+                 "alpha": 0,
+                 "lumi": 13900,
+                 "varName": "m_{#LT 2j #GT}, 0.10 < #alpha < 0.12",
+                 "varAxis": "m_{#LT 2j #GT} [GeV]",
+                 "varLabel": "0.10 < #alpha < 0.12",
+                 "rangelow" : 230,
+                 "rangehigh" : 3500,
+                 "legend": "PYTHIA8",
+                 "binFile": "/afs/cern.ch/work/j/jroloff/nixon/massResolutionStudies/binFiles/binFile_h2_resonance_jet_m2javg_m2javgresp_0.txt",
+               }
 
 
 
@@ -696,7 +1121,7 @@ samples["yxxjjjj_2javg_inclusive"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_inclusive",
                  "alpha": 5,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.34 < #alpha",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.1 < #alpha",
@@ -713,7 +1138,7 @@ samples["yxxjjjj_2javg_alpha12"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_12",
                  "alpha": 12,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.34 < #alpha",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.34 < #alpha",
@@ -728,7 +1153,7 @@ samples["yxxjjjj_2javg_alpha11"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_11",
                  "alpha": 11,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
@@ -744,7 +1169,7 @@ samples["yxxjjjj_2javg_alpha10"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_10",
                  "alpha": 10,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
@@ -761,7 +1186,7 @@ samples["yxxjjjj_2javg_alpha9"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_9",
                  "alpha": 9,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
@@ -777,7 +1202,7 @@ samples["yxxjjjj_2javg_alpha8"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_8",
                  "alpha": 8,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
@@ -793,7 +1218,7 @@ samples["yxxjjjj_2javg_alpha7"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_7",
                  "alpha": 7,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
@@ -809,7 +1234,7 @@ samples["yxxjjjj_2javg_alpha6"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_6",
                  "alpha": 6,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
@@ -827,7 +1252,7 @@ samples["yxxjjjj_2javg_alpha5"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_5",
                  "alpha": 5,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
@@ -843,7 +1268,7 @@ samples["yxxjjjj_2javg_alpha4"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_4",
                  "alpha": 4,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
@@ -859,7 +1284,7 @@ samples["yxxjjjj_2javg_alpha3"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_3",
                  "alpha": 3,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
@@ -875,7 +1300,7 @@ samples["yxxjjjj_2javg_alpha2"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_2",
                  "alpha": 2,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
@@ -893,7 +1318,7 @@ samples["yxxjjjj_2javg_alpha1"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_1",
                  "alpha": 1,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
@@ -910,7 +1335,7 @@ samples["yxxjjjj_2javg_alpha0"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_0",
                  "alpha": 0,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
@@ -929,7 +1354,7 @@ samples["sherpa_yxxjjjji_2javg_alpha11"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_11",
                  "alpha": 11,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
@@ -944,7 +1369,7 @@ samples["sherpa_yxxjjjj_2javg_alpha10"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_10",
                  "alpha": 10,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
@@ -960,7 +1385,7 @@ samples["sherpa_yxxjjjj_2javg_alpha9"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_9",
                  "alpha": 9,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
@@ -975,7 +1400,7 @@ samples["sherpa_yxxjjjj_2javg_alpha8"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_8",
                  "alpha": 8,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
@@ -990,7 +1415,7 @@ samples["sherpa_yxxjjjj_2javg_alpha7"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_7",
                  "alpha": 7,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
@@ -1005,7 +1430,7 @@ samples["sherpa_yxxjjjj_2javg_alpha6"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_6",
                  "alpha": 6,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
@@ -1020,7 +1445,7 @@ samples["sherpa_yxxjjjj_2javg_alpha5"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_5",
                  "alpha": 5,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
@@ -1035,7 +1460,7 @@ samples["sherpa_yxxjjjj_2javg_alpha4"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_4",
                  "alpha": 4,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
@@ -1050,7 +1475,7 @@ samples["sherpa_yxxjjjj_2javg_alpha3"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_3",
                  "alpha": 3,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
@@ -1066,7 +1491,7 @@ samples["sherpa_yxxjjjj_2javg_alpha2"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_2",
                  "alpha": 2,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
@@ -1083,7 +1508,7 @@ samples["sherpa_yxxjjjj_2javg_alpha1"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_1",
                  "alpha": 1,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
@@ -1099,7 +1524,7 @@ samples["sherpa_yxxjjjj_2javg_alpha0"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Sherpa.root",
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_0",
                  "alpha": 0,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{#LT 2j #GT}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{#LT 2j #GT} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
@@ -1115,7 +1540,7 @@ samples["tile_4j_alpha12"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_12",
                  "alpha": 12,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.34 < #alpha",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.34 < #alpha",
@@ -1131,7 +1556,7 @@ samples["tile_4j_alpha11"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_11",
                  "alpha": 11,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.32 < #alpha < 0.34",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.32 < #alpha < 0.34",
@@ -1147,7 +1572,7 @@ samples["tile_4j_alpha10"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_10",
                  "alpha": 10,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.30 < #alpha < 0.32",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.30 < #alpha < 0.32",
@@ -1163,7 +1588,7 @@ samples["tile_4j_alpha9"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_9",
                  "alpha": 9,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.28 < #alpha < 0.30",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.28 < #alpha < 0.30",
@@ -1179,7 +1604,7 @@ samples["tile_4j_alpha8"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_8",
                  "alpha": 8,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.26 < #alpha < 0.28",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.26 < #alpha < 0.28",
@@ -1195,7 +1620,7 @@ samples["tile_4j_alpha7"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_7",
                  "alpha": 7,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.24 < #alpha < 0.26",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.24 < #alpha < 0.26",
@@ -1212,7 +1637,7 @@ samples["tile_4j_alpha6"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_6",
                  "alpha": 6,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.22 < #alpha < 0.24",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.22 < #alpha < 0.24",
@@ -1230,7 +1655,7 @@ samples["tile_4j_alpha5"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_5",
                  "alpha": 5,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.20 < #alpha < 0.22",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.20 < #alpha < 0.22",
@@ -1246,7 +1671,7 @@ samples["tile_4j_alpha4"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_4",
                  "alpha": 4,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.18 < #alpha < 0.20",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.18 < #alpha < 0.20",
@@ -1263,7 +1688,7 @@ samples["tile_4j_alpha3"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_3",
                  "alpha": 3,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.16 < #alpha < 0.18",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.16 < #alpha < 0.18",
@@ -1279,7 +1704,7 @@ samples["tile_4j_alpha2"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_2",
                  "alpha": 2,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.14 < #alpha < 0.16",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.14 < #alpha < 0.16",
@@ -1295,7 +1720,7 @@ samples["tile_4j_alpha1"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_1",
                  "alpha": 1,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.12 < #alpha < 0.14",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.12 < #alpha < 0.14",
@@ -1312,7 +1737,7 @@ samples["tile_4j_alpha0"] = {
                  "inputFile": "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/yxxjjjj_Pythia.root",
                  "histname": "h2_resonance_jet_m4j_alpha_TILE_CORE_alphaBin_0",
                  "alpha": 0,
-                 "lumi": 139000,
+                 "lumi": 140000,
                  "varName": "m_{4j}, 0.10 < #alpha < 0.12",
                  "varAxis": "m_{4j} [GeV]",
                  "varLabel": "0.10 < #alpha < 0.12",
@@ -1415,6 +1840,21 @@ signals["Gaussian"] = {
 # Fit functions
 #####################################################################################
 fitFunctions = {}
+
+fitFunctions["threeParM2j"] = {
+                            "Name" : "3-par fit",
+                            "Config" : "config/background_threePar_m2j.xml",
+                          }
+
+fitFunctions["fourParM2j"] = {
+                            "Name" : "4-par fit",
+                            "Config" : "config/background_fourPar_m2j.xml",
+                          }
+
+fitFunctions["fiveParM2j"] = {
+                            "Name" : "5-par fit",
+                            "Config" : "config/background_fivePar_m2j.xml",
+                          }
 
 fitFunctions["threePar"] = { 
                             "Name" : "3-par fit",

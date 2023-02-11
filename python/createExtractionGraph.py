@@ -14,14 +14,19 @@ import AtlasStyle as AS
 
 
 
-def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal", isNInjected=False, pdFile = None, indir=""):
+def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal", isNInjected=False, pdFile = None, indir="", delta = 0.00, deltaMassAboveFit = 0):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     profile_list = []
     tmp_name = config.getFileName(infile, cdir, channelName, indir) 
     c = df.setup_canvas(tmp_name)
+    rangelow = config.samples[channelName]["rangelow"]
 
     for j,sigmean in enumerate(sigmeans):
+      #print sigmean, rangelow, rangelow + deltaMassAboveFit
+      if sigmean < (rangelow + deltaMassAboveFit) : 
+        print "fails mass"
+        continue
       
       for i,sigwidth in enumerate(sigwidths):
         g_allPoints = TGraph()
@@ -65,12 +70,13 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
               if nsig == None or  math.isnan(nsig):
                 nans += 1
               if nsig == None:
+                print "nsig is none"
                 continue
    
               tmp_path_injection = config.getFileName(infilePD, cdir, channelName, indir, sigmean, sigwidth, sigamp) + "_Sig_Gaussian.root"
               checkPath = glob(tmp_path_injection)
               if len(checkPath) == 0:
-                  #print "Did not find ", tmp_path_injection
+                  print "Did not find ", tmp_path_injection
                   continue
 
               f = TFile(tmp_path_injection)
@@ -104,9 +110,10 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           for i in range(len(inj_extr)):
             h_nsig.Fill(0.762*inj_extr[i][1] /  inj_extr[i][2])
           h_nsigs.append(h_nsig)
+          print sigamp, nFit, nFitErr
 
           #g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
-          g_profile.SetPoint(g_profile.GetN(), sigamp, nFit)
+          g_profile.SetPoint(g_profile.GetN(), sigamp + delta*j, nFit)
           #g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr / sqrtB)
           g_profile.SetPointError(g_profile.GetN()-1, 0, nFitErr)
           legs.append("Signal amplitude = %d, average = %.2f, nToys = %d"%(sigamp, nFit/sqrtB, len(inj_extr)))
@@ -135,6 +142,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
     for i in profile_list:
       legendNames.append(i.GetTitle())
     leg = df.DrawHists(c, profile_list, legendNames, labels, sampleName = "", drawOptions = ["ALP", "LP", "LP", "LP", "LP", "LP", "LP"], styleOptions=df.get_extraction_style_opt, isLogX=0, atlasLabel=atlasLabel, lumi=lumi)
+    #leg = df.DrawHists(c, profile_list, legendNames, labels, sampleName = "", drawOptions = ["APex0", "pex0", "pex0", "pex0", "pex0", "pex0", "pex0"], styleOptions=df.get_extraction_style_opt, isLogX=0, atlasLabel=atlasLabel, lumi=lumi)
 
     l = TLine(-0.5,-0.5,max(sigamps)+0.5, max(sigamps)+0.5)
     l.SetLineColor(kGray+2)

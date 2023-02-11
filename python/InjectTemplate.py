@@ -18,10 +18,12 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
     gRand = ROOT.TRandom3()
     seed = 0
 
+    nbkgs = []
     for histKey in f_in.GetListOfKeys():
         histNameFile = histKey.GetName()
         
         if not histname in histNameFile:
+            print "Did not find hist ", histname, "in ", histNameFile
             continue
 
         hist = f_in.Get(histNameFile).Clone()
@@ -29,10 +31,6 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
         hgaus = hist.Clone("injectedSignal") 
         hgaus.Reset("M")
 
-        #sigHist2.GetXaxis().Set(hist.GetNbinsX(), hist.GetBinLowEdge(1), hist.GetBinLowEdge(hist.GetNbinsX()+1))
-        #sigHist2.GetXaxis().SetLimits(hist.GetBinLowEdge(1), hist.GetBinLowEdge(hist.GetNbinsX()+1))
-        #sigHist2.GetXaxis().SetMinimum(hist.GetBinLowEdge(1))
-        #sigHist2.GetXaxis().SetMaximum(hist.GetBinLowEdge(hist.GetNbinsX()+1))
         # define the parameters of the gaussian and fill it
         if sigmean > 0.0:
 
@@ -44,6 +42,7 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
             binLowSig = sigHistNom.FindBin(rangeLow)
             binHighSig = sigHistNom.FindBin(rangeHigh)
             nBkg = hist.Integral(binLow, binHigh)
+            nbkgs.append(nBkg)
 
             sigma = (sigwidth*0.01) * sigmean 
 
@@ -55,18 +54,16 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
             sigHist2 = mctoy.createHistogram("test_%s"%(histKey), mjjVar);
             hgaus = mctoy.fillHistogram(hgaus, ROOT.RooArgList(mjjVar))
 
-            #hinj.Add(sigHist2)
             hinj.Add(hgaus)
 
         hinj.Write(histNameFile )
         hist.Write(histNameFile+"_beforeInjection")
-        #sigHist2.Write(histNameFile+"_injection")
         hgaus.Write(histNameFile+"_injection")
 
         seed += 1
             
     f_out.Close()
-    return [nBkg]
+    return nbkgs
 
 
 def main(args):

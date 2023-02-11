@@ -59,14 +59,12 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
         maskmax=-1
 
     print("running quickfit")
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s  -o %s" % (wsfile, _poi, _range, fitresultfile))
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s --minTolerance 1e-5 -o %s" % (wsfile, _poi, _range, fitresultfile))
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 0 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-3 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-5 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
     rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
+        #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 10 -o %s" % (wsfile, _poi, _range, fitresultfile))
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
 
@@ -83,7 +81,7 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
         maskmax=maskmax,
         channels=channels,
     )
-    pfe.Extract()
+    isPass = pfe.Extract()
     doRecreate = (toy==0)
     pvals = []
     chi2s = []
@@ -125,7 +123,7 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
     fitnsig = fpe.GetNsig()
     fitnbkg = fpe.GetNbkgFit()
 
-    return (pvals, postfitfile, parameterfile, fitnsig, fitnbkg)
+    return (pvals, postfitfile, parameterfile, fitnsig, fitnbkg, isPass)
 
 def run_anaFit(datahist,
                topfile,
@@ -325,7 +323,7 @@ def run_anaFit(datahist,
 
       print("running fit extractor")
       # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
-      pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg = build_fit_extract(topfile=tmptopfile,
+      pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass = build_fit_extract(topfile=tmptopfile,
                                                                 datafiles=datafiles, 
                                                                 channels=datahist,
                                                                 datahist=tmpDataHists,
@@ -342,6 +340,32 @@ def run_anaFit(datahist,
                                                                 )
 
       
+      #if isPass == 1 and fitnsig == -10:
+      if dosignal and (abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2):
+        print ("Rerunning")
+        if abs(fitnsig +10) < 1e-3 :
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,10"), ])
+        if abs(fitnsig +5) < 1e-3 :
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,5"), ])
+        if abs(fitnsig +100) < 1e-3 :
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,100"), ])
+        pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass = build_fit_extract(topfile=tmptopfile,
+                                                                datafiles=datafiles,
+                                                                channels=datahist,
+                                                                datahist=tmpDataHists,
+                                                                datafirstbin=rangesLow,
+                                                                wsfile=wsfile,
+                                                                fitresultfile=outputfile,
+                                                                poi=poi,
+                                                                rebinFile=rebinFile,
+                                                                rebinHist=rebinHist,
+                                                                rebinEdges=rebinEdges,
+                                                                toy=toy,
+                                                                toyString=toyString,
+                                                                nbkgWindow=nbkgWindow,
+                                                                )
+
+
       if sigmean and dosignal:
         if abs(fitnsig - nsigOld)< 0.0001 and abs(fitnbkg - nbkgOld) < 0.0001:
           print( "Fitting seems to be stuck?", fitnsig, nsigOld, fitnbkg, nbkgOld)
@@ -417,7 +441,9 @@ def run_anaFit(datahist,
       # blindrange not yet implemented with quickLimit
       if dolimit and dosignal and pvals_global[0] > maskthreshold:
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          #rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1 --muScanPoints 0 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          #rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

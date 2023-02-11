@@ -110,14 +110,27 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
 
         labels.append("p(F_{^{%s #rightarrow %s par}}) = %.2f" % (tmpName1, tmpName2, pF))
 
+    l_ratios = []
+    for hist in l_pf:
+      ratioHist = hist.Clone("Ratio_%s"%hist.GetName())
+      ratioHist.Divide(l_pf[0])
+      ratioHist.GetYaxis().SetRangeUser(0.85, 1.15)
+      l_ratios.append(ratioHist)
+
     c = df.setup_canvas(config.getFileName("FTest_%s"%(infile), cdir, channelName, outputdir) )
     df.SetRange(l_res, myMin=-2, myMax=5, isLog=False)
     outname = outfile.replace(".root", "")
     leg = df.DrawHists(c, l_res, legNames, labels, "", drawOptions = ["HIST", "HIST"], styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, isLogX = True)
     outfile = config.getFileName("FTest_%s"%(infile), cdir, channelName, outputdir) + ".pdf"
-
     c.Print(outfile)
 
+
+
+    df.SetRange(l_pf, minMin = 1e-10, isLog=True)
+
+    leg = df.DrawRatioHists(c, l_pf, l_ratios, legNames, labels, "", drawOptions = ["HIST", "HIST"], styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, isLogX = True, isLogY=True, ratioHeight=0.5)
+    outfile = config.getFileName("FitDifferences_%s"%(infile), cdir, channelName, outputdir) + ".pdf"
+    c.Print(outfile)
 
 
 

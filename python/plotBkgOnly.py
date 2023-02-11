@@ -203,7 +203,9 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
     # For now, leave in linear, and if we can update the root version, we can also fix this
     #
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+    plotHists[0].SetFillStyle(1001)
+    plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e2", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
     #fitNoSignal.Draw("SAME")
     c.Print(outname + ".pdf")
 
