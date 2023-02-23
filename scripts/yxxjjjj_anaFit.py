@@ -4,25 +4,25 @@ import os
 
 cdir = config.cdir
 
-#channelNames = [ ["yxxjjjj_4j_alpha6"], ]
+channelNames = [ ["yxxjjjj_4j_alpha3"], ]
 
-channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+#channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
 
 #channelNames = [ ["tenPercent_yxxjjjj_4j_alpha0"],[ "tenPercent_yxxjjjj_4j_alpha1"],[ "tenPercent_yxxjjjj_4j_alpha2"],[ "tenPercent_yxxjjjj_4j_alpha3"],[ "tenPercent_yxxjjjj_4j_alpha4"],[ "tenPercent_yxxjjjj_4j_alpha5"],[ "tenPercent_yxxjjjj_4j_alpha6"],[ "tenPercent_yxxjjjj_4j_alpha7"],[ "tenPercent_yxxjjjj_4j_alpha8"],[ "tenPercent_yxxjjjj_4j_alpha9"],[ "tenPercent_yxxjjjj_4j_alpha10"],[ "tenPercent_yxxjjjj_4j_alpha11"], ]
 
 #channelNames = [ ["sherpa_yxxjjjj_4j_alpha0"],[ "sherpa_yxxjjjj_4j_alpha1"],[ "sherpa_yxxjjjj_4j_alpha2"],[ "sherpa_yxxjjjj_4j_alpha3"],[ "sherpa_yxxjjjj_4j_alpha4"],[ "sherpa_yxxjjjj_4j_alpha5"],[ "sherpa_yxxjjjj_4j_alpha6"],[ "sherpa_yxxjjjj_4j_alpha7"],[ "sherpa_yxxjjjj_4j_alpha8"],[ "sherpa_yxxjjjj_4j_alpha9"],[ "sherpa_yxxjjjj_4j_alpha10"],[ "sherpa_yxxjjjj_4j_alpha11"], ]
 
 #fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
-fitNames = ["threePar", "fourPar", "fivePar"]
+#fitNames = ["threePar", "fourPar", "fivePar"]
 #fitNames = ["threePar"]
-#fitNames = ["fourPar"]
+fitNames = ["fourPar"]
 #fitNames = ["fivePar"]
 #fitNames = ["sixPar"]
 
 
 for channelName in channelNames:
   for fitName in fitNames:
-        nbkg="5E6,0,5E8"
+        nbkg="5E4,0,5E5"
         # These should all use the same top file
         topfile=config.samples[channelName[0]]["topfile"]
   

@@ -31,18 +31,19 @@ if args.isBatch:
 
 
 else:
-  pdFitNames = ["fivePar"]
-  fitName = "fourPar"
+  pdFitNames = ["sixParM2j"]
+  fitName = "fiveParM2j"
+  #pdFitNames = ["fourParM2j"]
+  #fitName = "threeParM2j"
+  #pdFitNames = ["fiveParM2j"]
+  #fitName = "fourParM2j"
   channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
   #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
   #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
-  sigmeans = [1500,]
-  sigwidths = [15]
+  sigmeans = [2000,]
+  sigwidths = [10]
   signalfile =  "Gaussian"
-  #signalfile =  "template"
-  #signalfile =  "gausHist"
-  #signalfile =  "test"
   coutputdir = "fits2javg_"
   #args.doRemake = 0
   args.doRemake = 0

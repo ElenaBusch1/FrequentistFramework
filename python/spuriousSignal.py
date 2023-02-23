@@ -87,7 +87,8 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
           for index, channelName in enumerate(channelNames):
 
             #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 21, -crange[j], crange[j])
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 21, -crange[j], crange[j])
+            #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 21, -crange[j], crange[j])
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 63, -crange[j], crange[j])
             h_allPoints.SetDirectory(0)
 
             rangelow = config.samples[channelName]["rangelow"]
@@ -185,16 +186,23 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
           g_ratio.GetXaxis().SetTitle("m_{%s}"%(signalName))
           for j,sigmean in enumerate(sigmeans):
             n = g_avg.GetN()
+            myMean =  h_myPoints[j][k].GetMean()
+            
+            quantiles = array('d', [0.] )
+            xq = array('d', [0.5])
+            h_myPoints[j][k].GetQuantiles(1, quantiles, xq);
+            myMedian = quantiles[0]
+            #print sigmean, myMean, myMedian,  h_myPoints[j][k].GetStdDev()
             if h_myPoints[j][k].GetEntries()>0:
-              g_avg.SetPoint(n, sigmean+delta*k, h_myPoints[j][k].GetMean())
+              g_avg.SetPoint(n, sigmean+delta*k, myMedian)
               g_avg.SetPointError(n, 0.001, h_myPoints[j][k].GetStdDev())
             if h_myPoints[j][k].GetStdDev() > 0:
-              g_ratio.SetPoint(n, sigmean+delta*k, h_myPoints[j][k].GetMean() / h_myPoints[j][k].GetStdDev())
+              g_ratio.SetPoint(n, sigmean+delta*k, myMedian / h_myPoints[j][k].GetStdDev())
               #print len(h_myPoints[j][k])
             if h_myPoints[j][k].GetStdDev() ==0 and h_myPoints[j][k].GetEntries()>0:
               #print len(h_myPoints[j][k])
-              g_ratio.SetPoint(n, sigmean+delta*k, h_myPoints[j][k].GetMean() )
-          meanSpurs.append(h_myPoints[j][k].GetMean())
+              g_ratio.SetPoint(n, sigmean+delta*k, myMedian )
+          meanSpurs.append(myMedian)
           sigSpurs.append(h_myPoints[j][k].GetStdDev())
           g_avg.GetXaxis().SetLimits(minMean-50, maxMean+delta*(len(channelNames)+2))
           g_ratio.GetXaxis().SetLimits(minMean-50, maxMean+delta*(len(channelNames)+2))

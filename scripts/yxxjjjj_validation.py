@@ -26,9 +26,9 @@ rebinFactors = [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25]
 #rebinFactors = [10]
 #fitNames = ["fourPar"]
 #fitNames = ["fivePar"]
-#fitNames = ["threePar","fourPar", "fivePar", "sixPar"]
+fitNames = ["threePar","fourPar", "fivePar", "sixPar"]
 #fitNames = ["fourPar", "fivePar"]
-fitNames = ["threePar","fourPar", "fivePar"]
+#fitNames = ["threePar","fourPar", "fivePar"]
 #rangeslow=[100]
 #rangeshigh=[3000]
 #rebinFactors = [10]
@@ -38,6 +38,7 @@ signalfile =  "Gaussian"
 
 base_outputdir = "fits_"
 
+'''
 for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
   outputdir = base_outputdir + channelNameSet[0]
   for channelName in channelNameSet:
@@ -56,17 +57,20 @@ for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
       outfilePulls = config.getFileName("pulls", cdir + "/scripts/", channelName, outputdir)
       #plotPulls.plotPulls(infiles=infiles, fitNames = fitNames, outfile=outfilePulls, minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName,  lumi=lumi, atlasLabel=config.atlasLabel, outputdir=outputdir)
       plotPulls.plotPulls(infiles=infiles, fitNames = fitNames, outfile="pulls", minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName,  lumi=lumi, atlasLabel=config.atlasLabel, outputdir=outputdir)
+'''
 
 
-#fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
-fitNames = ["threePar", "fourPar", "fivePar"]
+fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
+#fitNames = ["threePar", "fourPar", "fivePar"]
 for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
   outputdir = base_outputdir + channelNameSet[0]
   for channelName in channelNameSet:
       lumi =  config.samples[channelName]["lumi"]
       rangelow=config.samples[channelName]["rangelow"]
       rangehigh=config.samples[channelName]["rangehigh"]
-      rebinedges = config.getBinning(rangelow, rangehigh, delta=10)
+      #rebinedges = config.getBinning(rangelow, rangehigh, delta=1)
+      rebinedges = config.getBinningFromFile(channelName)
+
       infiles = ["PostFit_threePar_bkgonly", "PostFit_fourPar_bkgonly", "PostFit_fivePar_bkgonly", "PostFit_sixPar_bkgonly"]
       outfile = "Fit"
       runFTest.runFTest(infiles=infiles, cdir=cdir + "/scripts/", outfile=outfile, rangelow=rangelow, rangehigh=rangehigh, channelName=channelName, lumi=lumi, atlasLabel=config.atlasLabel, rebinEdges=rebinedges, outputdir=outputdir, fitNames = fitNames)

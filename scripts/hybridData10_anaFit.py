@@ -5,24 +5,25 @@ import os
 cdir = config.cdir
 
 
-channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-#channelNames = [ ["yxxjjjj_2javg_alpha2"],]
+channelNames = [ ["hybrid10_yxxjjjj_4j_alpha0"],[ "hybrid10_yxxjjjj_4j_alpha1"],[ "hybrid10_yxxjjjj_4j_alpha2"],[ "hybrid10_yxxjjjj_4j_alpha3"],[ "hybrid10_yxxjjjj_4j_alpha4"],[ "hybrid10_yxxjjjj_4j_alpha5"],[ "hybrid10_yxxjjjj_4j_alpha6"],[ "hybrid10_yxxjjjj_4j_alpha7"],[ "hybrid10_yxxjjjj_4j_alpha8"],[ "hybrid10_yxxjjjj_4j_alpha9"],[ "hybrid10_yxxjjjj_4j_alpha10"],[ "hybrid10_yxxjjjj_4j_alpha11"], ]
+#channelNames = [ [ "hybrid10_yxxjjjj_4j_alpha2"],]
 
+
+fitNames = ["threePar", "fourPar", "fivePar",]
 #fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
-#fitNames = ["threeParM2j", "fourParM2j", "fiveParM2j"]
 #fitNames = ["threePar"]
 #fitNames = ["fourPar"]
 #fitNames = ["fivePar"]
-fitNames = ["sixParM2j"]
+#fitNames = ["sixPar"]
 
 
 for channelName in channelNames:
   for fitName in fitNames:
-        nbkg="1e4,0,1e5"
+        nbkg="1E4,0,3E5"
         # These should all use the same top file
         topfile=config.samples[channelName[0]]["topfile"]
   
-        outputdir = "fits2javg_%s"%channelName[0]
+        outputdir = "fitsHybrid_%s"%channelName[0]
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_%s_1GeVBin_GlobalFit"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"
         outputfile = config.getFileName("FitResult_%s_bkgonly"%(fitName), cdir + "/scripts/", None, outputdir) + ".root"

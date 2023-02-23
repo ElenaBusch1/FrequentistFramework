@@ -50,7 +50,8 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
         _poi=""
 
     if maskrange:
-        _range="--range SBLo,SBHi"
+        _range="--range SBLo_%s,SBHi_%s"%(datahist[0],datahist[0])
+        #_range="--range SBLo,SBHi"
         maskmin=maskrange[0]
         maskmax=maskrange[1]
     else:
@@ -123,7 +124,7 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
     fitnsig = fpe.GetNsig()
     fitnbkg = fpe.GetNbkgFit()
 
-    return (pvals, postfitfile, parameterfile, fitnsig, fitnbkg, isPass)
+    return (pvals, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe)
 
 def run_anaFit(datahist,
                topfile,
@@ -151,8 +152,12 @@ def run_anaFit(datahist,
                doRemake = False,
                useSysts = False,
                alphaBin = 0,
+               rebinOnlyBH = False
               ):
 
+    myRebinEdges = rebinEdges
+    if rebinOnlyBH:
+      rebinEdges = None
 
     alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33, 0.35]
     # generate the config files on the fly in run dir
@@ -323,7 +328,7 @@ def run_anaFit(datahist,
 
       print("running fit extractor")
       # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
-      pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass = build_fit_extract(topfile=tmptopfile,
+      pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe = build_fit_extract(topfile=tmptopfile,
                                                                 datafiles=datafiles, 
                                                                 channels=datahist,
                                                                 datahist=tmpDataHists,
@@ -349,7 +354,7 @@ def run_anaFit(datahist,
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,5"), ])
         if abs(fitnsig +100) < 1e-3 :
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,100"), ])
-        pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass = build_fit_extract(topfile=tmptopfile,
+        pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe = build_fit_extract(topfile=tmptopfile,
                                                                 datafiles=datafiles,
                                                                 channels=datahist,
                                                                 datahist=tmpDataHists,
@@ -384,10 +389,19 @@ def run_anaFit(datahist,
       else:
         print("p(chi2) threshold not passed.")
         print("Now running BH for masking.")
+        if rebinOnlyBH:
+          print ("Running rebinning", myRebinEdges)
+          pfe.SetRebinEdges(myRebinEdges)
+          postfitfileName=postfitfile.replace("CHANNEL", datahist[0])
+          pfe.WriteRoot(postfitfileName, doRecreate=True, suffix=datahist[0] + "_" +toyString, dirPerCategory=True, channelNames =[datahist[0]])
+
+
 
         # TODO: Need to use the actual path, since this will only run if working in the correct directory
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json; deactivate" % (postfitfile, cdir, outdir))
+        bkghist = "postfit%s_%s"%(histName, toyString)
+        datahistName = "data%s_%s"%(histName, toyString)
+        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json --bkghist %s --datahist %s; deactivate" % (postfitfile, cdir, outdir, bkghist, datahistName))
 
         # pass results of pyBH via this json file
         with open(cdir + "/scripts/" + outdir + "/BHresults.json") as f:
@@ -410,12 +424,13 @@ def run_anaFit(datahist,
                        (wsfile, wsfilemasked),])
         replaceinfile(tmpcategoryfilemasked, 
                       [(r'(Binning="\d+")', r'\1 BlindRange="%s"' % BHresults["BlindRange"])])
+        print("Bump hunter", BHresults)
 
-        pvals_masked,_,_ = build_fit_extract(tmptopfilemasked,
+        pvals_masked, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe = build_fit_extract(tmptopfilemasked,
                                             datafiles=datafiles, 
                                             channels=datahist,
                                             datahist=tmpDataHists,
-                                            datafirstbin=rangelow, 
+                                            datafirstbin=[rangelow], 
                                             wsfile=wsfilemasked, 
                                             fitresultfile=outfilemasked, 
                                             poi=poi, 
@@ -424,7 +439,11 @@ def run_anaFit(datahist,
                                             rebinEdges=rebinEdges,
                                             toy=toy,
                                             toyString=toyString,
+                                            nbkgWindow=nbkgWindow,
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
+
+
+
 
         print("Masked fit p(chi2)=%.3f" % pvals_masked[0])
 
@@ -443,7 +462,8 @@ def run_anaFit(datahist,
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           #rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1 --muScanPoints 0 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           #rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

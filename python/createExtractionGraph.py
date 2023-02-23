@@ -105,6 +105,16 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           arr = numpy.array([0.762*x[1]/x[2] for x in inj_extr])
           #arr = numpy.array([x[1]/x[2] for x in inj_extr])
           nFit = numpy.mean(arr)
+
+          #myMean =  h_myPoints[j][k].GetMean()
+          #quantiles = array('d', [0.] )
+          #xq = array('d', [0.5])
+          #h_myPoints[j][k].GetQuantiles(1, quantiles, xq);
+          #myMedian = quantiles[0]
+          nFit = numpy.median(arr)
+
+
+
           nFitErr = numpy.std(arr, ddof=1) #1/N-1 corrected
 
           for i in range(len(inj_extr)):

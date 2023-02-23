@@ -33,23 +33,19 @@ if args.isBatch:
 else:
   #pdFitNames = ["fourPar"]
   #fitName = "threePar"
-  #pdFitNames = ["fivePar"]
-  #fitName = "fourPar"
-  pdFitNames = ["sixPar"]
-  fitName = "fivePar"
-  channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha3"], ]
+  pdFitNames = ["fivePar"]
+  fitName = "fourPar"
+  channelNames = [ ["hybrid10_yxxjjjj_4j_alpha0"],[ "hybrid10_yxxjjjj_4j_alpha1"],[ "hybrid10_yxxjjjj_4j_alpha2"],[ "hybrid10_yxxjjjj_4j_alpha3"],[ "hybrid10_yxxjjjj_4j_alpha4"],[ "hybrid10_yxxjjjj_4j_alpha5"],[ "hybrid10_yxxjjjj_4j_alpha6"],[ "hybrid10_yxxjjjj_4j_alpha7"],[ "hybrid10_yxxjjjj_4j_alpha8"],[ "hybrid10_yxxjjjj_4j_alpha9"],[ "hybrid10_yxxjjjj_4j_alpha10"],[ "hybrid10_yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ [ "hybrid10_yxxjjjj_4j_alpha7"],[ "hybrid10_yxxjjjj_4j_alpha8"],[ "hybrid10_yxxjjjj_4j_alpha9"],[ "hybrid10_yxxjjjj_4j_alpha10"],[ "hybrid10_yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ [ "hybrid10_yxxjjjj_4j_alpha11"],]
 
-  #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
+
+
+  #sigmeans = [2000,3000, 4000, 6000, 8000, 10000]
   sigmeans = [10000]
   sigwidths = [10]
   signalfile =  "Gaussian"
-  #signalfile =  "template"
-  #signalfile =  "crystalBallHistNoSyst"
-  #signalfile =  "crystalBallHist"
-  #signalfile =  "gausHist"
-  #signalfile =  "test"
-  coutputdir = "fits_"
+  coutputdir = "fitsHybrid_"
   args.doRemake = 0
   #args.doRemake = 1
   nToys = config.nToys
@@ -58,17 +54,12 @@ else:
 dosignal=1
 dolimit=0
 cdir = config.cdir
-alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
-
 
 
 for sigmean in sigmeans:
     for sigwidth in sigwidths:
       for pdFitName in pdFitNames:
-        for channelName, alpha in zip(channelNames, alphaBins):
-          mY = round( (alpha * sigmean)/10)*10
-          if mY < 500 and signalfile=="crystalBallHistNoSyst":
-            continue
+        for channelName in channelNames:
           outputdir = coutputdir+channelName[0]
 
           pdFiles = []
@@ -82,9 +73,23 @@ for sigmean in sigmeans:
 
           if not os.path.exists(outputdir):
               os.makedirs(outputdir)
-          nbkg="1E3,0,1E6"
+          #nbkg="1E4,0,3E5"
+          nbkg="1E3,0,1e5"
           nbkgWindow = 1
-          nsig="0,-1e4,1e4"
+          #nsig="0,-1e3,1e3"
+          nsig="0,-8e2,8e2"
+          if sigmean > 2000:
+            nsig="0,-200,200"
+          if sigmean > 3000:
+            nsig="0,-50,50"
+          if sigmean > 4000:
+            #nsig="0,-80,80"
+            nsig="0,-10.,20"
+          #if sigmean > 5000:
+          #  #nsig="0,-1.,10"
+          #  nsig="0,-1.,10"
+          if sigmean > 6000:
+            nsig="0,-0,3"
           topfile=config.samples[channelName[0]]["topfile"]
   
           # Output file names, which will be written to outputdir
@@ -104,7 +109,7 @@ for sigmean in sigmeans:
                nbkgWindow=[],
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="SS_%s_%s_%d_%d_%s_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile, channelName[0]),
+               outputstring="SS_hybrid_%s_%s_%d_%d_%s_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile, channelName[0]),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,
@@ -114,7 +119,7 @@ for sigmean in sigmeans:
                datafiles=pdFiles, 
                histnames=pdHists, 
                doRemake=args.doRemake,
-               useSysts = True,
+               useSysts = False,
               )
 
 

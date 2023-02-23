@@ -341,6 +341,10 @@ class PostfitExtractor:
             self.Extract()
         return self.channel_chi2.keys()
 
+    def SetRebinEdges(self, binEdges):
+      self.rebinEdges = binEdges 
+      self.Extract()
+
 
 def main(args):
 

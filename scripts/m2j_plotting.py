@@ -16,7 +16,8 @@ cdir = config.cdir
 
 
 #sigmeans= [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
-sigmeans=[500, 700, 1000, 1500, 2000, 2500, 3000]
+#sigmeans=[500, 700, 1000, 1500, 2000, 2500, 3000]
+sigmeans=[500, 700, 1000, 1500, 2000, 2500]
 spuriousRanges = [500, 300, 100, 10, 10, 5, 5, 5]
 #sigwidths=[ 5,10,15]
 sigwidths=[10]
@@ -27,10 +28,12 @@ sigamps=[5,4,3,2,1]
 
 #pdFitName = "fivePar"
 #fitName = "fourPar"
-pdFitName = "fourParM2j"
-fitName = "threeParM2j"
-#channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
-channelNames = [ "yxxjjjj_2javg_alpha3", ]
+#pdFitName = "fourParM2j"
+#fitName = "threeParM2j"
+pdFitName = "sixParM2j"
+fitName = "fiveParM2j"
+channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_alpha2", "yxxjjjj_2javg_alpha3", "yxxjjjj_2javg_alpha4", "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
+#channelNames = [ "yxxjjjj_2javg_alpha3", ]
 #channelNames = [ "yxxjjjj_2javg_alpha5", "yxxjjjj_2javg_alpha6", "yxxjjjj_2javg_alpha7", "yxxjjjj_2javg_alpha8", "yxxjjjj_2javg_alpha9", "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
 #channelNames = [ "yxxjjjj_2javg_alpha10", "yxxjjjj_2javg_alpha11", ]
 #channelNames = [ "yxxjjjj_2javg_alpha3", ]
@@ -147,7 +150,7 @@ outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
 rangelow = config.samples[channelNames[0]]["rangelow"]
 rangehigh = config.samples[channelNames[0]]["rangehigh"]
-#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "X", labels = ["m_{#LT 2j #GT} [GeV]"], delta=10)
+spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "X", labels = ["m_{#LT 2j #GT} [GeV]"], delta=10)
 
 
 
@@ -161,7 +164,7 @@ for channelName in channelNames:
   outfileExtraction = "PD_extraction_%s_%s_%s"%(pdFitName, fitName, signalfile)
   rangelow = config.samples[channelName]["rangelow"]
   rangehigh = config.samples[channelName]["rangehigh"]
-  createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir, deltaMassAboveFit = 50)
+  #createExtractionGraph.createExtractionGraphs(sigmeans=sigmeans, sigwidths=sigwidths, sigamps=sigamps, infile=infileExtraction, infilePD=infilePD, outfile=outfileExtraction, rangelow=rangelow, rangehigh = rangehigh, channelName=channelName, cdir=cdir+"/scripts/", lumi=lumi, isNInjected=False, indir=outputdir, deltaMassAboveFit = 50)
 
 # Limits
 for channelName in channelNames:

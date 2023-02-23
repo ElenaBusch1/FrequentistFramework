@@ -1,4 +1,4 @@
 <!DOCTYPE Model  SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
 <Model Type="UserDef">
-  <ModelItem Name="EXPR::background('@1*TMath::Power(1-@0/13000.,@2)*TMath::Power(@0/13000., -1*(@3 + @4*TMath::Log(@0/13000.) + @5*TMath::Power(TMath::Log(@0/13000.),2.) + @6*TMath::Power(TMath::Log(@0/13000.), 3.) ) )', :observable:, p1_CATEGORY[1,1,1], p2_CATEGORY[5., -50, 50.], p3_CATEGORY[12, -20.0, 20.], p4_CATEGORY[3.3, -10., 10.], p5_CATEGORY[0.28, -5., 5.], p6_CATEGORY[0.2, -5,5])"/>
+  <ModelItem Name="EXPR::background('@1*TMath::Power(1-@0/13000.,@2)*TMath::Power(@0/13000., -1*(@3 + @4*TMath::Log(@0/13000.) + @5*TMath::Power(TMath::Log(@0/13000.),2.) + @6*TMath::Power(TMath::Log(@0/13000.), 3.) ) )', :observable:, p1_CATEGORY[1,1,1], p2_CATEGORY[10., -50, 50.], p3_CATEGORY[-10, -40.0, 40.], p4_CATEGORY[10, -50., 50.], p5_CATEGORY[-10, -30., 20.], p6_CATEGORY[-5, -10,10])"/>
 </Model>

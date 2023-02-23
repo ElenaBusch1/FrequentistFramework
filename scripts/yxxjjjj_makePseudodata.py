@@ -7,9 +7,11 @@ import os
 cdir = config.cdir
 
 #fitNames = ["threePar", "fourPar", "fivePar"]
-fitNames = ["fourPar", "fivePar"]
+fitNames = ["sixPar"]
 
 channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1", "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
+#channelNames = [ "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
+#channelNames = [ "yxxjjjj_4j_alpha0",]
 #channelNames = [ "sherpa_yxxjjjj_4j_alpha0", "sherpa_yxxjjjj_4j_alpha1", "sherpa_yxxjjjj_4j_alpha2", "sherpa_yxxjjjj_4j_alpha3", "sherpa_yxxjjjj_4j_alpha4", "sherpa_yxxjjjj_4j_alpha5", "sherpa_yxxjjjj_4j_alpha6", "sherpa_yxxjjjj_4j_alpha7", "sherpa_yxxjjjj_4j_alpha8", "sherpa_yxxjjjj_4j_alpha9", "sherpa_yxxjjjj_4j_alpha10", "sherpa_yxxjjjj_4j_alpha11" ]
 
 scaling = 1.0
