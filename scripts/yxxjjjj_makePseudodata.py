@@ -1,25 +1,21 @@
 import scripts.config as config
-import python.run_injections_anaFit as run_injections_anaFit
 import python.generatePseudoData as generatePseudoData
 import os
 
 
 cdir = config.cdir
 
-#fitNames = ["threePar", "fourPar", "fivePar"]
-fitNames = ["sixPar"]
+# The list of fit functions you are using
+fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
 
+# The list of signal regions/channels/etc
 channelNames = [ "yxxjjjj_4j_alpha0", "yxxjjjj_4j_alpha1", "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
-#channelNames = [ "yxxjjjj_4j_alpha2", "yxxjjjj_4j_alpha3", "yxxjjjj_4j_alpha4", "yxxjjjj_4j_alpha5", "yxxjjjj_4j_alpha6", "yxxjjjj_4j_alpha7", "yxxjjjj_4j_alpha8", "yxxjjjj_4j_alpha9", "yxxjjjj_4j_alpha10", "yxxjjjj_4j_alpha11", ]
-#channelNames = [ "yxxjjjj_4j_alpha0",]
-#channelNames = [ "sherpa_yxxjjjj_4j_alpha0", "sherpa_yxxjjjj_4j_alpha1", "sherpa_yxxjjjj_4j_alpha2", "sherpa_yxxjjjj_4j_alpha3", "sherpa_yxxjjjj_4j_alpha4", "sherpa_yxxjjjj_4j_alpha5", "sherpa_yxxjjjj_4j_alpha6", "sherpa_yxxjjjj_4j_alpha7", "sherpa_yxxjjjj_4j_alpha8", "sherpa_yxxjjjj_4j_alpha9", "sherpa_yxxjjjj_4j_alpha10", "sherpa_yxxjjjj_4j_alpha11" ]
 
+# If you want to upscale the results, do this here
 scaling = 1.0
 
 
-
-# First make the pseudodata
-# TODO: maybe make a flag to decide whether to run this?
+# Make the pseudodata for each fit function and channel
 for fitName in fitNames:
   for channelName in channelNames:
     outputdir = "fits_" + channelName

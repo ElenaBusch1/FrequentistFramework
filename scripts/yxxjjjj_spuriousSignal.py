@@ -2,8 +2,6 @@ import scripts.config as config
 import python.generatePseudoData as generatePseudoData
 import os
 import python.run_anaFit as run_anaFit
-
-
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -33,31 +31,45 @@ if args.isBatch:
 else:
   #pdFitNames = ["fourPar"]
   #fitName = "threePar"
-  #pdFitNames = ["fivePar"]
-  #fitName = "fourPar"
-  pdFitNames = ["sixPar"]
-  fitName = "fivePar"
-  channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_4j_alpha3"], ]
 
-  #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
-  sigmeans = [10000]
+  # The function used to generate the pseudodata (used to get filenames)
+  pdFitNames = ["fivePar"]
+  # The function actually used for the fits
+  fitName = "fourPar"
+
+  #pdFitNames = ["sixPar"]
+  #fitName = "fivePar"
+
+  # The different channels you are using
+  channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+
+  # The means of the signal distributions
+  sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
+  # The width of the signal distribution (in %)
   sigwidths = [10]
+
+  # The signal file to use
   signalfile =  "Gaussian"
-  #signalfile =  "template"
   #signalfile =  "crystalBallHistNoSyst"
   #signalfile =  "crystalBallHist"
-  #signalfile =  "gausHist"
-  #signalfile =  "test"
+  
+  # This should match the output directory of previous steps
+  # The actual output directory will also depend on the channel name
   coutputdir = "fits_"
+
+  # Argument to control if you want to remake the results or just keep running them
   args.doRemake = 0
-  #args.doRemake = 1
+
+  # The number of toys used for the spurious signal tests
+  # If this is larger than the number of toys you have produced, this will cause problems
   nToys = config.nToys
 
 
 dosignal=1
 dolimit=0
 cdir = config.cdir
+# This is only necessary if you want to use templates, 
+# but then it will be important for making sure you don't try to use signals that don't exist
 alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
 
 
