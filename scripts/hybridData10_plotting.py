@@ -45,7 +45,7 @@ coutputdir="fitsHybrid_"
 signalfile =  "Gaussian"
 #signalfile =  "crystalBallHistNoSyst"
 
-lumi = 139000
+lumi = 140000
 
 atlasLabel = "Simulation Internal"
 

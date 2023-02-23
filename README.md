@@ -16,6 +16,11 @@ source scripts/install_FrequentistFramework.sh
 source scripts/setup_buildAndFit.sh
 ```
 
+In a fresh terminal (where you haven't run these scripts), you will also need to install pyBumpHunter in this same directory.
+```
+source scripts/install_pyBumpHunter.sh
+```
+
 # Setup
 
 In the future you can setup your environment via

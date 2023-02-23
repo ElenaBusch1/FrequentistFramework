@@ -31,7 +31,7 @@ channelNames = ["yxxjjjj_4j_inclusive"]
 outputdir="fitsyxxjjjjInclusive"
 signalfile =  "Gaussian"
 
-lumi = 139000
+lumi = 140000
 
 atlasLabel = "Simulation Internal"
 

@@ -43,7 +43,7 @@ channelNames = [ "yxxjjjj_2javg_alpha0", "yxxjjjj_2javg_alpha1", "yxxjjjj_2javg_
 coutputdir="fits2javg_"
 signalfile =  "Gaussian"
 
-lumi = 139000
+lumi = 140000
 
 atlasLabel = "Simulation Internal"
 

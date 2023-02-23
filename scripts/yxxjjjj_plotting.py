@@ -49,7 +49,7 @@ signalfile =  "Gaussian"
 #signalfile =  "crystalBallHistNoSyst"
 #signalfile =  "crystalBallHist"
 
-lumi = 139000
+lumi = 140000
 
 atlasLabel = "Simulation Internal"
 
