@@ -13,8 +13,9 @@ gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasStyle.C")
 gROOT.LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C")
 
 # lumi = 29300
-# lumi = 30000
-lumi = 133000
+lumi = 29500
+# lumi = 133000
+# lumi = 14500
 
 def createFillBetweenGraphs(g1, g2):
   g_fill = TGraph()
@@ -117,7 +118,7 @@ def main(args):
                 exp2d = h.GetBinContent(h.GetXaxis().FindBin("-2sigma")) / lumi
 
                 if math.isnan(obs) or math.isinf(obs):
-                  raise ValueError('observed limit not finite for point (%s, %w)' % (sigmean, sigwidth))
+                  raise ValueError('observed limit not finite for point (%d, %d)' % (sigmean, sigwidth))
                 
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
                 g_exp[i].SetPoint(g_exp[i].GetN(), sigmean, exp)

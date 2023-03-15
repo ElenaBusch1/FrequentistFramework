@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import ROOT
 import sys, re, os, math, argparse
 import array
@@ -24,7 +25,8 @@ def main(args):
         binEdges.append(h_temp.GetBinLowEdge(i))
     f_temp.Close()
 
-    print "Rebinning to %d bins:\n" % nBins, binEdges
+    print("Rebinning to %d bins:" % nBins)
+    print(binEdges)
 
     f_in = ROOT.TFile(args.infile, "READ")
     f_out = ROOT.TFile(args.outfile, "RECREATE")

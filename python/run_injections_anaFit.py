@@ -4,6 +4,7 @@ from __future__ import print_function
 import os,sys,re,argparse
 from InjectGaussian import InjectGaussian
 from run_anaFit import run_anaFit
+import json
 
 def main(args):
     
@@ -27,7 +28,11 @@ def main(args):
     parser.add_argument('--signame', dest='signame', type=str, help='Name of the signal parameter')
     parser.add_argument('--maskthreshold', dest='maskthreshold', type=float, default=0.01, help='Threshold of p(chi2) below which to run BH and mask the most significant window')
     parser.add_argument('--doprefit', dest='doprefit', action="store_true", help='Perform ROOT prefit before quickFit')
+    parser.add_argument('--dochi2fit', dest='dochi2fit', action="store_true", help='Minimize chi2 instead of NLL')
+    parser.add_argument('--dochi2constraints', dest='dochi2constraints', action="store_true", help='Include the constraint terms into chi2. Becomes virtually identical to NLL this way.')
+    parser.add_argument('--spursigfile', dest='spursigfile', type=str, help='Path to json file containing spurious signal dict')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
+    parser.add_argument('--categoryname', dest='categoryname', type=str, default='J100yStar06', help='Name of category to fit')
     parser.add_argument('--sigamp', dest='sigamp', type=float, default=0, help='Amplitude of Gaussian to inject (in sigma)')
     parser.add_argument('--loopstart', dest='loopstart', type=int, help='First toy to fit')
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
@@ -45,6 +50,12 @@ def main(args):
     except OSError:
         if not os.path.isdir(args.folder):
             raise
+
+    spursig=0
+    if args.spursigfile:
+        with open(args.spursigfile) as f:
+            dict_spursig = json.load(f)
+        spursig = dict_spursig[str(args.sigmean)][str(args.sigwidth)]['0']['uncertainty']
 
     injecteddatafile=args.datafile
     if (args.sigamp > 0):
@@ -66,7 +77,7 @@ def main(args):
         for toy in range(args.loopstart, args.loopend+1):
             datahist="%s_%d" % (args.datahist, toy)
             outputfile=args.outputfile.replace(".root", "_%d.root" % toy)
-            print("Running run_anaFit with datahist %s" % datahist)
+            print("\n\nRunning run_anaFit with datahist %s" % datahist)
             run_anaFit(datafile=injecteddatafile,
                        datahist=datahist,
                        topfile=args.topfile,
@@ -86,7 +97,10 @@ def main(args):
                        folder=args.folder,
                        signame=args.signame,
                        maskthreshold=args.maskthreshold,
-                       doprefit=args.doprefit)
+                       doprefit=args.doprefit,
+                       dochi2fit=args.dochi2fit, 
+                       dochi2constraints=args.dochi2constraints,
+                       spursig=spursig)
     else:
         print("Running run_anaFit with datahist %s" % args.datahist)
         run_anaFit(datafile=injecteddatafile,
@@ -108,7 +122,11 @@ def main(args):
                    folder=args.folder,
                    signame=args.signame,
                    maskthreshold=args.maskthreshold,
-                   doprefit=args.doprefit)
+                   doprefit=args.doprefit,
+                   dochi2fit=args.dochi2fit, 
+                   dochi2constraints=args.dochi2constraints,
+                   spursig=spursig,
+                   categoryname=args.categoryname)
 
 if __name__ == "__main__":  
     sys.exit(main(sys.argv[1:]))

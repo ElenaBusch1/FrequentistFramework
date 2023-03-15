@@ -25,6 +25,12 @@ def getNPars(pdf, obs, exclSyst):
         
     return counter
 
+def expHist(h):
+    for i in range(1, h.GetNbinsX()+1):
+        if h.GetBinContent(i) != 0:
+            h.SetBinContent(i, ROOT.TMath.Exp(h.GetBinContent(i)))
+            h.SetBinError(i, h.GetBinError(i)*h.GetBinContent(i))
+
 def getChi2(extractor, channelname, npars):
     chi2 = 0.
     chi2bins = 0
@@ -118,7 +124,9 @@ class PostfitExtractor:
                  externalchi2fct=None, 
                  externalchi2bins=40, 
                  maskmin=-1, 
-                 maskmax=-1):
+                 maskmax=-1,
+                 bkgonly=False,
+                 undolog=False):
 
         self.wsfile = wsfile
         self.datafile = datafile
@@ -133,6 +141,8 @@ class PostfitExtractor:
         self.externalchi2bins = externalchi2bins
         self.maskmin = maskmin
         self.maskmax = maskmax
+        self.bkgonly = bkgonly
+        self.undolog = undolog
         self.h_data = None
         self.channel_chi2 = {}
         self.channel_nbins = {}
@@ -153,6 +163,8 @@ class PostfitExtractor:
         fd =  ROOT.TFile(self.datafile, "READ")
         self.h_data = fd.Get(self.datahist)
         self.h_data.SetDirectory(0)
+        if self.undolog:
+            expHist(self.h_data)
 
         model = w.obj(self.modelname)
         pdf = model.GetPdf()
@@ -174,14 +186,27 @@ class PostfitExtractor:
             x = pdfi.getObservables(datai).first()
             npars = getNPars(pdfi, x, exclSyst=True)
             
-            print "Channel %s:" % channelname
-            print "Expected:"
+            if self.bkgonly:
+                pdf_bkg_unscaled = w.obj("pdf__background_"+channelname)
+                yield_bkg = w.obj("yield__background_"+channelname)
+                pdf_bkg = w.factory("ExtendPdf::pdf__background_ext_"+channelname+"(pdf__background_"+channelname+",yield__background_"+channelname+")")
+
             expectedEvents = pdfi.expectedEvents(RooArgSet(x))
-
-            print expectedEvents
-
             hpdf = pdfi.createHistogram("hpdf", x)
-            hpdf.Scale(expectedEvents/hpdf.Integral())
+
+            # hpdf.Scale(expectedEvents/hpdf.Integral())
+            try:
+                hpdf.Scale(data.sumEntries()/hpdf.Integral())
+            except:
+                pass
+
+            if self.undolog:
+                expHist(hpdf)
+            
+            print "Channel %s:" % channelname
+            print "Expected:", expectedEvents
+            print "sumEntries:", data.sumEntries()
+            print "Integral:", hpdf.Integral()
 
             binEdges = []
             nBins = hpdf.GetNbinsX()
@@ -200,6 +225,33 @@ class PostfitExtractor:
             self.channel_hpostfit[channelname] = h_postfit
 
             getChi2(extractor=self, channelname=channelname, npars=npars)
+
+            if self.bkgonly:
+                expectedEvents_bkg = pdf_bkg.expectedEvents(RooArgSet(x))
+                hpdf_bkg = pdf_bkg.createHistogram("hpdf_bkg", x)
+                # hpdf_bkg.Scale(expectedEvents_bkg/hpdf_bkg.Integral())
+                try:
+                    hpdf_bkg.Scale(data.sumEntries()/hpdf_bkg.Integral())
+                except:
+                    pass
+
+                if self.undolog:
+                    expHist(hpdf_bkg)
+
+                channelname_bkg = channelname+"_bkgonly"
+
+                h_postfit_bkg = TH1D("postfit", "postfit", nBins, array.array('d', binEdges))
+                h_postfit_bkg.SetDirectory(0)
+    
+                for ibin in range(1, nBins+1):
+                    h_postfit_bkg.SetBinContent(ibin, hpdf_bkg.GetBinContent(ibin))
+                    h_postfit_bkg.SetBinError(ibin, 0)
+                    
+                self.channel_hdata[channelname_bkg] = self.h_data.Rebin(nBins, "h_data_crop", array.array('d', binEdges))
+                self.channel_hdata[channelname_bkg].SetDirectory(0)
+                self.channel_hpostfit[channelname_bkg] = h_postfit_bkg
+    
+                getChi2(extractor=self, channelname=channelname_bkg, npars=npars)
 
             binEdges = None
             if self.rebinfile and self.rebinhist:
@@ -223,6 +275,14 @@ class PostfitExtractor:
 
                 getChi2(extractor=self, channelname=rebinnedchannelname, npars=npars)
 
+            if self.bkgonly and self.rebinfile and self.rebinhist:
+                rebinnedchannelname_bkg=channelname_bkg+"_rebinned"
+                self.channel_hpostfit[rebinnedchannelname_bkg] = self.channel_hpostfit[channelname_bkg].Rebin(len(binEdges)-1, "postfit", array.array('d', binEdges))
+                self.channel_hdata[rebinnedchannelname_bkg] = self.channel_hdata[channelname_bkg].Rebin(len(binEdges)-1, self.datahist, array.array('d', binEdges))
+                self.datafirstbin = self.channel_hdata[rebinnedchannelname_bkg].FindBin(self.datafirstbin) - 1
+
+                getChi2(extractor=self, channelname=rebinnedchannelname_bkg, npars=npars)
+    
         fd.Close()
         f.Close()
 
@@ -339,6 +399,8 @@ def main(args):
     parser.add_argument('--maskmin', dest='maskmin', type=int, default=-1, help='Masked range to exclude from chi2 calculation')
     parser.add_argument('--maskmax', dest='maskmax', type=int, default=-1, help='Masked range to exclude from chi2 calculation')
     parser.add_argument('--dirpercategory', dest='dirpercategory', action='store_true', help='Create one output directory per channel (also for rebinning)')
+    parser.add_argument('--bkgonly', dest='bkgonly', action='store_true', help='Add directory for bkg-only postfit. Needs --dirpercategory set.')
+    parser.add_argument('--undolog', dest='undolog', action='store_true', help='Perform exp(N) on all data and fit histograms if log(N) was used for fitting.')
 
     args = parser.parse_args(args)
 
@@ -355,7 +417,9 @@ def main(args):
         externalchi2fct=args.externalchi2fct,
         externalchi2bins=args.externalchi2bins,
         maskmin=args.maskmin,
-        maskmax=args.maskmax
+        maskmax=args.maskmax,
+        bkgonly=args.bkgonly,
+        undolog=args.undolog
     )
     pfe.Extract()
     pfe.WriteRoot(args.outfile, args.dirpercategory)
