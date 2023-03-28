@@ -10,12 +10,14 @@ import python.AtlasStyle as AS
 import array
 import config as config
 import python.ExtractFitParameters as efp
+import json
+
 
 
 
 def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedges=None, 
              atlasLabel="Simulation Internal", residualhistName="residuals", datahistName="data", 
-             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None, indir="", cutoffSpectrum = False):
+             fithistName="postfit", suffix="", fitNames = None, sigamp=0, sigmean=0, sigwidth=0, toy=None, indir="", cutoffSpectrum = False, plotBH=False, BHFile = ""):
 
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
     AS.SetAtlasStyle()
@@ -92,6 +94,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       
       if(cutoffSpectrum):
         maxMjj = maxData
+      #if minMjj < 400:
+      #  maxMjj = 600
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       dataHist.SetTitle(config.samples[channelName]["legend"])
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
@@ -130,6 +134,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
              maxData = dataHist.GetBinLowEdge(cbin+4)
       if(cutoffSpectrum):
         maxMjj = maxData
+      #if minMjj < 800:
+      #  maxMjj = 900
       dataHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       fitHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
       residualHist.GetXaxis().SetRangeUser(minMjj, maxMjj)
@@ -137,7 +143,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        dataRes.GetYaxis().SetRangeUser(-3, 3)
+        #dataRes.GetYaxis().SetRangeUser(-3, 3)
+        dataRes.GetYaxis().SetRangeUser(-8,8)
         dataRes.GetXaxis().SetRangeUser(minMjj, maxMjj)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
@@ -160,12 +167,46 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     #c.SetLogx()
     df.SetRange(plotHists, minMin=1e-5, maxMax=1e8, isLog=True, minMjj=minMjj, maxMjj = maxMjj)
     outname = outfile.replace(".root", "")
+    if plotBH:
+        with open(BHFile) as f:
+            BHresults=json.load(f)
+        bumpMin = BHresults["MaskMin"]
+        bumpMax = BHresults["MaskMax"]
+        labels.append("Bump position: %d GeV < X < %d GeV"%(bumpMin, bumpMax))
+        labels.append("Global significance: %.2f"%(BHresults["pyBHresult"]["significance"]))
 
     # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
     # For now, leave in linear, and if we can update the root version, we can also fix this
     plotHists[0].SetFillStyle(1001)
     plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e2", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+    leg, upperPad, lowerPad = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e2", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+
+    if plotBH:
+        labels.pop()
+        print (bumpMin, bumpMax)
+        upperPad.cd()
+        minBin = 0
+        for cbin in range(plotHists[0].GetNbinsX()):
+          if plotHists[0].GetXaxis().GetBinLowEdge(cbin+1) <= bumpMin and plotHists[0].GetXaxis().GetBinUpEdge(cbin+1) > bumpMin:
+            minBin = cbin+1
+            break
+        lineMin = ROOT.TLine(bumpMin, plotHists[0].GetMinimum(), bumpMin, plotHists[0].GetBinContent(minBin))
+        lineMin.SetLineStyle(2)
+        lineMin.SetLineColor(ROOT.kGray)
+        lineMin.Draw()
+
+        maxBin = 0
+        for cbin in range(plotHists[0].GetNbinsX()):
+          if plotHists[0].GetXaxis().GetBinLowEdge(cbin+1) <= bumpMax and plotHists[0].GetXaxis().GetBinUpEdge(cbin+1) > bumpMax:
+            maxBin = cbin+1
+            break
+        #lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[0].GetMaximum())
+        lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[0].GetBinContent(maxBin))
+        print bumpMax, plotHists[0].GetMinimum(), plotHists[0].GetBinContent(maxBin), maxBin
+        lineMax.SetLineStyle(2)
+        lineMax.SetLineColor(ROOT.kGray)
+        lineMax.Draw()
+
 
     c.Print(outname + ".pdf")
 

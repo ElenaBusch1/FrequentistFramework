@@ -47,3 +47,4 @@ JET_JER_EffectiveNP_10 JER*Eff.*NP*10
 JET_JER_EffectiveNP_11 JER*Eff.*NP*11
 JET_JER_EffectiveNP_12restTerm JER*Eff.*NP*12*rest*term
 JET_JER_DataVsMC_AFII JER*Data*Vs*MC*AFII
+SHOWER9 Shower

@@ -2,8 +2,6 @@ import scripts.config as config
 import python.generatePseudoData as generatePseudoData
 import os
 import python.run_anaFit as run_anaFit
-
-
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -27,66 +25,82 @@ if args.isBatch:
   sigwidths = [args.sigwidth]
   signalfile = args.signalFile
   coutputdir = args.outputdir
-  nToys = config.nToys
 
 
 else:
-  pdFitNames = ["fiveParM2j"]
-  fitName = "fourParM2j"
-  #channelNames = [ ["hybrid10_2javg_alpha0"],[ "hybrid10_2javg_alpha1"],[ "hybrid10_2javg_alpha2"],[ "hybrid10_2javg_alpha3"],[ "hybrid10_2javg_alpha4"],[ "hybrid10_2javg_alpha5"],[ "hybrid10_2javg_alpha6"],[ "hybrid10_2javg_alpha7"],[ "hybrid10_2javg_alpha8"],[ "hybrid10_2javg_alpha9"],[ "hybrid10_2javg_alpha10"],[ "hybrid10_2javg_alpha11"], ]
-  channelNames =[[ "hybrid10_2javg_alpha9"],]
+  #pdFitNames = ["fourPar"]
+  #fitName = "threePar"
+
+  # The function used to generate the pseudodata (used to get filenames)
+  pdFitNames = ["fivePar"]
+  # The function actually used for the fits
+  fitName = "fourPar"
+
+  #pdFitNames = ["sixPar"]
+  #fitName = "fivePar"
+
+  # The different channels you are using
+  channelNames = [ ["Data_yxxjjjj_4j_alpha0"],[ "Data_yxxjjjj_4j_alpha1"],[ "Data_yxxjjjj_4j_alpha2"],[ "Data_yxxjjjj_4j_alpha3"],[ "Data_yxxjjjj_4j_alpha4"],[ "Data_yxxjjjj_4j_alpha5"],[ "Data_yxxjjjj_4j_alpha6"],[ "Data_yxxjjjj_4j_alpha7"],[ "Data_yxxjjjj_4j_alpha8"],[ "Data_yxxjjjj_4j_alpha9"],[ "Data_yxxjjjj_4j_alpha10"],[ "Data_yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ ["Data_yxxjjjj_4j_alpha0"], ]
+  alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
 
 
-  #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
-  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
-  sigmeans = [700,]
+  # The means of the signal distributions
+  #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
+  sigmeans = [10000]
+  #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+  # The width of the signal distribution (in %)
   sigwidths = [10]
-  signalfile =  "Gaussian"
-  coutputdir = "fits2javg_hybrid_"
-  args.doRemake = 1
-  nToys = config.nToys
+
+  # The signal file to use
+  #signalfile =  "Gaussian"
+  #signalfile =  "crystalBallHistNoSyst"
+  signalfile =  "crystalBallHist"
+  
+  # This should match the output directory of previous steps
+  # The actual output directory will also depend on the channel name
+  coutputdir = "fitsData_"
+
+  # Argument to control if you want to remake the results or just keep running them
+  args.doRemake = 0
+
+  # The number of toys used for the spurious signal tests
+  # If this is larger than the number of toys you have produced, this will cause problems
+  #nToys = config.nToys
+  nToys = 50
 
 
 dosignal=1
 dolimit=0
 cdir = config.cdir
+# This is only necessary if you want to use templates, 
+# but then it will be important for making sure you don't try to use signals that don't exist
+
 
 
 for sigmean in sigmeans:
     for sigwidth in sigwidths:
       for pdFitName in pdFitNames:
-        for channelName in channelNames:
+        for channelName, alpha in zip(channelNames, alphaBins):
+          mY = round( (alpha * sigmean)/10)*10
+          if mY < 500 and (signalfile=="crystalBallHistNoSyst" or signalfile=="crystalBallHist"):
+            continue
           outputdir = coutputdir+channelName[0]
 
           pdFiles = []
           pdHists = []
           for channel in channelName:
-            if sigmean < config.samples[channel]["rangelow"]:
-              continue
             pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
             pdFiles.append(pdFile)
 
             pdHistName = "pseudodata"
             pdHists.append(pdHistName)
-          if len(pdFiles)==0:
-            continue
+
           if not os.path.exists(outputdir):
               os.makedirs(outputdir)
           nbkg="1E3,0,1E6"
           nbkgWindow = 1
-          #nsig="0,-1e3,1e3"
-          nsig="0,-500,500"
-          #nsig="0,-200,200"
-          #nsig="0,-5,5"
-          if sigmean > 500:
-            #nsig="0,-200,200"
-            nsig="0,-300,300"
-            #nsig="0,-200,200"
-            #nsig="0,-10,20"
-            #nsig="0,-100,100"
-          if sigmean > 700:
-            #nsig="0,-10,20"
-            nsig="0,-80,80"
+          nsig="0,-1e4,1e4"
           topfile=config.samples[channelName[0]]["topfile"]
   
           # Output file names, which will be written to outputdir
@@ -106,7 +120,7 @@ for sigmean in sigmeans:
                nbkgWindow=[],
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="m2j_SS_%s_%s_%d_%d_%s_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile, channelName[0]),
+               outputstring="SS_%s_%s_%d_%d_%s_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile, channelName[0]),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,

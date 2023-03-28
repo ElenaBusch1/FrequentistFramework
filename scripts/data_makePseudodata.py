@@ -1,27 +1,26 @@
 import scripts.config as config
-import python.run_injections_anaFit as run_injections_anaFit
 import python.generatePseudoData as generatePseudoData
 import os
 
 
 cdir = config.cdir
 
-fitNames = ["fourParM2j", "fiveParM2j"]
+# The list of fit functions you are using
+#fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
+fitNames = ["fivePar", ]
+
+# The list of signal regions/channels/etc
+channelNames = [ "Data_yxxjjjj_4j_alpha0", "Data_yxxjjjj_4j_alpha1", "Data_yxxjjjj_4j_alpha2", "Data_yxxjjjj_4j_alpha3", "Data_yxxjjjj_4j_alpha4", "Data_yxxjjjj_4j_alpha5", "Data_yxxjjjj_4j_alpha6", "Data_yxxjjjj_4j_alpha7", "Data_yxxjjjj_4j_alpha8", "Data_yxxjjjj_4j_alpha9", "Data_yxxjjjj_4j_alpha10", "Data_yxxjjjj_4j_alpha11", ]
 
 
-#channelNames = [ "hybrid10_2javg_alpha0", "hybrid10_2javg_alpha1", "hybrid10_2javg_alpha2", "hybrid10_2javg_alpha3", "hybrid10_2javg_alpha4", "hybrid10_2javg_alpha5", "hybrid10_2javg_alpha6", "hybrid10_2javg_alpha7", "hybrid10_2javg_alpha8", "hybrid10_2javg_alpha9", "hybrid10_2javg_alpha10", "hybrid10_2javg_alpha11", ]
-channelNames = [ "hybrid10_2javg_alpha11", ]
+# If you want to upscale the results, do this here
+scaling = 1.0
 
 
-scaling = 10.0
-
-
-
-# First make the pseudodata
-# TODO: maybe make a flag to decide whether to run this?
+# Make the pseudodata for each fit function and channel
 for fitName in fitNames:
   for channelName in channelNames:
-    outputdir = "fits2javg_hybrid_" + channelName
+    outputdir = "fitsData_" + channelName
 
     if not os.path.exists(outputdir):
       os.makedirs(outputdir)

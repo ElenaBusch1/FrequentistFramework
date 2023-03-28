@@ -9,7 +9,8 @@ cdir = config.cdir
 channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
 rebinFactors = [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25]
-fitNames = ["threeParM2j","fourParM2j", "fiveParM2j", "sixParM2j"]
+#fitNames = ["threeParM2j","fourParM2j", "fiveParM2j", "sixParM2j"]
+fitNames = ["fourParM2j",]
 
 base_outputdir = "fits2javg_"
 for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):

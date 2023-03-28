@@ -20,10 +20,13 @@ def plotPulls(infiles, fitNames, outfile, lumi, minMjj, maxMjj, cdir, channelNam
     dataHist = lf.read_histogram(path, datahist+suffix)
     fitHist = lf.read_histogram(path, "postfit"+suffix)
 
-    h_pulls = ROOT.TH1F("h_pulls", ";Pull;", 100, -5, 5)
+    h_pulls = ROOT.TH1F("h_pulls", ";Pull;", 100, -10, 10)
     h_pulls.SetDirectory(0)
     for i in range(residualHist.GetNbinsX()):
-      h_pulls.Fill( residualHist.GetBinContent(i+1)*1.0 );
+      if residualHist.GetBinContent(i+1)!=0:
+        #if residualHist.GetBinCenter(i+1) <650 or residualHist.GetBinCenter(i+1) > 650:
+        #if residualHist.GetBinCenter(i+1) <650:
+        h_pulls.Fill( residualHist.GetBinContent(i+1)*1.0 );
     f1 = ROOT.TF1("f1","[area] * ROOT::Math::normal_pdf(x, [sigma], [mean]) ", -5, 5);
 
     # TODO: need to figure out how to normalize this correctly

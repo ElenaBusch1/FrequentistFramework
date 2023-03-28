@@ -75,8 +75,10 @@ def writeSystematics(systNames, mY, alpha, inputFile):
   systString = ""
   #systList,_ = getVars(systNames) 
   systList,_ = getVars(inputFile) 
+  print systList, inputFile
   for systName in systList:
-    #print "running syst ", systName
+ 
+    print "running syst ", systName
     #systUp, systDown = getSystematic(systName, mY, alpha, inputFile)
     #systString = systString + "<Systematic Name='%s' Constr='asym' CentralValue='1' Mag='%.4f,%.4f' WhereTo='shape'/>\n"%(systName, systDown, systUp)
     #systString = systString + "<ExtSyst ConstrName='%s__1Constraint' NPName='%s__1' GOName='nom_%s__1' />\n"%(systName, systName, systName)

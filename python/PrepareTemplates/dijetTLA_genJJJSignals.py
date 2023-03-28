@@ -51,6 +51,7 @@ def generateSignalWS(infile, histName, doSysts, outfile = ""):
     for syst in systs:
       print histName, syst
       signal.AddHistoSys(syst, histName +syst+"_1down", infile, "", histName + syst+"_1up", infile, "")
+      #signal.AddHistoSys(syst, histName +syst+"down", infile, "", histName + syst+"up", infile, "")
 
   chan.AddSample( signal )
   # Done with this channel

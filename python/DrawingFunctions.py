@@ -250,7 +250,7 @@ def get_mass_plot_style(is_signal = 0):
                              )
 
 
-def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
+def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=140):
     text_size = text_size / height
     dy = dy / height
     if sampleName != "":
@@ -295,7 +295,7 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
           if hist.GetBinContent(cbin+1) > 0 and hist.GetBinContent(cbin+1) < minimum:
             minimum = hist.GetBinContent( cbin+1)
           
-      maximum = math.pow(10, math.log10(maximum) + math.log10(maximum/minimum)*0.6  )
+      maximum = math.pow(10, math.log10(maximum) + math.log10(maximum/minimum)*0.8  )
     #minimum = pow(10, math.floor(math.log10(minimum)))*0.2
     minimum = pow(10, math.floor(math.log10(minimum)))*0.5
   else:
@@ -343,7 +343,7 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
 
   legend.Draw()
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, atlasLabel=atlasLabel, text_size = 0.04)
+  draw_atlas_details(labels=labels, sampleName=sampleName, atlasLabel=atlasLabel, text_size = 0.04, dy = 0.045)
 
   return legend
 
@@ -404,7 +404,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
 
   legend.Draw()
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel, text_size = 0.04)
+  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel, text_size = 0.038, dy=0.038)
   lowerPad.cd()
 
   if(isLogX):

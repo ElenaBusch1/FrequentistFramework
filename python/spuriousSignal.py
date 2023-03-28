@@ -18,6 +18,12 @@ import FittingFunctions as ff
 def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50, deltaMassAboveFit = 0):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
+    meansCentered = []
+    meansCentered.append(sigmeans[0] - (sigmeans[1]-sigmeans[0])/2.)
+    for i in range(len(sigmeans)-1):
+      meansCentered.append((sigmeans[i] + sigmeans[i+1])/2.)
+    nbins = len(sigmeans)
+    meansCentered.append(sigmeans[nbins-1] + (sigmeans[nbins-1] - sigmeans[nbins-2])/2.)
 
     minMean = min(sigmeans)
     maxMean = max(sigmeans)
@@ -171,11 +177,17 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
 
         graphs = []
+        sigmas = []
+        h_sigmas = []
         ratios = []
         legendNames = []
         meanSpurs = []
         sigSpurs = []
         for k, channelName in enumerate(channelNames):
+          g_sigma = TGraphErrors()
+          g_sigma.SetTitle(config.samples[channelName]["varLabel"])
+          h_sigma = TH1D("%s_sigma"%(channelName), ";m_{Y} [GeV]",len(sigmeans), array('d', meansCentered))
+
           g_avg = TGraphErrors()
           #g_avg.SetTitle("#sigma / m = %.2d"%sigwidth)
           g_avg.SetTitle(config.samples[channelName]["varLabel"])
@@ -192,22 +204,28 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
             xq = array('d', [0.5])
             h_myPoints[j][k].GetQuantiles(1, quantiles, xq);
             myMedian = quantiles[0]
+            stdDev = h_myPoints[j][k].GetStdDev()
             #print sigmean, myMean, myMedian,  h_myPoints[j][k].GetStdDev()
             if h_myPoints[j][k].GetEntries()>0:
+              print( sigmean, stdDev)
+              g_sigma.SetPoint(n, sigmean+delta*k, stdDev)
+              h_sigma.Fill(sigmean, stdDev)
               g_avg.SetPoint(n, sigmean+delta*k, myMedian)
-              g_avg.SetPointError(n, 0.001, h_myPoints[j][k].GetStdDev())
-            if h_myPoints[j][k].GetStdDev() > 0:
-              g_ratio.SetPoint(n, sigmean+delta*k, myMedian / h_myPoints[j][k].GetStdDev())
+              g_avg.SetPoint(n, 0.001, stdDev)
+            if  stdDev > 0:
+              g_ratio.SetPoint(n, sigmean+delta*k, myMedian / stdDev)
               #print len(h_myPoints[j][k])
-            if h_myPoints[j][k].GetStdDev() ==0 and h_myPoints[j][k].GetEntries()>0:
+            if  stdDev ==0 and h_myPoints[j][k].GetEntries()>0:
               #print len(h_myPoints[j][k])
               g_ratio.SetPoint(n, sigmean+delta*k, myMedian )
           meanSpurs.append(myMedian)
-          sigSpurs.append(h_myPoints[j][k].GetStdDev())
+          sigSpurs.append( stdDev)
           g_avg.GetXaxis().SetLimits(minMean-50, maxMean+delta*(len(channelNames)+2))
           g_ratio.GetXaxis().SetLimits(minMean-50, maxMean+delta*(len(channelNames)+2))
 
           graphs.append(g_avg)
+          sigmas.append(g_sigma)
+          h_sigmas.append(h_sigma)
           ratios.append(g_ratio)
           legendNames.append(config.samples[channelName]["varLabel"])
 
@@ -237,6 +255,18 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
         line3.Draw()
         line4.Draw()
         c2.Print(outfileName)
+
+        leg = df.DrawHists(c,h_sigmas, legendNames, [], drawOptions = ["HIST"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
+        path = config.getFileName("Sigma", cdir, "", outputdir) + "Width_%d.pdf"%sigwidth 
+        c.Print(path)
+        for channelName, h_sigma in zip(channelNames, h_sigmas):
+          biasFileName = config.getFileName("bias_%s"%(signalName), cdir, channelName, outputdir) +".root"
+          fout = TFile(biasFileName, "RECREATE")
+          print biasFileName
+          
+          h_sigma.Write()
+          fout.Close()
+           
 
 
         # Plot the fit parameters for the different toys

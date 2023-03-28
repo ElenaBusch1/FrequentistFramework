@@ -31,19 +31,24 @@ if args.isBatch:
 
 
 else:
+  #pdFitNames = ["sixParM2j"]
+  #fitName = "fiveParM2j"
+  #pdFitNames = ["fourParM2j"]
+  #fitName = "threeParM2j"
   pdFitNames = ["fiveParM2j"]
   fitName = "fourParM2j"
-  #channelNames = [ ["hybrid10_2javg_alpha0"],[ "hybrid10_2javg_alpha1"],[ "hybrid10_2javg_alpha2"],[ "hybrid10_2javg_alpha3"],[ "hybrid10_2javg_alpha4"],[ "hybrid10_2javg_alpha5"],[ "hybrid10_2javg_alpha6"],[ "hybrid10_2javg_alpha7"],[ "hybrid10_2javg_alpha8"],[ "hybrid10_2javg_alpha9"],[ "hybrid10_2javg_alpha10"],[ "hybrid10_2javg_alpha11"], ]
-  channelNames =[[ "hybrid10_2javg_alpha9"],]
+  channelNames = [["Data_2javg_alpha0"],[ "Data_2javg_alpha1"],[ "Data_2javg_alpha2"],[ "Data_2javg_alpha3"],[ "Data_2javg_alpha4"],[ "Data_2javg_alpha5"],[ "Data_2javg_alpha6"],[ "Data_2javg_alpha7"],[ "Data_2javg_alpha8"],[ "Data_2javg_alpha9"],[ "Data_2javg_alpha10"],[ "Data_2javg_alpha11"], ]
 
 
   #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
   #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
-  sigmeans = [700,]
+  sigmeans = [2000,]
   sigwidths = [10]
   signalfile =  "Gaussian"
-  coutputdir = "fits2javg_hybrid_"
-  args.doRemake = 1
+  coutputdir = "fits2javg_data_"
+
+  #args.doRemake = 0
+  args.doRemake = 0
   nToys = config.nToys
 
 
@@ -74,19 +79,7 @@ for sigmean in sigmeans:
               os.makedirs(outputdir)
           nbkg="1E3,0,1E6"
           nbkgWindow = 1
-          #nsig="0,-1e3,1e3"
-          nsig="0,-500,500"
-          #nsig="0,-200,200"
-          #nsig="0,-5,5"
-          if sigmean > 500:
-            #nsig="0,-200,200"
-            nsig="0,-300,300"
-            #nsig="0,-200,200"
-            #nsig="0,-10,20"
-            #nsig="0,-100,100"
-          if sigmean > 700:
-            #nsig="0,-10,20"
-            nsig="0,-80,80"
+          nsig="0,-1e4,1e4"
           topfile=config.samples[channelName[0]]["topfile"]
   
           # Output file names, which will be written to outputdir
@@ -106,7 +99,7 @@ for sigmean in sigmeans:
                nbkgWindow=[],
                outputfile=outputfile,
                signalfile = signalfile,
-               outputstring="m2j_SS_%s_%s_%d_%d_%s_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile, channelName[0]),
+               outputstring="m2j_SS_%s_%s_%d_%d_%s"%(pdFitName, fitName, sigmean, sigwidth, signalfile),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,

@@ -1,5 +1,5 @@
 import scripts.config as config
-import python.run_injections_anaFit as run_injections_anaFit
+import python.run_bumpHunt as run_bumpHunt
 import os
 
 
@@ -30,23 +30,23 @@ if args.isBatch:
   coutputdir = args.outputdir
 
 else:
-  pdFitName = "fourParM2j"
-  fitName = "threeParM2j"
-  #pdFitName = "fiveParM2j"
-  #fitName = "fourParM2j"
-  channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
-  #channelNames = [ [ "yxxjjjj_2javg_alpha3"], ]
+  pdFitName = "fivePar"
+  fitName = "fourPar"
+  #pdFitName = "fourPar"
+  #fitName = "threePar"
+  #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
+  channelNames = [ [ "yxxjjjj_4j_alpha5"]]
 
-
-  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000]
-  sigmeans = [2000]
-  #sigamps = [0,1,2,3,4,5]
-  sigamps = [1,3,5]
+  #sigmeans = [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+  #sigmeans = [2000, 3000,]
+  sigmeans = [8000]
+  #sigamps = [1,2,3,4,5]
+  sigamps = [3]
   sigwidths = [10]
   signalfile =  "Gaussian"
-  coutputdir = "fits2javg_"
-  args.doRemake=0
+  #coutputdir = "fits2javg_"
+  coutputdir = "fits_"
+  args.doRemake=1
 
 
 #. scripts/setup_buildAndFit.sh
@@ -56,42 +56,49 @@ dolimit=0
 cdir = config.cdir
 
 for channelName in channelNames:
-  pdFiles = []
-  pdHists = []
-  for channel in channelName:
-    outputdir = coutputdir+channelName[0]
-    if not os.path.exists(outputdir):
-      os.makedirs(outputdir)
-    pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
-    pdFiles.append(pdFile)
-
-    pdHistName = "pseudodata"
-    pdHists.append(pdHistName)
 
 
   for sigmean in sigmeans:
     for sigamp in sigamps:
       for sigwidth in sigwidths:
-        nbkg="1E4,0,5e5"
-        nsig="0,0,1000"
-        if sigmean > 500:
-          nsig="0,0,800"
-        if sigmean > 700:
-          nsig="0,0,500"
-        if sigmean > 1000:
-          nsig="0,0,50"
+        #nbkg="1E5,0,1e6"
+        nbkg="1E4,0,1e6"
+        #nsig="0,0,5e4"
+        nsig="0,0,1e3"
+        if sigmean > 3000:
+          nsig="0,0,300"
+        if sigmean > 5000:
+          nsig="0,0,30"
+        if sigmean > 9000:
+          nsig="0,0,10"
+
+        pdFiles = []
+        pdHists = []
+        for channel in channelName:
+          outputdir = coutputdir+channelName[0]
+          if not os.path.exists(outputdir):
+            os.makedirs(outputdir)
+          #pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir) + ".root"
+          pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channel, outputdir, sigmean, sigwidth, sigamp) + "_Sig_Gaussian.root"
+          pdFiles.append(pdFile)
+
+          pdHistName = "pseudodata"
+          pdHists.append(pdHistName)
 
 
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputstring = "FitResult_injections_%d_%d_%d_%s_%s"%(sigamp, sigmean, sigwidth, signalfile, channelName[0])
+        outputfile = config.getFileName("FitResult_bkgOnlyInjections_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
+        outputstring = "FitResult_m4j_injections_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
         #binedges = config.getBinning(rangelow, rangehigh, delta=25)
-        binedges = None
+        #binedges = None
+        binedges = config.getBinningFromFile(channelName[0])
+
         topfile=config.samples[channelName[0]]["topfile"]
 
+        #sigamp=sigamp,
         # Then run the injection
-        run_injections_anaFit.run_injections_anaFit(
+        run_bumpHunt.run_anaFit(
              datahist=channelName,
              topfile=topfile,
              fitFunction=fitName,
@@ -99,19 +106,16 @@ for channelName in channelNames:
              wsfile=wsfile,
              sigmean=sigmean,
              sigwidth=sigwidth,
-             sigamp=sigamp,
              nbkg=nbkg,
              nsig=nsig,
              outputfile=outputfile,
              outputstring=outputstring,
              dosignal = dosignal,
              dolimit = dolimit,
-             loopstart=0,
-             loopend=config.nToys,
-             rebinedges=binedges,
+             rebinEdges=binedges,
              signalfile = signalfile,
-             rebinfile=None,
-             rebinhist=None,
+             rebinFile=None,
+             rebinHist=None,
              maskthreshold=-0.01,
              outdir=outputdir,
              datafiles=pdFiles,

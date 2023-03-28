@@ -111,7 +111,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           #xq = array('d', [0.5])
           #h_myPoints[j][k].GetQuantiles(1, quantiles, xq);
           #myMedian = quantiles[0]
-          nFit = numpy.median(arr)
+          #nFit = numpy.median(arr)
 
 
 

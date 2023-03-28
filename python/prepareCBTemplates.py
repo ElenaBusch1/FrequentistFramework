@@ -23,7 +23,7 @@ def getVars(varFileName):
   return varNames, newNames
 
 
-def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
+def getCrystalBallFunction(mY, alpha, inputFile, histName, syst, maxX = 11000):
   try:
     fp = open(inputFile)
   except:
@@ -59,7 +59,7 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
     alphaVals.append(alphaVal)
     nVals.append(nVal)
 
-    w.factory("RooCBShape::CBall{i}(x_{syst}[0,11000], mu{i}[{cmu}, 0,13000], sigma{i}[{csig}, 100, 3000], alphaCB{i}[{calpha}, 0.1, 4.0], n{i}[{cn}, 100,1e11])".format(syst=syst,i=cmY, cmu = muVal, csig=sigmaVal, calpha=alphaVal, cn = nVal));
+    w.factory("RooCBShape::CBall{i}(x_{syst}[0,{maxx}], mu{i}[{cmu}, 0,13000], sigma{i}[{csig}, 100, 3000], alphaCB{i}[{calpha}, 0.1, 4.0], n{i}[{cn}, 100,1e11])".format(maxx=maxX,syst=syst,i=cmY, cmu = muVal, csig=sigmaVal, calpha=alphaVal, cn = nVal));
     pdf = w.pdf('CBall{i}'.format(i=cmY))
     pdfs.add(pdf)
     mYs.append(cmY)
@@ -89,21 +89,21 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst):
   #n.setVal(mY)
 
 
-  histCB = morph.createHistogram("x_%s"%(syst), 11000, 0, 11000)
+  histCB = morph.createHistogram("x_%s"%(syst), maxX, 0, maxX)
   histCB.SetName("%s_%d_%.2f_%s"%(histName, mY, alpha, syst))
 
   return histCB
 
 
 
-def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/systs/", histName = "h2_resonance_jet_m4j_alpha", doSysts = True, mY = 6000, alpha = 5, outfile = "systematicsTest"):
+def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/systs/", histName = "h2_resonance_jet_m4j_alpha", doSysts = True, mY = 6000, alpha = 5, outfile = "systematicsTest", maxX=11000):
   outfileName = "%s_%d_%.2f.root"%(outfile, mY, alpha)
   f_out = r.TFile(outfileName, "RECREATE")
   f_out.cd()
   systs, _ = getVars("uncertaintySets/systematics")
   suffixes = ["_1up", "_1down"]
   inFile = "Syst__%s.txt"%(histName)
-  histCB = getCrystalBallFunction(mY, alpha, indir+inFile, histName=histName+"_", syst="")
+  histCB = getCrystalBallFunction(mY, alpha, indir+inFile, histName=histName+"_", syst="", maxX=maxX)
   if not histCB:
     print indir+inFile, histName+"_"
     return None
@@ -114,7 +114,7 @@ def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/
     for i, syst in enumerate(systs):
      for suffix in suffixes:
       inFile = "Syst_%s%s_%s.txt"%(syst, suffix, histName)
-      histCB = getCrystalBallFunction(mY, alpha, indir+inFile, histName=histName, syst=syst + suffix)
+      histCB = getCrystalBallFunction(mY, alpha, indir+inFile, histName=histName, syst=syst + suffix, maxX=maxX)
       if not histCB:
         print indir+inFile, histName, syst
         continue

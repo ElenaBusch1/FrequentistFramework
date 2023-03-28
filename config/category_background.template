@@ -9,9 +9,10 @@
     <NormFactor Name="nbkg:category:[NBKG]"/>
   </Sample>
 
-  <Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >
-    <NormFactor Name="nsig_meanMEAN_CHANNEL[NSIG]" />
-  </Sample>
+  <Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >  <NormFactor Name="nsig_meanMEAN_CHANNEL[NSIG]" />  </Sample>
+
+
+
 
 
 </Channel>

@@ -69,7 +69,7 @@ def run_injections_anaFit(
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1,
-                       wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX),
+                       wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX),
                        wspdf = config.signals[signalfile]["histname"],
                        )
       print (chist, nbkgWindow)

@@ -102,16 +102,16 @@ class PostfitExtractor:
             if(datai.GetName() != channel): continue
 
             channelname = "_modelSB_" + channel
-            print ("Channel %s:" % channelname, datai.GetName())
+            #print ("Channel %s:" % channelname, datai.GetName())
             pdfi = w.pdf(channelname)
             xAll = pdfi.getObservables(datai)
             x = xAll.first()
             
-            print ("Expected:")
+            #print ("Expected:")
             xnew= RooArgSet(x)
             expectedEvents = pdfi.expectedEvents(xnew)
 
-            print (expectedEvents)
+            #print (expectedEvents)
 
             hpdf = pdfi.createHistogram("hpdf_%s"%(channelname), x)
             hpdf.Scale(expectedEvents/hpdf.Integral())
@@ -138,9 +138,25 @@ class PostfitExtractor:
             chi2bins = 0
             maskedchi2bins = 0
 
+
+            maskPull1 = -1
+            maskPull2 = -1
             for ibin in range(1, nBins+1):
                 binCenter = self.h_data[channel].GetBinCenter(firstbin+ibin)
+                valueErrorData = self.h_data[channel].GetBinError(firstbin+ibin)
+                valueData = self.h_data[channel].GetBinContent(firstbin+ibin)
+                postFitValue = h_postfit.GetBinContent(ibin)
+                if valueErrorData > 0. and postFitValue > 0.:
+                    binSig = (valueData - postFitValue)/valueErrorData
+                    if abs(binSig) > maskPull1:
+                      maskPull2 = maskPull1
+                      maskPull1=abs(binSig)
+                    elif abs(binSig) > maskPull2:
+                      maskPull2 = abs(binSig)
 
+            print maskPull1, maskPull2
+            for ibin in range(1, nBins+1):
+                binCenter = self.h_data[channel].GetBinCenter(firstbin+ibin)
                 valueErrorData = self.h_data[channel].GetBinError(firstbin+ibin)
                 valueData = self.h_data[channel].GetBinContent(firstbin+ibin)
                 postFitValue = h_postfit.GetBinContent(ibin)
@@ -149,10 +165,19 @@ class PostfitExtractor:
                   return 1
 
                 binSig = 0.
+                #self.maskmin=650
+                #self.maskmax=1500
+
                 if valueErrorData > 0. and postFitValue > 0.:
                     binSig = (valueData - postFitValue)/valueErrorData
+                    if abs(binSig) >= maskPull2 and maskPull2>5:
+                       print "AAAAHHHHH", binCenter, binSig, maskPull1, maskPull2
+                       continue
+                    if abs(binSig) >= maskPull1 and maskPull1>5:
+                       print "AAAAHHHHH", binCenter, binSig, maskPull1, maskPull2
+                       continue
 
-                    if binCenter < self.maskmin or binCenter > self.maskmax:
+                    if binCenter-0.5 < self.maskmin or binCenter+0.5 > self.maskmax:
                         chi2bins += 1
                         chi2 += binSig*binSig
                     else:
@@ -234,7 +259,7 @@ class PostfitExtractor:
             self.channel_npars[channel] = npars
             self.channel_ndof[channel] = ndof
             self.channel_pval[channel] = pval
-            print( channelname, self.channel_pval[channel])
+            #print( channelname, self.channel_pval[channel])
 
             self.channel_hpostfit[channel] = h_postfit
             self.channel_hresiduals[channel] = h_residuals
@@ -342,7 +367,7 @@ class PostfitExtractor:
         return self.channel_chi2.keys()
 
     def SetRebinEdges(self, binEdges):
-      self.rebinEdges = binEdges 
+      self.binEdges = binEdges 
       self.Extract()
 
 

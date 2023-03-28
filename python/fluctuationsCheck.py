@@ -7,6 +7,7 @@ from math import sqrt
 from math import isnan
 from glob import glob
 import config as config
+import python.DrawingFunctions as df
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -43,11 +44,13 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0, signalType="Gaussian"):
-    SetAtlasStyle()
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0):
+  SetAtlasStyle()
+  fluctuations = ROOT.TH1F("Fluctuations", ";#sigma;Number of channels", 40, -2, 2)
 
-    # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
-    colors = [kBlue, kRed+1, kOrange-3]
+  # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
+  colors = [kBlue, kRed+1, kOrange-3]
+  for channelName in channelNames:
 
     g_obs_datasets = []
     g_exp_datasets = []
@@ -80,32 +83,25 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
             for j,sigmean in enumerate(sigmeans):
 
-                rangelow = config.samples[channelName[0]]["rangelow"]
+                rangelow = config.samples[channelName]["rangelow"]
 
                 if sigmean < (rangelow + deltaMassAboveFit) :
                    continue
 
 
 
+                coutdir = outdir + channelName
 
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
                 # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[dataset]
-                
-                tmp_path = config.getFileName(paths[dataset], cdir, None, outdir, sigmean, sigwidth, sigamp) + ".root"
+                tmp_path = config.getFileName(paths[dataset], cdir, None, coutdir, sigmean, sigwidth, sigamp) + "_%s.root"%(ntoy)
                 f = TFile(tmp_path, "READ")
 
                 if f.IsZombie():
-                  tmp_path = config.getFileName(paths[dataset], cdir, None, outdir, sigmean, sigwidth, sigamp) + "_%s.root"%(ntoy)
-                  print "zombie"
-                  f = TFile(tmp_path, "READ")
-                  if f.IsZombie():
-                    print "still zombie"
-                    continue
-                #print f
-
+                    if f.IsZombie():
+                      continue
                 h = f.Get("limit")
-
                 obs = h.GetBinContent(h.GetXaxis().FindBin("Observed")) / lumis
                 exp = h.GetBinContent(h.GetXaxis().FindBin("Expected")) / lumis
                 exp1u = h.GetBinContent(h.GetXaxis().FindBin("+1sigma")) / lumis
@@ -118,6 +114,9 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                 g_exp2u[i].SetPoint(g_exp2u[i].GetN(), sigmean, exp2u)
                 g_exp1d[i].SetPoint(g_exp1d[i].GetN(), sigmean, exp1d)
                 g_exp2d[i].SetPoint(g_exp2d[i].GetN(), sigmean, exp2d)
+                print( channelName, dataset, (obs-exp) / ((exp2d-exp)/2.), (obs-exp),  (exp2d-exp)/2., (exp1d-exp), (exp2u-exp)/2., (exp1u-exp))
+                testVal = (obs-exp) / ((exp2d-exp)/2.)
+                fluctuations.Fill( testVal) 
 
                 if isnan(obs):
                     continue
@@ -153,8 +152,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     leg_exp = TLegend(0.65,0.6,0.85,0.7)
 
     #minY = 0.005
-    minY = 0.000005
-    maxY = 0.1
+    minY = 0.00001
+    maxY = 0.7
 
     g_exp_datasets[0][0].Draw("af")
     g_exp_datasets[0][0].GetXaxis().SetTitle("M_{G} [GeV]")
@@ -187,16 +186,20 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
     ATLASLabel(0.20, 0.90, atlasLabel, 13)
     myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
-    myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV, %.1f fb^{-1}"%(lumis*0.001), 13)
-    myText(0.2, 0.72, 1, config.samples[channelName[0]]["varLabel"], 13)
-
+    myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV", 13)
+    myText(0.2, 0.72, 1, "%.1f fb^{-1}" % (lumis*0.001), 13)
 
     myText(0.65, 0.92, 1, "Observed:", 13)
     myText(0.65, 0.76, 1, "Expected:", 13)
     leg_exp.Draw()
     leg_obs.Draw()
 
-    c.Print("%s/limitPlot_%s_%s.pdf"%(outdir, channelName[0], signalType))
+    c.Print("%s/limitPlot_swift_fivepar_%s.pdf"%(outdir, channelName))
+  c.SetLogy(0)
+  leg = df.DrawHists(c, [fluctuations], ["test"], [], drawOptions = ["hist"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
+  c.Print("%s/test_swift_fivepar.pdf"%(outdir))
+  
+
 
 
 

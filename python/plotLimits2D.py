@@ -7,6 +7,7 @@ from math import sqrt
 from math import isnan
 from glob import glob
 import config as config
+import LocalFunctions as lf
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -43,11 +44,19 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0, alphaBins = [], meansCentered = [1500, 2500, 3500, 5000, 7000, 9000, 11000]):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=None, alphaBins = [], meansCentered = [1500, 2500, 3500, 5000, 7000, 9000, 11000], postfitPaths = []):
     SetAtlasStyle()
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
     colors = [kBlue, kRed+1, kOrange-3]
+    meansCentered = []
+    meansCentered.append(sigmeans[0] - (sigmeans[1]-sigmeans[0])/2.)
+    for i in range(len(sigmeans)-1):
+      print sigmeans[i], sigmeans[i+1], (sigmeans[i] + sigmeans[i+1])/2.
+      meansCentered.append((sigmeans[i] + sigmeans[i+1])/2.)
+    nbins = len(sigmeans)
+    meansCentered.append(sigmeans[nbins-1] + (sigmeans[nbins-1] - sigmeans[nbins-2])/2.)
+    print meansCentered
 
     #limits2D = TGraph2D()
 
@@ -93,10 +102,12 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
                 # Obviously this won't matter with real data, but it does for the tests
                 tmp_path = paths[alphaBin]
-                tmp_path = config.getFileName(paths[alphaBin], cdir, None, outdir + channelNames[alphaBin], sigmean, sigwidth, sigamp) + "_%s.root"%(ntoy)
+                tmp_path = config.getFileName(paths[alphaBin], cdir, None, outdir + channelNames[alphaBin], sigmean, sigwidth, sigamp) + ".root"
                 f = TFile(tmp_path, "READ")
 
                 if f.IsZombie():
+                    tmp_path = config.getFileName(paths[alphaBin], cdir, None, outdir + channelNames[alphaBin], sigmean, sigwidth, sigamp) + "_%s.root"%(ntoy)
+                    f = TFile(tmp_path, "READ")
                     if f.IsZombie():
                       continue
                 h = f.Get("limit")
@@ -115,6 +126,18 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
 
                 if isnan(obs):
                     continue
+
+
+                csuffix = ""
+                if ntoy != None:
+                  csuffix = "%s_%d"%(suffix, toy)
+                postfitPath = config.getFileName(postfitPaths[alphaBin], cdir, channelNames[alphaBin], outdir + channelNames[alphaBin], sigmean, sigwidth, sigamp) + ".root"
+                chi2Hist = lf.read_histogram(postfitPath, "chi2"+channelName+"_"+csuffix)
+                chi2 = chi2Hist.GetBinContent(2)
+                pval = chi2Hist.GetBinContent(6)
+                if pval < 0.05:
+                  continue
+
 
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
                 #limits2D.SetPoint(limits2D.GetN(), sigmean, alphaBin, obs)

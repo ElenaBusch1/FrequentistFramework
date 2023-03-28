@@ -18,7 +18,7 @@ cdir = config.cdir
 #sigmeans= [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
 sigmeans=[500, 700, 1000, 1500, 2000, 2500, 3000]
 #spuriousRanges = [400, 300, 100, 20, 10, 5, 5, 5]
-spuriousRanges = [100, 100, 50, 20, 10, 5, 5, 5]
+spuriousRanges = [500, 300, 100, 20, 10, 5, 5, 5]
 #sigwidths=[ 5,10,15]
 sigwidths=[10]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
@@ -26,7 +26,8 @@ sigamps=[5,4,3,2,1]
 
 pdFitName = "fiveParM2j"
 fitName = "fourParM2j"
-channelNames = [ "hybrid10_2javg_alpha0", "hybrid10_2javg_alpha1", "hybrid10_2javg_alpha2", "hybrid10_2javg_alpha3", "hybrid10_2javg_alpha4", "hybrid10_2javg_alpha5", "hybrid10_2javg_alpha6", "hybrid10_2javg_alpha7", "hybrid10_2javg_alpha8", "hybrid10_2javg_alpha9", "hybrid10_2javg_alpha10", "hybrid10_2javg_alpha11", ]
+#channelNames = [ "hybrid10_2javg_alpha0", "hybrid10_2javg_alpha1", "hybrid10_2javg_alpha2", "hybrid10_2javg_alpha3", "hybrid10_2javg_alpha4", "hybrid10_2javg_alpha5", "hybrid10_2javg_alpha6", "hybrid10_2javg_alpha7", "hybrid10_2javg_alpha8", "hybrid10_2javg_alpha9", "hybrid10_2javg_alpha10", "hybrid10_2javg_alpha11", ]
+channelNames = [ "hybrid10_2javg_alpha0", "hybrid10_2javg_alpha2", "hybrid10_2javg_alpha3", "hybrid10_2javg_alpha4", "hybrid10_2javg_alpha5", "hybrid10_2javg_alpha6", "hybrid10_2javg_alpha7", "hybrid10_2javg_alpha8", "hybrid10_2javg_alpha9", "hybrid10_2javg_alpha10",  ]
 
 coutputdir = "fits2javg_hybrid_"
 

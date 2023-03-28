@@ -6,6 +6,7 @@ cdir = config.cdir
 
 
 channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
+#channelNames = [ [ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha8"], ]
 
 fitNames = ["threeParM2j", "fourParM2j", "fiveParM2j", "sixParM2j"]
 
@@ -31,12 +32,11 @@ for channelName in channelNames:
                cdir=cdir ,
                wsfile=wsfile,
                nbkg=nbkg,
-               ntoys = 0,
                outdir=outputdir,
                outputstring="%s"%(fitName),
                outputfile=outputfile,
                signalfile="Gaussian",
-               maskthreshold=-0.01,
+               maskthreshold=0.05,
                dosignal=0,
                dolimit=0,
                useSysts = False,

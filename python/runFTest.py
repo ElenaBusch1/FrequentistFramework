@@ -8,12 +8,29 @@ import python.AtlasStyle as AS
 import config as config
 import array
 
+def getNPars(pdf, obs, exclSyst):
+    params = pdf.getVariables()
+    nuispdf = RooStats.MakeNuisancePdf(pdf, RooArgSet(obs), "nuisancePdf")
+
+    counter=0
+
+    for var in params:
+        if(not var.isConstant() and
+           var.GetName() != obs.GetName() and
+           not (exclSyst and nuispdf and nuispdf.dependsOn(RooArgSet(var)))):
+            # if exclSyst, do not count nuisance parameters
+            counter+=1
+
+    return counter
+
 
 def calcFpF(chi2_nom, chi2_alt, npars_nom, npars_alt, nbins):
     F_num = (chi2_nom - chi2_alt) / (npars_alt - npars_nom)
     F_den = chi2_alt / (nbins - npars_alt)
     F = F_num / F_den
     pF = ROOT.Math.fdistribution_cdf_c( F, npars_alt-npars_nom, nbins-npars_alt)
+    #print (chi2_nom, chi2_alt, nbins, npars_alt, npars_nom, F_num, F_den, F, pF)
+    print (F, pF)
 
     return (F, pF)
 
@@ -60,18 +77,56 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
 
         chi2  = h_chi2.GetBinContent(chi2bin)
         _nbins = h_chi2.GetBinContent(nbinsbin)
-        if nbins > 0 and _nbins != nbins:
-            #print "ERROR: Change of binning between files: %d, %d . Exiting" % (nbins, _nbins)
-            return -1
-        else:
-            nbins = _nbins
 
         if not usendof:
             npars = h_chi2.GetBinContent(nparsbin)
         else:
             npars = h_chi2.GetBinContent(nbinsbin) - h_chi2.GetBinContent(ndofbin)
 
+        #if nbins > 0 and _nbins != nbins:
+        #    #print "ERROR: Change of binning between files: %d, %d . Exiting" % (nbins, _nbins)
+        #    return -1
+        #else:
+        #    nbins = _nbins
+        nbins = _nbins
+
         ndof = h_chi2.GetBinContent(ndofbin)
+
+
+        chi2 = 0.
+        chi2bins = 0
+        maskedchi2bins = 0
+        firstbin=0
+
+        for ibin in range(1, h_data.GetNbinsX()+1):
+        
+            binCenter = h_data.GetBinCenter(firstbin+ibin)
+            #if binCenter < 4000:
+            #  continue
+
+
+            valueErrorData = h_data.GetBinError(firstbin+ibin)
+            valueData = h_data.GetBinContent(firstbin+ibin)
+            postFitValue = h_pf.GetBinContent(ibin)
+            if valueData / h_data.GetBinWidth(firstbin+ibin) < 0.01:
+              continue
+            if h_pf.GetBinContent(ibin) < 0:
+              print "Negative!"
+              return 1
+
+            binSig = 0.
+            if valueErrorData > 0. and postFitValue > 0.:
+                binSig = (valueData - postFitValue)/valueErrorData
+                chi2bins += 1
+                chi2 += binSig*binSig
+
+
+        ndof = chi2bins - npars
+
+        nbins = chi2bins
+        pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
+        print ("PVAL STUFF !!!! ", pval, chi2, ndof, chi2bins, chi2/ndof)
+
 
         l_pf.append(h_pf)
         l_res.append(h_res)
@@ -82,11 +137,12 @@ def runFTest(infiles, cdir, outfile, channelName, rangelow, rangehigh, lumi, atl
           tmpName = config.fitFunctions[fitName]["Name"]
         except:
           tmpName = fitName
-        legtext = "%s (#chi^{2}/n = %.0f/%.0f)" % (tmpName, chi2, ndof)
+        legtext = "%s (#chi^{2}/n = %.2f/%.0f)" % (tmpName, chi2, ndof)
         legNames.append(legtext)
 
     labels = []
     labels.append(config.samples[channelName]["varLabel"])
+    print (len(l_chi2))
     
     for i in range(len(l_chi2)-1):
 

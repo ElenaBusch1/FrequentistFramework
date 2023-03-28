@@ -3,7 +3,7 @@
   <Data InputFile="DATAFILE" FileType="histogram" HistName="DATAHIST" Observable="CHANNEL[RANGELOW,RANGEHIGH]" Binning="BINS" InjectGhost="1"/>
 
 
-  <Systematic Name="ATLAS_lumi_run2" Constr="logn" CentralValue="1" Mag="0.017" WhereTo="yield"/>
+  <Systematic Name="ATLAS_lumi_run2" Constr="logn" CentralValue="1" Mag="0.0083" WhereTo="yield"/>
 
   <Sample Name="background" 
 	  InputFile="FITFUNC" 
@@ -13,14 +13,12 @@
 
   <Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >
     <NormFactor Name="nsig_meanMEAN_CHANNEL[NSIG]" />
+    <Systematic Name="pdf" Constr="asym" CentralValue="1" Mag="+0.01,-0.01" WhereTo="yield"/>
   </Sample>
 
 
-
-
-
   <Sample Name="spurious" InputFile="SIGNALFILE" ImportSyst=":self:" MultiplyLumi="false" SharePdf="commonSig">
-    <Systematic Name="ATLAS_BIAS" Constr="gaus" CentralValue="0" Mag="0.5" WhereTo="yield"/>
+    <Systematic Name="ATLAS_BIAS" Constr="gaus" CentralValue="0" Mag="BIASMAGNITUDE" WhereTo="yield"/>
   </Sample>
 
 
