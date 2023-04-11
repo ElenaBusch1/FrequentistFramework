@@ -20,7 +20,9 @@ args = parser.parse_args()
 if args.isBatch:
   pdFitNames = [args.pdFitName]
   fitName = args.fitName
-  channelNames = [args.channelNames]
+  channelName = args.channelNames
+  channelNames = [channelName]
+
   sigmeans = [args.sigmean]
   sigwidths = [args.sigwidth]
   signalfile = args.signalFile
@@ -40,22 +42,24 @@ else:
   #fitName = "fivePar"
 
   # The different channels you are using
-  channelNames = [ ["Data_yxxjjjj_4j_alpha0"],[ "Data_yxxjjjj_4j_alpha1"],[ "Data_yxxjjjj_4j_alpha2"],[ "Data_yxxjjjj_4j_alpha3"],[ "Data_yxxjjjj_4j_alpha4"],[ "Data_yxxjjjj_4j_alpha5"],[ "Data_yxxjjjj_4j_alpha6"],[ "Data_yxxjjjj_4j_alpha7"],[ "Data_yxxjjjj_4j_alpha8"],[ "Data_yxxjjjj_4j_alpha9"],[ "Data_yxxjjjj_4j_alpha10"],[ "Data_yxxjjjj_4j_alpha11"], ]
+  #channelNames = [ ["Data_yxxjjjj_4j_alpha0"],[ "Data_yxxjjjj_4j_alpha1"],[ "Data_yxxjjjj_4j_alpha2"],[ "Data_yxxjjjj_4j_alpha3"],[ "Data_yxxjjjj_4j_alpha4"],[ "Data_yxxjjjj_4j_alpha5"],[ "Data_yxxjjjj_4j_alpha6"],[ "Data_yxxjjjj_4j_alpha7"],[ "Data_yxxjjjj_4j_alpha8"],[ "Data_yxxjjjj_4j_alpha9"],[ "Data_yxxjjjj_4j_alpha10"],[ "Data_yxxjjjj_4j_alpha11"], ]
   #channelNames = [ ["Data_yxxjjjj_4j_alpha0"], ]
-  alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
+  channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+  channelNames = [[10],]
 
 
   # The means of the signal distributions
   #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
-  sigmeans = [10000]
   #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+  sigmeans = [3750]
+
   # The width of the signal distribution (in %)
   sigwidths = [10]
 
   # The signal file to use
   #signalfile =  "Gaussian"
   #signalfile =  "crystalBallHistNoSyst"
-  signalfile =  "crystalBallHist"
+  signalfile =  "gausHistNoSyst"
   
   # This should match the output directory of previous steps
   # The actual output directory will also depend on the channel name
@@ -67,9 +71,10 @@ else:
   # The number of toys used for the spurious signal tests
   # If this is larger than the number of toys you have produced, this will cause problems
   #nToys = config.nToys
-  nToys = 50
 
 
+nToys = 50
+baseChannelName = "Data_yxxjjjj_4j_alpha"
 dosignal=1
 dolimit=0
 cdir = config.cdir
@@ -81,7 +86,10 @@ cdir = config.cdir
 for sigmean in sigmeans:
     for sigwidth in sigwidths:
       for pdFitName in pdFitNames:
-        for channelName, alpha in zip(channelNames, alphaBins):
+        for channelSuffix in channelNames:
+          channelName = [baseChannelName + "%d"%(int(channelSuffix[0]))]
+          alpha = config.alphaBins[int(channelSuffix[0])]
+
           mY = round( (alpha * sigmean)/10)*10
           if mY < 500 and (signalfile=="crystalBallHistNoSyst" or signalfile=="crystalBallHist"):
             continue

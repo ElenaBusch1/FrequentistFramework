@@ -46,6 +46,8 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst, maxX = 11000):
   for line in inputFileLines:
     calpha = float(line.split(" ")[2])
     cmY = float(line.split(" ")[0])
+    if(cmY < 3000): 
+      continue
     if alpha != calpha:
       continue
 
@@ -59,7 +61,8 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst, maxX = 11000):
     alphaVals.append(alphaVal)
     nVals.append(nVal)
 
-    w.factory("RooCBShape::CBall{i}(x_{syst}[0,{maxx}], mu{i}[{cmu}, 0,13000], sigma{i}[{csig}, 100, 3000], alphaCB{i}[{calpha}, 0.1, 4.0], n{i}[{cn}, 100,1e11])".format(maxx=maxX,syst=syst,i=cmY, cmu = muVal, csig=sigmaVal, calpha=alphaVal, cn = nVal));
+    print(syst, maxX, cmY, muVal, sigmaVal, alphaVal, nVal)
+    w.factory("RooCBShape::CBall{i}(x_{syst}[0,{maxx}], mu{i}[{cmu}, 0,13000], sigma{i}[{csig}, 100, 3000], alphaCB{i}[{calpha}, 0.1, 4.0], n{i}[{cn}, 100,1e11])".format(syst=syst, maxx=maxX, i=cmY, cmu = muVal, csig=sigmaVal, calpha=alphaVal, cn = nVal));
     pdf = w.pdf('CBall{i}'.format(i=cmY))
     pdfs.add(pdf)
     mYs.append(cmY)

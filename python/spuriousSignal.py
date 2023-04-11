@@ -15,7 +15,7 @@ import FittingFunctions as ff
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50, deltaMassAboveFit = 0):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50, deltaMassAboveFit = 0, signalfile=""):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     meansCentered = []
@@ -231,7 +231,8 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
 
         graphs[0].GetYaxis().SetTitle("S_{spur}")
-        ratios[0].GetYaxis().SetRangeUser(-0.8,0.8)
+        #ratios[0].GetYaxis().SetRangeUser(-0.8,0.8)
+        ratios[0].GetYaxis().SetRangeUser(-1.5,1.5)
         ratios[0].GetYaxis().SetTitle("S_{spur} / #sigma_{fit}")
         graphs[0].GetYaxis().SetRangeUser(-max(crange), max(crange))
         outfileName = config.getFileName("SpuriousSignal_PD_" + outfile + "Ratio", cdir, "all", outputdir) + "Width_%d"%sigwidth + ".pdf"
@@ -256,11 +257,12 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
         line4.Draw()
         c2.Print(outfileName)
 
+        h_sigmas[0].GetYaxis().SetRangeUser(0, 150)
         leg = df.DrawHists(c,h_sigmas, legendNames, [], drawOptions = ["HIST"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
         path = config.getFileName("Sigma", cdir, "", outputdir) + "Width_%d.pdf"%sigwidth 
         c.Print(path)
         for channelName, h_sigma in zip(channelNames, h_sigmas):
-          biasFileName = config.getFileName("bias_%s"%(signalName), cdir, channelName, outputdir) +".root"
+          biasFileName = config.getFileName("bias_%s"%(signalfile), cdir, channelName, outputdir) +"_%d.root"%(sigwidth)
           fout = TFile(biasFileName, "RECREATE")
           print biasFileName
           

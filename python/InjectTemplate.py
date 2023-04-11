@@ -2,6 +2,55 @@
 import ROOT
 import sys, re, os, math, argparse
 
+
+def findWindow(hist, windowFrac=0.68):
+  
+  minWidth = 1e5
+  if not isinstance(histo, r.TH1):
+    return 0, 0
+  if histo.Integral()==0:
+    return 0, 0
+
+  integral = histo.Integral(0, histo.GetNbinsX()+1)
+  Nbins = histo.GetNbinsX()
+  bestTopEdge = 0
+
+  tempFrac = 0.0
+  for imax in range(0, Nbins+1):
+     tempFrac += histo.GetBinContent(imax)
+
+  # The i in this loop will be the starting bin for a scan over histo
+  for i in range(Nbins):
+       tempFrac = 0.0
+       imax = i
+
+       # Scan over histo, starting at bin i until it contains a fraction of events > frac or it reaches the end of the histogram
+       while tempFrac<float(frac) and imax != Nbins:
+          tempFrac += histo.GetBinContent(imax)/integral 
+          imax += 1
+
+       # Width of the window found by the scan above
+       width = histo.GetBinCenter(imax) - histo.GetBinCenter(i)
+       # Bin center where the scan ended
+       top_edge = histo.GetBinCenter(imax)
+
+       # We want to find the smallest window containing fraction of signal ~= frac
+       # So we check that our new width is smaller than the previous one (minwidth) and the scan didn't reach the end of the histo
+       if imax != Nbins and width<minWidth:
+          minWidth = width
+          bestTopEdge = top_edge
+
+  if minWidth > (histo.GetBinCenter(Nbins)-histo.GetBinCenter(1)):
+    minWidth = (histo.GetBinCenter(Nbins)-histo.GetBinCenter(1))
+    bestTopEdge = histo.GetBinCenter(Nbins)
+  valLow = bestTopEdge-minWidth
+
+
+  return valLow,bestTopEdge
+
+
+
+
 def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= "", outfile= "", wsfile = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mR550.root", wspdf = "SigLow_1_alpha200_SR1", firsttoy=None, lasttoy=None):
 
     #print wsfile, wspdf
@@ -35,8 +84,9 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
         if sigmean > 0.0:
 
             # determine the gaussian amplitude (ntimes * sqrt(n) in FWHW range)
-            rangeLow = sigmean  - 1.18*(sigwidth*0.01) * sigmean
-            rangeHigh = sigmean + 1.18*(sigwidth*0.01) * sigmean
+            #rangeLow = sigmean  - 1.18*(sigwidth*0.01) * sigmean
+            #rangeHigh = sigmean + 1.18*(sigwidth*0.01) * sigmean
+            rangeLow, rangeHigh = findWindwo(hist)
             binLow = hist.FindBin(rangeLow)
             binHigh = hist.FindBin(rangeHigh)
             binLowSig = sigHistNom.FindBin(rangeLow)

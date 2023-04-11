@@ -37,30 +37,55 @@ else:
   #fitName = "threeParM2j"
   pdFitNames = ["fiveParM2j"]
   fitName = "fourParM2j"
-  channelNames = [["Data_2javg_alpha0"],[ "Data_2javg_alpha1"],[ "Data_2javg_alpha2"],[ "Data_2javg_alpha3"],[ "Data_2javg_alpha4"],[ "Data_2javg_alpha5"],[ "Data_2javg_alpha6"],[ "Data_2javg_alpha7"],[ "Data_2javg_alpha8"],[ "Data_2javg_alpha9"],[ "Data_2javg_alpha10"],[ "Data_2javg_alpha11"], ]
+  #channelNames = [["Data_2javg_alpha0"],[ "Data_2javg_alpha1"],[ "Data_2javg_alpha2"],[ "Data_2javg_alpha3"],[ "Data_2javg_alpha4"],[ "Data_2javg_alpha5"],[ "Data_2javg_alpha6"],[ "Data_2javg_alpha7"],[ "Data_2javg_alpha8"],[ "Data_2javg_alpha9"],[ "Data_2javg_alpha10"],[ "Data_2javg_alpha11"], ]
+  channelNames = [["4"]]
 
 
   #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
   #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
-  sigmeans = [2000,]
+  #sigmeans = [500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2450, 2500, 2550, 2600, 2650, 2700, 2750, 2800, 2850, 2900, 2950, 3000, 3050, 3100, 3150, 3200, 3250, 3300, 3350, 3400, 3450, 3500]
+  #sigmeans = [1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2450, 2500, 2550, 2600, 2650, 2700, 2750, 2800, 2850, 2900, 2950, 3000, 3050, 3100, 3150, 3200, 3250, 3300, 3350, 3400, 3450, 3500]
+  #sigmeans = [ 3200, 3250, 3300, 3350, 3400, 3450, 3500]
+  sigmeans = [1200]
+
   sigwidths = [10]
-  signalfile =  "Gaussian"
-  coutputdir = "fits2javg_data_"
+  signalfile = "crystalBallHistNoSyst"
 
   #args.doRemake = 0
-  args.doRemake = 0
-  nToys = config.nToys
+  args.doRemake = 1
 
+#nToys = config.nToys
+nToys = 50
+
+coutputdir = "fits2javg_data_"
+baseChannelName = "Data_2javg_alpha"
 
 dosignal=1
 dolimit=0
 cdir = config.cdir
+tagName = "m2j_"
 
 
 for sigmean in sigmeans:
     for sigwidth in sigwidths:
       for pdFitName in pdFitNames:
-        for channelName in channelNames:
+        for channelSuffix in channelNames:
+          channelName = [baseChannelName + "%d"%(int(channelSuffix[0]))]
+          alpha = config.alphaBins[int(channelSuffix[0])]
+
+          #mY = round( (alpha * sigmean)/10)*10
+          #if mY < 500 and (signalfile=="crystalBallHistNoSyst" or signalfile=="crystalBallHist"):
+          #  continue
+
+          mY = round(sigmean / alpha / 10) * 10
+          if sigmean < 500:
+            continue
+          if mY < 2000:
+            continue
+
+          if mY > 11000:
+            continue
+
           outputdir = coutputdir+channelName[0]
 
           pdFiles = []
@@ -79,7 +104,33 @@ for sigmean in sigmeans:
               os.makedirs(outputdir)
           nbkg="1E3,0,1E6"
           nbkgWindow = 1
-          nsig="0,-1e4,1e4"
+          nsig="0,-500,500"
+          if sigmean > 700 and alpha > 0.23:
+            nsig="0,-200,200"
+          elif sigmean > 700:
+            nsig="0,-150,150"
+          if sigmean > 1000 and alpha > 0.25:
+            nsig="0,-100,100"
+          elif sigmean > 1000:
+            nsig="0,-50,50"
+
+          if sigmean > 1300:
+            nsig="0,-30,30"
+          if sigmean > 1500 and alpha > 0.25:
+            nsig="0,-10,10"
+          elif sigmean > 1500:
+            nsig="0,-5,5"
+          if alpha < 0.17 and sigmean > 900:
+            nsig="0,-5,5"
+          elif alpha < 0.18 and sigmean > 1000:
+            nsig="0,-10,10"
+          elif alpha < 0.22 and sigmean > 1200:
+            nsig="0,-10,10"
+          elif alpha < 0.28 and sigmean > 1350:
+            nsig="0,-10,10"
+          elif alpha < 0.28 and sigmean > 1200:
+            nsig="0,-30,30"
+
           topfile=config.samples[channelName[0]]["topfile"]
   
           # Output file names, which will be written to outputdir
@@ -110,6 +161,8 @@ for sigmean in sigmeans:
                histnames=pdHists, 
                doRemake=args.doRemake,
                useSysts = False,
+               tagName = tagName,
+               isMx = True,
               )
 
 

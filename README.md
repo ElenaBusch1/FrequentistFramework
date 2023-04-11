@@ -32,7 +32,7 @@ source scripts/setup_buildAndFit.sh
 
 Most of the configuration is handled in scripts/config.py. 
 
-To run the code, you will need to change config.py to have cdir be the directory that you set this up in.
+Important: To run the code, you will need to change config.py to have cdir be the directory that you set this up in.
 
 There are two main parts to config.py -- the backgrounds (samples) and the signals.
 If you want to add a new background file to fit, or a new signal, you will have to change these.
@@ -87,6 +87,14 @@ The m4j scripts are the ones that start with yxxjjjj, and the m2javg are the one
 
 ```
 python yxxjjjj_anaFit.py
+python m2j_anaFit.py
+```
+
+You can check that the fits look reasonable using the validation scripts
+
+```
+python yxxjjjj_validation.py
+python m2j_validation.py
 ```
 
 
@@ -99,16 +107,10 @@ For the spurious signal, signal injection, and limits, you will need to generate
 python yxxjjjj_makePseudodata.py
 ```
 
-# Creating crystal ball templates
-
-Note: You only need to run this if you are using signal templates, but for many initial studies, this is not necessary, and a Gaussian template can be used instead.
-
-
 # Spurious signal tests
 
 
 This script uses the generated pseudodata to run S+B fits, with no injected signal.
-
 These tests can be done with the signal templates or Gaussian templates, and the default is currently using Gaussians.
 
 ```
@@ -140,11 +142,19 @@ python yxxjjjj_limits.py
 # Visualizing results
 
 Most of the plotting is handled in a single script, but it can be easier to sometimes comment out parts of it to only run the relevant aspects.
+Most of it is probably commented at the moment for simplicity.
 
 
 ```
 python yxxjjjj_plotting.py
 ```
+
+
+# Creating crystal ball templates
+
+Note: You only need to run this if you are using signal templates, but for many initial studies, this is not necessary, and a Gaussian template can be used instead.
+Ignore this for now, and we can come back to this.
+
 
 
 

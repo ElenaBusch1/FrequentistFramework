@@ -5,7 +5,7 @@ cdir="/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework"
 # This isn't strictly needed, but it makes the samples section slightly easier to handle
 baseDir = "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/"
 
-nToys = 100
+nToys = 50
 atlasLabel="Simulation Internal"
 
 
@@ -13,6 +13,8 @@ cSample = "fits_"
 cPDFitName = "fivePar"
 cFitName = "fourPar"
 cSignal = "Gaussian"
+alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
+
 
 
 
@@ -1717,6 +1719,7 @@ samples["tenPercentData_2javg_alpha3"] = {
 
 samples["tenPercentData_2javg_alpha2"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_DataRun2_10percent.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_2",
@@ -1735,6 +1738,7 @@ samples["tenPercentData_2javg_alpha2"] = {
 
 samples["tenPercentData_2javg_alpha1"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_DataRun2_10percent.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_1",
@@ -1752,6 +1756,7 @@ samples["tenPercentData_2javg_alpha1"] = {
 
 samples["tenPercentData_2javg_alpha0"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_DataRun2_10percent.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_0",
@@ -1779,6 +1784,7 @@ samples["tenPercentData_2javg_alpha0"] = {
 
 samples["Data_2javg_alpha11"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_11",
@@ -1795,6 +1801,7 @@ samples["Data_2javg_alpha11"] = {
 
 samples["Data_2javg_alpha10"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_10",
@@ -1812,6 +1819,7 @@ samples["Data_2javg_alpha10"] = {
 
 samples["Data_2javg_alpha9"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_9",
@@ -1828,6 +1836,7 @@ samples["Data_2javg_alpha9"] = {
 
 samples["Data_2javg_alpha8"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_8",
@@ -1845,6 +1854,7 @@ samples["Data_2javg_alpha8"] = {
 
 samples["Data_2javg_alpha7"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_7",
@@ -1861,6 +1871,7 @@ samples["Data_2javg_alpha7"] = {
 
 samples["Data_2javg_alpha6"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_6",
@@ -1877,6 +1888,7 @@ samples["Data_2javg_alpha6"] = {
 
 samples["Data_2javg_alpha5"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_5",
@@ -1893,6 +1905,7 @@ samples["Data_2javg_alpha5"] = {
 
 samples["Data_2javg_alpha4"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_4",
@@ -1909,6 +1922,7 @@ samples["Data_2javg_alpha4"] = {
 
 samples["Data_2javg_alpha3"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_3",
@@ -1925,6 +1939,7 @@ samples["Data_2javg_alpha3"] = {
 
 samples["Data_2javg_alpha2"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_2",
@@ -1943,6 +1958,7 @@ samples["Data_2javg_alpha2"] = {
 
 samples["Data_2javg_alpha1"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_1",
@@ -1960,6 +1976,7 @@ samples["Data_2javg_alpha1"] = {
 
 samples["Data_2javg_alpha0"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Data.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_0",
@@ -2406,6 +2423,7 @@ samples["sherpa_yxxjjjj_2javg_alpha1"] = {
 
 samples["sherpa_yxxjjjj_2javg_alpha0"] = {
                  "categoryfile"  : "../config/category_background.template",
+                 "categoryfileSysts"  : "../config/category_backgroundWithSysts.template",
                  "topfile": "../config/background.template",
                  "inputFile": "%s/yxxjjjj_Sherpa.root"%(baseDir),
                  "histname": "h2_resonance_jet_m2javg_alpha_nominal_alphaBin_0",
@@ -2658,21 +2676,14 @@ signals["template"] = {
                  #"histname": "Gaus_mX_3000_mY_870_alphaBin_ALPHA_ ",
                }
 
-# Signal template (can include systematics)
-signals["gausHist"] = {
-                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
-                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalGaus_mX_MEAN_mY_MASSX.root",
-                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausSignal__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
-                 "histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
-                 "systFile": "uncertaintySets/systematics",
-               }
 
 signals["crystalBallHist"] = {
                  "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
-                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCB_mX_MEAN_mY_MASSX.root",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalCB_mX_MEAN_mY_MASSX.root",
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
                  #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
                  "histname": "h2_resonance_jet_m4j_alpha_",
+                 "histnameMX": "h2_resonance_jet_m2javg_alpha_",
                  #"histname": "",
                  #"systFile": "empty.txt",
                  "systFile": "uncertaintySets/systematics",
@@ -2680,13 +2691,32 @@ signals["crystalBallHist"] = {
 
 signals["crystalBallHistNoSyst"] = {
                  "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
-                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalCBNoSyst_mX_MEAN_mY_MASSX.root",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalCBNoSyst_mX_MEAN_mY_MASSX.root",
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
-                 #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
                  "histname": "h2_resonance_jet_m4j_alpha_",
-                 #"histname": "",
+                 "histnameMX": "h2_resonance_jet_m2javg_alpha_",
                  "systFile": "empty.txt",
                }
+
+signals["gausHist"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalGaus_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_",
+                 "histnameMX": "h2_resonance_jet_m2javg_alpha_",
+                 "systFile": "uncertaintySets/systematics",
+               }
+
+signals["gausHistNoSyst"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalGausNoSyst_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_",
+                 "histnameMX": "h2_resonance_jet_m2javg_alpha_",
+                 "systFile": "empty.txt",
+               }
+
+
 
 
 

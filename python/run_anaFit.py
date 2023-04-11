@@ -157,6 +157,8 @@ def run_anaFit(datahist,
                alphaBin = 0,
                rebinOnlyBH = False,
                biasMagnitude=0,
+               tagName = "",
+               isMx = False,
               ):
 
     myRebinEdges = []
@@ -171,30 +173,39 @@ def run_anaFit(datahist,
     if not os.path.isfile("%s/run/AnaWSBuilder.dtd"%(cdir)):
         execute("ln -s ../config/dijetTLA/AnaWSBuilder.dtd %s/run/AnaWSBuilder.dtd"%(cdir))
 
-    tmptopfile="%s/run/dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
+    tmptopfileOld="%s/run/dijetTLA_fromTemplate_%s.xml"%(cdir, outputstring)
     tmpsignalfile="%s/run/dijetTLACat_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
     alpha          = config.samples[datahist[0]]["alpha"]
-    sigmeanX = round( (alphaBins[int(alpha)] * sigmean)/10)*10
+    if isMx:
+      sigmeanX = sigmean
+      sigmeanY = round(sigmean / alphaBins[int(alpha)] /10)*10
+    else:
+      sigmeanX = round( (alphaBins[int(alpha)] * sigmean)/10)*10
+      sigmeanY = sigmean
 
-    signalWSName   = config.signals[signalfile]["workspacefile"]
     signalfileName = config.signals[signalfile]["signalfile"]
+    signalWSName   = config.signals[signalfile]["workspacefile"]
     sigwsfile      = config.signals[signalfile]["workspacefile"]
     sighist        = config.signals[signalfile]["histname"]
+    if isMx:
+      sighist        = config.signals[signalfile]["histnameMX"]
 
     #print( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" , str(alpha), str(alphaBins[alpha]), sigmeanX)
     sighist = sighist.replace("ALPHA", "%d"%alpha)
-    sighist = sighist.replace("MEAN", "%d"%sigmean)
+    sighist = sighist.replace("MEAN", "%d"%sigmeanY)
     sighist = sighist.replace("MASSX", "%d"%sigmeanX)
 
-    sigwsfile = sigwsfile.replace("MEAN", "%d"%(sigmean))
 
-    signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
+    signalfileName = signalfileName.replace("TAGNAME", tagName)
     signalfileName = signalfileName.replace("MASSX", "%d"%(sigmeanX))
+    sigwsfile = sigwsfile.replace("MEAN", "%d"%(sigmeanY))
+    sigwsfile = sigwsfile.replace("SIGNALMASS", "%d"%(sigmean))
     sigwsfile = sigwsfile.replace("MASSX", "%d"%(sigmeanX))
+    signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
 
-    shutil.copy2(topfile, tmptopfile) 
+    shutil.copy2(topfile, tmptopfileOld) 
     shutil.copy2(signalfileName, tmpsignalfile) 
-    tmpsignalfile.replace("MEAN", str(sigmean))
+    tmpsignalfile.replace("MEAN", str(sigmeanY))
     tmpsignalfile.replace("MASSX", str(sigmeanX))
     
     # Make a list of all of the distributions that should be fit
@@ -204,6 +215,7 @@ def run_anaFit(datahist,
     for index, histName in enumerate(datahist):
          tmpcategoryfile="%s/run/category_dijet_fromTemplate_%s_%s.xml"%(cdir, outputstring, histName)
          tmpfitfile="%s/run/dijetFit_signal_%d_%d_%s_%s.xml"%(cdir, sigmean, sigwidth, outputstring, histName)
+         print (sigmean, sigmeanX, sigmeanY, isMx)
          fitfile = cdir + "/" + config.fitFunctions[fitFunction]["Config"]
          shutil.copy2(fitfile, tmpfitfile)
 
@@ -222,40 +234,47 @@ def run_anaFit(datahist,
     newSignal = newSignal + "</POI>\n"
     systFileName = config.signals[signalfile]["systFile"]
     systFileName = systFileName.replace("ALPHA", "%d"%alpha)
-    systFileName = systFileName.replace("MEAN", "%.0f"%sigmean)
+    systFileName = systFileName.replace("MEAN", "%.0f"%sigmeanY)
     systFileName = systFileName.replace("MASSX", "%.0f"%sigmeanX)
-    systematics = gs.writeSystematics("systematics", sigmean, alpha, systFileName)
+    systFileName = systFileName.replace("TAGNAME", tagName)
+    systematics = gs.writeSystematics("systematics", sigmeanY, alpha, systFileName)
     print (signalfile)
-    #if sigmean==0:
-    #  newSignal = ""
-    #  newSignalZero = ""
+    print(tmptopfileOld)
+    if sigmean==0:
+      newSignal = ""
+      newSignalZero = ""
     
-    replaceinfile(tmptopfile, 
+    replaceinfile(tmptopfileOld, 
                   [
                    ("  <Input>CATEGORYFILE</Input>", newName),
                    ("  <POI>nsig_meanMEAN_DATAHIST</POI>", newSignal),
                    ("nsig_meanMEAN_DATAHIST=0", newSignalZero),
                    ("CDIR", cdir),
-                   ("MEAN", str(sigmean)),
+                   ("MEAN", str(sigmeanY)),
+                   ("SIGNALMASS", str(sigmean)),
                    ("MASSX", str(sigmeanX)),
                    ("WIDTH", str(sigwidth)),
                    ("SIGNALFILE", tmpsignalfile),
                    ("SYSTEMATICS", systematics),
                    ("OUTPUTFILE", wsfile),
+                   ("TAGNAME", tagName),
                    ("BIASMAGNITUDE", "%.0f"%biasMagnitude),
                   ])
 
     replaceinfile(tmpsignalfile,
                   [
                    ("WORKSPACEFILE", signalWSName),
+                   #("WORKSPACEFILE", sigwsfile),
                    ("CDIR", cdir),
-                   ("MEAN", str(sigmean)),
+                   ("SIGNALMASS", str(sigmean)),
+                   ("MEAN", str(sigmeanY)),
                    ("MEANX", str(sigmeanX)),
                    ("WPERCENT", str(sigwidth/100.)),
                    ("WIDTH", str(sigwidth)),
                    ("SIGHIST", str(sighist)),
                    ("SIGFILE", str(sigwsfile)),
                    ("OUTPUTFILE", wsfile),
+                   ("TAGNAME", tagName),
                    ("SYSTEMATICS", systematics),
                    ("BIASMAGNITUDE", "%.0f"%biasMagnitude),
                   ])
@@ -301,6 +320,7 @@ def run_anaFit(datahist,
           datafile = datafiles[index]
           actualHistName = histnames[index]
 
+        print (histName)
         topfile=config.samples[histName]["topfile"]
         categoryfile=config.samples[histName]["categoryfile"]
         if useSysts:
@@ -316,9 +336,14 @@ def run_anaFit(datahist,
         tmpcategoryfile="%s/run/category_dijet_fromTemplate_%s_%s.xml"%(cdir, outputstring, histName)
         shutil.copy2(categoryfile, tmpcategoryfile) 
         tmpfitfile="%s/run/dijetFit_signal_%d_%d_%s_%s.xml"%(cdir, sigmean, sigwidth, outputstring, histName)
-        #if sigmean==0:
-        #  replaceinfile(tmpcategoryfile, [
-        #    ('<Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >  <NormFactor Name="nsig_meanMEAN_CHANNEL[NSIG]" />  </Sample>', "")])
+        if sigmean==0:
+          replaceinfile(tmpcategoryfile, [
+            ('<Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >  <NormFactor Name="nsig_meanMEAN_DATAHIST[NSIG]" />  </Sample>', "")])
+        tmptopfile="%s/run/dijetTLA_fromTemplate2_%s.xml"%(cdir, outputstring)
+        shutil.copy2(tmptopfileOld, tmptopfile) 
+        replaceinfile(tmptopfile, [
+          ("DATAHIST", histName) ,
+          ])
 
         replaceinfile(tmpcategoryfile, [
           ("DATAFILE", datafile),
@@ -333,7 +358,8 @@ def run_anaFit(datahist,
           ("BINS", str(nbins)),
           ("NBKG", str(nbkg)),
           ("NSIG", str(nsig)),
-          ("MEAN", str(sigmean)),
+          ("MEAN", str(sigmeanY)),
+          ("SIGNALMASS", str(sigmean)),
           ("MASSX", str(sigmeanX)),
           ("WIDTH", str(sigwidth)),
           ("BIASMAGNITUDE", "%.0f"%biasMagnitude),
@@ -368,6 +394,10 @@ def run_anaFit(datahist,
         print ("Rerunning")
         if abs(fitnsig +10) < 1e-3 :
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,10"), ])
+        if abs(fitnsig +30) < 1e-3 :
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,30"), ])
+        if abs(fitnsig +50) < 1e-3 :
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,50"), ])
         if abs(fitnsig +5) < 1e-3 :
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,5"), ])
         if abs(fitnsig +100) < 1e-3 :

@@ -17,7 +17,6 @@ import python.fluctuationsCheck as fc
 cdir = config.cdir
 
 
-#sigmeans=[3000, 4000, 5000, 6000, 7000, 8000]
 #sigmeans=[2000, 3000, 4000, 6000, 8000, 10000]
 sigmeans = [2000,2250, 2500, 2750, 3000,3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
 
@@ -67,9 +66,7 @@ outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
 rangelow = config.samples[channelNames[0]]["rangelow"]
 rangehigh = config.samples[channelNames[0]]["rangehigh"]
-spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"])
-
-
+#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"], signalfile=signalfile)
 
 
 infilesChi2 = "PostFit_bkgOnly_%s_%s"%(pdFitName, fitName)
@@ -100,7 +97,7 @@ pathsLimits = []
 for channelName in channelNames:
   outputdir = coutputdir + channelName
   pathsLimits = [ "Limits_limits_%s_%s"%(fitName, signalfile)]
-  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50)
+  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile)
 
 pathsLimits = []
 pathsPostFit = []

@@ -6,11 +6,11 @@ cdir = config.cdir
 
 
 #channelNames = [ ["Data_2javg_alpha0"],[ "Data_2javg_alpha1"],[ "Data_2javg_alpha2"],[ "Data_2javg_alpha3"],[ "Data_2javg_alpha4"],[ "Data_2javg_alpha5"],[ "Data_2javg_alpha6"],[ "Data_2javg_alpha7"],[ "Data_2javg_alpha8"],[ "Data_2javg_alpha9"],[ "Data_2javg_alpha10"],[ "Data_2javg_alpha11"], ]
-channelNames = [[ "Data_2javg_alpha0"],]
+channelNames = [[ "Data_2javg_alpha5"],]
 
 #fitNames = ["threeParM2j", "fourParM2j", "fiveParM2j"]
-#fitNames = ["fiveParM2j",]
-fitNames = ["fourParM2j",]
+fitNames = ["fiveParM2j",]
+#fitNames = ["fourParM2j",]
 
 
 for channelName in channelNames:
