@@ -15,7 +15,6 @@ parser = ArgumentParser()
 
 parser.add_argument('--isBatch', dest='isBatch', type=int, default=0, help='Input data file')
 parser.add_argument('--fitName', dest='fitName', type=str, default=None, help='Name of the file with the fit function information')
-parser.add_argument('--pdFitName', dest='pdFitName', type=str, default=None, help='Name of the file with the fit function information')
 parser.add_argument('--signalFile', dest='signalFile', type=str, default=None, help='Name of the signal file')
 parser.add_argument('--channelNames', dest='channelNames', nargs='+', help='Output workspace file')
 parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
@@ -28,7 +27,6 @@ args = parser.parse_args()
 
 
 if args.isBatch:
-  pdFitName = args.pdFitName
   fitName = args.fitName
   channelName = args.channelNames
   sigmeans = [args.sigmean]

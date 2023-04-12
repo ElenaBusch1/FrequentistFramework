@@ -40,7 +40,6 @@ else:
   channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
   #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
-  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
   sigmeans = [2000,]
   sigwidths = [10]
   signalfile =  "Gaussian"
@@ -77,7 +76,14 @@ for sigmean in sigmeans:
               os.makedirs(outputdir)
           nbkg="1E3,0,1E6"
           nbkgWindow = 1
-          nsig="0,-1e4,1e4"
+          nsig="0,0,1000"
+          if sigmean > 500:
+            nsig="0,0,800"
+          if sigmean > 700:
+            nsig="0,0,500"
+          if sigmean > 1000:
+            nsig="0,0,50"
+
           topfile=config.samples[channelName[0]]["topfile"]
   
           # Output file names, which will be written to outputdir

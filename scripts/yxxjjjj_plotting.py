@@ -29,7 +29,8 @@ spuriousRanges = [1500, 400, 150, 15, 5, 5, 5]
 sigwidths=[ 10]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[5,4,3,2,1,0]
-sigamps=[5,4,3,2,1]
+#sigamps=[5,4,3,2,1]
+sigamps=[5,3,1]
 
 #pdFitName = "sixPar"
 #fitName = "fivePar"
@@ -154,7 +155,7 @@ outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
 rangelow = config.samples[channelNames[0]]["rangelow"]
 rangehigh = config.samples[channelNames[0]]["rangehigh"]
-#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"])
+spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"])
 
 
 
@@ -182,14 +183,14 @@ pathsLimits = []
 for channelName in channelNames:
   outputdir = coutputdir + channelName
   pathsLimits = [ "Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile)]
-  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=100)
+  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=100)
 
 pathsLimits = []
 for channelName in channelNames:
   pathsLimits.append("Limits_limits_%s_%s_%s"%(pdFitName, fitName, signalfile))
 outputdir = coutputdir 
 #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=100)
-plotLimits2D.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=50, alphaBins=alphaBins)
+#plotLimits2D.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=50, alphaBins=alphaBins)
 
 for channelName in channelNames:
   outputdir = coutputdir + channelName
