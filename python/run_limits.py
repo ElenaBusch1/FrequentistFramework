@@ -29,7 +29,7 @@ def run_anaFit(datahist,
         print(postfitfile)
         if lf.read_histogram(postfitfile, "data%s_%s"%(histName, toyString)):
           print( "Already found toy for ", toy)
-          continue
+          return 0
 
 
 
