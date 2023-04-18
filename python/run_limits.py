@@ -24,11 +24,8 @@ def run_anaFit(datahist,
 
     limitFile =  outputfile.replace("FitResult","Limits")
     if not doRemake:
-        postfitfile=outputfile.replace("FitResult","PostFit")
-        postfitfile=postfitfile.replace("CHANNEL", histName)
-        print(postfitfile)
-        if lf.read_histogram(postfitfile, "data%s_%s"%(histName, toyString)):
-          print( "Already found toy for ", toy)
+        if os.path.isfile(limitFile):
+          print( "Already found limit")
           return 0
 
 
