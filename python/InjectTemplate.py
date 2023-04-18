@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-import ROOT
+import ROOT as r
 import sys, re, os, math, argparse
 
 
-def findWindow(hist, windowFrac=0.68):
+def findWindow(histo, windowFrac=0.72):
   
   minWidth = 1e5
   if not isinstance(histo, r.TH1):
@@ -11,7 +11,7 @@ def findWindow(hist, windowFrac=0.68):
   if histo.Integral()==0:
     return 0, 0
 
-  integral = histo.Integral(0, histo.GetNbinsX()+1)
+  integral = histo.Integral(1, histo.GetNbinsX()+1)
   Nbins = histo.GetNbinsX()
   bestTopEdge = 0
 
@@ -25,7 +25,7 @@ def findWindow(hist, windowFrac=0.68):
        imax = i
 
        # Scan over histo, starting at bin i until it contains a fraction of events > frac or it reaches the end of the histogram
-       while tempFrac<float(frac) and imax != Nbins:
+       while tempFrac<float(windowFrac) and imax != Nbins:
           tempFrac += histo.GetBinContent(imax)/integral 
           imax += 1
 
@@ -45,30 +45,35 @@ def findWindow(hist, windowFrac=0.68):
     bestTopEdge = histo.GetBinCenter(Nbins)
   valLow = bestTopEdge-minWidth
 
-
   return valLow,bestTopEdge
 
 
 
 
-def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= "", outfile= "", wsfile = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mR550.root", wspdf = "SigLow_1_alpha200_SR1", firsttoy=None, lasttoy=None):
+def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= "", outfile= "", wsfile = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/ff_latest/config/dijetISR/Input/signal/HistFactory_dijetISR_mR550.root", wspdf = "SigLow_1_alpha200_SR1", firsttoy=None, lasttoy=None, writeFile = True):
 
     #print wsfile, wspdf
-    inws = ROOT.TFile.Open(wsfile)
+    inws = r.TFile.Open(wsfile)
     ws = inws.Get("combined")
     signalPDF = ws.pdf(wspdf + "_model")
     mjjVar = ws.var('obs_x_' + wspdf)
+    print wsfile, histname, wspdf
     sigHistNom = signalPDF.createHistogram("test", mjjVar);
 
-    f_in = ROOT.TFile(infile, "READ")
-    f_out = ROOT.TFile(outfile, "RECREATE")
-    f_out.cd()
+    f_in = r.TFile(infile, "READ")
+    if writeFile:
+      f_out = r.TFile(outfile, "RECREATE")
+      f_out.cd()
 
-    gRand = ROOT.TRandom3()
+    gRand = r.TRandom3()
     seed = 0
 
     nbkgs = []
+    index = -1
     for histKey in f_in.GetListOfKeys():
+        index+=1
+        if index > lasttoy:
+          break;
         histNameFile = histKey.GetName()
         
         if not histname in histNameFile:
@@ -84,9 +89,7 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
         if sigmean > 0.0:
 
             # determine the gaussian amplitude (ntimes * sqrt(n) in FWHW range)
-            #rangeLow = sigmean  - 1.18*(sigwidth*0.01) * sigmean
-            #rangeHigh = sigmean + 1.18*(sigwidth*0.01) * sigmean
-            rangeLow, rangeHigh = findWindwo(hist)
+            rangeLow, rangeHigh = findWindow(sigHistNom)
             binLow = hist.FindBin(rangeLow)
             binHigh = hist.FindBin(rangeHigh)
             binLowSig = sigHistNom.FindBin(rangeLow)
@@ -100,19 +103,21 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
             fSig = sigHistNom.Integral(binLowSig, binHighSig) #integral from -1.18 sigma to +1.18 sigma
             nSigNew = int(math.sqrt(nBkg)*sigamp / fSig)
 
-            mctoy = signalPDF.generateBinned(ROOT.RooArgSet(mjjVar), nSigNew)
+            mctoy = signalPDF.generateBinned(r.RooArgSet(mjjVar), nSigNew)
             sigHist2 = mctoy.createHistogram("test_%s"%(histKey), mjjVar);
-            hgaus = mctoy.fillHistogram(hgaus, ROOT.RooArgList(mjjVar))
+            hgaus = mctoy.fillHistogram(hgaus, r.RooArgList(mjjVar))
 
             hinj.Add(hgaus)
 
-        hinj.Write(histNameFile )
-        hist.Write(histNameFile+"_beforeInjection")
-        hgaus.Write(histNameFile+"_injection")
+        if writeFile:
+          hinj.Write(histNameFile )
+          hist.Write(histNameFile+"_beforeInjection")
+          hgaus.Write(histNameFile+"_injection")
 
         seed += 1
             
-    f_out.Close()
+    if writeFile:
+      f_out.Close()
     return nbkgs
 
 

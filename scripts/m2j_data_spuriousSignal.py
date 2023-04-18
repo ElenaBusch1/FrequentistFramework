@@ -15,7 +15,6 @@ parser.add_argument('--channelNames', dest='channelNames', nargs='+', help='Outp
 parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
 parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
 parser.add_argument('--doRemake', dest='doRemake', type=int, default=0, help='Amplitude of signal Gaussian for s+b fit (in %)')
-parser.add_argument('--outputdir', dest='outputdir', type=str, default="fitsNixon", help='Amplitude of signal Gaussian for s+b fit (in %)')
 args = parser.parse_args()
 
 
@@ -26,7 +25,6 @@ if args.isBatch:
   sigmeans = [args.sigmean]
   sigwidths = [args.sigwidth]
   signalfile = args.signalFile
-  coutputdir = args.outputdir
   nToys = config.nToys
 
 
@@ -37,16 +35,17 @@ else:
   #fitName = "threeParM2j"
   pdFitNames = ["fiveParM2j"]
   fitName = "fourParM2j"
-  #channelNames = [["Data_2javg_alpha0"],[ "Data_2javg_alpha1"],[ "Data_2javg_alpha2"],[ "Data_2javg_alpha3"],[ "Data_2javg_alpha4"],[ "Data_2javg_alpha5"],[ "Data_2javg_alpha6"],[ "Data_2javg_alpha7"],[ "Data_2javg_alpha8"],[ "Data_2javg_alpha9"],[ "Data_2javg_alpha10"],[ "Data_2javg_alpha11"], ]
-  channelNames = [["4"]]
+  #channelNames = [["6"]]
+  channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+  #channelNames = [[8], [9], [10], [11],]
 
 
-  #sigmeans = [500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250]
-  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
+
   #sigmeans = [500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2450, 2500, 2550, 2600, 2650, 2700, 2750, 2800, 2850, 2900, 2950, 3000, 3050, 3100, 3150, 3200, 3250, 3300, 3350, 3400, 3450, 3500]
   #sigmeans = [1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2450, 2500, 2550, 2600, 2650, 2700, 2750, 2800, 2850, 2900, 2950, 3000, 3050, 3100, 3150, 3200, 3250, 3300, 3350, 3400, 3450, 3500]
   #sigmeans = [ 3200, 3250, 3300, 3350, 3400, 3450, 3500]
-  sigmeans = [1200]
+  sigmeans = [3500]
+  #sigmeans = [1800]
 
   sigwidths = [10]
   signalfile = "crystalBallHistNoSyst"
@@ -83,7 +82,7 @@ for sigmean in sigmeans:
           if mY < 2000:
             continue
 
-          if mY > 11000:
+          if mY > 10000:
             continue
 
           outputdir = coutputdir+channelName[0]
@@ -163,6 +162,9 @@ for sigmean in sigmeans:
                useSysts = False,
                tagName = tagName,
                isMx = True,
+               useBkgWindow = True,
+               minTolerance = "1e-4",
+               useNegWindow = True,
               )
 
 

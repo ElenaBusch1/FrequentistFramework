@@ -5,7 +5,7 @@ import sys, re, os, math, argparse
 def getVars(varFileName):
   varNames = []
   newNames = []
-  fp = open(varFileName + ".txt")
+  fp = open(varFileName)
   varNames = fp.readlines()
   for varName in range(len(varNames)):
     varNames[varName] = varNames[varName]. rstrip('\n')
@@ -17,20 +17,18 @@ def getVars(varFileName):
       varNames.append(varNames[varName])
 
     while(newNames[varName].find("*")>0):
-      #print newNames[varName]
       newNames[varName] = newNames[varName].replace("*", " ")
 
   return varNames, newNames
 
 
-def generateSignalWS(infile, histName, doSysts, outfile = ""):
+def generateSignalWS(infile, histName, doSysts, outfile = "", systematicNameFile = "uncertaintySets/systematics.txt"):
   ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.WARNING)
 
   meas = ROOT.RooStats.HistFactory.Measurement("meas", "meas")
   meas.SetExportOnly( False )    # True omits plots and tables from output file
  
   meas.SetOutputFilePrefix( outfile.replace(".root","") )
-  # meas.SetPOI( "nsig" )
 
   meas.SetLumi(1.0)
 
@@ -40,7 +38,7 @@ def generateSignalWS(infile, histName, doSysts, outfile = ""):
   inFile = ROOT.TFile(infile, "READ")
 
   # for some mass points there are morphed and original templates: pick up original ones.
-  systs, _ = getVars("uncertaintySets/systematics")
+  systs, _ = getVars(systematicNameFile)
 
   signal = ROOT.RooStats.HistFactory.Sample("signal", histName, infile)
   signal.SetNormalizeByTheory(False) #no lumi unc on this

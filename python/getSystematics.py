@@ -51,7 +51,7 @@ def getVars(varFileName):
   varNames = []
   newNames = []
   try:
-    fp = open(varFileName + ".txt")
+    fp = open(varFileName )
   except:
     return varNames, newNames
   varNames = fp.readlines()

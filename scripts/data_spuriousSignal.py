@@ -42,31 +42,32 @@ else:
   #fitName = "fivePar"
 
   # The different channels you are using
-  #channelNames = [ ["Data_yxxjjjj_4j_alpha0"],[ "Data_yxxjjjj_4j_alpha1"],[ "Data_yxxjjjj_4j_alpha2"],[ "Data_yxxjjjj_4j_alpha3"],[ "Data_yxxjjjj_4j_alpha4"],[ "Data_yxxjjjj_4j_alpha5"],[ "Data_yxxjjjj_4j_alpha6"],[ "Data_yxxjjjj_4j_alpha7"],[ "Data_yxxjjjj_4j_alpha8"],[ "Data_yxxjjjj_4j_alpha9"],[ "Data_yxxjjjj_4j_alpha10"],[ "Data_yxxjjjj_4j_alpha11"], ]
-  #channelNames = [ ["Data_yxxjjjj_4j_alpha0"], ]
-  channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-  channelNames = [[10],]
+  #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+  #channelNames = [[4], [5], [6], [7], [8], [9], [10], [11],]
+  channelNames = [[10], [11],]
+  #channelNames = [[6], [7], [8], [9], [10], [11],]
 
 
   # The means of the signal distributions
   #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
   #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
-  sigmeans = [3750]
+  #sigmeans = [10000]
+  sigmeans = [9750]
 
   # The width of the signal distribution (in %)
   sigwidths = [10]
 
   # The signal file to use
   #signalfile =  "Gaussian"
-  #signalfile =  "crystalBallHistNoSyst"
-  signalfile =  "gausHistNoSyst"
+  signalfile =  "crystalBallHistNoSyst"
+  #signalfile =  "gausHistNoSyst"
   
   # This should match the output directory of previous steps
   # The actual output directory will also depend on the channel name
   coutputdir = "fitsData_"
 
   # Argument to control if you want to remake the results or just keep running them
-  args.doRemake = 0
+  args.doRemake = 1
 
   # The number of toys used for the spurious signal tests
   # If this is larger than the number of toys you have produced, this will cause problems
@@ -139,9 +140,10 @@ for sigmean in sigmeans:
                histnames=pdHists, 
                doRemake=args.doRemake,
                useSysts = False,
+               useBkgWindow = True,
+               minTolerance = "1e-6",
+               useNegWindow = True,
               )
-
-
 
 
 

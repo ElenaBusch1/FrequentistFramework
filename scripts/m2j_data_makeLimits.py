@@ -1,6 +1,7 @@
 import config as config
 import python.run_limits as run_anaFit
-import os,sys,re,argparse,subprocess,shutil
+#import os,sys,re,argparse,subprocess,shutil
+import argparse
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -26,7 +27,7 @@ else:
   channelNames = [[ "0"], ]
 
   #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  sigmeans = [700]
+  sigmeans = [500]
   sigwidths = [10]
   signalfile =  "crystalBallHist"
   #signalfile =  "template"

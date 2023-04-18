@@ -6,13 +6,15 @@ signalfile =  config.cSignal
 overallName = config.cSample
 
 fitName = "fourPar"
-allChannelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+#allChannelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+allChannelNames = [[0], ]
 
 #signalfile =  "Gaussian"
 signalfile =  "crystalBallHist"
 coutputdir = "fitsData"
 
-sigmeans = [2000, 2250, 2500, 2750, 3000, 3250, 3500,3750, 4000,4250, 4500,4750, 5000,5250, 5500,5750, 6000,6250, 6500,6750, 7000,7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+#sigmeans = [2000, 2250, 2500, 2750, 3000, 3250, 3500,3750, 4000,4250, 4500,4750, 5000,5250, 5500,5750, 6000,6250, 6500,6750, 7000,7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+sigmeans = [2000]
 sigwidths = [10]
 
 for channelNames in allChannelNames:
@@ -32,6 +34,14 @@ for channelNames in allChannelNames:
                            " --outputdir=" + overallName +  \
                            " --doRemake=1 " \
                            " --isBatch=1"
+
+        if not doRemake:
+          postfitfile=outputfile.replace("FitResult","PostFit")
+          postfitfile=postfitfile.replace("CHANNEL", histName)
+          if lf.read_histogram(postfitfile, "data%s__%d"%(histName, toy)):
+            print( "Already found toy for ", toy)
+            continue
+
 
 
         runfile = "batch/runLimits_" + str(sigmean) + "_" + str(sigwidth)  + "_" + signalfile + "_" + overallName + "_%d"%(channelNames[0]) + ".sh"

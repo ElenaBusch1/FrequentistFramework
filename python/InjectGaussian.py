@@ -2,16 +2,22 @@
 import ROOT
 import sys, re, os, math, argparse
 
-def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, firsttoy=None, lasttoy=None):
+
+def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, firsttoy=None, lasttoy=None, writeFile = True):
     f_in = ROOT.TFile(infile, "READ")
-    f_out = ROOT.TFile(outfile, "RECREATE")
-    f_out.cd()
+    if writeFile:
+      f_out = ROOT.TFile(outfile, "RECREATE")
+      f_out.cd()
 
     gRand = ROOT.TRandom3()
     seed = 0
     nbkgs = []
 
+    index = -1
     for histKey in f_in.GetListOfKeys():
+        index+=1
+        if index > lasttoy:
+          continue;
         histNameFile = histKey.GetName()
         
         if not histname in histNameFile:
@@ -46,13 +52,15 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
                 hgaus.FillRandom('mygaus', nSigNew) 
                 hinj.Add(hgaus)
 
-        hinj.Write(histNameFile )
-        hist.Write(histNameFile+"_beforeInjection")
-        hgaus.Write(histNameFile+"_injection")
+        if writeFile:
+          hinj.Write(histNameFile )
+          hist.Write(histNameFile+"_beforeInjection")
+          hgaus.Write(histNameFile+"_injection")
 
         seed += 1
             
-    f_out.Close()
+    if writeFile:
+      f_out.Close()
     return nbkgs
 
 

@@ -32,7 +32,6 @@ for channelNames in allChannelNames:
                            " --channelNames " + channelString + \
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
-                           " --outputdir=" + overallName +  \
                            " --doRemake=1 " \
                            " --isBatch=1"
 

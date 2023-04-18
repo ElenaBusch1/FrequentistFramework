@@ -10,6 +10,10 @@ import ROOT as r
 from scipy.stats.distributions import chi2
 import python.LocalFunctions as lf
 import getSystematics as gs
+from python.InjectGaussian import InjectGaussian
+from python.InjectTemplate import InjectTemplate
+
+from math import sqrt
 
 def execute(cmd):  
     print("EXECUTE:", cmd)
@@ -32,7 +36,7 @@ def replaceinfile(f, old_new_list):
     with open(f, 'w') as file:
         file.write(filedata)
 
-def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None, nbkgWindow=[]):
+def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None, nbkgWindow=[], minTolerance = "1e-5"):
     
     print("starting fit extractor")
     rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
@@ -64,7 +68,8 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-5 -o %s" % (wsfile, _poi, _range, fitresultfile))
     #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 1e-8 -o %s" % (wsfile, _poi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance %s -o %s" % (wsfile, _poi, _range, minTolerance, fitresultfile))
     if rtv != 0:
         #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 %s --minTolerance 10 -o %s" % (wsfile, _poi, _range, fitresultfile))
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
@@ -159,6 +164,11 @@ def run_anaFit(datahist,
                biasMagnitude=0,
                tagName = "",
                isMx = False,
+               systematicNameFile = "uncertaintySets/systematics.txt",
+               minTolerance = "1e-8",
+               initialGuess = "50",
+               useBkgWindow = False,
+               useNegWindow = False,
               ):
 
     myRebinEdges = []
@@ -184,7 +194,7 @@ def run_anaFit(datahist,
       sigmeanY = sigmean
 
     signalfileName = config.signals[signalfile]["signalfile"]
-    signalWSName   = config.signals[signalfile]["workspacefile"]
+    #signalWSName   = config.signals[signalfile]["workspacefile"]
     sigwsfile      = config.signals[signalfile]["workspacefile"]
     sighist        = config.signals[signalfile]["histname"]
     if isMx:
@@ -194,19 +204,60 @@ def run_anaFit(datahist,
     sighist = sighist.replace("ALPHA", "%d"%alpha)
     sighist = sighist.replace("MEAN", "%d"%sigmeanY)
     sighist = sighist.replace("MASSX", "%d"%sigmeanX)
+    sighist = sighist.replace("WIDTH", "%d"%sigwidth)
 
 
     signalfileName = signalfileName.replace("TAGNAME", tagName)
     signalfileName = signalfileName.replace("MASSX", "%d"%(sigmeanX))
+    signalfileName = signalfileName.replace("WIDTH", "%d"%(sigwidth))
     sigwsfile = sigwsfile.replace("MEAN", "%d"%(sigmeanY))
     sigwsfile = sigwsfile.replace("SIGNALMASS", "%d"%(sigmean))
     sigwsfile = sigwsfile.replace("MASSX", "%d"%(sigmeanX))
-    signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
+    sigwsfile = sigwsfile.replace("WIDTH", "%d"%(sigwidth))
+    #signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
+    #signalWSName = signalWSName.replace("WIDTH", "%d"%(sigwidth))
 
     shutil.copy2(topfile, tmptopfileOld) 
     shutil.copy2(signalfileName, tmpsignalfile) 
     tmpsignalfile.replace("MEAN", str(sigmeanY))
     tmpsignalfile.replace("MASSX", str(sigmeanX))
+    tmpsignalfile.replace("WIDTH", str(sigwidth))
+
+
+    if useBkgWindow:
+      for cfile, chist in zip(datafiles, histnames):
+        if isMx:
+          myHistName = config.signals[signalfile]["histnameMX"] 
+        else:
+          myHistName = config.signals[signalfile]["histname"] 
+
+        if myHistName == "":
+          nbkgWindowTmp = InjectGaussian(infile=cfile,
+                         histname=chist,
+                         sigmean=sigmean,
+                         sigwidth=sigwidth,
+                         sigamp=0,
+                         firsttoy=0,
+                         lasttoy=0,
+                         writeFile = False)
+        else:
+          nbkgWindowTmp = InjectTemplate(infile=cfile,
+                         histname=chist,
+                         sigmean=sigmean,
+                         sigwidth=sigwidth,
+                         sigamp=0,
+                         firsttoy=0,
+                         lasttoy=0,
+                         wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmeanY).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName),
+                         wspdf = myHistName,
+                         writeFile = False,)
+      myNsig = max(6*sqrt(nbkgWindowTmp[0]), 3)
+      nsig = "0,0,%.2f"%(myNsig)
+      if useNegWindow:
+        nsig = "0,-%.2f,%.2f"%(myNsig,myNsig)
+      print ("Testing ", nsig)
+      print ( config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmeanY).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName), myHistName, nbkgWindowTmp)
+
     
     # Make a list of all of the distributions that should be fit
     newName = ""
@@ -236,10 +287,12 @@ def run_anaFit(datahist,
     systFileName = systFileName.replace("ALPHA", "%d"%alpha)
     systFileName = systFileName.replace("MEAN", "%.0f"%sigmeanY)
     systFileName = systFileName.replace("MASSX", "%.0f"%sigmeanX)
+    systFileName = systFileName.replace("WIDTH", "%.0f"%sigwidth)
     systFileName = systFileName.replace("TAGNAME", tagName)
-    systematics = gs.writeSystematics("systematics", sigmeanY, alpha, systFileName)
-    print (signalfile)
-    print(tmptopfileOld)
+    if useSysts:
+      systematics = gs.writeSystematics("systematics", sigmeanY, alpha, systematicNameFile)
+    else:
+      systematics = ""
     if sigmean==0:
       newSignal = ""
       newSignalZero = ""
@@ -255,16 +308,17 @@ def run_anaFit(datahist,
                    ("MASSX", str(sigmeanX)),
                    ("WIDTH", str(sigwidth)),
                    ("SIGNALFILE", tmpsignalfile),
+                   ("SIGNALNOSYSTFILE", tmpsignalfile),
                    ("SYSTEMATICS", systematics),
                    ("OUTPUTFILE", wsfile),
                    ("TAGNAME", tagName),
-                   ("BIASMAGNITUDE", "%.0f"%biasMagnitude),
+                   ("BIASMAGNITUDE", "%.2d"%biasMagnitude),
                   ])
 
     replaceinfile(tmpsignalfile,
                   [
-                   ("WORKSPACEFILE", signalWSName),
-                   #("WORKSPACEFILE", sigwsfile),
+                   #("WORKSPACEFILE", signalWSName),
+                   ("WORKSPACEFILE", sigwsfile),
                    ("CDIR", cdir),
                    ("SIGNALMASS", str(sigmean)),
                    ("MEAN", str(sigmeanY)),
@@ -276,28 +330,28 @@ def run_anaFit(datahist,
                    ("OUTPUTFILE", wsfile),
                    ("TAGNAME", tagName),
                    ("SYSTEMATICS", systematics),
-                   ("BIASMAGNITUDE", "%.0f"%biasMagnitude),
+                   ("BIASMAGNITUDE", "%.2d"%biasMagnitude),
                   ])
-
 
 
     nsigOld = -10
     nbkgOld = 0
     for toy in range(max(ntoys, 1)):
-      if not doRemake:
-        postfitfile=outputfile.replace("FitResult","PostFit")
-        postfitfile=postfitfile.replace("CHANNEL", histName)
-        print(postfitfile)
-        if lf.read_histogram(postfitfile, "data%s__%d"%(histName, toy)):
-          print( "Already found toy for ", toy)
-          continue
-
-
       print ("Running toy ", toy)
       if ntoys == None:
         toyString = ""
       else:
         toyString = "_%d"%(toy)
+
+      if not doRemake:
+        postfitfile=outputfile.replace("FitResult","PostFit")
+        postfitfile=postfitfile.replace("CHANNEL", histName)
+        print(postfitfile)
+        if lf.read_histogram(postfitfile, "data%s_%s"%(histName, toyString)):
+          print( "Already found toy for ", toy)
+          continue
+
+
       
       # Make a category file for each signal region
       tmpDataHists = []
@@ -352,6 +406,7 @@ def run_anaFit(datahist,
           ("FITFUNC", tmpfitfile),
           ("CDIR", cdir),
           ("SIGNALFILE", tmpsignalfile),
+          ("SIGNALNOSYSTFILE", tmpsignalfile),
           ("RANGELOW", str(rangelow)),
           ("RANGEHIGH", str(rangehigh)),
           ("SYSTEMATICS", systematics),
@@ -362,7 +417,8 @@ def run_anaFit(datahist,
           ("SIGNALMASS", str(sigmean)),
           ("MASSX", str(sigmeanX)),
           ("WIDTH", str(sigwidth)),
-          ("BIASMAGNITUDE", "%.0f"%biasMagnitude),
+          ("BIASMAGNITUDE", "%.2d"%biasMagnitude),
+          ("SYSTEMATICS", systematics),
         ])
 
       if dosignal:
@@ -386,11 +442,12 @@ def run_anaFit(datahist,
                                                                 toy=toy,
                                                                 toyString=toyString,
                                                                 nbkgWindow=nbkgWindow,
+                                                                minTolerance = minTolerance,
                                                                 )
 
       
       #if isPass == 1 and fitnsig == -10:
-      if dosignal and (abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2):
+      if dosignal and ((abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2) or useBkgWindow):
         print ("Rerunning")
         if abs(fitnsig +10) < 1e-3 :
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,10"), ])
@@ -402,6 +459,9 @@ def run_anaFit(datahist,
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,5"), ])
         if abs(fitnsig +100) < 1e-3 :
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,100"), ])
+
+        if useBkgWindow and abs(fitnsig + myNsig) < 1e-3:
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,%.2f"%(myNsig)), ])
         pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe = build_fit_extract(topfile=tmptopfile,
                                                                 datafiles=datafiles,
                                                                 channels=datahist,
@@ -465,17 +525,9 @@ def run_anaFit(datahist,
 
         tmptopfilemasked=tmptopfile
         tmpcategoryfilemasked=tmpcategoryfile
-        #tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
-        #tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
-        ##replaceinfile(tmpcategoryfilemasked, [
-        ##  (nbkg, "'%d,%d,%d'"%(fitnbkg,fitnbkg,fitnbkg)),
-        ##])
 
         outfilemasked=outputfile
         wsfilemasked=wsfile
-
-        #shutil.copy2(tmptopfile, tmptopfilemasked) 
-        #shutil.copy2(tmpcategoryfile, tmpcategoryfilemasked) 
 
         # TODO there is probably a better way of doing this
         replaceinfile(tmptopfilemasked, 
@@ -521,13 +573,10 @@ def run_anaFit(datahist,
       
       # blindrange not yet implemented with quickLimit
       if dolimit and dosignal and pvals_global[0] > maskthreshold:
-          #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          #rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1 --muScanPoints 0 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          #rtv=execute("timeout --foreground 6000 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100 --minTolerance 1E-5  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 50 --minTolerance 5E-2  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess %s --minTolerance %s  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, initialGuess, minTolerance,  outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

@@ -34,6 +34,8 @@ def run_injections_anaFit(
                           histnames,
                           doRemake,
                           useSysts,
+                          isMx = False,
+                          tagName="",
                          ):
 
     print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
@@ -49,9 +51,13 @@ def run_injections_anaFit(
       injecteddatafile=cfile
       injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
       injecteddatafiles.append(injecteddatafile)
+      if isMx:
+        myHistName = config.signals[signalfile]["histnameMX"]
+      else:
+        myHistName = config.signals[signalfile]["histname"]
 
 
-      if config.signals[signalfile]["histname"] == "":
+      if myHistName == "":
         nbkgWindow = InjectGaussian(infile=cfile,
                        histname=chist,
                        sigmean=sigmean,
@@ -69,8 +75,8 @@ def run_injections_anaFit(
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1,
-                       wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX),
-                       wspdf = config.signals[signalfile]["histname"],
+                       wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName),
+                       wspdf = myHistName,
                        )
       print (chist, nbkgWindow)
       nbkgWindows.append(nbkgWindow)

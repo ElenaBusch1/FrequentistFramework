@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 if args.isBatch:
   fitName = args.fitName
-  channelName = [args.channelNames]
+  channelNames = [args.channelNames]
   sigmeans = [args.sigmean]
   sigwidths = [args.sigwidth]
   signalfile = args.signalFile

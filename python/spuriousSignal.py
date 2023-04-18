@@ -94,7 +94,8 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
 
             #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";N_{extracted signal};No. of toys", 21, -crange[j], crange[j])
             #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 21, -crange[j], crange[j])
-            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 63, -crange[j], crange[j])
+            #h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 63, -crange[j], crange[j])
+            h_allPoints = TH1F("spuriousSignal_%d_%d"%(sigmean, sigwidth), ";S_{spur};No. of toys", 101, -crange[j], crange[j])
             h_allPoints.SetDirectory(0)
 
             rangelow = config.samples[channelName]["rangelow"]

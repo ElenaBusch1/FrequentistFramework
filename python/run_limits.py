@@ -22,11 +22,22 @@ def run_anaFit(datahist,
                doRemake = False,
               ):
 
+    limitFile =  outputfile.replace("FitResult","Limits")
+    if not doRemake:
+        postfitfile=outputfile.replace("FitResult","PostFit")
+        postfitfile=postfitfile.replace("CHANNEL", histName)
+        print(postfitfile)
+        if lf.read_histogram(postfitfile, "data%s_%s"%(histName, toyString)):
+          print( "Already found toy for ", toy)
+          continue
+
+
 
     poi="nsig_mean%s_%s" % (sigmean, datahist[0])
 
-    #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100 --minTolerance 1e-5  --minStrat 0 --betterBands 0  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
-    rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100 --minTolerance 1e-3  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits")))
+    rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 1000 --minTolerance 1e-3  --minStrat 2 --betterBands 1  --nllOffset 1 -o %s" % (wsfile, poi, limitFile))
+
+
     if rtv != 0:
           print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     
