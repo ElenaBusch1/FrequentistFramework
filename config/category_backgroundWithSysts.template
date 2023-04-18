@@ -12,8 +12,8 @@
   </Sample>
 
   <Sample Name="signal_meanMEAN" InputFile="SIGNALFILE" MultiplyLumi="0" >
-    <NormFactor Name="nsig_meanSIGNALMASS_CHANNEL[NSIG]" />
     <Systematic Name="pdf" Constr="asym" CentralValue="1" Mag="+0.01,-0.01" WhereTo="yield"/>
+    <NormFactor Name="nsig_meanSIGNALMASS_CHANNEL[NSIG]" />
   </Sample>
 
 

@@ -2,8 +2,6 @@
 <!DOCTYPE Model  SYSTEM 'CDIR/run/AnaWSBuilder.dtd'>
   <Model Type="External" Input="SIGFILE" WSName="combined" ModelName="SIGHIST_model" ObservableName="obs_x_SIGHIST">
 
-
   SYSTEMATICS
-
-
+ 
 </Model>
