@@ -2678,7 +2678,7 @@ signals["template"] = {
 
 
 signals["crystalBallHist"] = {
-                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "signalfile": "%s/config/signalGauss_meanM_template.xml"%(cdir),
                  "workspacefile": "%s/scripts/signalTemplates/TAGNAMESignalCB_mX_MEAN_mY_MASSX.root"%(cdir),
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
                  #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
