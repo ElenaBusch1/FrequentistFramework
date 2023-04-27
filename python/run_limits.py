@@ -20,6 +20,8 @@ def run_anaFit(datahist,
                sigmean=0,
                sigwidth=7,
                doRemake = False,
+               minTolerance = "1e-3",
+               initialGuess = "1000",
               ):
 
     limitFile =  outputfile.replace("FitResult","Limits")
@@ -32,7 +34,7 @@ def run_anaFit(datahist,
 
     poi="nsig_mean%s_%s" % (sigmean, datahist[0])
 
-    rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 1000 --minTolerance 1e-3  --minStrat 2 --betterBands 1  --nllOffset 1 -o %s" % (wsfile, poi, limitFile))
+    rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess %s --minTolerance %s  --minStrat 2 --betterBands 1  --nllOffset 1 -o %s" % (wsfile, poi, initialGuess, minTolerance, limitFile))
 
 
     if rtv != 0:

@@ -47,8 +47,8 @@ alphaBins = [0.10, 0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28, 0.30, 0
 coutputdir="fitsData_"
 #signalfile =  "template"
 #signalfile =  "Gaussian"
-signalfile =  "crystalBallHistNoSyst"
-#signalfile =  "crystalBallHist"
+#signalfile =  "crystalBallHistNoSyst"
+signalfile =  "crystalBallHist"
 #signalfile =  "gausHistNoSyst"
 
 lumi = 140000
@@ -67,7 +67,7 @@ outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
 rangelow = config.samples[channelNames[0]]["rangelow"]
 rangehigh = config.samples[channelNames[0]]["rangehigh"]
-spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"], signalfile=signalfile)
+#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"], signalfile=signalfile)
 
 
 infilesChi2 = "PostFit_bkgOnly_%s_%s"%(pdFitName, fitName)
@@ -86,6 +86,7 @@ outfileChi2="chi2_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile)
 
 
 
+signalfile =  "crystalBallHist"
 pathsLimits = []
 for channelName in channelNames:
   outputdir = coutputdir + channelName
@@ -94,11 +95,11 @@ outputdir = coutputdir + channelName
 #fc.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=100)
 
 # Limits
-#pathsLimits = []
-#for channelName in channelNames:
-#  outputdir = coutputdir + channelName
-#  pathsLimits = [ "Limits_limits_%s_%s"%(fitName, signalfile)]
-#  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile)
+pathsLimits = []
+for channelName in channelNames:
+  outputdir = coutputdir + channelName
+  pathsLimits = [ "Limits_limits_%s_%s"%(fitName, signalfile)]
+  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile)
 
 pathsLimits = []
 pathsPostFit = []

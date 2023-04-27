@@ -44,6 +44,7 @@ def findWindow(histo, windowFrac=0.72):
     minWidth = (histo.GetBinCenter(Nbins)-histo.GetBinCenter(1))
     bestTopEdge = histo.GetBinCenter(Nbins)
   valLow = bestTopEdge-minWidth
+  print(" Mass range: ", valLow, bestTopEdge)
 
   return valLow,bestTopEdge
 
@@ -96,6 +97,7 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
             binHighSig = sigHistNom.FindBin(rangeHigh)
             nBkg = hist.Integral(binLow, binHigh)
             nbkgs.append(nBkg)
+            print("number of background", binLow, binHigh, nBkg)
 
             sigma = (sigwidth*0.01) * sigmean 
 

@@ -255,6 +255,8 @@ def run_anaFit(datahist,
       nsig = "0,0,%.2f"%(myNsig)
       if useNegWindow:
         nsig = "0,-%.2f,%.2f"%(myNsig,myNsig)
+        if(myNsig > nbkgWindowTmp[0]) :
+          nsig = "0,-%.2f,%.2f"%(nbkgWindowTmp[0]/2.,myNsig)
       print ("Testing ", nsig)
       print ( config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmeanY).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName), myHistName, nbkgWindowTmp)
 
@@ -374,7 +376,7 @@ def run_anaFit(datahist,
           datafile = datafiles[index]
           actualHistName = histnames[index]
 
-        print (histName)
+        print ("Signal range: ", histName, nsig)
         topfile=config.samples[histName]["topfile"]
         categoryfile=config.samples[histName]["categoryfile"]
         if useSysts:
@@ -446,22 +448,38 @@ def run_anaFit(datahist,
                                                                 )
 
       
-      #if isPass == 1 and fitnsig == -10:
-      if dosignal and ((abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2) or useBkgWindow):
-        print ("Rerunning")
-        if abs(fitnsig +10) < 1e-3 :
-          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,10"), ])
-        if abs(fitnsig +30) < 1e-3 :
-          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,30"), ])
-        if abs(fitnsig +50) < 1e-3 :
-          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,50"), ])
-        if abs(fitnsig +5) < 1e-3 :
-          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,5"), ])
-        if abs(fitnsig +100) < 1e-3 :
-          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,100"), ])
+      if isPass == 1 and useBkgWindow:
+        if abs(fitnsig +myNsig) < 1e-3 :
+          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,%.2f")%(myNsig), ])
 
-        if useBkgWindow and abs(fitnsig + myNsig) < 1e-3:
-          replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,%.2f"%(myNsig)), ])
+      #if dosignal and ((abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2) or useBkgWindow):
+      #if dosignal and ((abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2)):
+      #print ("Rerunning")
+      if dosignal and abs(fitnsig +10) < 1e-3 :
+        replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,10"), ])
+        print ("Rerunning")
+      #if dosignal and abs(fitnsig +30) < 1e-3 :
+      #  replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,30"), ])
+      #  print ("Rerunning")
+      if dosignal and abs(fitnsig +50) < 1e-3 :
+        replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,50"), ])
+        print ("Rerunning")
+      if dosignal and abs(fitnsig +5) < 1e-3 :
+        replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,5"), ])
+        print ("Rerunning")
+      if dosignal and abs(fitnsig +100) < 1e-3 :
+        replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,100"), ])
+        print ("Rerunning")
+      if dosignal and useBkgWindow and abs(fitnsig + myNsig) < 1e-1:
+        replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,%.2f"%(myNsig)), ])
+        print ("Rerunning")
+      if dosignal and useBkgWindow and abs(fitnsig + nbkgWindowTmp[0]/2.) < 1e-1:
+        replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,%.2f"%(myNsig)), ])
+        print ("Rerunning")
+
+
+
+
         pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe = build_fit_extract(topfile=tmptopfile,
                                                                 datafiles=datafiles,
                                                                 channels=datahist,

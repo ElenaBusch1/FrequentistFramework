@@ -1,6 +1,8 @@
 import config as config
 import python.run_limits as run_anaFit
 import os,sys,re,argparse,subprocess,shutil
+import python.getBias as gb
+
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -26,10 +28,10 @@ if args.isBatch:
 else:
 
   fitName = "fourPar"
-  channelNames = [[ "6"], ]
+  channelNames = [[ "0"], ]
 
   #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  sigmeans = [5000]
+  sigmeans = [5750]
   sigwidths = [10]
   signalfile =  "crystalBallHist"
   args.doRemake = 1
@@ -58,6 +60,11 @@ for channelSuffix in channelNames:
         wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
         outputfile = config.getFileName("FitResult_limits_%s_%s"%(fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
 
+
+        biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName[0], sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile+"NoSyst")
+        #biasMagnitude = 0
+        print biasMagnitude
+
         # Then run the injection
         run_anaFit.run_anaFit(
              datahist=channelName,
@@ -67,6 +74,8 @@ for channelSuffix in channelNames:
              sigwidth=sigwidth,
              outputfile=outputfile,
              doRemake = args.doRemake,
+             minTolerance = "1e-3",
+             initialGuess = "%.2f"%(max(biasMagnitude*2,2)),
             )
 
 
