@@ -94,7 +94,7 @@ for channelSuffix in channelNames:
                sigmean=sigmean,
                sigwidth=sigwidth,
                outdir=outputdir,
-               outputstring="%s"%(fitName),
+               outputstring=outputstring,
                outputfile=outputfile,
                signalfile=signalfile,
                maskthreshold=0.05,

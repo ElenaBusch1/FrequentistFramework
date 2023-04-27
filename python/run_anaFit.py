@@ -194,13 +194,11 @@ def run_anaFit(datahist,
       sigmeanY = sigmean
 
     signalfileName = config.signals[signalfile]["signalfile"]
-    #signalWSName   = config.signals[signalfile]["workspacefile"]
     sigwsfile      = config.signals[signalfile]["workspacefile"]
     sighist        = config.signals[signalfile]["histname"]
     if isMx:
       sighist        = config.signals[signalfile]["histnameMX"]
 
-    #print( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" , str(alpha), str(alphaBins[alpha]), sigmeanX)
     sighist = sighist.replace("ALPHA", "%d"%alpha)
     sighist = sighist.replace("MEAN", "%d"%sigmeanY)
     sighist = sighist.replace("MASSX", "%d"%sigmeanX)
@@ -214,8 +212,6 @@ def run_anaFit(datahist,
     sigwsfile = sigwsfile.replace("SIGNALMASS", "%d"%(sigmean))
     sigwsfile = sigwsfile.replace("MASSX", "%d"%(sigmeanX))
     sigwsfile = sigwsfile.replace("WIDTH", "%d"%(sigwidth))
-    #signalWSName = signalWSName.replace("MASSX", "%d"%(sigmeanX))
-    #signalWSName = signalWSName.replace("WIDTH", "%d"%(sigwidth))
 
     shutil.copy2(topfile, tmptopfileOld) 
     shutil.copy2(signalfileName, tmpsignalfile) 
@@ -319,7 +315,6 @@ def run_anaFit(datahist,
 
     replaceinfile(tmpsignalfile,
                   [
-                   #("WORKSPACEFILE", signalWSName),
                    ("WORKSPACEFILE", sigwsfile),
                    ("CDIR", cdir),
                    ("SIGNALMASS", str(sigmean)),
@@ -445,6 +440,7 @@ def run_anaFit(datahist,
                                                                 toyString=toyString,
                                                                 nbkgWindow=nbkgWindow,
                                                                 minTolerance = minTolerance,
+                                                                #maskrange=(678,685)
                                                                 )
 
       
@@ -452,15 +448,10 @@ def run_anaFit(datahist,
         if abs(fitnsig +myNsig) < 1e-3 :
           replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,%.2f")%(myNsig), ])
 
-      #if dosignal and ((abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2) or useBkgWindow):
-      #if dosignal and ((abs(fitnsig +5) < 1e-3 or abs(fitnsig +10) < 1e-2  or abs(fitnsig+100) < 1e-2)):
       #print ("Rerunning")
       if dosignal and abs(fitnsig +10) < 1e-3 :
         replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,10"), ])
         print ("Rerunning")
-      #if dosignal and abs(fitnsig +30) < 1e-3 :
-      #  replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,30"), ])
-      #  print ("Rerunning")
       if dosignal and abs(fitnsig +50) < 1e-3 :
         replaceinfile(tmpcategoryfile, [(str(nsig), "0,0,50"), ])
         print ("Rerunning")
@@ -582,6 +573,7 @@ def run_anaFit(datahist,
         if pvals_masked[0] > maskthreshold:
             print("p(chi2) threshold passed. Continuing with successful (window-excluded) fit.")
             wsfile=wsfilemasked
+            pvals_global = pvals_masked
         else:
             print("p(chi2) threshold still not passed.")
             print("Exiting with failed fit status.")
@@ -591,8 +583,6 @@ def run_anaFit(datahist,
       
       # blindrange not yet implemented with quickLimit
       if dolimit and dosignal and pvals_global[0] > maskthreshold:
-          #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 1  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
-          #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-5  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           #rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100 --minTolerance 1E-5  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           rtv=execute("quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess %s --minTolerance %s  --minStrat 2  --nllOffset 1 -o %s" % (wsfile, poi, initialGuess, minTolerance,  outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
