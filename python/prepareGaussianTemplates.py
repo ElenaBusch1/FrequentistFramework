@@ -106,6 +106,9 @@ def prepareGaussianTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/systemati
       histUp, histDown, isPruned = getGaussianFunction(mY, alpha, indir+inFile, indir+inFileWidth, histName=histName, syst=syst, maxX=maxX, sigma = sigma, pruneThreshold = pruneThreshold)
       if isPruned:
         continue
+      systematicsString = "%s %s \n"%(syst, syst)
+      systematicsFile.write(systematicsString)
+
       if not histUp:
         print " did not find ", indir+inFile, histName, syst
         continue

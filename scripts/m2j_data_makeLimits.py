@@ -1,7 +1,6 @@
 import config as config
 import python.run_limits as run_anaFit
-#import os,sys,re,argparse,subprocess,shutil
-import argparse
+import python.getBias as gb
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -12,7 +11,6 @@ parser.add_argument('--channelNames', dest='channelNames', nargs='+', help='Outp
 parser.add_argument('--sigmean', dest='sigmean', type=int, default=1000, help='Mean of signal Gaussian for s+b fit (in GeV)')
 parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Width of signal Gaussian for s+b fit (in %)')
 parser.add_argument('--doRemake', dest='doRemake', type=int, default=0, help='Amplitude of signal Gaussian for s+b fit (in %)')
-parser.add_argument('--outputdir', dest='outputdir', type=str, default="fitsNixon", help='Amplitude of signal Gaussian for s+b fit (in %)')
 args = parser.parse_args()
 
 if args.isBatch:
@@ -23,11 +21,14 @@ if args.isBatch:
   signalfile = args.signalFile
 
 else:
-  fitName = "fourPar"
-  channelNames = [[ "0"], ]
+  fitName = "fourParM2j"
+  channelNames = [[ "8"],]
 
   #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  sigmeans = [500]
+  sigmeans = [1000]
+  #sigmeans = [500, 600, 800, 900, 1000, 1100, 1200, 1300, ]
+  #sigmeans = [1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100,]
+
   sigwidths = [10]
   signalfile =  "crystalBallHist"
   #signalfile =  "template"
@@ -55,6 +56,9 @@ for channelSuffix in channelNames:
       wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
       outputfile = config.getFileName("FitResult_limits_%s_%s"%(fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
 
+      biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName[0], sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile+"NoSyst")
+      #biasMagnitude = 0
+
       # Then run the injection
       run_anaFit.run_anaFit(
            datahist=channelName,
@@ -64,6 +68,8 @@ for channelSuffix in channelNames:
            sigwidth=sigwidth,
            outputfile=outputfile,
            doRemake = args.doRemake,
+           minTolerance = "1e-2",
+           initialGuess = "%.2f"%(max(biasMagnitude*0.5,1)),
           )
 
 

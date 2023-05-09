@@ -244,7 +244,7 @@ def run_anaFit(datahist,
                          sigamp=0,
                          firsttoy=0,
                          lasttoy=0,
-                         wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmeanY).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName),
+                         wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmeanY).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName).replace("WIDTH", "%d"%(sigwidth)),
                          wspdf = myHistName,
                          writeFile = False,)
       myNsig = max(6*sqrt(nbkgWindowTmp[0]), 3)
@@ -415,7 +415,6 @@ def run_anaFit(datahist,
           ("MASSX", str(sigmeanX)),
           ("WIDTH", str(sigwidth)),
           ("BIASMAGNITUDE", "%.2d"%biasMagnitude),
-          ("SYSTEMATICS", systematics),
         ])
 
       if dosignal:

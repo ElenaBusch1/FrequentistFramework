@@ -2698,6 +2698,28 @@ signals["crystalBallHistNoSyst"] = {
                  "systFile": "empty.txt",
                }
 
+
+signals["crystalBallHistNoPrune"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMENoPruneSignalCB_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_",
+                 "histnameMX": "h2_resonance_jet_m2javg_alpha_",
+                 "systFile": "uncertaintySets/systematics",
+                 #"systFile": "empty.txt",
+               }
+
+signals["crystalBallHistExtraPrune"] = {
+                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
+                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMEExtraPruneSignalCB_mX_MEAN_mY_MASSX.root",
+                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
+                 "histname": "h2_resonance_jet_m4j_alpha_",
+                 "histnameMX": "h2_resonance_jet_m2javg_alpha_",
+                 "systFile": "uncertaintySets/systematics",
+                 #"systFile": "empty.txt",
+               }
+
+
 signals["gausHist"] = {
                  "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
                  "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalGaus_mX_MEAN_mY_MASSX_width_WIDTH.root",

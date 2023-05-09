@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import ROOT
+from math import log10
 import sys, re, os, math, argparse
 from array import array
 from ROOT import *
@@ -7,6 +8,7 @@ from math import sqrt
 from math import isnan
 from glob import glob
 import config as config
+import LocalFunctions as lf
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -43,8 +45,25 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0, signalType="Gaussian"):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0, signalType="Gaussian", isMx = False, alphaBin = 0):
     SetAtlasStyle()
+
+    massString = "mY"
+    if isMx:
+      massString = "mX"
+    fileName = "limitFiles/h2_eff_alpha_%s_forJen.root"%(massString)
+    histName = "h2_eff_alpha_%s"%(massString)
+    alpha = config.alphaBins[alphaBin] 
+    #+ 0.01
+    h_eff = lf.read_histogram(fileName, histName)
+    h_xsTmp = lf.read_histogram("limitFiles/h2_xs_alpha_%s_forJen.root"%(massString), "h2_xs_alpha_%s"%(massString))
+    h_xs = h_xsTmp.Clone("hXs")
+    for xBin in range(h_xs.GetNbinsX()):
+      for yBin in range(h_xs.GetNbinsY()):
+        #print (h_xsTmp.GetBinContent(xBin+1, yBin+1))
+        if h_xsTmp.GetBinContent(xBin+1, yBin+1):
+          h_xs.SetBinContent(xBin+1, yBin+1, log10(h_xsTmp.GetBinContent(xBin+1, yBin+1)))
+
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
     colors = [kBlue, kRed+1, kOrange-3]
@@ -58,6 +77,16 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     g_exp1d_datasets = []
     g_exp2d_datasets = []
 
+    g_obs_datasets_model = []
+    g_exp_datasets_model = []
+    g_exp1_datasets_model = []
+    g_exp2_datasets_model = []
+    g_exp1u_datasets_model = []
+    g_exp2u_datasets_model = []
+    g_exp1d_datasets_model = []
+    g_exp2d_datasets_model = []
+
+
     for dataset in range(len(paths)):
 
         g_obs = []
@@ -69,6 +98,15 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
         g_exp1d = []
         g_exp2d = []
 
+        g_obs_model = []
+        g_exp_model = []
+        g_exp1_model = []
+        g_exp2_model = []
+        g_exp1u_model = []
+        g_exp2u_model = []
+        g_exp1d_model = []
+        g_exp2d_model = []
+
         for i,sigwidth in enumerate(sigwidths):
 
             g_obs.append( TGraph() )
@@ -78,14 +116,30 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             g_exp1d.append( TGraph() )
             g_exp2d.append( TGraph() )
 
+            g_obs_model.append( TGraph() )
+            g_exp_model.append( TGraph() )
+            g_exp1u_model.append( TGraph() )
+            g_exp2u_model.append( TGraph() )
+            g_exp1d_model.append( TGraph() )
+            g_exp2d_model.append( TGraph() )
+
             for j,sigmean in enumerate(sigmeans):
+                if isMx:
+                  alpha = config.alphaBins[alphaBin]
+                  mY = round(sigmean / alpha / 10) * 10
+                  if sigmean < 500:
+                    continue
+                  if mY < 3000:
+                    continue
+                  if mY > 10000:
+                    continue
+                  print sigmean, mY, alpha
+
 
                 rangelow = config.samples[channelName[0]]["rangelow"]
 
                 if sigmean < (rangelow + deltaMassAboveFit) :
                    continue
-
-
 
 
                 # TODO need a better way of choosing a file. sometimes they don't get created, so making a second option.
@@ -119,10 +173,21 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                 g_exp1d[i].SetPoint(g_exp1d[i].GetN(), sigmean, exp1d)
                 g_exp2d[i].SetPoint(g_exp2d[i].GetN(), sigmean, exp2d)
 
+                xs = pow(10, h_xs.Interpolate(sigmean, alpha))
+                eff = h_eff.Interpolate(sigmean, alpha)
+                print xs, eff, alpha, sigmean
+
+                g_exp_model[i].SetPoint(g_exp_model[i].GetN(), sigmean, exp*xs*eff)
+                g_exp1u_model[i].SetPoint(g_exp1u_model[i].GetN(), sigmean, exp1u*xs*eff)
+                g_exp2u_model[i].SetPoint(g_exp2u_model[i].GetN(), sigmean, exp2u*xs*eff)
+                g_exp1d_model[i].SetPoint(g_exp1d_model[i].GetN(), sigmean, exp1d*xs*eff)
+                g_exp2d_model[i].SetPoint(g_exp2d_model[i].GetN(), sigmean, exp2d*xs*eff)
+
                 if isnan(obs):
                     continue
 
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
+                g_obs_model[i].SetPoint(g_obs_model[i].GetN(), sigmean, obs*xs*eff)
 
 
             g_exp1.append( createFillBetweenGraphs(g_exp1d[-1], g_exp1u[-1]) )
@@ -137,6 +202,18 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             g_obs[-1].SetLineColor(colors[i])
             g_obs[-1].SetMarkerColor(colors[i])
 
+           
+            g_exp1_model.append( createFillBetweenGraphs(g_exp1d_model[-1], g_exp1u_model[-1]) )
+            g_exp2_model.append( createFillBetweenGraphs(g_exp2d_model[-1], g_exp2u_model[-1]) )
+            g_exp1_model[-1].SetFillColorAlpha(colors[i], 0.2)
+            g_exp2_model[-1].SetFillColorAlpha(colors[i], 0.2)
+            g_exp_model[-1].SetLineColor(colors[i])
+            g_exp_model[-1].SetLineStyle(2)
+            g_exp_model[-1].SetLineWidth(2)
+            g_obs_model[-1].SetLineWidth(2)
+            g_obs_model[-1].SetLineColor(colors[i])
+            g_obs_model[-1].SetMarkerColor(colors[i])
+
         g_obs_datasets.append(g_obs)
         g_exp_datasets.append(g_exp)
         g_exp1_datasets.append(g_exp1)
@@ -145,6 +222,15 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
         g_exp2u_datasets.append(g_exp2u)
         g_exp1d_datasets.append(g_exp1d)
         g_exp2d_datasets.append(g_exp2d)
+
+        g_obs_datasets_model.append(g_obs_model)
+        g_exp_datasets_model.append(g_exp_model)
+        g_exp1_datasets_model.append(g_exp1_model)
+        g_exp2_datasets_model.append(g_exp2_model)
+        g_exp1u_datasets_model.append(g_exp1u_model)
+        g_exp2u_datasets_model.append(g_exp2u_model)
+        g_exp1d_datasets_model.append(g_exp1d_model)
+        g_exp2d_datasets_model.append(g_exp2d_model)
 
     c = TCanvas("c1_%s"%(outdir), "c1", 800, 600)
     c.SetLogy()
@@ -197,6 +283,57 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     leg_obs.Draw()
 
     c.Print("%s/limitPlot_%s_%s.pdf"%(outdir, channelName[0], signalType))
+
+
+    minY = 1e-20
+    maxY = 1e-8
+    g_exp_datasets_model[0][0].Draw("af")
+    g_exp_datasets_model[0][0].GetXaxis().SetTitle("M_{G} [GeV]")
+    g_exp_datasets_model[0][0].GetYaxis().SetTitle("#sigma #times #it{BR} [pb]")
+    g_exp_datasets_model[0][0].GetYaxis().SetTitleOffset(1.0)
+    g_exp_datasets_model[0][0].GetHistogram().SetMinimum(minY)
+    g_exp_datasets_model[0][0].GetHistogram().SetMaximum(maxY)
+    g_exp_datasets_model[0][0].GetXaxis().SetLimits(min(sigmeans)-49.9, max(sigmeans)+49.9)
+
+    c.Modified()
+
+    '''
+
+    for dataset in range(len(paths)):
+        if dataset != len(paths)-1:
+
+            l=TLine()
+            l.DrawLineNDC(xToNDC(sigmeans[-1]), gPad.GetBottomMargin(), xToNDC(sigmeans[-1]), 0.72)
+
+        g_exp2_datasets_model[dataset][0].Draw("f")
+        g_exp1_datasets_model[dataset][0].Draw("f")
+
+        for i,g in enumerate(g_exp_datasets_model[dataset]):
+            g.Draw("l")
+            if (dataset==0):
+                leg_exp.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "l")
+        for i,g in enumerate(g_obs_datasets_model[dataset]):
+            g.Draw("pl")
+            if (dataset==0):
+                leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "lp")
+
+
+    
+    
+
+    ATLASLabel(0.20, 0.90, atlasLabel, 13)
+    myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
+    myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV, %.1f fb^{-1}"%(lumis*0.001), 13)
+    myText(0.2, 0.72, 1, config.samples[channelName[0]]["varLabel"], 13)
+
+
+    myText(0.65, 0.92, 1, "Observed:", 13)
+    myText(0.65, 0.76, 1, "Expected:", 13)
+    leg_exp.Draw()
+    leg_obs.Draw()
+    c.Print("%s/limitPlot_modelDependent_%s_%s.pdf"%(outdir, channelName[0], signalType))
+
+    '''
 
 
 

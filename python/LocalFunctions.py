@@ -16,8 +16,10 @@ def read_histogram(fileName, histName):
     hist = myfile.Get(histName)
     if not isinstance(hist,r.TH1F):
       if not isinstance(hist,r.TH1D):
-        #print "Did not find ", histName, " in ", fileName
-        return None
+        if not isinstance(hist,r.TH2D):
+          if not isinstance(hist,r.TH2F):
+            #print "Did not find ", histName, " in ", fileName
+            return None
     hist.SetDirectory(0)
     myfile.Close()
     return hist

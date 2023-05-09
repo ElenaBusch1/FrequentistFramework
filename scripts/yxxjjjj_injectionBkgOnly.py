@@ -30,10 +30,10 @@ if args.isBatch:
   coutputdir = args.outputdir
 
 else:
-  pdFitName = "fourPar"
-  fitName = "threePar"
-  #pdFitName = "fivePar"
-  #fitName = "fourPar"
+  #pdFitName = "fourPar"
+  #fitName = "threePar"
+  pdFitName = "fivePar"
+  fitName = "fourPar"
   #channelNames = [ ["yxxjjjj_4j_alpha0"],[ "yxxjjjj_4j_alpha1"],[ "yxxjjjj_4j_alpha2"],[ "yxxjjjj_4j_alpha3"],[ "yxxjjjj_4j_alpha4"],[ "yxxjjjj_4j_alpha5"],[ "yxxjjjj_4j_alpha6"],[ "yxxjjjj_4j_alpha7"],[ "yxxjjjj_4j_alpha8"],[ "yxxjjjj_4j_alpha9"],[ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
   #channelNames = [ [ "yxxjjjj_4j_alpha10"],[ "yxxjjjj_4j_alpha11"], ]
   #channelNames = [ [ "yxxjjjj_4j_alpha11"], ]
@@ -41,8 +41,8 @@ else:
   channelNames = [ [ "yxxjjjj_4j_alpha5"]]
   #channelNames = [ ["yxxjjjj_2javg_alpha0"],[ "yxxjjjj_2javg_alpha1"],[ "yxxjjjj_2javg_alpha2"],[ "yxxjjjj_2javg_alpha3"],[ "yxxjjjj_2javg_alpha4"],[ "yxxjjjj_2javg_alpha5"],[ "yxxjjjj_2javg_alpha6"],[ "yxxjjjj_2javg_alpha7"],[ "yxxjjjj_2javg_alpha8"],[ "yxxjjjj_2javg_alpha9"],[ "yxxjjjj_2javg_alpha10"],[ "yxxjjjj_2javg_alpha11"], ]
 
-  sigmeans = [10000]
-  sigamps = [1,]
+  sigmeans = [8000]
+  sigamps = [3,]
   #sigamps = [0, 3, 5]
   sigwidths = [10]
   signalfile =  "Gaussian"
@@ -81,9 +81,9 @@ for channelName in channelNames:
 
 
         # Output file names, which will be written to outputdir
-        wsfile = config.getFileName("FitResult_sigPlusBkg_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputfile = config.getFileName("FitResult_sigPlusBkg_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
-        outputstring = "FitResult_injections_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
+        wsfile = config.getFileName("FitResult_bkgOnlyInjections_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
+        outputfile = config.getFileName("FitResult_bkgOnlyInjections_%s_%s_%s"%(pdFitName, fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, sigamp) + ".root"
+        outputstring = "FitResult_bkgOnlyInjections_%d_%d_%d_%s"%(sigamp, sigmean, sigwidth, signalfile)
         #binedges = config.getBinning(rangelow, rangehigh, delta=25)
         binedges = None
         topfile=config.samples[channelName[0]]["topfile"]

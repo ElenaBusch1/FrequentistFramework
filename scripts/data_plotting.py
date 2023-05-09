@@ -96,10 +96,10 @@ outputdir = coutputdir + channelName
 
 # Limits
 pathsLimits = []
-for channelName in channelNames:
+for alphaBin, channelName in enumerate(channelNames):
   outputdir = coutputdir + channelName
   pathsLimits = [ "Limits_limits_%s_%s"%(fitName, signalfile)]
-  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile)
+  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile, alphaBin = alphaBin)
 
 pathsLimits = []
 pathsPostFit = []

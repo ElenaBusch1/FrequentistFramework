@@ -27,15 +27,24 @@ if args.isBatch:
 
 else:
   fitName = "fourPar"
-  channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+  #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+  #channelNames = [[6],[7],[8],[9], [10], [11]]
+  channelNames = [[7],]
  
-  sigmeans = [2000]
+  #sigmeans = [3000]
   #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+  #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000,] 
+  #sigmeans = [2750] 
+  #sigmeans = [3750] 
+  #sigmeans = [3250] 
+  sigmeans = [3250] 
   sigwidths = [10]
   #signalfile =  "Gaussian"
   #signalfile =  "gausHist"
   signalfile =  "crystalBallHist"
-  args.doRemake = 0
+  args.doRemake = 1
+
+doSyst = True
 
 
 coutputdir = "fitsData"
@@ -71,6 +80,7 @@ for channelSuffix in channelNames:
         if sigmean > 9000:
           nsig="0,0,10"
 
+
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
         outputfile = config.getFileName("FitResult_limits_%s_%s"%(fitName, signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
@@ -83,6 +93,10 @@ for channelSuffix in channelNames:
 
         biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName, sigmean, sigwidth, biasFraction= 0.4, signalName=signalfile+"NoSyst")
         print biasMagnitude
+        nsig="0,0,%.2f"%(max(5*biasMagnitude, 5))
+        if not doSyst:
+          nsig="0,0,%.2f"%(max(5*biasMagnitude, 100))
+
 
         run_anaFit.run_anaFit(
                datahist=[channelName],
@@ -100,7 +114,7 @@ for channelSuffix in channelNames:
                maskthreshold=0.05,
                dosignal=1,
                dolimit=1,
-               useSysts = True,
+               useSysts = doSyst,
                doRemake = args.doRemake,
                biasMagnitude = biasMagnitude,
                rebinOnlyBH=True,

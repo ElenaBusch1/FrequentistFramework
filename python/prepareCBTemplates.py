@@ -23,7 +23,7 @@ def getVars(varFileName):
   return varNames, newNames
 
 
-def getGaussianFunction(signalMass, alpha, inputFile, inputFileWidth, histName, syst, maxX = 11000, sigma=0.1, pruneThreshold = 0.1):
+def getGaussianFunction(signalMass, alpha, inputFile, inputFileWidth, histName, syst, maxX = 11000, sigma=0.1, pruneThreshold = 0.1, pruneThresholdJer = 0):
   if syst != "" and syst.find("JER") < 0 and (syst.find("JET") >= 0 or syst.find("Shower") >= 0 or syst.find("SHOWER") >= 0):
     try:
       fp = open(inputFile)
@@ -61,9 +61,11 @@ def getGaussianFunction(signalMass, alpha, inputFile, inputFileWidth, histName, 
 
 
   isPruned = True
-  if syst.find("JER") < 0 and (100.*abs(muValUp - signalMass)/signalMass > pruneThreshold or  100.*abs(muValDown - signalMass)/signalMass > pruneThreshold ):
+  #pruneThresholdJer = pruneThreshold
+  #pruneThresholdJer = 8
+  if syst.find("JER") < 0 and (100.*abs(muValUp - signalMass)/signalMass >= pruneThreshold or  100.*abs(muValDown - signalMass)/signalMass >= pruneThreshold ):
     isPruned = False
-  elif syst.find("JER") >= 0 and (100.*abs(sigmaValUp - sigma*signalMass)/(sigma*signalMass) > pruneThreshold or  100.*abs(sigmaValDown - sigma*signalMass)/(sigma*signalMass) > pruneThreshold):
+  elif syst.find("JER") >= 0 and (100.*abs(sigmaValUp - sigma*signalMass)/(sigma*signalMass) >= pruneThresholdJer or  100.*abs(sigmaValDown - sigma*signalMass)/(sigma*signalMass) >= pruneThresholdJer):
     isPruned = False
   print syst, isPruned, 100.*abs(muValUp - signalMass)/signalMass,  100.*abs(muValDown - signalMass)/signalMass 
   return isPruned
@@ -93,8 +95,8 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst, maxX = 11000):
   for line in inputFileLines:
     calpha = float(line.split(" ")[2])
     cmY = float(line.split(" ")[0])
-    if(cmY < 3000): 
-      continue
+    #if(cmY < 3000): 
+    #  continue
     if alpha != calpha:
       continue
 
@@ -146,7 +148,7 @@ def getCrystalBallFunction(mY, alpha, inputFile, histName, syst, maxX = 11000):
 
 
 
-def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/systs/", histName = "h2_resonance_jet_m4j_alpha", doSysts = True, mY = 6000, alpha = 5, outfile = "systematicsTest", maxX=11000, pruneThreshold = 0.1, systematicNameFile = "uncertaintySets/systematics.txt"):
+def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/systs/", histName = "h2_resonance_jet_m4j_alpha", doSysts = True, mY = 6000, alpha = 5, outfile = "systematicsTest", maxX=11000, pruneThreshold = 0.1, systematicNameFile = "uncertaintySets/systematics.txt", pruneThresholdJer = 0):
   outfileName = "%s_%d_%.2f.root"%(outfile, mY, alpha)
   f_out = r.TFile(outfileName, "RECREATE")
   f_out.cd()
@@ -168,7 +170,7 @@ def prepareCBTemplate(indir = "/afs/cern.ch/work/j/jroloff/nixon/signalMorphing/
      inFileWidth = "/afs/cern.ch/work/j/jroloff/nixon/systematics/test/SystSlopes_Width_%s_%s_alphaBin_%d.txt"%(histName, syst, alpha)
      sigma = 0.1
      print inFileMean
-     isPruned = getGaussianFunction(mY, alpha, inFileMean, inFileWidth, histName=histName, syst=syst, maxX=maxX, sigma = sigma, pruneThreshold = pruneThreshold)
+     isPruned = getGaussianFunction(mY, alpha, inFileMean, inFileWidth, histName=histName, syst=syst, maxX=maxX, sigma = sigma, pruneThreshold = pruneThreshold, pruneThresholdJer = pruneThresholdJer)
 
      if isPruned:
        continue

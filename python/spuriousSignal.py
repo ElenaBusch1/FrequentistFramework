@@ -258,10 +258,13 @@ def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, ran
         line4.Draw()
         c2.Print(outfileName)
 
-        h_sigmas[0].GetYaxis().SetRangeUser(0, 150)
+        #h_sigmas[0].GetYaxis().SetRangeUser(0, 150)
+        h_sigmas[0].GetYaxis().SetRangeUser(1e-3, 1000)
+        c.SetLogy()
         leg = df.DrawHists(c,h_sigmas, legendNames, [], drawOptions = ["HIST"], styleOptions=df.get_rainbow_style_opt, isLogX=0)
         path = config.getFileName("Sigma", cdir, "", outputdir) + "Width_%d.pdf"%sigwidth 
         c.Print(path)
+        c.SetLogy(0)
         for channelName, h_sigma in zip(channelNames, h_sigmas):
           biasFileName = config.getFileName("bias_%s"%(signalfile), cdir, channelName, outputdir) +"_%d.root"%(sigwidth)
           fout = TFile(biasFileName, "RECREATE")

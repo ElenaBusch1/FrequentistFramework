@@ -43,35 +43,29 @@ else:
 
   # The different channels you are using
   #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-  #channelNames = [[4], [5], [6], [7], [8], [9], [10], [11],]
-  channelNames = [[10], [11],]
-  #channelNames = [[6], [7], [8], [9], [10], [11],]
+  channelNames = [[0]]
 
 
   # The means of the signal distributions
   #sigmeans = [2000, 3000, 4000, 6000, 8000, 10000]
-  #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
-  #sigmeans = [10000]
-  sigmeans = [9750]
+  sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
 
   # The width of the signal distribution (in %)
   sigwidths = [10]
 
   # The signal file to use
   #signalfile =  "Gaussian"
-  signalfile =  "crystalBallHistNoSyst"
-  #signalfile =  "gausHistNoSyst"
+  #signalfile =  "crystalBallHistNoSyst"
+  signalfile =  "gausHistNoSyst"
   
   # This should match the output directory of previous steps
   # The actual output directory will also depend on the channel name
   coutputdir = "fitsData_"
 
   # Argument to control if you want to remake the results or just keep running them
-  args.doRemake = 1
+  args.doRemake = 0
 
   # The number of toys used for the spurious signal tests
-  # If this is larger than the number of toys you have produced, this will cause problems
-  #nToys = config.nToys
 
 
 nToys = 50
@@ -79,10 +73,6 @@ baseChannelName = "Data_yxxjjjj_4j_alpha"
 dosignal=1
 dolimit=0
 cdir = config.cdir
-# This is only necessary if you want to use templates, 
-# but then it will be important for making sure you don't try to use signals that don't exist
-
-
 
 for sigmean in sigmeans:
     for sigwidth in sigwidths:
@@ -92,7 +82,7 @@ for sigmean in sigmeans:
           alpha = config.alphaBins[int(channelSuffix[0])]
 
           mY = round( (alpha * sigmean)/10)*10
-          if mY < 500 and (signalfile=="crystalBallHistNoSyst" or signalfile=="crystalBallHist"):
+          if mY < 500 and (signalfile=="crystalBallHistNoSyst" or signalfile=="crystalBallHist" or signalfile=="gausHistNoSyst"):
             continue
           outputdir = coutputdir+channelName[0]
 

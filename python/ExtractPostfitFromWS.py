@@ -141,6 +141,7 @@ class PostfitExtractor:
 
             maskPull1 = -1
             maskPull2 = -1
+            maskPull3 = -1
             for ibin in range(1, nBins+1):
                 binCenter = self.h_data[channel].GetBinCenter(firstbin+ibin)
                 valueErrorData = self.h_data[channel].GetBinError(firstbin+ibin)
@@ -149,12 +150,17 @@ class PostfitExtractor:
                 if valueErrorData > 0. and postFitValue > 0.:
                     binSig = (valueData - postFitValue)/valueErrorData
                     if abs(binSig) > maskPull1:
+                      maskPull3 = maskPull2
                       maskPull2 = maskPull1
                       maskPull1=abs(binSig)
                     elif abs(binSig) > maskPull2:
+                      maskPull3 = maskPull2
                       maskPull2 = abs(binSig)
+                    elif abs(binSig) > maskPull3:
+                      maskPull3 = abs(binSig)
 
-            print maskPull1, maskPull2
+
+            print maskPull1, maskPull2, maskPull3
             for ibin in range(1, nBins+1):
                 binCenter = self.h_data[channel].GetBinCenter(firstbin+ibin)
                 valueErrorData = self.h_data[channel].GetBinError(firstbin+ibin)
@@ -170,11 +176,14 @@ class PostfitExtractor:
 
                 if valueErrorData > 0. and postFitValue > 0.:
                     binSig = (valueData - postFitValue)/valueErrorData
-                    if abs(binSig) >= maskPull2 and maskPull2>5:
+                    if abs(binSig) >= maskPull2 and maskPull2>4:
                        print "AAAAHHHHH", binCenter, binSig, maskPull1, maskPull2
                        continue
-                    if abs(binSig) >= maskPull1 and maskPull1>5:
+                    if abs(binSig) >= maskPull1 and maskPull1>4:
                        print "AAAAHHHHH", binCenter, binSig, maskPull1, maskPull2
+                       continue
+                    if abs(binSig) >= maskPull3 and maskPull3>4:
+                       print "AAAAHHHHH", binCenter, binSig, maskPull3, maskPull2
                        continue
 
                     if binCenter-0.5 < self.maskmin or binCenter+0.5 > self.maskmax:
