@@ -5,6 +5,8 @@ cdir="/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework"
 # This isn't strictly needed, but it makes the samples section slightly easier to handle
 baseDir = "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/"
 
+templateDir = "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates"
+
 nToys = 50
 atlasLabel="Simulation Internal"
 
@@ -2673,7 +2675,6 @@ signals["template"] = {
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/Signal_mX_MEAN_mY_MASSX.root",
                  "histname": "h2_resonance_jet_m4j_alpha_alphaBin_ALPHA_",
                  "systFile": "empty.txt",
-                 #"histname": "Gaus_mX_3000_mY_870_alphaBin_ALPHA_ ",
                }
 
 
@@ -2681,11 +2682,8 @@ signals["crystalBallHist"] = {
                  "signalfile": "%s/config/signalGauss_meanM_template.xml"%(cdir),
                  "workspacefile": "%s/scripts/signalTemplates/TAGNAMESignalCB_mX_MEAN_mY_MASSX.root"%(cdir),
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
-                 #"histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
                  "histname": "h2_resonance_jet_m4j_alpha_",
                  "histnameMX": "h2_resonance_jet_m2javg_alpha_",
-                 #"histname": "",
-                 #"systFile": "empty.txt",
                  "systFile": "uncertaintySets/systematics",
                }
 
@@ -2706,7 +2704,6 @@ signals["crystalBallHistNoPrune"] = {
                  "histname": "h2_resonance_jet_m4j_alpha_",
                  "histnameMX": "h2_resonance_jet_m2javg_alpha_",
                  "systFile": "uncertaintySets/systematics",
-                 #"systFile": "empty.txt",
                }
 
 signals["crystalBallHistExtraPrune"] = {
@@ -2716,13 +2713,12 @@ signals["crystalBallHistExtraPrune"] = {
                  "histname": "h2_resonance_jet_m4j_alpha_",
                  "histnameMX": "h2_resonance_jet_m2javg_alpha_",
                  "systFile": "uncertaintySets/systematics",
-                 #"systFile": "empty.txt",
                }
 
 
 signals["gausHist"] = {
-                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
-                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalGaus_mX_MEAN_mY_MASSX_width_WIDTH.root",
+                 "signalfile": "%s/config/signalGauss_meanM_template.xml"%(cdir),
+                 "workspacefile": "%s/TAGNAMESignalGaus_mX_MEAN_mY_MASSX_width_WIDTH.root"%(templateDir),
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
                  "histname": "h2_resonance_jet_m4j_alpha_",
                  "histnameMX": "h2_resonance_jet_m2javg_alpha_",
@@ -2730,8 +2726,8 @@ signals["gausHist"] = {
                }
 
 signals["gausHistNoSyst"] = {
-                 "signalfile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/config/signalGauss_meanM_template.xml",
-                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/TAGNAMESignalGausNoSyst_mX_MEAN_mY_MASSX_width_WIDTH.root",
+                 "signalfile": "%s/config/signalGauss_meanM_template.xml"%(cdir),
+                 "workspacefile": "%s/TAGNAMESignalGausNoSyst_mX_MEAN_mY_MASSX_width_WIDTH.root"%(templateDir),
                  "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausCB__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
                  "histname": "h2_resonance_jet_m4j_alpha_",
                  "histnameMX": "h2_resonance_jet_m2javg_alpha_",
@@ -2740,17 +2736,6 @@ signals["gausHistNoSyst"] = {
 
 
 
-
-
-
-# Signal template (can include systematics)
-signals["test"] = {
-                 "signalfile": "../config/signalGauss_meanM_template.xml",
-                 "workspacefile": "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates/SignalGaus_mX_MEAN_mY_MASSX.root",
-                 "histfile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/gausSignals/gausSignal__mX_MEAN_mY_MASSX_alphaBin_ALPHA.root",
-                 "systFile": "/afs/cern.ch/work/j/jroloff/nixon/systematics/test/Systematics_h2_resonance_jet_m4j_alpha_mX_MEAN_mY_MASSX_alphaBin_ALPHA_systematics_mean",
-                 "histname": "Gaus_mX_MEAN_mY_MASSX_alphaBin_ALPHA_",
-               }
 
 
 # Generic gaussian distribution
