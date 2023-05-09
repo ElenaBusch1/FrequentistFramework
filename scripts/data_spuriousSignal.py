@@ -83,6 +83,7 @@ for sigmean in sigmeans:
 
           mY = round( (alpha * sigmean)/10)*10
           if mY < 500 and (signalfile=="crystalBallHistNoSyst" or signalfile=="crystalBallHist" or signalfile=="gausHistNoSyst"):
+            print "mass too low, continuing"
             continue
           outputdir = coutputdir+channelName[0]
 

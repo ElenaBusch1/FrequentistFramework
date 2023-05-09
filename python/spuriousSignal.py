@@ -15,7 +15,7 @@ import FittingFunctions as ff
 
 
 
-def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, rangelow, rangehigh, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50, deltaMassAboveFit = 0, signalfile=""):
+def spuriousSignal(sigmeans, sigwidths, infile, infilePD, outfile, channelNames, cdir, atlasLabel="Simulation Internal", bkgOnlyFitFile = None, fitName = "", crange = 30000, isNInjected=False, outputdir="", signalName = "Z'", labels = [], delta = 50, deltaMassAboveFit = 0, signalfile=""):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
     meansCentered = []

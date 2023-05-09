@@ -31,21 +31,15 @@ else:
 
   fitName = "fourParM2j"
   #fitName = "threeParM2j"
-  #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-  channelNames = [[0], ]
+  channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+  #channelNames = [[0], ]
 
 
-  #sigmeans = [500, 700, 1000, 1500, 2000, 2500, 3000,]
   sigmeans = [500, 600, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500]
-  #sigmeans = [600, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500]
-  #sigmeans = [1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500]
-  #sigmeans = [1300]
   #sigmeans = [800]
 
   sigwidths = [10]
   #signalfile =  "crystalBallHist"
-  #signalfile =  "crystalBallHistNoPrune"
-  #signalfile =  "crystalBallHistExtraPrune"
   #signalfile =  "crystalBallHistNoSyst"
   signalfile =  "gausHist"
   coutputdir = "fits2javg_data"
@@ -59,9 +53,6 @@ dosignal=1
 dolimit=1
 baseChannelName = "Data_2javg_alpha"
 tagName = "m2j_"
-
-
-
 
 for channelSuffix in channelNames:
   channelName = [baseChannelName + "%d"%(int(channelSuffix[0]))]
@@ -79,15 +70,6 @@ for channelSuffix in channelNames:
     for sigwidth in sigwidths:
         outputdir = coutputdir + channelName[0]
         nbkg="1E4,0,5E4"
-        nsig="0,0,1000"
-        if sigmean > 500:
-          nsig="0,0,600"
-          #nsig="0,0,50"
-        if sigmean > 700:
-          nsig="0,0,500"
-        if sigmean > 1000:
-          nsig="0,0,50"
-        nsig="0,0,30"
 
         # Output file names, which will be written to outputdir
         wsfile = config.getFileName("FitResult_limits_1GeVBin_GlobalFit_%s"%(signalfile), cdir + "/scripts/", None, outputdir, sigmean, sigwidth, 0) + ".root"
@@ -108,11 +90,7 @@ for channelSuffix in channelNames:
  
         #systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_2javg_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile + ".txt"
         #systematicNameFile = config.getFileName("systematicsNoPrune", cdir + "/scripts/", "yxxjjjj_2javg_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile.replace("NoPrune","") + ".txt"
-        #systematicNameFile = config.getFileName("systematicsExtraPrune", cdir + "/scripts/", "yxxjjjj_2javg_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile.replace("ExtraPrune","") + ".txt"
-        #systematicNameFile = config.getFileName("systematicsGaus", cdir + "/scripts/", "yxxjjjj_2javg_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile.replace("ExtraPrune","") + ".txt"
         systematicNameFile = config.getFileName("systematicsGaus", cdir + "/scripts/", "yxxjjjj_2javg_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + ".txt"
-        #print systematicNameFile
-        #continue
         #systematicNameFile = "uncertaintySets/systematics.txt"
 
 
@@ -141,13 +119,9 @@ for channelSuffix in channelNames:
                tagName=tagName,
                isMx = True,
                systematicNameFile = systematicNameFile,
-               #minTolerance = "1e-3",
-               minTolerance = "0.02",
+               minTolerance = "1e-3",
                initialGuess = "%.2f"%(max(biasMagnitude, 1)),
                )
-
-        print biasMagnitude
-        print "WARNING DO NOT USE CHECK BIAS"
 
 
 

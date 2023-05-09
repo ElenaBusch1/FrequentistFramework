@@ -6,6 +6,7 @@ cdir = config.cdir
 pdFitName = "fiveParM2j"
 fitName = "fourParM2j"
 allChannelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
+#allChannelNames = [[0], ]
 overallName = "fitsData_" 
 #signalfile =  "crystalBallHistNoSyst"
 signalfile =  "gausHistNoSyst"
@@ -13,9 +14,11 @@ signalfile =  "gausHistNoSyst"
 
 pdHistName = "pseudodata"
 sigmeans = [500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500]
+#sigmeans = [500]
 
 
 sigwidths = [5, 10, 15]
+#sigwidths = [10]
 
 for channelNames in allChannelNames:
   channelString = ""

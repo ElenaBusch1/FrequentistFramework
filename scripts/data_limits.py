@@ -14,9 +14,6 @@ parser.add_argument('--sigwidth', dest='sigwidth', type=int, default=7, help='Wi
 parser.add_argument('--doRemake', dest='doRemake', type=int, default=0, help='Amplitude of signal Gaussian for s+b fit (in %)')
 args = parser.parse_args()
 
-
-
-
 if args.isBatch:
   fitName = args.fitName
   channelName = args.channelNames
@@ -28,33 +25,22 @@ if args.isBatch:
 else:
   fitName = "fourPar"
   #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-  #channelNames = [[6],[7],[8],[9], [10], [11]]
-  channelNames = [[7],]
+  channelNames = [[0],]
  
-  #sigmeans = [3000]
-  #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
-  #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000,] 
-  #sigmeans = [2750] 
-  #sigmeans = [3750] 
-  #sigmeans = [3250] 
-  sigmeans = [3250] 
+  sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+  #sigmeans = [2000] 
   sigwidths = [10]
-  #signalfile =  "Gaussian"
-  #signalfile =  "gausHist"
-  signalfile =  "crystalBallHist"
-  args.doRemake = 1
+  signalfile =  "gausHist"
+  #signalfile =  "crystalBallHist"
+  args.doRemake = 0
 
 doSyst = True
 
 
 coutputdir = "fitsData"
 cdir = config.cdir
-#if not os.path.exists(cdir + "/scripts/" + channelName):
-#      os.makedirs(cdir + "/scripts/" + channelName)
-#
 dosignal=1
 dolimit=1
-alphaBins = [0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.29, 0.31, 0.33]
 
 baseChannelName = "Data_yxxjjjj_4j_alpha"
 
@@ -62,7 +48,7 @@ baseChannelName = "Data_yxxjjjj_4j_alpha"
 for channelSuffix in channelNames:
   channelName = baseChannelName + "%d"%(int(channelSuffix[0]))
 
-  alpha = alphaBins[int(channelSuffix[0])]
+  alpha = config.alphaBins[int(channelSuffix[0])]
   for sigmean in sigmeans:
     mY = round( (alpha * sigmean)/10)*10
     if mY < 500:
@@ -72,13 +58,6 @@ for channelSuffix in channelNames:
     for sigwidth in sigwidths:
         outputdir = coutputdir + "_" + channelName
         nbkg="1E4,0,1E6"
-        nsig="0,0,1e3"
-        if sigmean > 3000:
-          nsig="0,0,300"
-        if sigmean > 5000:
-          nsig="0,0,30"
-        if sigmean > 9000:
-          nsig="0,0,10"
 
 
         # Output file names, which will be written to outputdir
@@ -88,10 +67,12 @@ for channelSuffix in channelNames:
         binedges = config.getBinningFromFile(channelName)
         topfile=config.samples[channelName]["topfile"]
  
-        systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_4j_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile + ".txt"
-        #print systematicNameFile
+        #systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_4j_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile + ".txt"
+        systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_4j_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + ".txt"
+        print systematicNameFile
+        #continue
 
-        biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName, sigmean, sigwidth, biasFraction= 0.4, signalName=signalfile+"NoSyst")
+        biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName, sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile+"NoSyst")
         print biasMagnitude
         nsig="0,0,%.2f"%(max(5*biasMagnitude, 5))
         if not doSyst:
@@ -119,7 +100,7 @@ for channelSuffix in channelNames:
                biasMagnitude = biasMagnitude,
                rebinOnlyBH=True,
                systematicNameFile = systematicNameFile,
-               minTolerance = "1e-5",
+               minTolerance = "1e-3",
                initialGuess = "%.2f"%(max(biasMagnitude, 2)),
                )
 

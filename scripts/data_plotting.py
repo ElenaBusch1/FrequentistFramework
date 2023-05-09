@@ -65,9 +65,7 @@ infileExtraction="FitParameters_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, si
 infilePD='PD_%s_bkgonly'%(pdFitName)
 outfileSpurious = "%s_%s_%s"%(pdFitName, fitName, signalfile)
 infileBkgOnly = "FitParameters_%s_PD_%s_bkgonly"%(pdFitName, fitName)
-rangelow = config.samples[channelNames[0]]["rangelow"]
-rangehigh = config.samples[channelNames[0]]["rangehigh"]
-#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, rangelow=rangelow, rangehigh = rangehigh, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"], signalfile=signalfile)
+#spuriousSignal.spuriousSignal(sigmeans=sigmeans, sigwidths=sigwidths, infile=infileExtraction, infilePD=infilePD, outfile=outfileSpurious, channelNames=channelNames, cdir=cdir+"/scripts/", bkgOnlyFitFile = infileBkgOnly, fitName = fitName, crange = spuriousRanges, outputdir=coutputdir, signalName = "Y", labels = ["m_{4j}"], signalfile=signalfile)
 
 
 infilesChi2 = "PostFit_bkgOnly_%s_%s"%(pdFitName, fitName)
