@@ -43,7 +43,7 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
 
     if maskrange:
         # _range="--range SBLo,SBHi"
-        _range="--range SBLo_J100yStar06,SBHi_J100yStar06"
+        _range="--range SBLo_{},SBHi_{}".format(categoryname, categoryname)
         maskmin=maskrange[0]
         maskmax=maskrange[1]
     else:
@@ -115,7 +115,8 @@ def run_anaFit(datafile,
                dochi2fit=False, 
                dochi2constraints=False,
                folder="run/",
-               spursig=0):
+               spursig=0,
+               categoryname="J100yStar06"):
 
     nbins=rangehigh - rangelow
 
@@ -260,7 +261,7 @@ def run_anaFit(datafile,
         tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
 
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --bkghist %s --datahist %s --outputjson %s; deactivate" % (postfitfile, "J100yStar06_rebinned/postfit", "J100yStar06_rebinned/data", "{}/BHresults.json".format(folder)))
+        execute("source pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 python/FindBHWindow.py --inputfile %s --bkghist %s --datahist %s --outputjson %s; deactivate" % (postfitfile, "{}_rebinned/postfit".format(categoryname), "{}_rebinned/data".format(categoryname), "{}/BHresults.json".format(folder)))
 
         # pass results of pyBH via this json file
         with open("{}/BHresults.json".format(folder)) as f:
@@ -346,6 +347,7 @@ def main(args):
     parser.add_argument('--dochi2constraints', dest='dochi2constraints', action="store_true", help='Include the constraint terms into chi2. Becomes virtually identical to NLL this way.')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
     parser.add_argument('--spursigfile', dest='spursigfile', type=str, help='Path to json file containing spurious signal dict')
+    parser.add_argument('--categoryname', dest='categoryname', type=str, default='J100yStar06', help='Name of category to fit')
 
     args = parser.parse_args(args)
     if not args.signame:
@@ -389,7 +391,8 @@ def main(args):
                doprefit=args.doprefit,
                dochi2fit=args.dochi2fit, 
                dochi2constraints=args.dochi2constraints,
-               spursig=spursig)
+               spursig=spursig,
+               categoryname=args.categoryname)
 
 
 if __name__ == "__main__":  

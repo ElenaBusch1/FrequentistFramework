@@ -32,6 +32,7 @@ def main(args):
     parser.add_argument('--dochi2constraints', dest='dochi2constraints', action="store_true", help='Include the constraint terms into chi2. Becomes virtually identical to NLL this way.')
     parser.add_argument('--spursigfile', dest='spursigfile', type=str, help='Path to json file containing spurious signal dict')
     parser.add_argument('--folder', dest='folder', type=str, default='run', help='Output folder to store configs and results (default: run)')
+    parser.add_argument('--categoryname', dest='categoryname', type=str, default='J100yStar06', help='Name of category to fit')
     parser.add_argument('--sigamp', dest='sigamp', type=float, default=0, help='Amplitude of Gaussian to inject (in sigma)')
     parser.add_argument('--loopstart', dest='loopstart', type=int, help='First toy to fit')
     parser.add_argument('--loopend', dest='loopend', type=int, help='Last toy to fit')
@@ -124,7 +125,8 @@ def main(args):
                    doprefit=args.doprefit,
                    dochi2fit=args.dochi2fit, 
                    dochi2constraints=args.dochi2constraints,
-                   spursig=spursig)
+                   spursig=spursig,
+                   categoryname=args.categoryname)
 
 if __name__ == "__main__":  
     sys.exit(main(sys.argv[1:]))
