@@ -6,16 +6,16 @@ signalfile =  config.cSignal
 overallName = config.cSample
 
 fitName = "fourPar"
-#allChannelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-allChannelNames = [[0], ]
+allChannelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
 
 #signalfile =  "Gaussian"
-signalfile =  "crystalBallHist"
+#signalfile =  "crystalBallHist"
+signalfile =  "gausHist"
 coutputdir = "fitsData"
 
-#sigmeans = [2000, 2250, 2500, 2750, 3000, 3250, 3500,3750, 4000,4250, 4500,4750, 5000,5250, 5500,5750, 6000,6250, 6500,6750, 7000,7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
-sigmeans = [2000]
-sigwidths = [10]
+sigmeans = [2000, 2250, 2500, 2750, 3000, 3250, 3500,3750, 4000,4250, 4500,4750, 5000,5250, 5500,5750, 6000,6250, 6500,6750, 7000,7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+#sigmeans = [2000]
+sigwidths = [5,10,15]
 
 for channelNames in allChannelNames:
   channelString = ""
@@ -32,7 +32,6 @@ for channelNames in allChannelNames:
                            " --sigmean=" + str(sigmean) +  \
                            " --sigwidth=" + str(sigwidth) +  \
                            " --outputdir=" + overallName +  \
-                           " --doRemake=1 " \
                            " --isBatch=1"
 
         if not doRemake:

@@ -28,15 +28,16 @@ if args.isBatch:
 else:
 
   fitName = "fourPar"
-  channelNames = [[ "0"], ]
+  channelNames = [[ "4"], ]
 
   #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  sigmeans = [5750]
+  sigmeans = [3100, 3300]
   sigwidths = [10]
   signalfile =  "crystalBallHist"
   args.doRemake = 1
 
 
+args.doRemake = 0
 cdir = config.cdir
 coutputdir = "fitsData"
 baseChannelName = "Data_yxxjjjj_4j_alpha"
