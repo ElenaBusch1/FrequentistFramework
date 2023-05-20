@@ -18,7 +18,9 @@ cdir = config.cdir
 
 
 #sigmeans=[2000, 3000, 4000, 6000, 8000, 10000]
-sigmeans = [2000,2250, 2500, 2750, 3000,3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+#sigmeans = [2000,2250, 2500, 2600, 2700, 2750,2800, 2900, 3000,3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+sigmeans = [2000,2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+#sigmeans = [2000,2250, 2500, 2750, 3000,3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
 
 #sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
 #sigmeans=[4000, 8000]
@@ -28,7 +30,7 @@ sigmeans = [2000,2250, 2500, 2750, 3000,3250, 3500, 3750, 4000, 4250, 4500, 4750
 spuriousRanges = [1500, 1500, 1500, 1500, 1000, 1000, 1000, 1000, 400, 400, 400, 400, 150, 150, 150, 150, 50, 50, 50, 15, 15, 15, 15, 15, 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5, 5, 5]
 #spuriousRanges = [100, 50, 50, 30, 10, 5, 5]
 #sigwidths=[ 5, 10, 15 ]
-sigwidths=[ 10]
+sigwidths=[ 5,10,15]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[5,4,3,2,1,0]
 #sigamps=[5,4,3,2,1]
@@ -48,7 +50,8 @@ coutputdir="fitsData_"
 #signalfile =  "template"
 #signalfile =  "Gaussian"
 #signalfile =  "crystalBallHistNoSyst"
-signalfile =  "crystalBallHist"
+#signalfile =  "crystalBallHist"
+signalfile =  "gausHist"
 #signalfile =  "gausHistNoSyst"
 
 lumi = 140000
@@ -97,16 +100,17 @@ pathsLimits = []
 for alphaBin, channelName in enumerate(channelNames):
   outputdir = coutputdir + channelName
   pathsLimits = [ "Limits_limits_%s_%s"%(fitName, signalfile)]
-  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile, alphaBin = alphaBin)
+  plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile, alphaBin = alphaBin, signalName = "Y")
 
 pathsLimits = []
 pathsPostFit = []
-for channelName in channelNames:
-  pathsLimits.append("Limits_limits_%s_%s"%(fitName, signalfile))
-  pathsPostFit.append("PostFit_limits_%s_%s"%(fitName, signalfile))
-outputdir = coutputdir 
-#plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=100)
-#plotLimits2D.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=50, alphaBins=alphaBins, postfitPaths = pathsPostFit)
+for width in sigwidths:
+  for channelName in channelNames:
+    pathsLimits.append("Limits_limits_%s_%s"%(fitName, signalfile))
+    pathsPostFit.append("PostFit_limits_%s_%s"%(fitName, signalfile))
+  outputdir = coutputdir 
+  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=100)
+  plotLimits2D.plotLimits(sigmeans=sigmeans, sigwidths=[width], paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=50, alphaBins=alphaBins, postfitPaths = pathsPostFit)
 
 
 

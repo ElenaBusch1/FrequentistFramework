@@ -254,7 +254,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
     c.SetRightMargin(0.2)
     c.SetLogz()
     limits2D.Draw("COLZ")
-    c.Print("%s/limits2D.pdf"%(outdir))
+    c.Print("%s/limits2D_%d.pdf"%(outdir, sigwidths[0]))
 
 
 def main(args):

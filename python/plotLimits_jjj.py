@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import ROOT
 from math import log10
+from math import floor
 import sys, re, os, math, argparse
 from array import array
 from ROOT import *
@@ -45,12 +46,12 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0, signalType="Gaussian", isMx = False, alphaBin = 0):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=0, signalType="Gaussian", isMx = False, alphaBin = 0, signalName = "Y"):
     SetAtlasStyle()
 
     massString = "mY"
-    if isMx:
-      massString = "mX"
+    #if isMx:
+    #  massString = "mX"
     fileName = "limitFiles/h2_eff_alpha_%s_forJen.root"%(massString)
     histName = "h2_eff_alpha_%s"%(massString)
     alpha = config.alphaBins[alphaBin] 
@@ -134,7 +135,15 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                   if mY > 10000:
                     continue
                   print sigmean, mY, alpha
-
+                else:
+                  mYTest = floor(sigmean/1000) * 1000 
+                  mX = round(mYTest * alpha / 10) * 10
+                  print sigmean, mYTest, mX
+                  if mYTest < 2000:
+                    continue
+                  if mX < 500:
+                    continue
+                  
 
                 rangelow = config.samples[channelName[0]]["rangelow"]
 
@@ -243,7 +252,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     maxY = 0.1
 
     g_exp_datasets[0][0].Draw("af")
-    g_exp_datasets[0][0].GetXaxis().SetTitle("M_{G} [GeV]")
+    g_exp_datasets[0][0].GetXaxis().SetTitle("M_{%s} [GeV]"%(signalName))
     g_exp_datasets[0][0].GetYaxis().SetTitle("#sigma #times #it{A} #times #it{BR} [pb]")
     g_exp_datasets[0][0].GetYaxis().SetTitleOffset(1.0)
     g_exp_datasets[0][0].GetHistogram().SetMinimum(minY)
@@ -264,11 +273,11 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
         for i,g in enumerate(g_exp_datasets[dataset]):
             g.Draw("l")
             if (dataset==0):
-                leg_exp.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "l")
+                leg_exp.AddEntry(g, "#sigma_{G}/M_{%s} = %.2f" % (signalName, sigwidths[i]/100.), "l")
         for i,g in enumerate(g_obs_datasets[dataset]):
             g.Draw("pl")
             if (dataset==0):
-                leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "lp")
+                leg_obs.AddEntry(g, "#sigma_{G}/M_{%s} = %.2f" % (signalName, sigwidths[i]/100.), "lp")
 
 
     ATLASLabel(0.20, 0.90, atlasLabel, 13)
@@ -288,7 +297,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     minY = 1e-20
     maxY = 1e-8
     g_exp_datasets_model[0][0].Draw("af")
-    g_exp_datasets_model[0][0].GetXaxis().SetTitle("M_{G} [GeV]")
+    g_exp_datasets_model[0][0].GetXaxis().SetTitle("M_{%s} [GeV]"%(signalName))
     g_exp_datasets_model[0][0].GetYaxis().SetTitle("#sigma #times #it{BR} [pb]")
     g_exp_datasets_model[0][0].GetYaxis().SetTitleOffset(1.0)
     g_exp_datasets_model[0][0].GetHistogram().SetMinimum(minY)
