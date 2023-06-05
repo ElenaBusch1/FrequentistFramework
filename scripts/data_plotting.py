@@ -3,8 +3,6 @@ import python.createExtractionGraph as createExtractionGraph
 import python.createCoverageGraph as createCoverageGraph
 import python.plotLimits_jjj as plotLimits_jjj
 import python.plotLimits2D as plotLimits2D
-import python.getChi2Distribution as getChi2Distribution
-import python.plotFalseExclusionCandles as plotFalseExclusionCandles
 import python.spuriousSignal as spuriousSignal
 import python.plotFits as plotFits
 import python.plotPulls as plotPulls
@@ -30,7 +28,7 @@ sigmeans = [2000,2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 310
 spuriousRanges = [1500, 1500, 1500, 1500, 1000, 1000, 1000, 1000, 400, 400, 400, 400, 150, 150, 150, 150, 50, 50, 50, 15, 15, 15, 15, 15, 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5, 5, 5]
 #spuriousRanges = [100, 50, 50, 30, 10, 5, 5]
 #sigwidths=[ 5, 10, 15 ]
-sigwidths=[ 5,10,15]
+sigwidths=[ 10]
 # These cannot start with 0, because this will result in an incorrect determination of nbkg for createExtractionGraph
 #sigamps=[5,4,3,2,1,0]
 #sigamps=[5,4,3,2,1]
@@ -56,7 +54,7 @@ signalfile =  "gausHist"
 
 lumi = 140000
 
-atlasLabel = "Simulation Internal"
+atlasLabel = "Internal"
 
 #rebinedges = config.getBinning(rangelow, rangehigh, delta=50)
 
@@ -87,7 +85,7 @@ outfileChi2="chi2_spuriousSignal_%s_%s_%s"%(pdFitName, fitName, signalfile)
 
 
 
-signalfile =  "crystalBallHist"
+#signalfile =  "crystalBallHist"
 pathsLimits = []
 for channelName in channelNames:
   outputdir = coutputdir + channelName
@@ -102,15 +100,14 @@ for alphaBin, channelName in enumerate(channelNames):
   pathsLimits = [ "Limits_limits_%s_%s"%(fitName, signalfile)]
   plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelName=[channelName],atlasLabel=atlasLabel, deltaMassAboveFit=50, signalType = signalfile, alphaBin = alphaBin, signalName = "Y")
 
-pathsLimits = []
-pathsPostFit = []
 for width in sigwidths:
+  pathsLimits = []
+  pathsPostFit = []
   for channelName in channelNames:
     pathsLimits.append("Limits_limits_%s_%s"%(fitName, signalfile))
     pathsPostFit.append("PostFit_limits_%s_%s"%(fitName, signalfile))
   outputdir = coutputdir 
-  #plotLimits_jjj.plotLimits(sigmeans=sigmeans, sigwidths=sigwidths, paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=100)
-  plotLimits2D.plotLimits(sigmeans=sigmeans, sigwidths=[width], paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=50, alphaBins=alphaBins, postfitPaths = pathsPostFit)
+  #plotLimits2D.plotLimits(sigmeans=sigmeans, sigwidths=[width], paths=pathsLimits, lumis=lumi, outdir=outputdir, cdir=cdir+"/scripts/",channelNames=channelNames,atlasLabel=atlasLabel, deltaMassAboveFit=50, alphaBins=alphaBins, postfitPaths = pathsPostFit, signalfile=signalfile)
 
 
 

@@ -97,13 +97,13 @@ def InjectTemplate(infile= "", histname= "", sigmean= "", sigwidth= "", sigamp= 
             binHighSig = sigHistNom.FindBin(rangeHigh)
             nBkg = hist.Integral(binLow, binHigh)
             nbkgs.append(nBkg)
-            print("number of background", binLow, binHigh, nBkg)
 
             sigma = (sigwidth*0.01) * sigmean 
 
             # TODO: Ideally the window size should be chosen from the template, not just arbitrary
             fSig = sigHistNom.Integral(binLowSig, binHighSig) #integral from -1.18 sigma to +1.18 sigma
-            nSigNew = int(math.sqrt(nBkg)*sigamp / fSig)
+            nSigNew = int(sigHistNom.Integral() * math.sqrt(nBkg)*sigamp*1.0 / fSig)
+            print("number of background", binLow, binHigh, nBkg, nSigNew, sigamp, fSig)
 
             mctoy = signalPDF.generateBinned(r.RooArgSet(mjjVar), nSigNew)
             sigHist2 = mctoy.createHistogram("test_%s"%(histKey), mjjVar);

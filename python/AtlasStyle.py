@@ -113,6 +113,7 @@ def myText(x, y, color, tsize, text):
     l.SetNDC()
     l.SetTextColor(color)
     l.SetTextSize(tsize)
+    l.SetNDC()
     l.DrawLatex(x,y,text)
 
 

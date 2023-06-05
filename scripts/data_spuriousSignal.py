@@ -43,7 +43,7 @@ else:
 
   # The different channels you are using
   #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-  channelNames = [[0]]
+  channelNames = [[1]]
 
 
   # The means of the signal distributions

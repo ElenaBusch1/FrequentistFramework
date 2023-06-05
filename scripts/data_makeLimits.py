@@ -28,13 +28,13 @@ if args.isBatch:
 else:
 
   fitName = "fourPar"
-  channelNames = [[ "4"], ]
+  channelNames = [[ "10"], ]
 
   #sigmeans = [2500, 3500, 5000, 7000, 9000]
-  sigmeans = [3100, 3300]
+  sigmeans = [2200]
   sigwidths = [10]
   signalfile =  "crystalBallHist"
-  args.doRemake = 1
+  args.doRemake = 0
 
 
 args.doRemake = 0
@@ -63,7 +63,6 @@ for channelSuffix in channelNames:
 
 
         biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName[0], sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile+"NoSyst")
-        #biasMagnitude = 0
         print biasMagnitude
 
         # Then run the injection

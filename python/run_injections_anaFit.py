@@ -36,6 +36,7 @@ def run_injections_anaFit(
                           useSysts,
                           isMx = False,
                           tagName="",
+                          rebinOnlyBH = True,
                          ):
 
     print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
@@ -75,7 +76,7 @@ def run_injections_anaFit(
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1,
-                       wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName),
+                       wsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%sigmean).replace("MASSX", "%d"%sigmeanX).replace("TAGNAME", tagName).replace("WIDTH", "%d"%(sigwidth)),
                        wspdf = myHistName,
                        )
       print (chist, nbkgWindow)
@@ -113,6 +114,7 @@ def run_injections_anaFit(
                histnames=histnames,
                doRemake=doRemake,
                useSysts=useSysts,
+               rebinOnlyBH = rebinOnlyBH,
               )
 
 

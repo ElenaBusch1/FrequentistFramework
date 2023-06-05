@@ -6,6 +6,7 @@ cdir="/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework"
 baseDir = "/afs/cern.ch/work/j/jroloff/nixon/createHistograms/"
 
 templateDir = "/afs/cern.ch/work/j/jroloff/nixon/FrequentistFramework/scripts/signalTemplates"
+#templateDir = "/eos/user/j/jroloff/nixon/forMatt/signalTemplates"
 
 nToys = 50
 atlasLabel="Simulation Internal"

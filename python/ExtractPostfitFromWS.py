@@ -171,10 +171,13 @@ class PostfitExtractor:
                   return 1
 
                 binSig = 0.
-                #self.maskmin=650
-                #self.maskmax=1500
+
+                #if valueErrorData <= 0. or postFitValue <= 0.:
+                #  print binCenter, valueErrorData, postFitValue
 
                 if valueErrorData > 0. and postFitValue > 0.:
+                    #print "Jen mask! ", binCenter, self.maskmin, self.maskmax, maskedchi2bins, chi2, valueData
+                      
                     binSig = (valueData - postFitValue)/valueErrorData
                     if abs(binSig) >= maskPull2 and maskPull2>4:
                        print "AAAAHHHHH", binCenter, binSig, maskPull1, maskPull2
@@ -185,6 +188,9 @@ class PostfitExtractor:
                     if abs(binSig) >= maskPull3 and maskPull3>4:
                        print "AAAAHHHHH", binCenter, binSig, maskPull3, maskPull2
                        continue
+
+                    #print "Jen mask! ", binCenter, self.maskmin, self.maskmax, maskedchi2bins, chi2
+                    #if self.maskmin > 0:
 
                     if binCenter-0.5 < self.maskmin or binCenter+0.5 > self.maskmax:
                         chi2bins += 1

@@ -53,10 +53,11 @@ def build_fit_extract(topfile, datafiles, channels, datahist, datafirstbin, wsfi
         print("Now running bkg-only quickFit")
         _poi=""
 
+    print ("maskrange", maskrange) 
     if maskrange:
-        _range="--range SBLo_%s,SBHi_%s"%(datahist[0],datahist[0])
-        #_range="--range 600,650"
-        #_range="--range SBLo,SBHi"
+        #_range="--range SBLo_%s,SBHi_%s"%(datahist[0],datahist[0])
+        _range="--range SBLo,SBHi"
+        #_range="--range %d,%d"%(maskrange[0] , maskrange[1])
         maskmin=maskrange[0]
         maskmax=maskrange[1]
     else:
@@ -422,6 +423,12 @@ def run_anaFit(datahist,
       else:
           poi=None
 
+      #mymaskrange = "2800,3200" 
+      #replaceinfile(tmptopfile,
+      #                [
+      #                 (r'(OutputFile="[A-Za-z0-9_/.-]*")',r'\1'),
+      #                 ('Blind="false"','Blind="true"'),])
+      #replaceinfile(tmpcategoryfile, [(r'(Binning="\d+")', r'\1 BlindRange="%s"' % (mymaskrange))])
       print("running fit extractor")
       # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
       pvals_global, postfitfile, parameterfile, fitnsig, fitnbkg, isPass, pfe = build_fit_extract(topfile=tmptopfile,
@@ -439,7 +446,7 @@ def run_anaFit(datahist,
                                                                 toyString=toyString,
                                                                 nbkgWindow=nbkgWindow,
                                                                 minTolerance = minTolerance,
-                                                                #maskrange=(678,685)
+                                                                #maskrange=(2800, 3200),
                                                                 )
 
       
@@ -523,13 +530,13 @@ def run_anaFit(datahist,
         # pass results of pyBH via this json file
         with open(cdir + "/scripts/" + outdir + "/BHresults.json") as f:
             BHresults=json.load(f)
-        with open(cdir + "/scripts/" + outdir + "/BHresults_deficit.json") as f:
-            BHresultsDeficit=json.load(f)
+        #with open(cdir + "/scripts/" + outdir + "/BHresults_deficit.json") as f:
+        #    BHresultsDeficit=json.load(f)
         sigUp = BHresults["pyBHresult"]["significance"]
-        sigDown = BHresultsDeficit["pyBHresult"]["significance"]
-        print( sigUp, sigDown)
-        if sigDown > sigUp:
-          BHresults = BHresultsDeficit
+        #sigDown = BHresultsDeficit["pyBHresult"]["significance"]
+        #print( sigUp, sigDown)
+        #if sigDown > sigUp:
+        #  BHresults = BHresultsDeficit
 
         tmptopfilemasked=tmptopfile
         tmpcategoryfilemasked=tmpcategoryfile
@@ -561,7 +568,6 @@ def run_anaFit(datahist,
                                             toy=toy,
                                             toyString=toyString,
                                             nbkgWindow=nbkgWindow,
-                                            #maskrange=(600,650))
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
 
 

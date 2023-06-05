@@ -25,17 +25,17 @@ if args.isBatch:
 else:
   fitName = "fourPar"
   #channelNames = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11],]
-  channelNames = [[0],]
+  channelNames = [[7],]
  
-  sigmeans = [2000,2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
-  #sigmeans = [2000] 
+  #sigmeans = [2000,2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750, 9000, 9250, 9500, 9750, 10000]
+  sigmeans = [6750] 
+
   sigwidths = [10]
   signalfile =  "gausHist"
-  #signalfile =  "crystalBallHist"
-  args.doRemake = 0
+  #signalfile =  "crystalBallHistNoSyst"
+  args.doRemake = 1
 
 doSyst = True
-
 
 coutputdir = "fitsData"
 cdir = config.cdir
@@ -58,6 +58,7 @@ for channelSuffix in channelNames:
     for sigwidth in sigwidths:
         outputdir = coutputdir + "_" + channelName
         nbkg="1E4,0,1E6"
+        #nbkg="5E3,0,1E4"
 
 
         # Output file names, which will be written to outputdir
@@ -68,15 +69,18 @@ for channelSuffix in channelNames:
         topfile=config.samples[channelName]["topfile"]
  
         #systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_4j_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + "_" + signalfile + ".txt"
-        systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_4j_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) + ".txt"
+        systematicNameFile = config.getFileName("systematics", cdir + "/scripts/", "yxxjjjj_4j_alpha%d"%(int(channelSuffix[0])), "uncertaintySets", sigmean, sigwidth) +".txt"
         print systematicNameFile
-        #continue
 
-        biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName, sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile+"NoSyst")
+        if signalfile.find("NoSyst")>=0:
+          print "no syst"
+          biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName, sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile)
+        else:
+          biasMagnitude = gb.getSpuriousSignal(coutputdir, channelName, sigmean, sigwidth, biasFraction= 0.5, signalName=signalfile+"NoSyst")
         print biasMagnitude
         nsig="0,0,%.2f"%(max(5*biasMagnitude, 5))
-        if not doSyst:
-          nsig="0,0,%.2f"%(max(5*biasMagnitude, 100))
+        #if not doSyst:
+        #  nsig="0,0,%.2f"%(max(5*biasMagnitude, 100))
 
 
         run_anaFit.run_anaFit(
@@ -93,8 +97,8 @@ for channelSuffix in channelNames:
                outputfile=outputfile,
                signalfile=signalfile,
                maskthreshold=0.05,
-               dosignal=1,
-               dolimit=1,
+               dosignal=dosignal,
+               dolimit=dolimit,
                useSysts = doSyst,
                doRemake = args.doRemake,
                biasMagnitude = biasMagnitude,

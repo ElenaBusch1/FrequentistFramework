@@ -46,7 +46,7 @@ for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
         infiles.append("PostFit_%s_bkgonly"%(pdFitName))
       outfileFits = config.getFileName("fits", cdir + "/scripts/", channelName, outputdir)
       #outfileFits = outputdir + "/Fits_" + channelName 
-      plotFits.plotFits(infiles=infiles, outfile=outfileFits,  minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName, lumi=lumi, rebinedges=rebinedges, atlasLabel=config.atlasLabel, fitNames = fitNames, indir = outputdir, cutoffSpectrum=True, plotBH=True, BHFile = "fitsData_%s/BHresults.json"%(channelName))
+      plotFits.plotFits(infiles=infiles, outfile=outfileFits,  minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName, lumi=lumi, rebinedges=rebinedges, atlasLabel="Internal", fitNames = fitNames, indir = outputdir, cutoffSpectrum=True, plotBH=True, BHFile = "fitsData_%s/BHresults.json"%(channelName))
     
       #outfilePulls = "pulls_%s_Fit_%d_%d"%(channelName, rangelow, rangehigh)
       outfilePulls = config.getFileName("pulls", cdir + "/scripts/", channelName, outputdir)
@@ -54,19 +54,19 @@ for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
       plotPulls.plotPulls(infiles=infiles, fitNames = fitNames, outfile="pulls", minMjj=rangelow, maxMjj=rangehigh, cdir=cdir+"/scripts/", channelName=channelName,  lumi=lumi, atlasLabel=config.atlasLabel, outputdir=outputdir)
 
 
-#fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
-#fitNames = ["threePar", "fourPar", "fivePar"]
-fitNames = ["fourPar", "fivePar"]
-for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
-  outputdir = base_outputdir + channelNameSet[0]
-  for channelName in channelNameSet:
-      rangelow=config.samples[channelName]["rangelow"]
-      rangehigh=config.samples[channelName]["rangehigh"]
-      rebinedges = config.getBinning(rangelow, rangehigh, delta=10)
-      lumi =  config.samples[channelName]["lumi"]
-      #infiles = ["PostFit_threePar_bkgonly", "PostFit_fourPar_bkgonly", "PostFit_fivePar_bkgonly", "PostFit_sixPar_bkgonly"]
-      infiles = ["PostFit_fourPar_bkgonly", "PostFit_fivePar_bkgonly",]
-      outfile = "Fit"
-      runFTest.runFTest(infiles=infiles, cdir=cdir + "/scripts/", outfile=outfile, rangelow=rangelow, rangehigh=rangehigh, channelName=channelName, lumi=lumi, atlasLabel=config.atlasLabel, rebinEdges=rebinedges, outputdir=outputdir, fitNames = fitNames)
+##fitNames = ["threePar", "fourPar", "fivePar", "sixPar"]
+##fitNames = ["threePar", "fourPar", "fivePar"]
+#fitNames = ["fourPar", "fivePar"]
+#for channelNameSet, rebinFactor in zip(channelNames, rebinFactors):
+#  outputdir = base_outputdir + channelNameSet[0]
+#  for channelName in channelNameSet:
+#      rangelow=config.samples[channelName]["rangelow"]
+#      rangehigh=config.samples[channelName]["rangehigh"]
+#      rebinedges = config.getBinning(rangelow, rangehigh, delta=10)
+#      lumi =  config.samples[channelName]["lumi"]
+#      #infiles = ["PostFit_threePar_bkgonly", "PostFit_fourPar_bkgonly", "PostFit_fivePar_bkgonly", "PostFit_sixPar_bkgonly"]
+#      infiles = ["PostFit_fourPar_bkgonly", "PostFit_fivePar_bkgonly",]
+#      outfile = "Fit"
+#      runFTest.runFTest(infiles=infiles, cdir=cdir + "/scripts/", outfile=outfile, rangelow=rangelow, rangehigh=rangehigh, channelName=channelName, lumi=lumi, atlasLabel=config.atlasLabel, rebinEdges=rebinedges, outputdir=outputdir, fitNames = fitNames)
 
 
