@@ -143,8 +143,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        #dataRes.GetYaxis().SetRangeUser(-3, 3)
-        dataRes.GetYaxis().SetRangeUser(-8,8)
+        dataRes.GetYaxis().SetRangeUser(-2.5, 2.5)
         dataRes.GetXaxis().SetRangeUser(minMjj, maxMjj)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
@@ -177,9 +176,9 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
     # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
     # For now, leave in linear, and if we can update the root version, we can also fix this
-    plotHists[0].SetFillStyle(1001)
-    plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
-    leg, upperPad, lowerPad = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e2", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
+    #plotHists[0].SetFillStyle(1001)
+    #plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
+    leg, upperPad, lowerPad = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["ex0", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
 
     if plotBH:
         labels.pop()

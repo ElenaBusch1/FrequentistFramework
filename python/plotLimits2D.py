@@ -8,6 +8,8 @@ from math import isnan
 from glob import glob
 import config as config
 import LocalFunctions as lf
+import DrawingFunctions as df
+import AtlasStyle as AS
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -44,7 +46,7 @@ def createFillBetweenGraphs(g1, g2):
 
   return g_fill
 
-def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=None, alphaBins = [], meansCentered = [1500, 2500, 3500, 5000, 7000, 9000, 11000], postfitPaths = [], isMx = False):
+def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, atlasLabel="Simulation Internal", deltaMassAboveFit=0, sigamp=0, ntoy=None, alphaBins = [], meansCentered = [1500, 2500, 3500, 5000, 7000, 9000, 11000], postfitPaths = [], isMx = False, signalfile="Gaussian"):
     SetAtlasStyle()
 
     red = [0.001462, 0.002258, 0.003279, 0.004512, 0.005950, 0.007588, 0.009426, 0.011465, 0.013708, 0.016156, 0.018815, 0.021692, 0.024792, 0.028123, 0.031696, 0.035520, 0.039608, 0.043830, 0.048062, 0.052320, 0.056615, 0.060949, 0.065330, 0.069764, 0.074257, 0.078815, 0.083446, 0.088155, 0.092949, 0.097833, 0.102815, 0.107899, 0.113094, 0.118405, 0.123833, 0.129380, 0.135053, 0.140858, 0.146785, 0.152839, 0.159018, 0.165308, 0.171713, 0.178212, 0.184801, 0.191460, 0.198177, 0.204935, 0.211718, 0.218512, 0.225302, 0.232077, 0.238826, 0.245543, 0.252220, 0.258857, 0.265447, 0.271994, 0.278493, 0.284951, 0.291366, 0.297740, 0.304081, 0.310382, 0.316654, 0.322899, 0.329114, 0.335308, 0.341482, 0.347636, 0.353773, 0.359898, 0.366012, 0.372116, 0.378211, 0.384299, 0.390384, 0.396467, 0.402548, 0.408629, 0.414709, 0.420791, 0.426877, 0.432967, 0.439062, 0.445163, 0.451271, 0.457386, 0.463508, 0.469640, 0.475780, 0.481929, 0.488088, 0.494258, 0.500438, 0.506629, 0.512831, 0.519045, 0.525270, 0.531507, 0.537755, 0.544015, 0.550287, 0.556571, 0.562866, 0.569172, 0.575490, 0.581819, 0.588158, 0.594508, 0.600868, 0.607238, 0.613617, 0.620005, 0.626401, 0.632805, 0.639216, 0.645633, 0.652056, 0.658483, 0.664915, 0.671349, 0.677786, 0.684224, 0.690661, 0.697098, 0.703532, 0.709962, 0.716387, 0.722805, 0.729216, 0.735616, 0.742004, 0.748378, 0.754737, 0.761077, 0.767398, 0.773695, 0.779968, 0.786212, 0.792427, 0.798608, 0.804752, 0.810855, 0.816914, 0.822926, 0.828886, 0.834791, 0.840636, 0.846416, 0.852126, 0.857763, 0.863320, 0.868793, 0.874176, 0.879464, 0.884651, 0.889731, 0.894700, 0.899552, 0.904281, 0.908884, 0.913354, 0.917689, 0.921884, 0.925937, 0.929845, 0.933606, 0.937221, 0.940687, 0.944006, 0.947180, 0.950210, 0.953099, 0.955849, 0.958464, 0.960949, 0.963310, 0.965549, 0.967671, 0.969680, 0.971582, 0.973381, 0.975082, 0.976690, 0.978210, 0.979645, 0.981000, 0.982279, 0.983485, 0.984622, 0.985693, 0.986700, 0.987646, 0.988533, 0.989363, 0.990138, 0.990871, 0.991558, 0.992196, 0.992785, 0.993326, 0.993834, 0.994309, 0.994738, 0.995122, 0.995480, 0.995810, 0.996096, 0.996341, 0.996580, 0.996775, 0.996925, 0.997077, 0.997186, 0.997254, 0.997325, 0.997351, 0.997351, 0.997341, 0.997285, 0.997228, 0.997138, 0.997019, 0.996898, 0.996727, 0.996571, 0.996369, 0.996162, 0.995932, 0.995680, 0.995424, 0.995131, 0.994851, 0.994524, 0.994222, 0.993866, 0.993545, 0.993170, 0.992831, 0.992440, 0.992089, 0.991688, 0.991332, 0.990930, 0.990570, 0.990175, 0.989815, 0.989434, 0.989077, 0.988717, 0.988367, 0.988033, 0.987691, 0.987387, 0.987053]
@@ -62,11 +64,11 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
     meansCentered = []
     meansCentered.append(sigmeans[0] - (sigmeans[1]-sigmeans[0])/2.)
     for i in range(len(sigmeans)-1):
-      print sigmeans[i], sigmeans[i+1], (sigmeans[i] + sigmeans[i+1])/2.
+      #print sigmeans[i], sigmeans[i+1], (sigmeans[i] + sigmeans[i+1])/2.
       meansCentered.append((sigmeans[i] + sigmeans[i+1])/2.)
     nbins = len(sigmeans)
     meansCentered.append(sigmeans[nbins-1] + (sigmeans[nbins-1] - sigmeans[nbins-2])/2.)
-    print meansCentered
+    #print meansCentered
 
     #limits2D = TGraph2D()
 
@@ -118,7 +120,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
                     continue
                   if mY > 10000:
                     continue
-                  print sigmean, mY, alpha
+                  #print sigmean, mY, alpha
 
                 rangelow = config.samples[channelNames[alphaBin]]["rangelow"]
                 if sigmean < (rangelow + deltaMassAboveFit) :
@@ -167,7 +169,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
                 #limits2D.SetPoint(limits2D.GetN(), sigmean, alphaBin, obs)
                 limits2D.Fill(sigmean, alphaBins[alphaBin], obs)
-                print sigmean, alphaBins[alphaBin], exp
+                #print sigmean, alphaBins[alphaBin], exp
 
 
             #g_exp1.append( createFillBetweenGraphs(g_exp1d[-1], g_exp1u[-1]) )
@@ -252,9 +254,22 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
 
     c = TCanvas("c1_%s"%(outdir), "c1", 800, 600)
     c.SetRightMargin(0.2)
+    c.SetTopMargin(0.1)
     c.SetLogz()
+    limits2D.GetZaxis().SetTitleOffset(1.2)
     limits2D.Draw("COLZ")
-    c.Print("%s/limits2D_%d.pdf"%(outdir, sigwidths[0]))
+    #df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Internal", lumi=140)
+    df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Internal", lumi=140)
+    lumi = 140
+    sampleName = ""
+    x_pos = 0.18
+    y_pos = 0.91
+    text_size = 20
+    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %.0f fb^{-1}  %s"%(lumi, sampleName))
+
+
+
+    c.Print("%s/limits2D_%s_%d.pdf"%(outdir, signalfile, sigwidths[0]))
 
 
 def main(args):

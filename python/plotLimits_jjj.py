@@ -61,13 +61,25 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     h_xs = h_xsTmp.Clone("hXs")
     for xBin in range(h_xs.GetNbinsX()):
       for yBin in range(h_xs.GetNbinsY()):
-        #print (h_xsTmp.GetBinContent(xBin+1, yBin+1))
         if h_xsTmp.GetBinContent(xBin+1, yBin+1):
           h_xs.SetBinContent(xBin+1, yBin+1, log10(h_xsTmp.GetBinContent(xBin+1, yBin+1)))
+
+    myMeans = [2000, 3000, 4000, 6000, 8000, 10000]
+    gEff = TGraph2D()
+    test = TGraph()
+    for i, myMean in enumerate(myMeans):
+      test.SetPoint(i+1, myMean, h_xs.GetBinContent(i+1, 12))
+      print h_xs.GetBinContent(i+1, 12)
+      for j in range(h_eff.GetNbinsY()):
+        gEff.SetPoint(gEff.GetN()+1, myMean, h_eff.GetYaxis().GetBinCenter(j+1), h_eff.GetBinContent(i+1, j+1))
+
+
 
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
     colors = [kBlue, kRed+1, kOrange-3]
+
+    g_model_datasets = []
 
     g_obs_datasets = []
     g_exp_datasets = []
@@ -90,6 +102,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
     for dataset in range(len(paths)):
 
+        g_model = []
         g_obs = []
         g_exp = []
         g_exp1 = []
@@ -110,6 +123,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
         for i,sigwidth in enumerate(sigwidths):
 
+            g_model.append( TGraph() )
+
             g_obs.append( TGraph() )
             g_exp.append( TGraph() )
             g_exp1u.append( TGraph() )
@@ -128,21 +143,21 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                 if isMx:
                   alpha = config.alphaBins[alphaBin]
                   mY = round(sigmean / alpha / 10) * 10
-                  if sigmean < 500:
-                    continue
-                  if mY < 3000:
-                    continue
-                  if mY > 10000:
-                    continue
-                  print sigmean, mY, alpha
+                  #if sigmean < 500:
+                  #  continue
+                  #if mY < 3000:
+                  #  continue
+                  #if mY > 10000:
+                  #  continue
+                  #print sigmean, mY, alpha
                 else:
                   mYTest = floor(sigmean/1000) * 1000 
                   mX = round(mYTest * alpha / 10) * 10
-                  print sigmean, mYTest, mX
-                  if mYTest < 2000:
-                    continue
-                  if mX < 500:
-                    continue
+                  #print sigmean, mYTest, mX
+                  #if mYTest < 2000:
+                  #  continue
+                  #if mX < 500:
+                  #  continue
                   
 
                 rangelow = config.samples[channelName[0]]["rangelow"]
@@ -182,9 +197,10 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                 g_exp1d[i].SetPoint(g_exp1d[i].GetN(), sigmean, exp1d)
                 g_exp2d[i].SetPoint(g_exp2d[i].GetN(), sigmean, exp2d)
 
-                xs = pow(10, h_xs.Interpolate(sigmean, alpha))
-                eff = h_eff.Interpolate(sigmean, alpha)
-                print xs, eff, alpha, sigmean
+                xs = pow(10, test.Eval(sigmean))*1000.
+                #eff = h_eff.Interpolate(sigmean, alpha)
+                #eff = gEff.Eval(sigmean, alpha)
+                eff = gEff.Interpolate(sigmean, alpha)
 
                 g_exp_model[i].SetPoint(g_exp_model[i].GetN(), sigmean, exp*xs*eff)
                 g_exp1u_model[i].SetPoint(g_exp1u_model[i].GetN(), sigmean, exp1u*xs*eff)
@@ -194,6 +210,10 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
                 if isnan(obs):
                     continue
+
+                print sigmean, eff, h_eff.Interpolate(sigmean, alpha)
+                g_model[i].SetPoint(g_model[i].GetN(), sigmean, xs*eff)
+                #g_model[i].SetPoint(g_model[i].GetN(), sigmean, xs)
 
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
                 g_obs_model[i].SetPoint(g_obs_model[i].GetN(), sigmean, obs*xs*eff)
@@ -223,6 +243,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             g_obs_model[-1].SetLineColor(colors[i])
             g_obs_model[-1].SetMarkerColor(colors[i])
 
+        g_model_datasets.append(g_model)
         g_obs_datasets.append(g_obs)
         g_exp_datasets.append(g_exp)
         g_exp1_datasets.append(g_exp1)
@@ -248,8 +269,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     leg_exp = TLegend(0.65,0.6,0.85,0.7)
 
     #minY = 0.005
-    minY = 0.000005
-    maxY = 0.1
+    minY = 0.00000005
+    maxY = 0.5
 
     g_exp_datasets[0][0].Draw("af")
     g_exp_datasets[0][0].GetXaxis().SetTitle("M_{%s} [GeV]"%(signalName))
@@ -258,6 +279,9 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     g_exp_datasets[0][0].GetHistogram().SetMinimum(minY)
     g_exp_datasets[0][0].GetHistogram().SetMaximum(maxY)
     g_exp_datasets[0][0].GetXaxis().SetLimits(min(sigmeans)-49.9, max(sigmeans)+49.9)
+
+    #g_model_datasets[0][0].SetLineColor(ROOT.kRed)
+    #g_model_datasets[0][0].Draw("l")
 
     c.Modified()
 
@@ -282,7 +306,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
     ATLASLabel(0.20, 0.90, atlasLabel, 13)
     myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
-    myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV, %.1f fb^{-1}"%(lumis*0.001), 13)
+    myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV, %.0f fb^{-1}"%(lumis*0.001), 13)
     myText(0.2, 0.72, 1, config.samples[channelName[0]]["varLabel"], 13)
 
 

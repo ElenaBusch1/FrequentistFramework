@@ -258,7 +258,7 @@ def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size
     AS.ATLASLabel(x_pos, y_pos, 1, 0.13, text_size, atlasLabel)
 
     y_pos -= dy
-    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %.1f fb^{-1}  %s"%(lumi, sampleName))
+    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %.0f fb^{-1}  %s"%(lumi, sampleName))
     y_pos -= dy
 
     for label in labels:
