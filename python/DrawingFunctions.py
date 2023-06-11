@@ -379,7 +379,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   if len(hists) ==0:
     return
   upperPad.cd()
-  deltaHists=0.11
+  deltaHists=0.13
   if len(hists) > 5:
     deltaHists = 0.06
   legend = r.TLegend(0.56,0.95-(len(hists))*deltaHists,.91,0.95)
@@ -407,7 +407,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
 
   legend.Draw()
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel, text_size = 0.038, dy=0.038)
+  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel, text_size = 0.05, dy=0.055)
   lowerPad.cd()
 
   if(isLogX):

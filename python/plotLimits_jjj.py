@@ -269,13 +269,13 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     leg_exp = TLegend(0.65,0.6,0.85,0.7)
 
     #minY = 0.005
-    minY = 0.00000005
+    minY = 0.000003
     maxY = 0.5
 
     g_exp_datasets[0][0].Draw("af")
     g_exp_datasets[0][0].GetXaxis().SetTitle("M_{%s} [GeV]"%(signalName))
     g_exp_datasets[0][0].GetYaxis().SetTitle("#sigma #times #it{A} #times #it{BR} [pb]")
-    g_exp_datasets[0][0].GetYaxis().SetTitleOffset(1.0)
+    g_exp_datasets[0][0].GetYaxis().SetTitleOffset(1.1)
     g_exp_datasets[0][0].GetHistogram().SetMinimum(minY)
     g_exp_datasets[0][0].GetHistogram().SetMaximum(maxY)
     g_exp_datasets[0][0].GetXaxis().SetLimits(min(sigmeans)-49.9, max(sigmeans)+49.9)

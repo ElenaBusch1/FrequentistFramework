@@ -159,11 +159,11 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
                 if ntoy != None:
                   csuffix = "%s_%d"%(suffix, toy)
                 postfitPath = config.getFileName(postfitPaths[alphaBin], cdir, channelNames[alphaBin], outdir + channelNames[alphaBin], sigmean, sigwidth, sigamp) + ".root"
-                chi2Hist = lf.read_histogram(postfitPath, "chi2"+channelName+"_"+csuffix)
-                chi2 = chi2Hist.GetBinContent(2)
-                pval = chi2Hist.GetBinContent(6)
-                if pval < 0.05:
-                  continue
+                #chi2Hist = lf.read_histogram(postfitPath, "chi2"+channelName+"_"+csuffix)
+                #chi2 = chi2Hist.GetBinContent(2)
+                #pval = chi2Hist.GetBinContent(6)
+                #if pval < 0.05:
+                #  continue
 
 
                 g_obs[i].SetPoint(g_obs[i].GetN(), sigmean, obs)
@@ -257,6 +257,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
     c.SetTopMargin(0.1)
     c.SetLogz()
     limits2D.GetZaxis().SetTitleOffset(1.2)
+    limits2D.GetXaxis().SetLabelOffset(0.015)
     limits2D.Draw("COLZ")
     #df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Internal", lumi=140)
     df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Internal", lumi=140)

@@ -143,7 +143,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        dataRes.GetYaxis().SetRangeUser(-2.5, 2.5)
+        dataRes.GetYaxis().SetRangeUser(-2.9, 2.9)
         dataRes.GetXaxis().SetRangeUser(minMjj, maxMjj)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
@@ -160,7 +160,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         tmpName = config.fitFunctions[fitName]["Name"]
       except:
         tmpName = fitName
-      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
+      #legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-val = %.2f}"%(tmpName, chi2, pval))
+      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f}"%(tmpName, chi2))
 
 
     #c.SetLogx()
@@ -171,8 +172,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
             BHresults=json.load(f)
         bumpMin = BHresults["MaskMin"]
         bumpMax = BHresults["MaskMax"]
-        labels.append("Bump position: %d GeV < X < %d GeV"%(bumpMin, bumpMax))
-        labels.append("Global significance: %.2f"%(BHresults["pyBHresult"]["significance"]))
+        #labels.append("Bump position: %d GeV < X < %d GeV"%(bumpMin, bumpMax))
+        #labels.append("Global significance: %.2f"%(BHresults["pyBHresult"]["significance"]))
 
     # Note: do not try to use Logx with this version of root (6.20.04), because it will fail.
     # For now, leave in linear, and if we can update the root version, we can also fix this
@@ -189,7 +190,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
           if plotHists[0].GetXaxis().GetBinLowEdge(cbin+1) <= bumpMin and plotHists[0].GetXaxis().GetBinUpEdge(cbin+1) > bumpMin:
             minBin = cbin+1
             break
-        lineMin = ROOT.TLine(bumpMin, plotHists[0].GetMinimum(), bumpMin, plotHists[0].GetBinContent(minBin))
+        #lineMin = ROOT.TLine(bumpMin, plotHists[0].GetMinimum(), bumpMin, plotHists[0].GetBinContent(minBin))
+        lineMin = ROOT.TLine(bumpMin, plotHists[0].GetMinimum(), bumpMin, plotHists[1].GetBinContent(minBin))
         lineMin.SetLineStyle(2)
         lineMin.SetLineColor(ROOT.kGray)
         lineMin.Draw()
@@ -200,7 +202,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
             maxBin = cbin+1
             break
         #lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[0].GetMaximum())
-        lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[0].GetBinContent(maxBin))
+        #lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[0].GetBinContent(maxBin))
+        lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[1].GetBinContent(maxBin))
         print bumpMax, plotHists[0].GetMinimum(), plotHists[0].GetBinContent(maxBin), maxBin
         lineMax.SetLineStyle(2)
         lineMax.SetLineColor(ROOT.kGray)
