@@ -265,8 +265,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     c = TCanvas("c1_%s"%(outdir), "c1", 800, 600)
     c.SetLogy()
 
-    leg_obs = TLegend(0.65,0.76,0.85,0.86)
-    leg_exp = TLegend(0.65,0.6,0.85,0.7)
+    leg_obs = TLegend(0.65,0.72,0.85,0.87)
+    leg_exp = TLegend(0.65,0.5,0.85,0.65)
 
     #minY = 0.005
     minY = 0.000003
@@ -311,13 +311,14 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
 
     myText(0.65, 0.92, 1, "Observed:", 13)
-    myText(0.65, 0.76, 1, "Expected:", 13)
+    myText(0.65, 0.70, 1, "Expected:", 13)
     leg_exp.Draw()
     leg_obs.Draw()
 
     c.Print("%s/limitPlot_%s_%s.pdf"%(outdir, channelName[0], signalType))
 
 
+    '''
     minY = 1e-20
     maxY = 1e-8
     g_exp_datasets_model[0][0].Draw("af")
@@ -330,7 +331,6 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
     c.Modified()
 
-    '''
 
     for dataset in range(len(paths)):
         if dataset != len(paths)-1:
