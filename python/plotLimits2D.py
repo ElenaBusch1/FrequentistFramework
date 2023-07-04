@@ -120,6 +120,10 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
                     continue
                   if mY > 10000:
                     continue
+                else:
+                  alpha = config.alphaBins[alphaBin]
+                  if (sigmean * alpha) < 500:
+                    continue
                   #print sigmean, mY, alpha
 
                 rangelow = config.samples[channelNames[alphaBin]]["rangelow"]

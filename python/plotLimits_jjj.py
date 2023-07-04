@@ -69,7 +69,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     test = TGraph()
     for i, myMean in enumerate(myMeans):
       test.SetPoint(i+1, myMean, h_xs.GetBinContent(i+1, 12))
-      print h_xs.GetBinContent(i+1, 12)
+      #print h_xs.GetBinContent(i+1, 12)
       for j in range(h_eff.GetNbinsY()):
         gEff.SetPoint(gEff.GetN()+1, myMean, h_eff.GetYaxis().GetBinCenter(j+1), h_eff.GetBinContent(i+1, j+1))
 
@@ -77,7 +77,18 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
 
     # colors = [kBlue, kMagenta+2, kRed+1, kGreen+2]
-    colors = [kBlue, kRed+1, kOrange-3]
+    #colors = [kBlue, kRed+1, kOrange-3]
+    #colors = ["#5656D7", "#36BDBD", "#D74061"]
+    #colors = ["#6633CC", "#CC33CC", "#CC6633"]
+    #colors = ["#6633CC", "#CC3399", "#DB7D2A"]
+    #colors = ["#4717A6", "#CC3399", "#DB7D2A"]
+    #colors = ["#2D28BF", "#CC3399", "#E6923E"]
+    #colors = ["#2D28BF", "#BA1EA5", "#E6923E"]
+    #colors = ["#4717A6", "#BA1EA5", "#E6923E"]
+    colors = ["#6B2C90", "#ED516F", "#F4BB4A"]
+    #colors = ["#5F4B8B", "#FF6F61", "#5ECAA9"]
+    # "#009499"
+
 
     g_model_datasets = []
 
@@ -143,6 +154,12 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                 if isMx:
                   alpha = config.alphaBins[alphaBin]
                   mY = round(sigmean / alpha / 10) * 10
+                  mYTest = floor(mY/1000) * 1000 
+                  #print mY, mYTest, sigmean, mYTest * alpha
+                  if mYTest * alpha < 500:
+                    continue
+                  if mY > 10000:
+                    continue
                   #if sigmean < 500:
                   #  continue
                   #if mY < 3000:
@@ -156,8 +173,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                   #print sigmean, mYTest, mX
                   #if mYTest < 2000:
                   #  continue
-                  #if mX < 500:
-                  #  continue
+                  if mX < 500:
+                    continue
                   
 
                 rangelow = config.samples[channelName[0]]["rangelow"]
@@ -211,7 +228,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
                 if isnan(obs):
                     continue
 
-                print sigmean, eff, h_eff.Interpolate(sigmean, alpha)
+                #print sigmean, eff, h_eff.Interpolate(sigmean, alpha)
                 g_model[i].SetPoint(g_model[i].GetN(), sigmean, xs*eff)
                 #g_model[i].SetPoint(g_model[i].GetN(), sigmean, xs)
 
@@ -222,26 +239,29 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             g_exp1.append( createFillBetweenGraphs(g_exp1d[-1], g_exp1u[-1]) )
             g_exp2.append( createFillBetweenGraphs(g_exp2d[-1], g_exp2u[-1]) )
 
-            g_exp1[-1].SetFillColorAlpha(colors[i], 0.2)
-            g_exp2[-1].SetFillColorAlpha(colors[i], 0.2)
-            g_exp[-1].SetLineColor(colors[i])
-            g_exp[-1].SetLineStyle(2)
+            g_exp1[-1].SetFillColorAlpha(ROOT.TColor.GetColor(colors[i]), 0.2)
+            g_exp2[-1].SetFillColorAlpha(ROOT.TColor.GetColor(colors[i]), 0.2)
+            g_exp[-1].SetLineColor(ROOT.TColor.GetColor(colors[i]))
+            g_exp[-1].SetLineStyle(2+2*i)
             g_exp[-1].SetLineWidth(2)
             g_obs[-1].SetLineWidth(2)
-            g_obs[-1].SetLineColor(colors[i])
-            g_obs[-1].SetMarkerColor(colors[i])
+            g_obs[-1].SetLineColor(ROOT.TColor.GetColor(colors[i]))
+            g_obs[-1].SetMarkerColor(ROOT.TColor.GetColor(colors[i]))
 
+            if(sigwidth==5): continue
+            elif(sigwidth==10): g_obs[i].SetMarkerStyle(21)
+            elif(sigwidth==15): g_obs[i].SetMarkerStyle(22)
            
             g_exp1_model.append( createFillBetweenGraphs(g_exp1d_model[-1], g_exp1u_model[-1]) )
             g_exp2_model.append( createFillBetweenGraphs(g_exp2d_model[-1], g_exp2u_model[-1]) )
-            g_exp1_model[-1].SetFillColorAlpha(colors[i], 0.2)
-            g_exp2_model[-1].SetFillColorAlpha(colors[i], 0.2)
-            g_exp_model[-1].SetLineColor(colors[i])
-            g_exp_model[-1].SetLineStyle(2)
+            g_exp1_model[-1].SetFillColorAlpha(ROOT.TColor.GetColor(colors[i]), 0.2)
+            g_exp2_model[-1].SetFillColorAlpha(ROOT.TColor.GetColor(colors[i]), 0.2)
+            g_exp_model[-1].SetLineColor(ROOT.TColor.GetColor(colors[i]))
+            g_exp_model[-1].SetLineStyle(2+2*i)
             g_exp_model[-1].SetLineWidth(2)
             g_obs_model[-1].SetLineWidth(2)
-            g_obs_model[-1].SetLineColor(colors[i])
-            g_obs_model[-1].SetMarkerColor(colors[i])
+            g_obs_model[-1].SetLineColor(ROOT.TColor.GetColor(colors[i]))
+            g_obs_model[-1].SetMarkerColor(ROOT.TColor.GetColor(colors[i]))
 
         g_model_datasets.append(g_model)
         g_obs_datasets.append(g_obs)
@@ -267,6 +287,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
     leg_obs = TLegend(0.65,0.72,0.85,0.87)
     leg_exp = TLegend(0.65,0.5,0.85,0.65)
+    leg_sig = TLegend(0.65,0.45,0.9,0.5)
+    leg_sig.SetNColumns(2)
 
     #minY = 0.005
     minY = 0.000003
@@ -293,15 +315,27 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
         g_exp2_datasets[dataset][0].Draw("f")
         g_exp1_datasets[dataset][0].Draw("f")
+        tmpExp1 =g_exp1_datasets[dataset][0].Clone("tmp")
 
         for i,g in enumerate(g_exp_datasets[dataset]):
             g.Draw("l")
             if (dataset==0):
-                leg_exp.AddEntry(g, "#sigma_{G}/M_{%s} = %.2f" % (signalName, sigwidths[i]/100.), "l")
+                if(signalType.find("Gaussian")>=0) or signalType.find("gaus") >= 0:
+                  leg_exp.AddEntry(g, "#sigma_{%s}/M_{%s} = %.2f" % (signalName, signalName, sigwidths[i]/100.), "l")
+                else:
+                  leg_exp.AddEntry(g, "Y #rightarrow XX #rightarrow jjjj", "l")
         for i,g in enumerate(g_obs_datasets[dataset]):
             g.Draw("pl")
             if (dataset==0):
-                leg_obs.AddEntry(g, "#sigma_{G}/M_{%s} = %.2f" % (signalName, sigwidths[i]/100.), "lp")
+                if(signalType.find("Gaussian")>=0) or signalType.find("gaus") >= 0:
+                  leg_obs.AddEntry(g, "#sigma_{%s}/M_{%s} = %.2f" % (signalName, signalName, sigwidths[i]/100.), "lp")
+                else:
+                  leg_obs.AddEntry(g, "Y #rightarrow XX #rightarrow jjjj", "lp")
+        tmpExp1.SetFillColorAlpha(ROOT.TColor.GetColor(colors[0]), 0.4)
+        tmpExp1.SetLineColor(ROOT.kWhite)
+        g_exp2[0].SetLineColor(ROOT.kWhite)
+        leg_sig.AddEntry(tmpExp1, "#pm 1 #sigma", "f")
+        leg_sig.AddEntry(g_exp2[0], "#pm 2 #sigma", "f")
 
 
     ATLASLabel(0.20, 0.90, atlasLabel, 13)
@@ -314,6 +348,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     myText(0.65, 0.70, 1, "Expected:", 13)
     leg_exp.Draw()
     leg_obs.Draw()
+    leg_sig.Draw()
 
     c.Print("%s/limitPlot_%s_%s.pdf"%(outdir, channelName[0], signalType))
 
