@@ -60,7 +60,7 @@ def build_fit_extract(topfile, datafile, datahist, rangelow, wsfile, fitresultfi
     else:
         chi2flag += " --chi2constraints 0"
 
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s %s -o %s" % (wsfile, _poi, _range, chi2flag, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2 --nllOffset 0 --optConst 2 --GKIntegrator 1 --minTolerance 1E-10 %s %s -o %s" % (wsfile.replace("root://eosatlas.cern.ch/",""), _poi, _range, chi2flag, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
@@ -124,17 +124,26 @@ def run_anaFit(datafile,
 
     # generate the config files on the fly in run dir
     if not os.path.isfile("{}/AnaWSBuilder.dtd".format(folder)):
-      execute("ln -sf $PWD/config/dijetTLA/AnaWSBuilder.dtd $PWD/{}/AnaWSBuilder.dtd".format(folder))
+      execute("ln -sf $PWD/config/dijetTLA/AnaWSBuilder.dtd {}AnaWSBuilder.dtd".format(folder))
+      #execute("ln -sf $PWD/config/dijetTLA/AnaWSBuilder.dtd $PWD/{}/AnaWSBuilder.dtd".format(folder))
+    
+    
+    tmpbackgroundfile="{}/"+backgroundfile.split("/")[-1].replace("template","xml")
+    tmpbackgroundfile=tmpbackgroundfile.format(folder)
+    tmpsignalfile="{}/signal_dijetTLA_fromTemplate.xml".format(folder).replace("fromTemplate","mean{0}_width{1}".format(sigmean, sigwidth)) 
+    tmpcategoryfile=tmpbackgroundfile.replace(".xml","_mean{0}_width{1}.xml".format(sigmean, sigwidth)).replace("background","category")
+    tmptopfile=tmpcategoryfile.replace("category_","")
     if sigwidth == -999: # running on zprime samples:
       print("Running in Zprime samples")
-      tmpcategoryfile="{0}/category_dijetTLA_fromTemplate_mR{1}.xml".format(folder, sigmean)
-      tmptopfile="{0}/dijetTLA_fromTemplate_mR{1}.xml".format(folder, sigmean)
-    else:
-      tmpcategoryfile="{}/category_dijetTLA_fromTemplate.xml".format(folder)
-      tmptopfile="{}/dijetTLA_fromTemplate.xml".format(folder)  
-    tmpsignalfile="{}/signal_dijetTLA_fromTemplate.xml".format(folder)
-    tmpbackgroundfile="{}/background_dijetTLA_fromTemplate.xml".format(folder)
+      tmpcategoryfile=tmpcategoryfile.split("mean")[0]+"mR{}.xml".format(sigmean)
+      tmptopfile=tmptopfile.split("mean")[0]+"mR{}.xml".format(sigmean)
     
+    print("Generated following cards:\n")
+    print("\tTop card:", tmptopfile)
+    print("\tCategory card:", tmpcategoryfile)
+    print("\tBackground card:", tmpbackgroundfile)
+    print("\tSignal card:", tmpsignalfile)
+
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(categoryfile, tmpcategoryfile) 
     if signalfile:
@@ -147,25 +156,26 @@ def run_anaFit(datafile,
                ])
 
     if backgroundfile:
-        shutil.copy2(backgroundfile, tmpbackgroundfile) 
+	nPars = 5                          
+	if "four" in  backgroundfile:
+	    nPars = 4
+	elif "five" in  backgroundfile:
+	    nPars = 5
+	elif "six" in  backgroundfile:
+	    nPars = 6
+	elif "seven" in  backgroundfile:
+	    nPars = 7
+	elif "eight" in  backgroundfile:
+	    nPars = 8
+	elif "nine" in  backgroundfile:
+	    nPars = 9
+	tmpbackgroundfile = tmpbackgroundfile.replace("fromTemplate","{}Par".format(nPars))
+        shutil.copy2(backgroundfile,tmpbackgroundfile)
+
         replaceinfile(tmpcategoryfile, 
-                      [("BACKGROUNDFILE", tmpbackgroundfile)])
+	  [("BACKGROUNDFILE", tmpbackgroundfile)])
         
         if doprefit:
-            nPars = 5
-
-            if "four" in  backgroundfile:
-                nPars = 4
-            elif "five" in  backgroundfile:
-                nPars = 5
-            elif "six" in  backgroundfile:
-                nPars = 6
-            elif "seven" in  backgroundfile:
-                nPars = 7
-            elif "eight" in  backgroundfile:
-                nPars = 8
-            elif "nine" in  backgroundfile:
-                nPars = 9
             # [1, -30, -30, -30, ...]
             parRangeLow = [1]+[-30]*(nPars-1)
             parRangeHigh = [1]+[30]*(nPars-1)
@@ -182,8 +192,8 @@ def run_anaFit(datafile,
                             #m[2] is rangeHigh
                             parRangeLow[int(m[0])-1] = float(m[1])
                             parRangeHigh[int(m[0])-1] = float(m[2])
-
-            print("Starting PreFit in parameter ranges:")
+            
+	    print("Starting PreFit in parameter ranges:")
             print(parRangeLow)
             print(parRangeHigh)
                             
@@ -357,11 +367,11 @@ def main(args):
             args.signame="mean%s_width%s" % (args.sigmean, args.sigwidth)
 
     # create dir if not exists: https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory
-    try: 
-        os.makedirs(args.folder)
-    except OSError:
-        if not os.path.isdir(args.folder):
-            raise
+    #try: 
+    #    os.makedirs(args.folder)
+    #except OSError:
+    #    if not os.path.isdir(args.folder):
+    #        raise
 
     spursig=0
     if args.spursigfile:
