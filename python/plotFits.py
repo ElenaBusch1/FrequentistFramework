@@ -12,6 +12,7 @@ import config as config
 import python.ExtractFitParameters as efp
 import json
 
+import python.makeHepData as hepdata
 
 
 
@@ -181,6 +182,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
     #plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
     leg, upperPad, lowerPad = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["ex0", "HIST", "HIST", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel, ratioDrawOptions = ["HIST", "HIST", "HIST", "HIST", "HIST"])
 
+
+
     if plotBH:
         labels.pop()
         print (bumpMin, bumpMax)
@@ -210,6 +213,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         lineMax.Draw()
 
 
+    hepdata.makeHepData(plotHists[0], plotHists[1], histName = "fits_%s"%(channelName))
     c.Print(outname + ".pdf")
 
 

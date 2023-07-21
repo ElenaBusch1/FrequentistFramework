@@ -10,6 +10,7 @@ from math import isnan
 from glob import glob
 import config as config
 import LocalFunctions as lf
+import python.makeHepData as hepdata
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -54,6 +55,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     #  massString = "mX"
     fileName = "limitFiles/h2_eff_alpha_%s_forJen.root"%(massString)
     histName = "h2_eff_alpha_%s"%(massString)
+
+
     alpha = config.alphaBins[alphaBin] 
     #+ 0.01
     h_eff = lf.read_histogram(fileName, histName)
@@ -63,6 +66,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
       for yBin in range(h_xs.GetNbinsY()):
         if h_xsTmp.GetBinContent(xBin+1, yBin+1):
           h_xs.SetBinContent(xBin+1, yBin+1, log10(h_xsTmp.GetBinContent(xBin+1, yBin+1)))
+    hepdata.make2DHepData(h_xs, "crossSection")
 
     myMeans = [2000, 3000, 4000, 6000, 8000, 10000]
     gEff = TGraph2D()
@@ -72,6 +76,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
       #print h_xs.GetBinContent(i+1, 12)
       for j in range(h_eff.GetNbinsY()):
         gEff.SetPoint(gEff.GetN()+1, myMean, h_eff.GetYaxis().GetBinCenter(j+1), h_eff.GetBinContent(i+1, j+1))
+    hepdata.make2DHepData(h_eff, "efficiency")
 
 
 
@@ -306,6 +311,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     #g_model_datasets[0][0].Draw("l")
 
     c.Modified()
+    legNames = []
 
     for dataset in range(len(paths)):
         if dataset != len(paths)-1:
@@ -322,8 +328,10 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
             if (dataset==0):
                 if(signalType.find("Gaussian")>=0) or signalType.find("gaus") >= 0:
                   leg_exp.AddEntry(g, "#sigma_{%s}/M_{%s} = %.2f" % (signalName, signalName, sigwidths[i]/100.), "l")
+                  legNames.append( "sigma/M = %.2f" % (sigwidths[i]/100.))
                 else:
                   leg_exp.AddEntry(g, "Y #rightarrow XX #rightarrow jjjj", "l")
+                  legNames.append("")
         for i,g in enumerate(g_obs_datasets[dataset]):
             g.Draw("pl")
             if (dataset==0):
@@ -351,6 +359,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     leg_sig.Draw()
 
     c.Print("%s/limitPlot_%s_%s.pdf"%(outdir, channelName[0], signalType))
+
+    hepdata.makeLimitHepData(g_exp, g_obs, g_exp1d, g_exp1u, g_exp2d, g_exp2u, legNames, histName = "limits_%s_%s"%(channelName[0], signalType))
 
 
     '''
