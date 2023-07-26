@@ -290,10 +290,16 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     c = TCanvas("c1_%s"%(outdir), "c1", 800, 600)
     c.SetLogy()
 
-    leg_obs = TLegend(0.65,0.72,0.85,0.87)
-    leg_exp = TLegend(0.65,0.5,0.85,0.65)
-    leg_sig = TLegend(0.65,0.45,0.9,0.5)
-    leg_sig.SetNColumns(2)
+    if len(sigwidths)>1:
+      leg_obs = TLegend(0.65,0.72,0.85,0.87)
+      leg_exp = TLegend(0.65,0.5,0.85,0.65)
+      leg_sig = TLegend(0.65,0.45,0.9,0.5)
+      leg_sig.SetNColumns(2)
+    else:
+      leg_obs = TLegend(0.65,0.79,0.85,0.87)
+      leg_exp = TLegend(0.65,0.64,0.85,0.72)
+      leg_sig = TLegend(0.65,0.59,0.9,0.64)
+      leg_sig.SetNColumns(2)
 
     #minY = 0.005
     minY = 0.000003
@@ -301,7 +307,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
     g_exp_datasets[0][0].Draw("af")
     g_exp_datasets[0][0].GetXaxis().SetTitle("M_{%s} [GeV]"%(signalName))
-    g_exp_datasets[0][0].GetYaxis().SetTitle("#sigma #times #it{A} #times #it{BR} [pb]")
+    g_exp_datasets[0][0].GetYaxis().SetTitle("#sigma #times #it{A} #times #epsilon #times #it{BR} [pb]")
     g_exp_datasets[0][0].GetYaxis().SetTitleOffset(1.1)
     g_exp_datasets[0][0].GetHistogram().SetMinimum(minY)
     g_exp_datasets[0][0].GetHistogram().SetMaximum(maxY)
@@ -347,13 +353,17 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
 
 
     ATLASLabel(0.20, 0.90, atlasLabel, 13)
-    myText(0.20, 0.84, 1, "95% CL_{s} upper limits", 13)
-    myText(0.2, 0.78, 1, "#sqrt{s}=13 TeV, %.0f fb^{-1}"%(lumis*0.001), 13)
-    myText(0.2, 0.72, 1, config.samples[channelName[0]]["varLabel"], 13)
+    myText(0.2, 0.84, 1, "#sqrt{s}=13 TeV, %.0f fb^{-1}"%(lumis*0.001), 13)
+    myText(0.2, 0.78, 1, config.samples[channelName[0]]["varLabel"], 13)
+    myText(0.20, 0.72, 1, "95% CL upper limits", 13)
 
 
     myText(0.65, 0.92, 1, "Observed:", 13)
-    myText(0.65, 0.70, 1, "Expected:", 13)
+    if len(sigwidths)>1:
+      myText(0.65, 0.70, 1, "Expected:", 13)
+    else:
+      myText(0.65, 0.77, 1, "Expected:", 13)
+
     leg_exp.Draw()
     leg_obs.Draw()
     leg_sig.Draw()

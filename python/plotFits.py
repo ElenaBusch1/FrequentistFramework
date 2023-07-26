@@ -127,7 +127,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
 
       dataHist.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
-      dataHist.GetYaxis().SetTitle("N_{events}")
+      #dataHist.GetYaxis().SetTitle("N_{events}")
+      dataHist.GetYaxis().SetTitle("Events")
 
       if cutoffSpectrum:
          for cbin in range(dataHist.GetNbinsX()):
@@ -196,7 +197,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         #lineMin = ROOT.TLine(bumpMin, plotHists[0].GetMinimum(), bumpMin, plotHists[0].GetBinContent(minBin))
         lineMin = ROOT.TLine(bumpMin, plotHists[0].GetMinimum(), bumpMin, plotHists[1].GetBinContent(minBin))
         lineMin.SetLineStyle(2)
-        lineMin.SetLineColor(ROOT.kGray)
+        lineMin.SetLineColor(ROOT.kGray+1)
         lineMin.Draw()
 
         maxBin = 0
@@ -209,7 +210,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         lineMax = ROOT.TLine(bumpMax, plotHists[0].GetMinimum(), bumpMax, plotHists[1].GetBinContent(maxBin))
         print bumpMax, plotHists[0].GetMinimum(), plotHists[0].GetBinContent(maxBin), maxBin
         lineMax.SetLineStyle(2)
-        lineMax.SetLineColor(ROOT.kGray)
+        lineMax.SetLineColor(ROOT.kGray+1)
         lineMax.Draw()
 
 

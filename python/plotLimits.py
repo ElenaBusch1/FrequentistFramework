@@ -132,7 +132,8 @@ def main(args):
 
     g_exp2[0].Draw("af")
     g_exp2[0].GetXaxis().SetTitle("M_{G} [GeV]")
-    g_exp2[0].GetYaxis().SetTitle("#sigma #times #it{A} #times #it{BR} [pb]")
+    #g_exp2[0].GetYaxis().SetTitle("#sigma #times #it{A} #times #it{BR} [pb]")
+    g_exp2[0].GetYaxis().SetTitle("#sigma #times #it{A} #times #epsilon #times #it{BR} [pb]")
     g_exp2[0].GetHistogram().SetMaximum(50.)
     g_exp2[0].GetXaxis().SetLimits(min(sigmeans), max(sigmeans))
 
@@ -149,7 +150,7 @@ def main(args):
         leg_obs.AddEntry(g, "#sigma_{G}/M_{G} = %.2f" % (sigwidths[i]/100.), "lp")
         
     ATLASLabel(0.20, 0.90, "Simulation Internal", 13)
-    myText(0.20, 0.85, 1, "95% CL_{s} upper limits", 13)
+    myText(0.20, 0.85, 1, "95% CL upper limits", 13)
     myText(0.20, 0.80, 1, "#sqrt{s}=13 TeV, %.1f fb^{-1}" % (lumi/1000.), 13)
 
     myText(0.65, 0.90, 1, "Observed:", 13)

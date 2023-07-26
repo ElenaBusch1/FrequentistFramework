@@ -76,7 +76,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
     massLabel = "m_{Y}"
     if isMx:
       massLabel = "m_{X}"
-    limits2D = TH2D("limits2D", ";%s [GeV];#alpha;#sigma #times #it{A} #times #it{BR} [pb]"%(massLabel), len(sigmeans), array('d', meansCentered), len(alphaBins)-1, array('d', alphaBins))
+    limits2D = TH2D("limits2D", ";%s [GeV];#alpha;#sigma #times #it{A} #times #epsilon #times #it{BR} [pb]"%(massLabel), len(sigmeans), array('d', meansCentered), len(alphaBins)-1, array('d', alphaBins))
 
     for alphaBin, channelName in enumerate(channelNames):
         g_obs_datasets = []
@@ -264,7 +264,7 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelNames, at
     limits2D.GetXaxis().SetLabelOffset(0.015)
     limits2D.Draw("COLZ")
     #df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Internal", lumi=140)
-    df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Internal", lumi=140)
+    df.draw_atlas_details(x_pos= 0.18,y_pos = 0.96, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "", lumi=140)
     lumi = 140
     sampleName = ""
     x_pos = 0.18
