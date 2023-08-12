@@ -127,8 +127,8 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
 
       dataHist.GetXaxis().SetTitle(config.samples[channelName]["varAxis"])
-      #dataHist.GetYaxis().SetTitle("N_{events}")
-      dataHist.GetYaxis().SetTitle("Events")
+      dataHist.GetYaxis().SetTitle("N_{events}")
+      #dataHist.GetYaxis().SetTitle("Events")
 
       if cutoffSpectrum:
          for cbin in range(dataHist.GetNbinsX()):
@@ -214,7 +214,7 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         lineMax.Draw()
 
 
-    hepdata.makeHepData(plotHists[0], plotHists[1], histName = "fits_%s"%(channelName))
+    hepdata.makeHepData(plotHists[0], plotHists[1], histName = "fits_%s"%(channelName), minX =minMjj, maxX = maxMjj)
     c.Print(outname + ".pdf")
 
 

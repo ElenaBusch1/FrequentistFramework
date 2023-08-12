@@ -65,7 +65,8 @@ def plotLimits(sigmeans, sigwidths, paths, lumis, outdir, cdir, channelName, atl
     for xBin in range(h_xs.GetNbinsX()):
       for yBin in range(h_xs.GetNbinsY()):
         if h_xsTmp.GetBinContent(xBin+1, yBin+1):
-          h_xs.SetBinContent(xBin+1, yBin+1, log10(h_xsTmp.GetBinContent(xBin+1, yBin+1)))
+          #h_xs.SetBinContent(xBin+1, yBin+1, log10(h_xsTmp.GetBinContent(xBin+1, yBin+1)))
+          h_xs.SetBinContent(xBin+1, yBin+1, h_xsTmp.GetBinContent(xBin+1, yBin+1))
     hepdata.make2DHepData(h_xs, "crossSection")
 
     myMeans = [2000, 3000, 4000, 6000, 8000, 10000]
