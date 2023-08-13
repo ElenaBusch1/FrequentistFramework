@@ -2,13 +2,15 @@ import math
 
 def makeHepData(data, fit, histName = "test", labels = {}, minX = 0, maxX = 0): 
 
-  xaxis = "$$" + data.GetXaxis().GetTitle() + "$$"
-  yaxis = "$$" + data.GetYaxis().GetTitle() + "$$"
+  xaxis = "$" + data.GetXaxis().GetTitle() + "$"
+  yaxis = "$" + data.GetYaxis().GetTitle() + "$"
   #xaxis = data.GetXaxis().GetTitle() 
   #yaxis = data.GetYaxis().GetTitle() 
 
   xaxis = xaxis.replace("[GeV]", "")
   xaxis = xaxis.replace("#", "\\")
+  xaxis = xaxis.replace("\LT", "<")
+  xaxis = xaxis.replace("\GT", ">")
   #xaxis = xaxis.replace("{", "")
   #xaxis = xaxis.replace("}", "")
   #xaxis = xaxis.replace("#", "")
@@ -69,8 +71,8 @@ def makeHepData(data, fit, histName = "test", labels = {}, minX = 0, maxX = 0):
 
 def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expected2downs, expected2ups, legNames, histName = "test", labels = {}):
 
-  xaxis = "$$" + expecteds[0].GetXaxis().GetTitle() + "$$";
-  yaxis = "$$" + expecteds[0].GetYaxis().GetTitle() + "$$";
+  xaxis = "$" + expecteds[0].GetXaxis().GetTitle() + "$";
+  yaxis = "$" + expecteds[0].GetYaxis().GetTitle() + "$";
 
   xaxis = xaxis.replace("[GeV]", "")
   xaxis = xaxis.replace("#it", "")
@@ -139,8 +141,8 @@ def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expecte
 
 
 def make2DHepData(data, histName, labels = {}):
-  xaxis = "$$" + data.GetXaxis().GetTitle() + "$$";
-  yaxis = "$$" + data.GetYaxis().GetTitle() + "$$";
+  xaxis = "$" + data.GetXaxis().GetTitle() + "$";
+  yaxis = "$" + data.GetYaxis().GetTitle() + "$";
   zaxis = data.GetZaxis().GetTitle();
 
   #xaxis = xaxis.replace("[GeV]", "")
@@ -164,7 +166,7 @@ def make2DHepData(data, histName, labels = {}):
   zaxis = zaxis.replace("#it", "")
   zaxis = zaxis.replace("#", "\\")
   zUnits = "none"
-  if(zaxis.find("nb")>0): zUnits = "$$nb^{-1}$$"
+  if(zaxis.find("nb")>0): zUnits = "$nb^{-1}$"
   zaxis = zaxis.replace("[nb^{-1}]", "")
 
 
