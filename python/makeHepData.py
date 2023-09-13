@@ -101,6 +101,7 @@ def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expecte
 
   myfile.write("dependent_variables: \n")
 
+  index = 0
   for expected, observed, expected1up, expected1down, expected2up, expected2down, legName in zip(expecteds, observeds, expected1ups, expected1downs, expected2ups, expected2downs, legNames):
     myfile.write("- header: \n")
     myfile.write("    name: %s\n"%(yaxis))
@@ -123,9 +124,12 @@ def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expecte
     myfile.write("  values: \n")
     for k in range(expected.GetN()):
       myfile.write("    - value: %.8f \n"%(expected.GetPointY(k)))
-      myfile.write("      errors:\n")
-      myfile.write("      - {asymerror: {plus: %.8f, minus: -%.8f}, label: '1 $\sigma$'} \n"%(abs(expected.GetPointY(k)-expected1up.GetPointY(k)), abs(expected.GetPointY(k)-expected1down.GetPointY(k))))
-      myfile.write("      - {asymerror: {plus: %.8f, minus: -%.8f}, label: '2 $\sigma$'} \n"%(abs(expected.GetPointY(k)-expected2up.GetPointY(k)), abs(expected.GetPointY(k)-expected2down.GetPointY(k))))
+      if index == 0:
+        myfile.write("      errors:\n")
+        myfile.write("      - {asymerror: {plus: %.8f, minus: -%.8f}, label: '1 $\sigma$'} \n"%(abs(expected.GetPointY(k)-expected1up.GetPointY(k)), abs(expected.GetPointY(k)-expected1down.GetPointY(k))))
+        myfile.write("      - {asymerror: {plus: %.8f, minus: -%.8f}, label: '2 $\sigma$'} \n"%(abs(expected.GetPointY(k)-expected2up.GetPointY(k)), abs(expected.GetPointY(k)-expected2down.GetPointY(k))))
+
+    index += 1
 
   myfile.write("independent_variables: \n")
   myfile.write("- header:\n")
