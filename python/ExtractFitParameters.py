@@ -19,12 +19,17 @@ class FitParameterExtractor:
 
     def ExtractFromFile(self, suffix):
         f_in = ROOT.TFile(self.wsfile, "READ")
+        if not f_in:
+           print "did not find ", self.wsfile
+        #f_in.Print()
 
         self.h1_params = f_in.Get("postfit_params%s"%(suffix))
         self.h2_cov    = f_in.Get("h2_cov%s"%(suffix))
         self.h2_cor    = f_in.Get("h2_cor%s"%(suffix))
         self.h1_nbkg    = f_in.Get("nbkg%s"%(suffix))
 
+        #print "postfit_params%s"%(suffix)
+        #print self.h1_params, "postfit_params%s"%(suffix)
         self.h1_params.SetDirectory(0)
         self.h2_cov.SetDirectory(0)
         self.h2_cor.SetDirectory(0)
@@ -107,6 +112,11 @@ class FitParameterExtractor:
     def GetNsig(self):
         if not self.nsig:
             self.Extract()
+        if not self.nsig:
+            self.nsig = self.h1_params.GetBinContent(2)
+        if not self.nsig:
+           print "no luck"
+   
         return self.nsig
 
     def GetNbkg(self):

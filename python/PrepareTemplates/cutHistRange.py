@@ -41,9 +41,6 @@ def main(args):
 
             h_out.Write(histName)
 
-            print binEdges
-            print len(binEdges)
-            
         f_out.Close()
 
 if __name__ == "__main__":  

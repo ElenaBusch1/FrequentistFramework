@@ -10,6 +10,8 @@ import python.AtlasStyle as AS
 import array
 import config as config
 import ExtractFitParameters as efp
+import python.makeHepData as hepdata
+
 
 
 
@@ -33,9 +35,12 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
       fitNames = infiles
 
     labels = []
+    labels.append("%s"%(config.samples[channelName]["label"]))
 
     for index, infileName, fitName in zip(range(len(infiles)), infiles, fitNames):
       path = config.getFileName(infileName, cdir, channelName, minMjj, maxMjj, sigmean, sigwidth, sigamp) + ".root"
+      print path, datahistName+suffix
+      #path = infileName
       dataHist = lf.read_histogram(path, datahistName + suffix)
       fitHist = lf.read_histogram(path, fithistName + suffix)
       residualHist = lf.read_histogram(path, residualhistName + suffix)
@@ -97,17 +102,23 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
 
             residualHist.SetBinContent(ibin, binSig)
             residualHist.SetBinError(ibin, 0)
-            residualHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
+            residualHist.GetXaxis().SetTitle(config.samples[channelName]["varName"] + " [GeV]")
             residualHist.GetYaxis().SetTitle("Residuals (#sigma)")
 
+        for cbin in range(dataHist.GetNbinsX()):
+          dataHist.SetBinContent(cbin+1, dataHist.GetBinContent(cbin+1) / dataHist.GetBinWidth(cbin+1))
+          fitHist.SetBinContent(cbin+1, fitHist.GetBinContent(cbin+1) / fitHist.GetBinWidth(cbin+1))
+          dataHist.SetBinError(cbin+1, dataHist.GetBinError(cbin+1) / dataHist.GetBinWidth(cbin+1))
+          fitHist.SetBinError(cbin+1, fitHist.GetBinError(cbin+1) / fitHist.GetBinWidth(cbin+1))
 
-      dataHist.GetXaxis().SetTitle(config.samples[channelName]["varName"])
-      dataHist.GetYaxis().SetTitle("N_{events}")
+
+      dataHist.GetXaxis().SetTitle(config.samples[channelName]["varName"] + " [GeV]")
+      dataHist.GetYaxis().SetTitle("N_{events} / GeV")
 
       if index == 0:
         dataRes = residualHist.Clone("Residuals_zero")
         dataRes.Reset()
-        dataRes.GetYaxis().SetRangeUser(-5.2,5.2)
+        dataRes.GetYaxis().SetRangeUser(-4.4999,4.4999)
         dataRes.SetDirectory(0)
         residualHists.append(dataRes)
         dataHist.SetTitle(config.samples[channelName]["legend"])
@@ -123,14 +134,22 @@ def plotFits(infiles, outfile, minMjj, maxMjj, lumi, cdir, channelName, rebinedg
         tmpName = config.fitFunctions[fitName]["Name"]
       except:
         tmpName = fitName
-      legNames.append("#splitline{%s, }{#chi^{2} / ndof = %.2f, p-value = %.2f %%}"%(tmpName, chi2, pval))
+      legNames.append("#splitline{%s, }{#splitline{#chi^{2} / ndof = %.2f}{p-value = %.2f}}"%(tmpName, chi2, pval))
 
 
     df.SetRange(plotHists, minMin=1, maxMax=1e8, isLog=True)
     outname = outfile.replace(".root", "")
 
-    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
-    c.Print(outname + ".pdf")
+    #leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["PX0", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    #residualHists[0].GetYaxis().SetNdivisions(113)
+    residualHists[0].GetYaxis().SetNdivisions(505)
+    plotHists[0].SetFillStyle(1001)
+    plotHists[0].SetFillColorAlpha(ROOT.kBlack, 0.25);
+    leg = df.DrawRatioHists(c, plotHists, residualHists, legNames, labels, "", drawOptions = ["e2", "HIST", "HIST", "HIST"], outName=outname, isLogX = False, styleOptions = df.get_fit_style_opt, lumi=lumi, atlasLabel=atlasLabel)
+    #c.Print(outname + ".pdf")
+    hepdata.makeHepData(plotHists[0], plotHists[1], histName = "fits_%s"%(channelName), minX =minMjj, maxX = maxMjj)
+
+    df.SaveCanvas(c, outname )
 
 
 

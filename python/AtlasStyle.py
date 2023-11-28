@@ -93,7 +93,7 @@ def ATLASLabel(x, y, color, dR, tsize, text):
     l.SetTextFont(62)
     l.SetTextColor(color)
     l.SetTextSize(tsize)
-    l.DrawLatex(x,y,"ATLAS")
+    l.DrawLatex(x,y,"#it{ATLAS}")
 
     p = TLatex()
     p.SetNDC()

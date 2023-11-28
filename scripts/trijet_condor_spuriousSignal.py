@@ -12,10 +12,10 @@ signalfile =  config.cSignal
 
 
 pdHistName = "pseudodata"
-sigmeans = [250, 350, 450, 550, 650]
+sigmeans = [250, 350, 450, 550, 650, 750]
 #sigmeans = [250, 450, 650]
 #sigwidths = [5, 7, 10, 15]
-sigwidths = [7]
+sigwidths = [7, 10]
 
 
 for sigmean in sigmeans:
@@ -32,7 +32,7 @@ for sigmean in sigmeans:
                            " --isBatch=1"
 
 
-      runfile = "batch/runSpurious_" + str(sigmean) + "_" + str(sigwidth) +  "_" + pdFitName + "_" + fitName + "_" + channelName + "_" + signalfile + ".sh"
+      runfile = "batch/runSpurious_" + str(sigmean) + "_" + str(sigwidth) +  "_" + pdFitName + "_" + fitName + "_" + channelName + "_" + signalfile + "2.sh"
       fr=open(runfile,'w')
       fr.write('#!/bin/sh\n')
       fr.write('export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase\n')
@@ -56,7 +56,7 @@ for sigmean in sigmeans:
       fsubcondor.write('Output          = logs/'+runfile.replace('.sh','').split('/')[-1] +'_$(Cluster).$(Process).out\n')
       fsubcondor.write('Error           = logs/'+runfile.replace('.sh','').split('/')[-1] +'_$(Cluster).$(Process).err\n')
       fsubcondor.write('Log             = logs/'+runfile.replace('.sh','').split('/')[-1] +'_$(Cluster).$(Process).log\n')
-      fsubcondor.write('+JobFlavour        = "workday"\n')
+      fsubcondor.write('+JobFlavour        = "longlunch"\n')
       fsubcondor.write('stream_output = TRUE\n')
       fsubcondor.write('stream_error = TRUE\n')
       fsubcondor.write('\nqueue 1\n')

@@ -5,6 +5,7 @@ import os,sys,re,argparse,subprocess,shutil
 import json
 from ExtractPostfitFromWS import PostfitExtractor
 from ExtractFitParameters import FitParameterExtractor
+import getSystematics as gs
 import config as config
 
 def execute(cmd):  
@@ -30,8 +31,8 @@ def replaceinfile(f, old_new_list):
 
 def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresultfile, toy=0, toyString = "",  poi=None, maskrange=None, rebinFile=None, rebinHist=None, rebinEdges=None, nbkg=0):
     print("starting fit extractor")
-    rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
-    #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
+    #rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -v 0 -m Minuit2 -n 1 -p 0 -b 1' % topfile) # minimizer strategy fast
+    rtv=execute('XMLReader -x %s -o "logy integral" -s 0 -t 100' % topfile) # minimizer strategy fast
 
     print("done with xml")
     if rtv != 0:
@@ -54,14 +55,22 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
         maskmax=-1
 
     print("running quickfit")
-    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
-    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 0 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 0.0005 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 1e-8 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --chi2fit 1 --chi2constraints 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 1e-4 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #_nopoi = None
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 1e-5 %s -o %s" % (wsfile, _nopoi, _range, fitresultfile))
+    rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 1e-3 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 2  --minTolerance 0.0005 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
+    #rtv=execute("quickFit -f %s -d combData %s --checkWS 1 --hesse 1 --savefitresult 1 --saveWS 1 --saveNP 1 --saveErrors 1 --minStrat 1 %s -o %s" % (wsfile, _poi, _range, fitresultfile))
     if rtv != 0:
         print("WARNING: Non-zero return code from quickFit. Check if tolerable")
 
     if maskrange:
-      postfitfile=fitresultfile.replace("FitResult","PostFit_masked")
-      parameterfile=fitresultfile.replace("FitResult","FitParameters_masked")
+      #postfitfile=fitresultfile.replace("FitResult","PostFit_masked")
+      #parameterfile=fitresultfile.replace("FitResult","FitParameters_masked")
+      postfitfile=fitresultfile.replace("FitResult","PostFit")
+      parameterfile=fitresultfile.replace("FitResult","FitParameters")
     else:
       postfitfile=fitresultfile.replace("FitResult","PostFit")
       parameterfile=fitresultfile.replace("FitResult","FitParameters")
@@ -89,7 +98,7 @@ def build_fit_extract(topfile, datafile, datahist, datafirstbin, wsfile, fitresu
     fpe = FitParameterExtractor(wsfile=fitresultfile, nbkg=nbkg)
     fpe.WriteRoot(parameterfile,  doRecreate=doRecreate, suffix=suffix)
 
-    return (pval, postfitfile, parameterfile)
+    return (pval, postfitfile, parameterfile, pfe)
 
 def run_anaFit(datafile,
                datahist,
@@ -111,12 +120,29 @@ def run_anaFit(datafile,
                ntoys=10,
                maskthreshold=0.01,
                nsig="0,0,1e6",
-               nbkgWindow = 1,
+               nbkgWindow = None,
+               rebinOnlyBH = False,
                rebinFile=None,
                rebinHist=None,
                rebinEdges=None,
                fitFunction=None,
+               useSysts = False,
+               systematicNameFile = "uncertaintySets/systematics.txt",
+               systematicAllNameFile = "uncertaintySets/systematics.txt",
+               histName = "",
+               biasMagnitude=0,
+               initialGuess = "1000",
+               inDirSysts = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/test",
               ):
+
+    myRebinEdges = []
+    if rebinEdges:
+      for cbin in rebinEdges:
+        myRebinEdges.append(cbin)
+    if rebinOnlyBH:
+      rebinEdges = None
+
+
 
     nbins=rangehigh - rangelow
 
@@ -132,16 +158,31 @@ def run_anaFit(datafile,
 
     signalWSName = config.signals[signalfile]["workspacefile"]
     signalfileName = config.signals[signalfile]["signalfile"]
-    sighist = config.signals[signalfile]["histname"]
+    sighist = config.signals[signalfile]["histname"].replace("MEAN", "%d"%(sigmean))
     sigwsfile = config.signals[signalfile]["workspacefile"].replace("MEAN", "%d"%(sigmean))
+    sigwsfile = sigwsfile.replace("WIDTH", "%d"%(sigwidth))
 
     shutil.copy2(topfile, tmptopfile) 
     shutil.copy2(signalfileName, tmpsignalfile) 
     tmpsignalfile.replace("MEAN", str(sigmean))
+    tmpsignalfile.replace("WIDTH", str(sigwidth))
 
     tmpfitfile="%s/run/dijetFit_signal_%d_%d_%s.xml"%(cdir, sigmean, sigwidth, outputstring)
     fitfile = cdir + "/" + config.fitFunctions[fitFunction]["Config"]
     shutil.copy2(fitfile, tmpfitfile)
+
+    if useSysts:
+      systematics = gs.writeSystematics("systematics", sigmean, systematicNameFile)
+      effSysts = gs.writeEfficiencySystematics("systematics", sigmean, systematicAllNameFile, inDir =inDirSysts)
+
+    else:
+      systematics = ""
+      effSysts = ""
+    print ("Systematics!!!", effSysts, systematicNameFile)
+    #print (effSysts)
+    #print (systematics)
+    #print (signalfileName)
+
 
     replaceinfile(tmpfitfile,
                   [
@@ -155,6 +196,8 @@ def run_anaFit(datafile,
                    ("WIDTH", str(sigwidth)),
                    ("SIGNALFILE", tmpsignalfile),
                    ("OUTPUTFILE", wsfile),
+                   ("EFFSYSTS", effSysts),
+                   ("BIASMAGNITUDE", "%.2d"%biasMagnitude),
                   ])
 
     replaceinfile(tmpsignalfile,
@@ -164,18 +207,19 @@ def run_anaFit(datafile,
                    ("MEAN", str(sigmean)),
                    ("WPERCENT", str(sigwidth/100.)),
                    ("WIDTH", str(sigwidth)),
+                   ("SYSTEMATICS", str(systematics)),
                    ("SIGHIST", str(sighist)),
                    ("SIGFILE", str(sigwsfile)),
                    ("OUTPUTFILE", wsfile),
                   ])
 
 
-
     for toy in range(max(ntoys, 1)):
       if ntoys == 0:
         toyString = ""
       else:
-        toyString = "_%d"%(toy)
+        #toyString = "_%d"%(toy)
+        toyString = "%d"%(toy)
       shutil.copy2(categoryfile, tmpcategoryfile) 
       print ("Running with datafile ", datafile)
       replaceinfile(tmpcategoryfile, [
@@ -186,11 +230,13 @@ def run_anaFit(datafile,
         ("SIGNALFILE", tmpsignalfile),
         ("RANGELOW", str(rangelow)),
         ("RANGEHIGH", str(rangehigh)),
+        ("EFFSYSTS", effSysts),
         ("BINS", str(nbins)),
         ("NBKG", str(nbkg)),
         ("NSIG", str(nsig)),
         ("MEAN", str(sigmean)),
         ("WIDTH", str(sigwidth)),
+        ("BIASMAGNITUDE", "%.2d"%biasMagnitude),
       ])    
 
       if dosignal:
@@ -199,9 +245,13 @@ def run_anaFit(datafile,
       else:
           poi=None
 
+      if nbkgWindow and len(nbkgWindow)>0:
+        c_nbkg = nbkgWindow[toy]
+      else:
+        c_nbkg = 0
       print("running fit extractor")
       # TODO: Need to dynamically set datafirstbin based on the histogram -- they might not always start at 0, and the bin width might not always be 1
-      pval_global, postfitfile, parameterfile = build_fit_extract(topfile=tmptopfile,
+      pval_global, postfitfile, parameterfile, pfe = build_fit_extract(topfile=tmptopfile,
                                                                 datafile=datafile, 
                                                                 datahist=datahist + "%s"%(toyString), 
                                                                 datafirstbin=rangelow, 
@@ -213,7 +263,8 @@ def run_anaFit(datafile,
                                                                 rebinEdges=rebinEdges,
                                                                 toy=toy,
                                                                 toyString=toyString,
-                                                                nbkg=nbkgWindow,
+                                                                nbkg=c_nbkg,
+                                                                #maskrange=(350, 475)
                                                                 )
 
       print("Finished fit extractor")
@@ -225,23 +276,37 @@ def run_anaFit(datafile,
       else:
         print("p(chi2) threshold not passed.")
         print("Now running BH for masking.")
+        if rebinOnlyBH:
+          print ("Running rebinning", myRebinEdges)
+          pfe.SetRebinEdges(myRebinEdges)
+          postfitfileName=postfitfile.replace("CHANNEL", datahist)
+          pfe.WriteRoot(postfitfileName, doRecreate=True, suffix=datahist + "_" +toyString, dirPerCategory=True)
+
+
+
 
         # TODO: Need to use the actual path, since this will only run if working in the correct directory
         # need to unset pythonpath in order to not use cvmfs numpy
-        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json; deactivate" % (postfitfile, cdir, outdir))
+        print ("%s/scripts/%s/BHresults.json"%(cdir, outdir))
+        #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json --bkghist jjj_SR1/postfitBkgLow_15_SR1_ --datahist jjj_SR1/dataBkgLow_15_SR1_; deactivate" % (postfitfile, cdir, outdir))
+        execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json --bkghist jjj_SR1/postfit%s_ --datahist jjj_SR1/data%s_; deactivate" % (postfitfile, cdir, outdir, datahist, datahist))
+        #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json --bkghist jjj_SR1/postfitBkgLow_12_SR1_ --datahist jjj_SR1/dataBkgLow_12_SR1_; deactivate" % (postfitfile, cdir, outdir))
+        #execute("source ../pyBumpHunter/pyBH_env/bin/activate; env PYTHONPATH=\"\" python3 ../python/FindBHWindow.py --inputfile %s  --outputjson %s/scripts/%s/BHresults.json --bkghist jjj_SR1/postfitSigMj2j3_ --datahist jjj_SR1/dataSigMj2j3_; deactivate" % (postfitfile, cdir, outdir))
 
         # pass results of pyBH via this json file
         with open(cdir + "/scripts/" + outdir + "/BHresults.json") as f:
             BHresults=json.load(f)
 
-        tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
-        tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
+        #tmptopfilemasked=tmptopfile.replace(".xml","_masked.xml")
+        #tmpcategoryfilemasked=tmpcategoryfile.replace(".xml","_masked.xml")
+        tmptopfilemasked=tmptopfile
+        tmpcategoryfilemasked=tmpcategoryfile
 
         outfilemasked=outputfile
         wsfilemasked=wsfile
 
-        shutil.copy2(tmptopfile, tmptopfilemasked) 
-        shutil.copy2(tmpcategoryfile, tmpcategoryfilemasked) 
+        #shutil.copy2(tmptopfile, tmptopfilemasked) 
+        #shutil.copy2(tmpcategoryfile, tmpcategoryfilemasked) 
 
         # TODO there is probably a better way of doing this
         replaceinfile(tmptopfilemasked, 
@@ -252,7 +317,7 @@ def run_anaFit(datafile,
         replaceinfile(tmpcategoryfilemasked, 
                       [(r'(Binning="\d+")', r'\1 BlindRange="%s"' % BHresults["BlindRange"])])
 
-        pval_masked,_,_ = build_fit_extract(tmptopfilemasked,
+        pval_masked,_,_, pfe = build_fit_extract(tmptopfilemasked,
                                             datafile=datafile, 
                                             datahist=datahist + "%s"%(toyString), 
                                             datafirstbin=rangelow, 
@@ -265,6 +330,7 @@ def run_anaFit(datafile,
                                             toy=toy,
                                             toyString=toyString,
                                             maskrange=(int(BHresults["MaskMin"]), int(BHresults["MaskMax"])))
+                                            #maskrange=(350, 475))
 
         print("Masked fit p(chi2)=%.3f" % pval_masked)
 
@@ -281,7 +347,9 @@ def run_anaFit(datafile,
       # blindrange not yet implemented with quickLimit
       if dolimit and dosignal and pval_global > maskthreshold:
           #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 100000 --minTolerance 1E-8 --muScanPoints 20 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","_%d.root"%(toy))))
-          rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-8 --muScanPoints 0 --minStrat 1 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          #rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess 10000 --minTolerance 1E-6 --muScanPoints 0 --minStrat 2 --nllOffset 1 -o %s" % (wsfile, poi, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
+          rtv=execute("timeout --foreground 1800 quickLimit -f %s -d combData -p %s --checkWS 1 --initialGuess %s --minTolerance 1E-12 --muScanPoints 0 --minStrat 2 --nllOffset 1 -o %s" % (wsfile, poi, initialGuess, outputfile.replace("FitResult","Limits").replace(".root","%s.root"%(toyString))))
           if rtv != 0:
               print("WARNING: Non-zero return code from quickLimit. Check if tolerable")
     

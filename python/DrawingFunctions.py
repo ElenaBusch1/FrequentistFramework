@@ -69,7 +69,8 @@ def SetStyleOptions(hists, styleDef, height = 1.0):
 
 def get_extraction_style_opt(count=0):
         markers = [34,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
-        colors = ["#00CC99", "#CC3366", "#669933", "#3366CC", "#DD9933", "#9933CC"]
+        #colors = ["#00CC99", "#CC3366", "#669933", "#3366CC", "#DD9933", "#9933CC"]
+        colors = ["#CC3366", "#669933", "#3366CC", "#DD9933", "#9933CC"]
         lineStyles = [1, 1, 1, 1, 1, 1, 1]
         count = int(math.fmod(count, len(colors)))
 
@@ -105,7 +106,9 @@ def get_finalist_style_opt(count=0):
 def get_fit_style_opt(count=0):
         markers = [34,20,24,21,25,22,26,23,32, 35, 20, 24, 21, 25]
         #colors = ['#000000','#3c3c3c','#5656d7','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
-        colors = ['#000000','#FF0000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        #colors = ['#000000','#FF0000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        colors = ['#000000','#FF0000','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
+        #colors = ['#000000','#D74061','#36bdbd', '#D69340', '#669900', "#2D2D70", "#CC6699", "#1518BD", "#33CC00", "#CC6600"]
         #colors = ['#000000','#D74061']
         #colors = ['#000000','#5656d7','#D74061','#36bdbd']
         lineStyles = [1, 1, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4]
@@ -172,7 +175,7 @@ def set_style_options(hist,style_options, height):
 
     hist.SetMarkerStyle(style_options.marker_style )
     hist.SetLineStyle(style_options.line_style  )
-    hist.SetFillStyle(0)
+    #hist.SetFillStyle(0)
     #hist.SetFillColorAlpha(r.TColor.GetColor(style_options.fill_color), 0.  )
     hist.SetMarkerColor(r.TColor.GetColor(style_options.marker_color))
     hist.SetLineColor(r.TColor.GetColor(style_options.line_color))
@@ -212,7 +215,7 @@ def get_mass_plot_style(is_signal = 0):
                              )
 
 
-def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=139):
+def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size = 0.05, sampleName="", atlasLabel = "Simulation Internal", height = 1.0, lumi=140, channelName = "Trijet channel"):
     text_size = text_size / height
     dy = dy / height
     if sampleName != "":
@@ -220,8 +223,10 @@ def draw_atlas_details(labels=[],x_pos= 0.18,y_pos = 0.88, dy = 0.055, text_size
     AS.ATLASLabel(x_pos, y_pos, 1, 0.13, text_size, atlasLabel)
 
     y_pos -= dy
-    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %.1f fb^{-1}  %s"%(lumi, sampleName))
+    AS.myText(  x_pos, y_pos,1,text_size,"#sqrt{s} = 13 TeV, %d fb^{-1}  %s"%(int(lumi), sampleName))
     y_pos -= dy
+    #AS.myText(  x_pos, y_pos,1,text_size,"%s"%(channelName))
+    #y_pos -= dy
 
     for label in labels:
         AS.myText( x_pos, y_pos, 1, text_size, "%s"%label)
@@ -252,6 +257,7 @@ def SetRange(hists, minMin=-1e6, maxMax=1e6, myMin=-123456, myMax=-123456, isLog
       #minimum = maximum / 10.
       #maximum = maximum * math.pow(10, math.log(maximum/minimum)  )
       maximum = maximum * 10
+      #maximum = maximum * 100
     minimum = minimum / 1.5
   else:
     #maximum = maximum + delta*1.
@@ -290,7 +296,7 @@ def DrawHists(canvas, hists, legendNames, labels, sampleName = "", drawOptions =
 
   legend.Draw()
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, atlasLabel=atlasLabel)
+  draw_atlas_details(labels=labels, sampleName=sampleName, atlasLabel=atlasLabel, lumi=lumi)
 
   return legend
 
@@ -303,7 +309,7 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   upperPad.SetTopMargin(0.05)
   upperPad.SetBottomMargin(0.0)
   upperPad.SetLeftMargin(0.15)
-  upperPad.SetRightMargin(0.03)
+  upperPad.SetRightMargin(0.05)
   upperPad.Draw()
   upperPad.SetLogx(isLogX)
   upperPad.SetLogy(isLogY)
@@ -312,10 +318,10 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
 
   canvas.cd();
   lowerPad = r.TPad("pad2%s"%outName, "pad2", 0.0,0.0,1.0,0.35)
-  lowerPad.SetBottomMargin(0.35)
+  lowerPad.SetBottomMargin(0.4)
   lowerPad.SetTopMargin(0.00)
   lowerPad.SetLeftMargin(0.15)
-  lowerPad.SetRightMargin(0.03)
+  lowerPad.SetRightMargin(0.05)
   lowerPad.Draw()
   lowerPad.SetLogx(isLogX)
   r.SetOwnership(lowerPad, False)
@@ -323,27 +329,40 @@ def DrawRatioHists(canvas, hists, Ratios, legendNames, labels, sampleName, drawO
   if len(hists) ==0:
     return
   upperPad.cd()
-  deltaHists=0.1
+  deltaHists=0.15
   if len(hists) > 4:
     deltaHists = 0.06
-  legend = r.TLegend(0.65,0.9-(len(hists))*deltaHists,.95,0.90)
+  legend = r.TLegend(0.6,0.92-(len(hists))*deltaHists,.91,0.92)
   legend.SetFillStyle(0)
   SetStyleOptions(hists, styleOptions,1.0-0.35)
   SetStyleOptions(Ratios, styleOptions, 0.35)
 
   for hist in range(len(hists)):
-    hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
-    legend.AddEntry(hists[hist], legendNames[hist] , "l")
+    if hist ==0:
+      hists[hist].SetMarkerStyle(20)
+      hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
+      legend.AddEntry(hists[hist], legendNames[hist] , "p")
+    else:
+      #hists[hist].SetLineStyle(2)
+      hists[hist].Draw("%s SAME"%(drawOptions[hist%len(drawOptions)]))
+      legend.AddEntry(hists[hist], legendNames[hist] , "l")
   hists[0].Draw("%s SAME"%(drawOptions[0]))
+  
 
   legend.Draw()
+  print "testing", atlasLabel.find("Simulation"), legendNames[0].find("Data"), legendNames[0]
+  if atlasLabel.find("Simulation") >= 0 and legendNames[0].find("Data")>=0:
+    atlasLabel = atlasLabel.replace("Simulation", "")
+    print atlasLabel
 
-  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel)
+  draw_atlas_details(labels=labels, sampleName=sampleName, height=0.9-0.35, y_pos=0.85, atlasLabel=atlasLabel, lumi=lumi)
   lowerPad.cd()
 
   Ratios[0].Draw("%s"%(ratioDrawOptions[0]))
   #Ratios[0].Draw("HIST")
   for hist in range(len(Ratios)):
+    #if hist !=0:
+    #  Ratios[hist].SetLineStyle(2)
     Ratios[hist].Draw("%s SAME"%(ratioDrawOptions[hist%len(ratioDrawOptions)]))
 
   return legend, upperPad, lowerPad
@@ -372,6 +391,7 @@ def DrawResponseArrows(multigraph):
 def SaveCanvas(canvas,name):
     #if savePDF:
         canvas.SaveAs(name+".pdf")
+        canvas.SaveAs(name+".root")
     #if saveEPS:
     #    canvas.SaveAs(name+".eps")
 

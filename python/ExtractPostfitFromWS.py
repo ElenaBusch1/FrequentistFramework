@@ -45,6 +45,7 @@ class PostfitExtractor:
                  maskmax=-1,
                  ):
 
+
         self.wsfile = wsfile
         self.datafile = datafile
         self.datahist = datahist
@@ -67,6 +68,7 @@ class PostfitExtractor:
         self.channel_pval = {}
         self.channel_hpostfit = {}
         self.channel_hchi2 = {}
+        self.channel_hmaskrange = {}
         self.channel_hresiduals = {}
  
     
@@ -75,9 +77,10 @@ class PostfitExtractor:
         f = ROOT.TFile(self.wsfile, "READ")
         w = f.Get(self.wsname)
 
+        print self.datafile
         fd =  ROOT.TFile(self.datafile, "READ")
         self.h_data = fd.Get(self.datahist)
-        print self.datafile, self.datahist
+        print self.datafile, self.datahist, self.wsname, self.wsfile
         self.h_data.SetDirectory(0)
 
         model = w.obj(self.modelname)
@@ -85,7 +88,7 @@ class PostfitExtractor:
         cat = pdf.indexCat()
         nChan = cat.numBins("")
 
-        print "There are %d channels" % nChan
+        #print "There are %d channels" % nChan
 
         obs = pdf.getObservables(model.GetObservables())
         obs.Print()
@@ -113,9 +116,12 @@ class PostfitExtractor:
             cbinEdges = []
             nBins = hpdf.GetNbinsX()
             firstbin = self.h_data.FindBin(self.datafirstbin) - 1
+            print "First bin", firstbin, self.datafirstbin, self.h_data.GetBinLowEdge(3)
+            #for i in range(1, nBins+2):
             for i in range(1, nBins+2):
                 cbinEdges.append(self.h_data.GetBinLowEdge(i+firstbin))
 
+            #print cbinEdges
             h_postfit = TH1D("postfit_1", "postfit", nBins, array.array('d', cbinEdges))
             h_postfit.SetDirectory(0)
 
@@ -156,6 +162,12 @@ class PostfitExtractor:
 
             pval = ROOT.Math.chisquared_cdf_c(chi2, ndof)
 
+            h_maskrange = TH1D("maskrange", "maskrange", 2, 0, 2)
+            h_maskrange.SetDirectory(0)
+            h_maskrange.SetBinContent(1, self.maskmin)
+            h_maskrange.SetBinContent(2, self.maskmax)
+           
+
             h_chi2 = TH1D("chi2", "chi2", 6, 0, 6)
             h_chi2.SetDirectory(0)
             h_chi2.SetBinContent(1, chi2)
@@ -189,6 +201,7 @@ class PostfitExtractor:
             
             if self.binEdges:
                 print("Rebinning histogram based on list of bins")
+                print(array.array('d', self.binEdges))
                 h_postfit = h_postfit.Rebin(len(self.binEdges)-1, "postfit", array.array('d', self.binEdges))
                 self.h_data = self.h_data.Rebin(len(self.binEdges)-1, self.datahist, array.array('d', self.binEdges))
                 firstbin = 0
@@ -200,16 +213,16 @@ class PostfitExtractor:
             h_residuals.Reset("M")
 
             for ibin in range(1, h_residuals.GetNbinsX()+1):
-                valueErrorData = self.h_data.GetBinError(ibin+firstbin)
-                valueData = self.h_data.GetBinContent(ibin+firstbin)
-                postFitValue = h_postfit.GetBinContent(ibin)
-
-                binSig = 0.
-                if valueErrorData > 0. and postFitValue > 0.:
-                    binSig = (valueData - postFitValue)/valueErrorData
-
-                    h_residuals.SetBinContent(ibin, binSig)
-                    h_residuals.SetBinError(ibin, 0)
+                  valueErrorData = self.h_data.GetBinError(ibin+firstbin)
+                  valueData = self.h_data.GetBinContent(ibin+firstbin)
+                  postFitValue = h_postfit.GetBinContent(ibin)
+  
+                  binSig = 0.
+                  if valueErrorData > 0. and postFitValue > 0.:
+                      binSig = (valueData - postFitValue)/valueErrorData
+  
+                      h_residuals.SetBinContent(ibin, binSig)
+                      h_residuals.SetBinError(ibin, 0)
 
             self.channel_chi2[channelname] = chi2
             self.channel_nbins[channelname] = chi2bins
@@ -220,6 +233,7 @@ class PostfitExtractor:
             self.channel_hpostfit[channelname] = h_postfit
             self.channel_hresiduals[channelname] = h_residuals
             self.channel_hchi2[channelname] = h_chi2
+            self.channel_hmaskrange[channelname] = h_maskrange
 
         fd.Close()
         f.Close()
@@ -235,7 +249,8 @@ class PostfitExtractor:
 
         if dirPerCategory:
             for channelname in self.channel_chi2:
-                d = fout.mkdir(channelname)
+              try:
+                d = fout.mkdir(channelname+"Rebin")
                 d.cd()
 
                 self.h_data.Write("data%s"%(suffix))
@@ -243,6 +258,9 @@ class PostfitExtractor:
                 self.channel_hresiduals[channelname].Write("residuals%s"%(suffix))
                 # self.channel_hresiduals[channelname].Write("postFitSigma%s"%(suffix))
                 self.channel_hchi2[channelname].Write("chi2%s"%(suffix))
+                self.channel_hmaskrange[channelname].Write("maskrange%s"%(suffix))
+              except:
+                x = 1
         else:
             # just take first (and hopefully only) channel
             self.h_data.Write("data%s"%(suffix))
@@ -250,6 +268,7 @@ class PostfitExtractor:
             next(iter(self.channel_hresiduals.values())).Write("residuals%s"%(suffix))
             # next(iter(self.channel_hresiduals.values())).Write("postFitSigma%s"%(suffix))
             next(iter(self.channel_hchi2.values())).Write("chi2%s"%(suffix))
+            next(iter(self.channel_hmaskrange.values())).Write("maskrange%s"%(suffix))
 
         fout.Close()
 
@@ -321,6 +340,10 @@ class PostfitExtractor:
         if not self.channel_chi2:
             self.Extract()
         return self.channel_chi2.keys()
+
+    def SetRebinEdges(self, binEdges):
+      self.binEdges = binEdges
+      self.Extract()
 
 
 def main(args):

@@ -28,12 +28,14 @@ if args.isBatch:
   signalfile = args.signalfile
 
 else:
-  pdFitNames = [config.cPDFitName]
-  fitName = config.cFitName
-  channelNames=[config.cSample]
-  rangelow=config.cRangeLow
-  rangehigh=config.cRangeHigh
-  signalfile =  config.cSignal
+  pdFitNames = ["sixPar"]
+  fitName = "fivePar"
+  #channelNames=["testSherpa"]
+  #channelNames=["test3New_15"]
+  channelNames=["test3New_NoCut_no21"]
+  rangelow=225
+  rangehigh=1000
+  signalfile = "Gaussian"
 
 
 
@@ -48,9 +50,11 @@ for pdFitName in pdFitNames:
     if not os.path.exists(outputdir):
           os.makedirs(outputdir)
     pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
-    pdHistName = "pseudodata"
+    pdHistName = "pseudodata_"
+    #pdFile = "/afs/cern.ch/work/d/dmelini/public/toJennifer/PseudoFromSWIFTajj_DataStat.root"
+    #pdHistName = "h_pseudo"
+
     nbkg="1E7,0,1E8"
-    nsig="0,0,1e6"
 
     topfile=config.samples[channelName]["topfile"]
     categoryfile=config.samples[channelName]["categoryfile"]

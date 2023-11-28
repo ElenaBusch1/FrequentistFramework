@@ -35,35 +35,20 @@ if args.isBatch:
 
 
 else:
-  #pdFitNames = ["fourPar"]
-  #fitName = "threePar"
   pdFitNames = ["sixPar"]
   fitName = "fivePar"
   #pdFitNames = ["fivePar"]
   #fitName = "fourPar"
-  #channelNames=["sherpaReweight"]
-  #channelNames=["testSherpa_15"]
-  #channelNames=["testSherpa"]
-  #channelNames=["test3"]
-  #channelNames=["test3New"]
-  #channelNames=["test3New_15"]
-  channelNames = ["test3New_NoCut_no21"]
-
-  #channelNames=["yjj"]
-  #channelNames=["yxxjjjj_4j_alpha0"]
-  #channelNames=["test3New_NoCut"]
-  #sigmeans = [250, 350, 450, 550, 650]
-  sigmeans = [250, 350, 450, 550]
-  #sigmeans = [650]
+  channelNames=["btagFinal"]
+  #sigmeans =  [250, 300, 350, 400, 450, 500, 550, 600, 650]
+  sigmeans = [200, 250, 350, 450, 550, 650]
+  #sigmeans = [550]
   sigamps = [0]
-  sigwidths = [10]
-  rangelow=225
-  rangehigh=1000
-  #signalfile =  "test3_15NoSysts"
-  #signalfile =  "gausHist"
-  #signalfile =  "Gaussian"
-  signalfile =  "templateHistNoSyst"
-  #signalfile =  config.cSignal
+  sigwidths = [15]
+  rangelow=160
+  rangehigh=700
+  signalfile =  "Gaussian"
+  #signalfile = "jbbNoSysts"
 
 
 
@@ -86,10 +71,11 @@ for sigmean in sigmeans:
           outputdir = channelName
           if not os.path.exists(outputdir):
               os.makedirs(outputdir)
-          nbkg="5E7,0,1E8"
+          nbkg="1E5,0,5E6"
           nbkgWindow = 1
-          nsig="0,-1e5,1e5"
-          #nsig="0,0,0"
+          #nsig="0,-1e4,0"
+          nsig="0,-1e4,1e4"
+          #nsig="0,-1e4,1e4"
           topfile=config.samples[channelName]["topfile"]
           categoryfile=config.samples[channelName]["categoryfile"]
           dataFile=config.samples[channelName]["inputFile"]
@@ -114,13 +100,13 @@ for sigmean in sigmeans:
                rangehigh=rangehigh,
                outputfile=outputfile,
                signalfile = signalfile,
-               histName = channelName,
                outputstring="SS_%s_%s_%d_%d_%d_%d_%s"%(pdFitName, fitName, sigmean, sigamp, sigwidth, rangehigh, signalfile),
                dosignal = dosignal,
                dolimit = dolimit,
                nsig=nsig,
                nbkgWindow=None,
                ntoys=config.nToys,
+               histName = channelName,
                maskthreshold=-0.01,
                outdir=outputdir,
               )

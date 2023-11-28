@@ -15,6 +15,7 @@ def fluctuatePoisson(hist):
       fluc = gRand.Poisson(hist.GetBinContent(ibin));
       if fluc >= 0:
           result.SetBinContent(ibin, fluc);
+          #result.SetBinError(ibin, 0.1*math.sqrt(fluc));
           result.SetBinError(ibin, math.sqrt(fluc));
       #else:
       #    result.SetBinContent(ibin, 0);

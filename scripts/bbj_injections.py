@@ -34,28 +34,19 @@ if args.isBatch:
   signalfile = args.signalFile
 
 else:
-  #pdFitName = "fivePar"
-  #fitName = "fourPar"
   pdFitName = "sixPar"
   fitName = "fivePar"
-  #channelName="testSherpa"
-  #channelName="test3New_15"
-  #channelName="Data_m32"
-  channelName = "test3New_NoCut_no21"
-
-  #channelName="yjj"
-  #sigmeans = [250, 350, 450, 550, 650, 750]
-  #sigmeans = [450, 550, 650, 750, ]
-  sigmeans = [250]
-  sigamps = [1,2,3,4,5]
-  #sigamps = [3]
-  sigwidths = [10]
-  #sigwidths = [5, 7, 10, 12, 15]
-  rangelow=225
-  rangehigh=1000
-  #signalfile = "Gaussian"
-  #signalfile = "test3_15NoSysts"
-  signalfile = "templateHistNoSyst"
+  channelName="btagFinal"
+  #sigmeans = [250, 350, 450, 550]
+  #sigmeans = [200, 250, 350, 450, 550, 650]
+  sigmeans = [250,450, 550, 650]
+  #sigamps = [5,4,3,2,1,0]
+  sigamps = [5,4,3,2,1]
+  sigwidths = [5]
+  rangelow=160
+  rangehigh=700
+  signalfile = "Gaussian"
+  #signalfile = "jbbNoSysts"
 
 
 #. scripts/setup_buildAndFit.sh
@@ -70,14 +61,13 @@ if not os.path.exists(outputdir):
 
 pdFile = config.getFileName("PD_%s_bkgonly"%(pdFitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
 pdHistName = "pseudodata_"
-ntoys = 50
 
 
 for sigmean in sigmeans:
   for sigamp in sigamps:
     for sigwidth in sigwidths:
-      nbkg="1E7,0,1E8"
-      nsig="0,0,7e4"
+      nbkg="1E5,0,5E6"
+      nsig="0,0,1e4"
   
       topfile=config.samples[channelName]["topfile"]
       categoryfile=config.samples[channelName]["categoryfile"]
@@ -109,12 +99,12 @@ for sigmean in sigmeans:
            rangehigh=rangehigh,
            outputfile=outputfile,
            outputstring=outputstring,
+           histName = channelName,
            dosignal = dosignal,
            dolimit = dolimit,
            loopstart=0,
-           loopend=ntoys,
+           loopend=config.nToys,
            rebinedges=binedges,
-           histName = channelName,
            signalfile = signalfile,
            rebinfile=None,
            rebinhist=None,

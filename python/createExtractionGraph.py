@@ -8,14 +8,16 @@ from math import sqrt
 from glob import glob
 import ExtractFitParameters as efp
 import numpy
-from color import getColorSteps
+#from color import getColorSteps
 import DrawingFunctions as df
 import AtlasStyle as AS
+import LocalFunctions as lf
 
 
 
-def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal", isNInjected=False, pdFile = None):
+def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfile, rangelow, rangehigh, channelName, cdir, lumi, atlasLabel="Simulation Internal", isNInjected=False, pdFile = None, signalName = "Gaussian"):
     ROOT.gROOT.SetBatch(ROOT.kTRUE)
+    ROOT.gErrorIgnoreLevel = (ROOT.kInfo + 1)
 
     profile_list = []
     c = df.setup_canvas()
@@ -42,11 +44,13 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
               if sigamp > 0:
                 try:
                   fpe = efp.FitParameterExtractor(tmp_path_fitresult)
-                  fpe.suffix = "_%d"%(toy)
-                  fpe.ExtractFromFile( "_%d"%(toy))
+                  fpe.suffix = "%d"%(toy)
+                  fpe.ExtractFromFile( "%d"%(toy))
+                  #fpe.suffix = "_%d"%(toy)
+                  #fpe.ExtractFromFile( "_%d"%(toy))
                   nsig = fpe.GetNsig()
                 except:
-                  print "Couldn't read nsig from", tmp_path_fitresult
+                  #print "Couldn't read nsig from", tmp_path_fitresult, fpe.suffix
                   continue
               else:
                 nsig = 0
@@ -55,8 +59,21 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
                 nans += 1
               if nsig == None:
                 continue
+
+              postFit = tmp_path_fitresult.replace("FitParameters", "PostFit")
+              suffix = "%d"%(toy)
+              chi2Hist = lf.read_histogram(postFit, "chi2"+suffix)
+              pval = chi2Hist.GetBinContent(6)
+
+
+              if pval < 0.10:
+                continue
    
-              tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_Sig_Gaussian.root"
+              if pdFile == None:
+                #print "no file path given", 
+                tmp_path_injection = config.getFileName(infilePD, cdir, channelName, rangelow, rangehigh, sigmean, sigwidth, sigamp) + "_Sig_%s.root"%(signalName)
+              else: 
+                tmp_path_injection = pdFile.replace("AMP","%d"%sigamp);
               checkPath = glob(tmp_path_injection)
               if len(checkPath) == 0:
                   print "Did not find ", tmp_path_injection
@@ -64,17 +81,25 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
 
               nBkg = fpe.GetNbkg()
               sqrtB = sqrt(nBkg)
+              
 
               f = TFile(tmp_path_injection)
               h = f.Get("pseudodata_%d_injection"%(toy))
+              #h = f.Get("h_pseudo%d_injection"%(toy))
               n_injected = h.Integral(0, h.GetNbinsX()+1)
+              print n_injected, nsig, nBkg, pval
+              #print n_injected*0.762, nsig*0.762, nBkg
 
               if sqrtB == 0:
                  sqrtB = 1
 
-              inj_extr.append((n_injected, nsig, sqrtB))
+              #inj_extr.append((n_injected, nsig/0.762, sqrtB))
+              inj_extr.append((n_injected, nsig*0.762, sqrtB))
+              #inj_extr.append((n_injected, nsig, sqrtB))
+              #inj_extr.append((n_injected, n_injected*0.762, sqrtB))
 
           if len(inj_extr)==0:
+              print "Nothing found"
               continue
           
           if len(inj_extr) > 0:
@@ -84,9 +109,10 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
           arr = numpy.array([x[1] for x in inj_extr])
           nFit = numpy.mean(arr)
           nFitErr = numpy.std(arr, ddof=1) #1/N-1 corrected
+          print nFit, len(arr)
 
           for i in range(len(inj_extr)):
-            h_nsig.Fill(inj_extr[i][1] /  inj_extr[i][3])
+            h_nsig.Fill(inj_extr[i][1] /  inj_extr[i][2])
           h_nsigs.append(h_nsig)
 
           g_profile.SetPoint(g_profile.GetN(), sigamp, nFit / sqrtB)
@@ -112,7 +138,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
 
 
     labels = ["Pseudodata"]
-    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + ".pdf"
+    outfileName = config.getFileName(outfile, cdir, channelName, rangelow, rangehigh) + "_sigwidth_%d"%sigwidth + ".pdf"
     legendNames = []
     for i in profile_list:
       legendNames.append(i.GetTitle())
@@ -122,6 +148,7 @@ def createExtractionGraphs(sigmeans, sigwidths, sigamps, infile, infilePD, outfi
     l.SetLineColor(kGray+2)
     l.SetLineStyle(7)
     l.Draw()
+    print outfileName
 
     c.Print(outfileName)
 

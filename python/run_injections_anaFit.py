@@ -33,14 +33,24 @@ def run_injections_anaFit(datafile,
                           fitFunction, 
                           cdir,
                           outdir,
+                          useSysts = False,
+                          systematicNameFile = "uncertaintySets/systematics.txt",
+                          systematicAllNameFile = "uncertaintySets/systematics.txt",
+                          histName = "",
+                          biasMagnitude=0,
+                          inDirSysts = "/afs/cern.ch/work/j/jroloff/dijetPlusISR/adversarialNN/test",
+                          initialGuess = "1000",
                          ):
 
     print("Injecting signal of amplitude %.1f sigma (FWHM)" % sigamp)
     injecteddatafile=datafile
     injecteddatafile=injecteddatafile.replace(".root","_Mean_%d_Width_%d_Amp_%.0f_Sig_%s.root" % (sigmean, sigwidth, sigamp, signalfile))
+    print (injecteddatafile)
 
 
+    print (loopstart, loopend)
     if config.signals[signalfile]["histname"] == "":
+      print ("Running gaussian injection")
       nbkgWindow = InjectGaussian(infile=datafile,
                        histname=datahist,
                        sigmean=sigmean,
@@ -50,6 +60,7 @@ def run_injections_anaFit(datafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1)
     else:
+      print ("Running template injection")
       nbkgWindow = InjectTemplate(infile=datafile,
                        histname=datahist,
                        sigmean=sigmean,
@@ -58,8 +69,10 @@ def run_injections_anaFit(datafile,
                        outfile=injecteddatafile,
                        firsttoy=loopstart,
                        lasttoy=loopend-1,
-                       wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean),
-                       wspdf = config.signals[signalfile]["histname"],
+                       wsfile = config.signals[signalfile]["templatefile"].replace("MEAN", "%d"%sigmean).replace("WIDTH", "%d"%sigwidth),
+                       wspdf = config.signals[signalfile]["histname"].replace("MEAN", "%d"%(sigmean)),
+                       minMass = rangelow,
+                       maxMass = rangehigh,
                        )
 
     if loopstart==None or loopend==None:
@@ -67,7 +80,8 @@ def run_injections_anaFit(datafile,
     else:
        ntoys = loopend
 
-    print("Running run_anaFit with datahist %s" % datahistName)
+    
+    #print("Running run_anaFit with datahist %s" % datahistName)
     run_anaFit(datafile=injecteddatafile,
                datahist=datahist,
                topfile=topfile,
@@ -92,7 +106,14 @@ def run_injections_anaFit(datafile,
                rebinFile=rebinfile,
                rebinHist=rebinhist,
                rebinEdges=rebinedges,
-               maskthreshold=maskthreshold
+               maskthreshold=maskthreshold,
+               useSysts = useSysts,
+               systematicNameFile = systematicNameFile,
+               systematicAllNameFile = systematicAllNameFile,
+               histName = histName,
+               biasMagnitude= biasMagnitude,
+               inDirSysts = inDirSysts,
+               initialGuess = initialGuess,
               )
 
 

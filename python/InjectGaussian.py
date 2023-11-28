@@ -9,11 +9,13 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
 
     gRand = ROOT.TRandom3()
     seed = 0
+    nBkgs = []
 
     for histKey in f_in.GetListOfKeys():
         histNameFile = histKey.GetName()
         
         if not histname in histNameFile:
+            print "Did not find", histname, "in", infile
             continue
 
         #if firsttoy != None and lasttoy != None and re.search(r'.*_(\d+)', histNameFile):
@@ -53,17 +55,18 @@ def InjectGaussian(infile, histname, sigmean, sigwidth, sigamp, outfile = None, 
 
                 gRand.SetSeed(seed)
                 hgaus.FillRandom('mygaus', nSigNew) 
-                #print 'Injecting Signal with mean = ', sigmean, ' Number of events = ', nSigNew, "Integral: ", hgaus.Integral(), "n_bkg: ", nBkg
+                print 'Injecting Signal with mean = ', sigmean, ' Number of events = ', nSigNew, "Integral: ", hgaus.Integral(), "n_bkg: ", nBkg, "Window range", rangeLow, rangeHigh, "Amplitude", sigamp, math.sqrt(nBkg)
                 hinj.Add(hgaus)
 
         hinj.Write(histNameFile )
         hist.Write(histNameFile+"_beforeInjection")
         hgaus.Write(histNameFile+"_injection")
+        nBkgs.append(nBkg)
 
         seed += 1
             
     f_out.Close()
-    return nBkg
+    return nBkgs
 
 
 def main(args):

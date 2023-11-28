@@ -30,18 +30,22 @@ def main(args):
     parser.add_argument('--inputxmlcard', dest='inputxmlcard', type=str, help='Path of xmlAnaWSBuilder card to insert BlindRange into')
     parser.add_argument('--outputxmlcard', dest='outputxmlcard', type=str, help='Output path of modified xmlAnaWSBuilder card')
     parser.add_argument('--usebinnumbers', dest='usebinnumbers', action='store_true', help='Use bin numbers instead of observable for BlindRange')
+    parser.add_argument('--statType', dest='statType', type=str, default="excess", help='Path of xmlAnaWSBuilder card to insert BlindRange into')
 
     args = parser.parse_args(args)
 
     # Open the file
     with uproot.open(args.inputfile) as file:
         # Background
-        bkg_th1 = file[args.bkghist]
+        #bkg_th1 = file["jjj_SR1/"+args.bkghist]
+        bkg_th1 = file["jjj_SR1Rebin/" + args.bkghist]
         bkg, bins = bkg_th1.to_numpy()
 
         # Data
-        data_th1 = file[args.datahist]
+        #data_th1 = file["jjj_SR1/" + args.datahist]
+        data_th1 = file["jjj_SR1Rebin/" + args.datahist]
         data,bins_data = data_th1.to_numpy()
+    print ("Number of bins: ", len(bins_data), len(bins))
 
     #crop data hist to bkg range
     firstbindata=0
@@ -60,13 +64,16 @@ def main(args):
     # Create a BumpHunter1D class instance
     hunter = BH.BumpHunter1D(
         width_min=2,
-        width_max=6,
+        #width_max=4,
+        width_max=3,
         width_step=1,
         scan_step=1,
         npe=10000,
         nworker=1,
         seed=666,
-        bins=bins)
+        bins=bins,
+        mode=args.statType,
+        )
 
     # Call the bump_scan method
     print("####bump_scan call####")
@@ -81,10 +88,10 @@ def main(args):
     hunter.print_bump_true(data, bkg, is_hist=True)
 
     # Get and save tomography plot
-    # hunter.plot_tomography(data, is_hist=True, filename="%s_tomography.png"%(args.outname))
+    #hunter.plot_tomography(data, is_hist=True, filename="%s_tomography.png"%(args.outname))
 
     # Get and save bump plot
-    hunter.plot_bump(data, bkg, is_hist=True, filename="%s_bump.png"%(args.outname))
+    #hunter.plot_bump(data, bkg, is_hist=True, filename="%s_bump.png"%(args.outname))
 
     # Get and save statistics plot
     hunter.plot_stat(show_Pval=True, filename="%s_BH_statistics.png"%(args.outname))

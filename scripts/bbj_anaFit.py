@@ -5,33 +5,33 @@ import os
 
 # May want to loop over these at some point?
 cdir = config.cdir
-#channelNames = ["test3", "testSherpa", "sherpaReweight", "sherpaNoCut"]
-#channelNames=["testSherpa_15"]
-#channelNames=["Data18Partial", "Data15"]
-#channelNames=["Data16"]
-#channelNames=["test3New_15"]
-#channelNames=["test3New_15_MCEffOnData"]
-#channelNames = ["FullRun2Data"]
-#channelNames = ["FullRun2Data_NoNN"]
-#channelNames = ["test3New_15_dataEff", "test3New_15_data_mcEff"]
-#channelNames = ["test3New_NoCut_no21"]
-channelNames = ["FullRun2Data_NoNN_No21"]
-#channelNames = ["test3New_15_data_mcEff"]
-#channelNames = ["Data_m32"]
-#channelNames = ["DataNoInsitu"]
-#channelNames = ["DataMCJES"]
-#channelNames = ["Data16_massAnd"]
-#channelNames = ["Data16MCJES"]
-#channelNames = ["Data_475_60"]
-#channelNames = ["Data_minMass"]
+#channelNames=["btagFinal"]
+#channelNames=["bbj_Data15Partial"]
+channelNames=["bbj_Data"]
 
-#channelNames=["mj2j3", "mjjmin", "mjjmindphi"]
-#rangeslow = [225]
-rangeslow = [225]
-rangeshigh = [1000, ]
+#channelNames=["btag_32"]
+#channelNames=["Btagged70_23"]
+#channelNames=["Btagged70_23_ystar"]
 
+#rangeslow=[160, 180, 200, 220, 240, 250]
+#rangeshigh = [900, 1000, 1100, 1200]
+#rangeshigh = [1250]
+#rangeslow = [160]
+#rangeslow = [170]
+#rangeslow = [160]
+#rangeshigh = [700]
+#rangeslow = [200]
+#rangeslow = [170]
+#rangeshigh = [1000]
+#rangeshigh = [700]
+rangeslow = [160]
+rangeshigh = [700]
+
+
+#fitNames = ["fourPar", "fivePar"]
 #fitNames = ["fourPar", "fivePar", "sixPar"]
-#fitNames = ["fivePar", "sixPar"]
+#fitNames = ["UA2"]
+#fitNames = ["threePar"]
 #fitNames = ["fourPar"]
 fitNames = ["fivePar"]
 #fitNames = ["sixPar"]
@@ -43,8 +43,8 @@ for rangelow in rangeslow:
       for channelName in channelNames:
         fitFunction = config.fitFunctions[fitName]["Config"]
 
-        nbkg="3E7,0,1E8"
-        #nbkg="1E5,0,5E6"
+        #nbkg="6E7,0,5E8"
+        nbkg="1E6,0,1E7"
         topfile=config.samples[channelName]["topfile"]
         categoryfile=config.samples[channelName]["categoryfile"]
         dataFile=config.samples[channelName]["inputFile"]
@@ -55,6 +55,11 @@ for rangelow in rangeslow:
         outputfile = config.getFileName("FitResult_%s_bkgonly"%(fitName), cdir + "/scripts/", channelName, rangelow, rangehigh) + ".root"
         #binedges = config.getBinning(rangelow, rangehigh, 25)
         binedges = config.getBinning(rangelow, rangehigh)
+        #outputstring = "FitResult_limits_%d_%d_%d_%s"%(0, sigmean, sigwidth, signalfile)
+        #outputstring = "FitResult_limits_%d_%d_%d_%s"%(0, sigmean, sigwidth, signalfile)
+        outputstring = config.getFileName("FitResult_%s_bkgonly"%(fitName), "", channelName, rangelow, rangehigh) + ".root"
+
+
 
     
         outputdir = channelName
@@ -75,15 +80,14 @@ for rangelow in rangeslow:
                outputstring="%s"%(fitName),
                rangelow=rangelow,
                rangehigh=rangehigh,
+               histName = channelName,
                outputfile=outputfile,
                signalfile="Gaussian",
-               histName = channelName,
                maskthreshold=-0.05,
                dosignal=0,
                dolimit=0,
                rebinEdges=binedges,
                rebinOnlyBH = True,
                )
-
   
 

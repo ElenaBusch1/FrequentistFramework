@@ -19,7 +19,8 @@ sigmeans = [250, 350, 450, 550, 650, 750]
 sigamps = [0,1,2,3,4,5]
 #sigamps = [2, 5]
 #sigwidths = [5, 7, 10]
-sigwidths = [7, 10]
+sigwidths = [7]
+#sigwidths = [7, 10]
 
 
 
@@ -65,7 +66,7 @@ for sigmean in sigmeans:
       fsubcondor.write('Output          = logs/'+runfile.replace('.sh','').split('/')[-1] +'_$(Cluster).$(Process).out\n')
       fsubcondor.write('Error           = logs/'+runfile.replace('.sh','').split('/')[-1] +'_$(Cluster).$(Process).err\n')
       fsubcondor.write('Log             = logs/'+runfile.replace('.sh','').split('/')[-1] +'_$(Cluster).$(Process).log\n')
-      fsubcondor.write('+JobFlavour        = "workday"\n')
+      fsubcondor.write('+JobFlavour        = "tomorrow"\n')
       fsubcondor.write('stream_output = TRUE\n')
       fsubcondor.write('stream_error = TRUE\n')
       fsubcondor.write('\nqueue 1\n')

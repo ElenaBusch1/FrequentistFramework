@@ -5,20 +5,19 @@ import os
 
 
 cdir = config.cdir
-#channelNames = ["testSherpa_15"]
-#channelNames =  ["test3New_15"]
-#channelNames =  ["Data_m32"]
-channelNames = ["test3New_NoCut_no21"]
+#channelNames =  ["btagFinal", "btag_32"]
+channelNames =  ["btagFinal"]
 
+rangelow=160
+#rangehigh=1200
+rangehigh=700
 
-#rangelow=160
-rangelow=225
-rangehigh=1000
-
+#fitNames = ["fiveParV2"]
 #fitNames = ["fourPar", "fivePar", "UA2", "sixPar"]
+#fitNames = ["sevenPar"]
 #fitNames = ["UA2"]
-#fitNames = ["fourPar", "fivePar", "sixPar"]
-fitNames = ["fivePar", "sixPar"]
+fitNames = ["fourPar", "fivePar", "sixPar"]
+#fitNames = ["sixPar"]
 
 
 # First make the pseudodata
