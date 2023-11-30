@@ -19,7 +19,7 @@ def makeHepData(data, fit, histName = "test", labels = {}, minX = 0, maxX = 0):
   myfile.write("- header: \n")
   myfile.write("    name: %s\n"%(yaxis))
   myfile.write("  qualifiers: \n")
-  myfile.write("  - {name: Number of Events, value: Observed} \n")
+  myfile.write("  - {name: \"Number of Events\", value: \"Observed\"} \n")
   myfile.write("  - {name: RE, value: P P to JET JET JET JET}\n")
   myfile.write("  - {name: SQRT(S), units: GEV, value: 13000} \n")
   myfile.write("  values: \n")
@@ -31,7 +31,7 @@ def makeHepData(data, fit, histName = "test", labels = {}, minX = 0, maxX = 0):
   myfile.write("- header: \n")
   myfile.write("    name: %s\n"%(yaxis))
   myfile.write("  qualifiers: \n")
-  myfile.write("  - {name: Number of Events, value: Fit} \n")
+  myfile.write("  - {name: \"Number of Events\", value: \"Fit\"} \n")
   myfile.write("  - {name: RE, value: P P to JET JET JET JET}\n")
   myfile.write("  - {name: SQRT(S), units: GEV, value: 13000} \n")
   myfile.write("  values: \n")
@@ -68,6 +68,8 @@ def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expecte
   yaxis = yaxis.replace("#times", "\\times")
   yaxis = yaxis.replace("#it", "")
   yaxis = yaxis.replace("[pb]", "")
+  yaxis = yaxis.replace("{A}", "A")
+  yaxis = yaxis.replace("{BR}", "BR")
   yaxis = yaxis.replace("#", "\\")
   yaxis = yaxis.replace("\LT", "<")
   yaxis = yaxis.replace("\GT", ">")
@@ -81,22 +83,18 @@ def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expecte
 
   index = 0
   for expected, observed, expected1up, expected1down, expected2up, expected2down, legName in zip(expecteds, observeds, expected1ups, expected1downs, expected2ups, expected2downs, legNames):
-    myfile.write("- header: \n")
-    myfile.write("    name: %s\n"%(yaxis))
-    myfile.write("    units: pb\n")
+    myfile.write("- header: { name: %s, units: pb}\n"%(yaxis))
     myfile.write("  qualifiers: \n")
-    myfile.write("  - {name: Number of Events, value: Observed %s} \n"%(legName))
+    myfile.write("  - {name: Number of Events, value: \"Observed %s\"} \n"%(legName))
     myfile.write("  - {name: RE, value: P P to JET JET JET}\n")
     myfile.write("  - {name: SQRT(S), units: GEV, value: 13000} \n")
     myfile.write("  values: \n")
     for k in range(expected.GetN()):
       myfile.write("    - {value: %.8f} \n"%(observed.GetPointY(k)))
 
-    myfile.write("- header:\n")
-    myfile.write("    name: %s\n"%(yaxis))
-    myfile.write("    units: pb\n")
+    myfile.write("- header: { name: %s, units: pb}\n"%(yaxis))
     myfile.write("  qualifiers: \n")
-    myfile.write("  - {name: Number of Events, value: Fit %s} \n"%(legName))
+    myfile.write("  - {name: Number of Events, value: \"Fit %s\"} \n"%(legName))
     myfile.write("  - {name: RE, value: P P to JET JET JET}\n")
     myfile.write("  - {name: SQRT(S), units: GEV, value: 13000} \n")
     myfile.write("  values: \n")
@@ -110,7 +108,7 @@ def makeLimitHepData(expecteds, observeds, expected1downs, expected1ups, expecte
 
   myfile.write("independent_variables: \n")
   myfile.write("- header:\n")
-  myfile.write("    name: %s\n"%(xaxis))
+  myfile.write("    name: \"%s\"\n"%(xaxis))
   myfile.write("    units: GeV\n")
   myfile.write("  values: \n")
 
@@ -145,9 +143,7 @@ def make2DHepData(data, histName, labels = {}):
   myfile = open ("%s.yaml"%(histName), "w");
 
   myfile.write("independent_variables: \n")
-  myfile.write("- header:\n")
-  myfile.write("    name: %s\n"%(xaxis))
-  myfile.write("    units: GeV\n")
+  myfile.write("- header: { name: %s, units: GeV}\n"%(yaxis))
   myfile.write("  values: \n")
   for k in range(data.GetNbinsX()):
     for m in range(data.GetNbinsY()):
